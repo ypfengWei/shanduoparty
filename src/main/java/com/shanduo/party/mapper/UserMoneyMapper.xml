@@ -157,23 +157,4 @@
     from user_money
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
-  <update id="updateRefresh">
-    update user_money
-    set 
-	  refresh = 10
-    where user_id not in (select user_id from shanduo_vip where vip_end_time > now())
-  </update>
-  <update id="updateVipRefresh">
-    update user_money
-    set 
-	  refresh = 50
-    where user_id in (select user_id from shanduo_vip where vip_end_time > now() and vip_type = '0' 
-    and user_id not in (select user_id from shanduo_vip where vip_end_time > now() and vip_type = '1'))
-  </update>
-  <update id="updateSVipRefresh">
-    update user_money
-    set 
-	  refresh = 100
-    where user_id in (select user_id from shanduo_vip where vip_end_time > now() and vip_type = '1')
-  </update>
 </mapper>

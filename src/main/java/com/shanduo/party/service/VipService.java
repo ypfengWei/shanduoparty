@@ -20,11 +20,12 @@ public interface VipService {
 	 * @param @param date 开始时间
 	 * @param @param month 月份
 	 * @param @param vipType 类型:0.vip;1.svip
+	 * @param @param isRefresh 是否重置刷新次数:0.是;1.否
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int saveVip(Integer userId, Date date,Integer month,String vipType);
+	int saveVip(Integer userId, Date date,Integer month,String vipType,String isRefresh);
 	
 	/**
 	 * 开通/续费会员

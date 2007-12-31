@@ -38,5 +38,4 @@ public interface ShanduoVipMapper {
      */
     List<ShanduoVip> selectByUserId(Integer userId);
  
-    
 }

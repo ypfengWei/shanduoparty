@@ -2,6 +2,7 @@ package com.shanduo.party.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class VipServiceImpl implements VipService {
 	private MoneyService moneyService;
 
 	@Override
-	public int saveVip(Integer userId, Date date,Integer month,String vipType) {
+	public int saveVip(Integer userId, Date date,Integer month,String vipType,String isRefresh) {
 		ShanduoVip userVip = vipMapper.selectByVipType(userId,vipType);
 		if(userVip == null) {
 			userVip = new ShanduoVip();
@@ -62,11 +63,13 @@ public class VipServiceImpl implements VipService {
 				throw new RuntimeException();
 			}
 		}
-		//修改刷新次数
-		if("0".equals(vipType)) {
-			moneyService.updateRefresh(userId, 50);
-		}else {
-			moneyService.updateRefresh(userId, 100);
+		if("0".equals(isRefresh)) {
+			//修改刷新次数
+			if("0".equals(vipType)) {
+				moneyService.updateRefresh(userId, 50);
+			}else {
+				moneyService.updateRefresh(userId, 100);
+			}
 		}
 		//添加成长值
 		VipExperience vip = experienceMapper.selectByPrimaryKey(userId);
@@ -80,6 +83,26 @@ public class VipServiceImpl implements VipService {
 			}
 		}
 		return 1;
+	}
+	
+	/**
+	 * 开通svip时保存vip没用完的刷新次数
+	 * @Title: addRemarks
+	 * @Description: TODO
+	 * @param @param userId
+	 * @return void
+	 * @throws
+	 */
+	public void addRemarks(Integer userId) {
+		Map<String, Object> resultMap = moneyService.selectByUserId(userId);
+		VipExperience vip = new VipExperience();
+		vip.setUserId(userId);
+		vip.setRemarks(resultMap.get("refresh").toString());
+		int i = experienceMapper.updateByPrimaryKeySelective(vip);
+		if (i < 1) {
+			log.error("添加备注刷新次数失败");
+			throw new RuntimeException();
+		}
 	}
 	
 	/**
@@ -109,7 +132,7 @@ public class VipServiceImpl implements VipService {
 		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
 		if(resultList == null || resultList.isEmpty()) {
 			//开通
-			saveVip(userId, date, month, vipType);
+			saveVip(userId, date, month, vipType,"0");
 		}else if(resultList.size() == 2) {
 			ShanduoVip vip1 = resultList.get(0);
 			ShanduoVip vip2 = resultList.get(1);
@@ -121,6 +144,7 @@ public class VipServiceImpl implements VipService {
 					renewVip(vip2.getId(), vip2.getVipEndTime(), month);
 				}
 			}else {
+				addRemarks(userId);
 				//续费svip和vip延后
 				renewVip(vip1.getId(), vip1.getVipEndTime(), month);
 				renewVip(vip2.getId(), vip2.getVipEndTime(), month);
@@ -133,10 +157,11 @@ public class VipServiceImpl implements VipService {
 			}else {
 				if("0".equals(vipType)) {
 					//开通vip
-					saveVip(userId, vip.getVipEndTime(), month, vipType);
+					saveVip(userId, vip.getVipEndTime(), month, vipType,"1");
 				}else {
+					addRemarks(userId);
 					//开通svip
-					saveVip(userId, date, month, vipType);
+					saveVip(userId, date, month, vipType,"0");
 					//vip延长
 					renewVip(vip.getId(), vip.getVipEndTime(), month);
 				}

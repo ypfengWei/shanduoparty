@@ -202,10 +202,12 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public int updatePassword(Integer userId,String password, String newPassword) {
-		password = MD5Utils.getInstance().getMD5(password);
+	public int updatePassword(Integer userId,String newPassword) {
 		newPassword = MD5Utils.getInstance().getMD5(newPassword);
-		int i = userMapper.updateByPassword(userId, password, newPassword);
+		ShanduoUser user = new ShanduoUser();
+		user.setId(userId);
+		user.setPassWord(newPassword);
+		int i = userMapper.updateByPrimaryKeySelective(user);
 		if(i < 1) {
 			log.error("修改密码失败");
 			throw new RuntimeException();
@@ -214,9 +216,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int updatePasswordByPhone(Integer userId, String password) {
+	public int updatePasswordByPhone(String phone, String password) {
 		password = MD5Utils.getInstance().getMD5(password);
-		int i = userMapper.updateByPhone(userId, password);
+		int i = userMapper.updateByPhone(phone, password);
 		if(i < 1) {
 			log.error("修改密码失败");
 			throw new RuntimeException();

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 /**
- * 余额-闪多-豆刷新次数业务层
+ * 余额-闪多豆-刷新次数业务层
  * @ClassName: MoneyService
  * @Description: TODO
  * @author fanshixin
@@ -125,7 +125,7 @@ public interface MoneyService {
 	int updatePassWord(Integer userId,String password);
 	
 	/**
-	 * 每月重置刷新次数
+	 * 重置刷新次数
 	 * @Title: updateRefresh
 	 * @Description: TODO
 	 * @param @return

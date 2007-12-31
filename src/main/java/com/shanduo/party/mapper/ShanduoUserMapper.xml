@@ -318,17 +318,10 @@
     from shanduo_user
     where phone_number = #{0} and pass_word = #{1}
   </select>
-  <update id="updateByPassword">
-    update shanduo_user
-    set 
-      pass_word = #{2}
-    where id = #{0}
-    and pass_word = #{1}
-  </update>
   <update id="updateByPhone">
     update shanduo_user
     set pass_word = #{1}
-    where id = #{0}
+    where phone_number = #{0}
   </update>
   <select id="seekUser" parameterType="java.lang.String" resultType="map">
   	select

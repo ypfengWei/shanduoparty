@@ -104,11 +104,6 @@
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
   
-  <update id="updateExperienceByUserId">
-  	update
-  	vip_experience 
-  	set experience = #{0} where user_id = #{1} and del_flag = '0'
-  </update>
   <select id="selectByUserId" resultType="java.lang.Integer">
   	select 
   	experience
@@ -137,4 +132,17 @@
 	(select user_id from shanduo_vip where vip_end_time > now() and del_flag = '0')
 	and del_flag = '0' and experience > 0
   </update>
+  <select id="vipList" resultMap="BaseResultMap">
+    select 
+	user_id,remarks,create_date
+	from vip_experience
+	where user_id in (
+		select user_id from shanduo_vip 
+		where 
+		vip_end_time &gt;= #{startDate}
+		<if test="endDate != null and endDate !=''">
+		and vip_end_time &lt; #{endDate}
+		</if>
+		)
+  </select>
 </mapper>

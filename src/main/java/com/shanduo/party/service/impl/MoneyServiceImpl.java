@@ -1,6 +1,12 @@
 package com.shanduo.party.service.impl;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.UserMoney;
+import com.shanduo.party.entity.VipExperience;
+import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserMoneyRecordMapper;
+import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.MoneyService;
@@ -42,6 +52,10 @@ public class MoneyServiceImpl implements MoneyService {
 	private ExperienceService experienceService;
 	@Autowired
 	private ActivityService activityService;
+	@Autowired
+	private ShanduoVipMapper vipMapper;
+	@Autowired
+	private VipExperienceMapper vipExperienceMapper;
 
 	@Override
 	public Map<String, Object> selectByUserId(Integer userId) {
@@ -188,14 +202,102 @@ public class MoneyServiceImpl implements MoneyService {
 
 	@Override
 	public int updateRefresh() {
-		int i = 0;
-//		i = moneyMapper.updateRefresh();
-//		log.info("重置普通用户刷新次数:"+i+"人");
-		i = moneyMapper.updateVipRefresh();
-		log.info("重置vip用户刷新次数:"+i+"人");
-		i = moneyMapper.updateSVipRefresh();
-		log.info("重置svip用户刷新次数:"+i+"人");
+		long time = System.currentTimeMillis();
+		Format format = new SimpleDateFormat("yyyy-MM-dd");
+		String yesterday = format.format(time - 1000*60*60*24);
+		String today = format.format(time);
+		//查询今天过期vip的所有用户
+		List<VipExperience> vipList = new ArrayList<VipExperience>();
+		vipList = vipExperienceMapper.vipList(yesterday, today);
+		for (VipExperience vip : vipList) {
+			updateRefresh(vip.getUserId(), 0);
+			log.info(vip.getUserId()+"vip过期重置刷新次数为0");
+		}
+		vipReset(yesterday,today);
 		return 1;
+	}
+	
+	/**
+	 * 所有未过期的vip刷新次数
+	 * @Title: vipReset
+	 * @Description: TODO
+	 * @param @param startDate
+	 * @param @param endDate
+	 * @return void
+	 * @throws
+	 */
+	public void vipReset(String yesterday,String today) {
+		Format format = new SimpleDateFormat("yyyy-MM-dd");
+		//查询所有未过期的vip用户
+		List<VipExperience> vipList = vipExperienceMapper.vipList(today, null);
+		for (VipExperience vip : vipList) {
+			Integer userId = vip.getUserId();
+			Integer refresh = Integer.parseInt(vip.getRemarks());//保存的刷新次数
+			List<ShanduoVip> list = vipMapper.selectByUserId(userId);
+			if(list.size() == 1) {
+				ShanduoVip vips = list.get(0);
+				String vipStartDate = format.format(vips.getVipStartTime());
+				if("0".equals(vips.getVipType())) {
+					ShanduoVip svip = vipMapper.selectByVipType(userId, "1");
+					if(svip != null) {
+						String vipEndDate =  format.format(svip.getVipEndTime());
+						if(vipEndDate.equals(yesterday)) {
+							updateRefresh(vip.getUserId(), refresh);
+							log.info(userId+"svip过期重置刷新次数为上次开通svip前的vip剩余次数");
+						}
+					}
+				}
+				Long sub = isMonth(vipStartDate, today);
+				if(sub%31 == 0) {
+					if("0".equals(vips.getVipType())) {
+						updateRefresh(vip.getUserId(), 50);
+						log.info(userId+"vip重置刷新次数50");
+					}
+					if("1".equals(vips.getVipType())){
+						updateRefresh(vip.getUserId(), 100);
+						log.info(userId+"svip重置刷新次数100");
+					}
+				}
+			}else {
+				ShanduoVip svip = new ShanduoVip();
+				for (ShanduoVip shanduoVip : list) {
+					if("1".equals(shanduoVip.getVipType())) {
+						svip = shanduoVip;
+						break;
+					}
+				}
+				String vipStartDate = format.format(svip.getVipStartTime());
+				Long sub = isMonth(vipStartDate, today);
+				if(sub%31 == 0) {
+					updateRefresh(vip.getUserId(), 100);
+					log.info(userId+"svip重置刷新次数100");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 计算出2个日期的天数差
+	 * @Title: isMonth
+	 * @Description: TODO
+	 * @param @param startDate
+	 * @param @param endDate
+	 * @param @return
+	 * @return Long
+	 * @throws
+	 */
+	public Long isMonth(String startDate,String endDate) {
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date sdate = null;
+        Date edate = null;
+		try {
+			sdate = format.parse(startDate);
+			edate = format.parse(endDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		Long sub = edate.getTime()-sdate.getTime();
+		return sub/1000/60/60/24;
 	}
 	
 	@Override

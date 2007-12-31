@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -148,25 +147,37 @@ public class UserController {
 	}
 	
 	/**
-	 * 注册前检查手机号是否已注册
+	 * 检查手机号
 	 * @Title: checkPhone
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param phone 手机号
+	 * @param @param typeId 类型:1.注册检查,2.忘记密码检查
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
 	@RequestMapping(value = "chenkphone",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean checkPhone(HttpServletRequest request,String phone) {
+	public ResultBean checkPhone(HttpServletRequest request,String phone,String typeId) {
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
+		}
 		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 			log.error("手机号格式错误");
 			return new ErrorBean(10002,"手机号格式错误");
 		}
-		if(userService.checkPhone(phone)) {
-			log.error("手机号已被注册");
-			return new ErrorBean(10002,"手机号已被注册");
+		if("1".equals(typeId)) {
+			if(userService.checkPhone(phone)) {
+				log.error("手机号已被注册");
+				return new ErrorBean(10002,"手机号已被注册");
+			}
+		}else {
+			if(!userService.checkPhone(phone)) {
+				log.error("该手机号没有注册");
+				return new ErrorBean(10002,"该手机号没有注册");
+			}
 		}
 		return new SuccessBean("可以使用");
 	}
@@ -232,8 +243,8 @@ public class UserController {
 	 */
 	@RequestMapping(value = "updatepassword",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean updatePassword(HttpServletRequest request,String token,String typeId,String code,
-			String password,String newPassword) {
+	public ResultBean updatePassword(HttpServletRequest request,String token,String typeId,String phone,
+			String code,String password,String newPassword) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -248,17 +259,20 @@ public class UserController {
 			return new ErrorBean(10002,"新密码格式错误");
 		}
 		if("1".equals(typeId)) {
-			ShanduoUser user = userService.selectByUserId(isUserId);
+			if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
+				log.error("手机号格式错误");
+				return new ErrorBean(10002,"手机号格式错误");
+			}
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean(10002,"验证码错误");
 			}
-			if(codeService.selectByQuery(user.getPhoneNumber(), code, "3")) {
+			if(codeService.selectByQuery(phone, code, "3")) {
 				log.error("验证码超时或错误");
 				return new ErrorBean(10002,"验证码超时或错误");
 			}
 			try {
-				userService.updatePasswordByPhone(isUserId, newPassword);
+				userService.updatePasswordByPhone(phone, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
 				return new ErrorBean(10003,"修改失败");
@@ -268,12 +282,12 @@ public class UserController {
 				log.error("密码格式错误");
 				return new ErrorBean(10002,"密码格式错误");
 			}
-			if(userService.checkPassword(isUserId, newPassword)) {
+			if(userService.checkPassword(isUserId, password)) {
 				log.error("旧密码错误");
 				return new ErrorBean(10002,"旧密码错误");
 			}
 			try {
-				userService.updatePassword(isUserId, password, newPassword);
+				userService.updatePassword(isUserId,newPassword);
 			} catch (Exception e) {
 				log.error("修改失败");
 				return new ErrorBean(10003,"修改失败");

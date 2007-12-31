@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.CarouselService;
 
 /**
@@ -33,8 +32,8 @@ public class CarouselController {
 
 	private static final Logger log = LoggerFactory.getLogger(CarouselController.class);
 	
-	@Autowired
-	private BaseService baseService;
+//	@Autowired
+//	private BaseService baseService;
 	@Autowired
 	private CarouselService carouselService;
 	

@@ -1,5 +1,9 @@
 package com.shanduo.party.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.shanduo.party.entity.VipExperience;
 
 public interface VipExperienceMapper {
@@ -55,4 +59,16 @@ public interface VipExperienceMapper {
      * @throws
      */
     int updateByUserIdThree();
+    
+    /**
+     * 查询在一段时间内属于vip的用户
+     * @Title: vipList
+     * @Description: TODO
+     * @param @param startDate
+     * @param @param endDate
+     * @param @return
+     * @return List<VipExperience>
+     * @throws
+     */
+    List<VipExperience> vipList(@Param(value="startDate")String startDate,@Param(value="endDate")String endDate);
 }

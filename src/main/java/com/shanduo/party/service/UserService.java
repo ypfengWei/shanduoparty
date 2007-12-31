@@ -105,25 +105,24 @@ public interface UserService {
 	 * @Title: updatePassword
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param password 旧密码
 	 * @param @param newPassword 新密码
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int updatePassword(Integer userId,String password,String newPassword);
+	int updatePassword(Integer userId,String newPassword);
 	
 	/**
 	 * 手机号修改密码
 	 * @Title: updatePasswordByPhone
 	 * @Description: TODO
-	 * @param @param userId 用户ID
+	 * @param @param phone 手机号
 	 * @param @param password 新密码
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int updatePasswordByPhone(Integer userId,String password);
+	int updatePasswordByPhone(String phone,String password);
 	
 	/**
 	 * 修改个人信息

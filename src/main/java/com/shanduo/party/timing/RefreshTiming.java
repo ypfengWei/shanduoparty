@@ -22,14 +22,14 @@ public class RefreshTiming {
 	private MoneyService moneyService;
 	
 	/**
-	 * 每月1号刷新重置刷新次数
+	 * 每日检测重置刷新次数
 	 * @Title: delTiming
 	 * @Description: TODO
 	 * @param 
 	 * @return void
 	 * @throws
 	 */
-	@Scheduled(cron = "0 0 0 1 * ?")
+	@Scheduled(cron = "0 0 0 * * ? ")
 	public void delTiming() {
 		moneyService.updateRefresh();
 	}

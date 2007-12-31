@@ -71,7 +71,7 @@ public class RegionServiceImpl implements RegionService {
 	
 	@Override
 	public BigDecimal selectCurrentMonth(Integer userId) {
-		RegionAgency agency =  agencyMapper.selectByPrimaryKey(userId);
+		RegionAgency agency = agencyMapper.selectByPrimaryKey(userId);
 		if(agency == null) {
 			return null;
 		}

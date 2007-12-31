@@ -210,15 +210,15 @@ public class OrderContrpller {
 		String body = "";
 		String subject = "";
 		if("1".equals(order.getOrderType())) {
-			body = "充值闪多余额";
+			body = "充值余额";
 		}else if("2".equals(order.getOrderType())){
-			body = "开通闪多VIP"+order.getMonth()+"个月";
+			body = "开通VIP"+order.getMonth()+"个月";
 		}else if("3".equals(order.getOrderType())){
-			body = "开通闪多SVIP"+order.getMonth()+"个月";
+			body = "开通SVIP"+order.getMonth()+"个月";
 		}else if("4".equals(order.getOrderType())){
-			body = "刷新闪多活动"+order.getActivityId();
+			body = "刷新活动";
 		}else {
-			body = "置顶闪多活动"+order.getActivityId();
+			body = "置顶活动";
 		}
 		subject = body + order.getMoney();
 		//实例化客户端
@@ -264,15 +264,15 @@ public class OrderContrpller {
 	public ResultBean wxPayOrder(UserOrder order,HttpServletRequest request) {
 		String body = "";
 		if("1".equals(order.getOrderType())) {
-			body = "充值闪多余额";
+			body = "充值余额";
 		}else if("2".equals(order.getOrderType())){
-			body = "开通闪多VIP"+order.getMonth()+"个月";
+			body = "开通VIP"+order.getMonth()+"个月";
 		}else if("3".equals(order.getOrderType())){
-			body = "开通闪多SVIP"+order.getMonth()+"个月";
+			body = "开通SVIP"+order.getMonth()+"个月";
 		}else if("4".equals(order.getOrderType())){
-			body = "刷新闪多活动"+order.getActivityId();
+			body = "刷新活动";
 		}else {
-			body = "置顶闪多活动"+order.getActivityId();
+			body = "置顶活动";
 		}
 		body = body + order.getMoney();
 		//价格，单位为分
@@ -345,15 +345,15 @@ public class OrderContrpller {
 		}
 		String body = "";
 		if("1".equals(order.getOrderType())) {
-			body = "充值闪多余额";
+			body = "充值余额";
 		}else if("2".equals(order.getOrderType())){
-			body = "开通闪多VIP"+order.getMonth()+"个月";
+			body = "开通VIP"+order.getMonth()+"个月";
 		}else if("3".equals(order.getOrderType())){
-			body = "开通闪多SVIP"+order.getMonth()+"个月";
+			body = "开通SVIP"+order.getMonth()+"个月";
 		}else if("4".equals(order.getOrderType())){
-			body = "刷新闪多活动"+order.getActivityId();
+			body = "刷新活动";
 		}else {
-			body = "置顶闪多活动"+order.getActivityId();
+			body = "置顶活动";
 		}
 		body = body + order.getMoney();
 		//价格，单位为分

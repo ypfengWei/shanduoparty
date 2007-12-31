@@ -33,7 +33,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		boolean check = false;
-		log.info("token拦截中");
+//		log.info("token拦截中");
 		ErrorBean errorBean = new ErrorBean();
 		String token = request.getParameter("token");
 		if ("".equals(token) || token == null) {
