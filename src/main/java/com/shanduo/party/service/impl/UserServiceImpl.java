@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isNull(token)) {
 			return null;
 		}
-		return new TokenInfo(user,token,vipService.selectVipExperience(user.getId()));
+		return new TokenInfo(user,token,vipService.selectVipLevel(user.getId()));
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException();
 		}
 		user = userMapper.selectByPrimaryKey(userId);
-		return new TokenInfo(user,token,vipService.selectVipExperience(user.getId()));
+		return new TokenInfo(user,token,vipService.selectVipLevel(user.getId()));
 	}
 
 	@Override
@@ -249,7 +249,7 @@ public class UserServiceImpl implements UserService {
 		for (Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
-			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
+			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
 			map.put("isAttention", attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString())));
 		}
 		return resultList;
@@ -266,7 +266,7 @@ public class UserServiceImpl implements UserService {
 		resultMap.put("name", user.getUserName());
 		resultMap.put("gender", user.getGender());
 		resultMap.put("age", AgeUtils.getAgeFromBirthTime(user.getBirthday()));
-		resultMap.put("vip", vipService.selectVipExperience(userId));
+		resultMap.put("vip", vipService.selectVipLevel(userId));
 		resultMap.put("level", experienceService.selectLevel(userId));
 		resultMap.put("picture", PictureUtils.getPictureUrl(user.getHeadPortraitId()));
 		resultMap.put("isAttention", attentionService.checkAttention(userId, Attention));

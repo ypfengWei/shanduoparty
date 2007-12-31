@@ -15,8 +15,15 @@ public interface VipExperienceMapper {
 
     int updateByPrimaryKey(VipExperience record);
     
-    int updateExperienceByUserId(Integer experience, Integer userId);
-    
+    /**
+     * 查询vip成长值
+     * @Title: selectByUserId
+     * @Description: TODO
+     * @param @param userId
+     * @param @return
+     * @return int
+     * @throws
+     */
     int selectByUserId(Integer userId);
     
     /**
@@ -40,7 +47,7 @@ public interface VipExperienceMapper {
     int updateByUserIdTwo();
     
     /**
-     * 扣成长值
+     * 扣非vip成长值
      * @Title: updateByUserIdThree
      * @Description: TODO(这里用一句话描述这个方法的作用)
      * @param @return    设定文件

@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
 			order.setMoney(moneys);
 		}else if("4".equals(orderType)) {
 			order.setActivityId(activityId);
-			int vip = vipService.selectVipExperience(userId);
+			int vip = vipService.selectVipLevel(userId);
 			if(vip == 0) {
 				order.setMoney(new BigDecimal("0.2"));
 			}else if(vip < 11) {
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}else {
 			order.setActivityId(activityId);
-			int vip = vipService.selectVipExperience(userId);
+			int vip = vipService.selectVipLevel(userId);
 			if(vip == 0) {
 				order.setMoney(new BigDecimal("2"));
 			}else if(vip < 11) {

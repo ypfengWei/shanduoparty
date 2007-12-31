@@ -52,8 +52,6 @@
 	 		<mvc:mapping path="/activity/selectByHistorical"/>
 	 		<!-- 评论操作接口拦截 -->
 	 		<mvc:mapping path="/score/**"/>
-	 		<!-- vip操作接口拦截 -->
-	 		<mvc:mapping path="/vip/**"/>
 	 		<!-- 上传图片接口拦截 -->
 	 		<mvc:mapping path="/file/**"/>
 	 		<!-- 用户操作接口拦截 -->

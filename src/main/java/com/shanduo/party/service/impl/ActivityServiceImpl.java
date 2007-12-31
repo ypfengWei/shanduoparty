@@ -373,7 +373,7 @@ public class ActivityServiceImpl implements ActivityService {
 			activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
-        	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
+        	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
         	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
     		if(resultMap != null) {
     			for (Map<String, Object> map : resultMap) {

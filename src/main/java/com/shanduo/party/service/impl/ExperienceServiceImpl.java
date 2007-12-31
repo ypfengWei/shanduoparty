@@ -115,7 +115,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 	 * @throws
 	 */
 	public int getVipExperience(Integer userId,String moneyType) {
-		int vip = vipService.selectVipExperience(userId);
+		int vip = vipService.selectVipLevel(userId);
 		BigDecimal rate = new BigDecimal(vip).divide(new BigDecimal("10"));
 		if(vip < 10) {
 			rate = rate.add(new BigDecimal("1"));
