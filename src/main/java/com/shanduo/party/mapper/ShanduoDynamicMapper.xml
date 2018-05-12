@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ShanduoDynamicMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoDynamic">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="lat" jdbcType="DECIMAL" property="lat" />
+    <result column="lon" jdbcType="DECIMAL" property="lon" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, content, picture, lat, lon, remarks, create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shanduo_dynamic
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from shanduo_dynamic
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoDynamic">
+    insert into shanduo_dynamic (id, user_id, content, 
+      picture, lat, lon, 
+      remarks, create_date, update_date, 
+      del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{picture,jdbcType=VARCHAR}, #{lat,jdbcType=DECIMAL}, #{lon,jdbcType=DECIMAL}, 
+      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoDynamic">
+    insert into shanduo_dynamic
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+      <if test="lat != null">
+        lat,
+      </if>
+      <if test="lon != null">
+        lon,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="lon != null">
+        #{lon,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ShanduoDynamic">
+    update shanduo_dynamic
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        lat = #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="lon != null">
+        lon = #{lon,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoDynamic">
+    update shanduo_dynamic
+    set user_id = #{userId,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=VARCHAR},
+      lat = #{lat,jdbcType=DECIMAL},
+      lon = #{lon,jdbcType=DECIMAL},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectById" parameterType="java.lang.String" resultType="map">
+    select 
+    sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    from shanduo_dynamic sd 
+	join shanduo_user su on sd.user_id = su.id
+	where sd.del_flag = '0'
+	and sd.id = #{id,jdbcType=VARCHAR}
+  </select>
+  <update id="updateByDelFlag">
+    update shanduo_dynamic
+    set del_flag = '1'
+    where del_flag = '0' and id = #{0} and user_id = #{1}
+  </update>
+  <select id="attentionCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from shanduo_dynamic
+	where del_flag = '0'
+	and (user_id in (select attention from user_attention where user_id = #{userId,jdbcType=INTEGER} and attention_type = '1')
+	or user_id = #{userId,jdbcType=INTEGER})
+  </select>
+  <select id="attentionList" resultType="map">
+    select 
+    sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    from shanduo_dynamic sd 
+	join shanduo_user su on sd.user_id = su.id
+	where sd.del_flag = '0'
+	and (sd.user_id in (select attention from user_attention where user_id = #{0} and attention_type = '1') 
+	or sd.user_id = #{0})
+	order by sd.create_date desc 
+	limit #{1},#{2}
+  </select>
+  <select id="nearbyCount" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from shanduo_dynamic
+	where del_flag = '0'
+	and lon >= #{0} and lon &lt;= #{1}
+ 	and lat >= #{2} and lat &lt;= #{3}
+  </select>
+  <select id="nearbyList" resultType="map">
+    select 
+    sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    from shanduo_dynamic sd 
+	join shanduo_user su on sd.user_id = su.id
+	where sd.del_flag = '0'
+	and lon &gt;= #{0} and lon &lt;= #{1}
+ 	and lat &gt;= #{2} and lat &lt;= #{3}
+	order by sd.create_date desc 
+	limit #{4},#{5}
+  </select>
+  <select id="selectMyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from shanduo_dynamic
+	where del_flag = '0'
+	and user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectMyList" resultType="map">
+    select 
+    sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    from shanduo_dynamic sd
+	join shanduo_user su on sd.user_id = su.id
+	where sd.del_flag = '0'
+	and sd.user_id = #{0}
+	order by sd.create_date desc 
+	limit #{1},#{2}
+  </select>
+</mapper>

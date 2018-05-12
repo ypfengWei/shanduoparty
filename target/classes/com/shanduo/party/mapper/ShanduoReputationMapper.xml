@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ShanduoReputationMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoReputation">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="reputation" jdbcType="INTEGER" property="reputation" />
+    <result column="deduction" jdbcType="INTEGER" property="deduction" />
+    <result column="reporting_time" jdbcType="TIMESTAMP" property="reportingTime" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, reputation, deduction, reporting_time, create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shanduo_reputation
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from shanduo_reputation
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoReputation">
+    insert into shanduo_reputation (user_id, reputation, deduction, 
+      reporting_time, create_date, update_date, 
+      del_flag)
+    values (#{userId,jdbcType=INTEGER}, #{reputation,jdbcType=INTEGER}, #{deduction,jdbcType=INTEGER}, 
+      #{reportingTime,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoReputation">
+    insert into shanduo_reputation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="reputation != null">
+        reputation,
+      </if>
+      <if test="deduction != null">
+        deduction,
+      </if>
+      <if test="reportingTime != null">
+        reporting_time,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="reputation != null">
+        #{reputation,jdbcType=INTEGER},
+      </if>
+      <if test="deduction != null">
+        #{deduction,jdbcType=INTEGER},
+      </if>
+      <if test="reportingTime != null">
+        #{reportingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ShanduoReputation">
+    update shanduo_reputation
+    <set>
+      <if test="reputation != null">
+        reputation = #{reputation,jdbcType=INTEGER},
+      </if>
+      <if test="deduction != null">
+        deduction = #{deduction,jdbcType=INTEGER},
+      </if>
+      <if test="reportingTime != null">
+        reporting_time = #{reportingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoReputation">
+    update shanduo_reputation
+    set reputation = #{reputation,jdbcType=INTEGER},
+      deduction = #{deduction,jdbcType=INTEGER},
+      reporting_time = #{reportingTime,jdbcType=TIMESTAMP},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByUserId">
+    update shanduo_reputation set reputation = #{1} where user_id = #{0} and del_flag = '0'
+  </update>
+</mapper>

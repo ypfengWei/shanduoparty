@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ShanduoReputationRecordMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoReputationRecord">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="reputation_type" jdbcType="CHAR" property="reputationType" />
+    <result column="deduction_count" jdbcType="INTEGER" property="deductionCount" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, reputation_type, deduction_count, create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shanduo_reputation_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from shanduo_reputation_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
+    insert into shanduo_reputation_record (id, user_id, reputation_type, 
+      deduction_count, create_date, update_date, 
+      del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{reputationType,jdbcType=CHAR}, 
+      #{deductionCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
+    insert into shanduo_reputation_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="reputationType != null">
+        reputation_type,
+      </if>
+      <if test="deductionCount != null">
+        deduction_count,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="reputationType != null">
+        #{reputationType,jdbcType=CHAR},
+      </if>
+      <if test="deductionCount != null">
+        #{deductionCount,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
+    update shanduo_reputation_record
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="reputationType != null">
+        reputation_type = #{reputationType,jdbcType=CHAR},
+      </if>
+      <if test="deductionCount != null">
+        deduction_count = #{deductionCount,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
+    update shanduo_reputation_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      reputation_type = #{reputationType,jdbcType=CHAR},
+      deduction_count = #{deductionCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByUserId" resultType="java.lang.Integer">
+  	select sum(deduction_count) from shanduo_reputation_record where user_id = #{0}
+	and update_date between #{1} and #{2} 
+	and reputation_type = 1 and del_flag = '0'
+  </select>
+  <select id="selectByUserIdTwo" resultType="java.lang.Integer">
+  	select sum(deduction_count) from shanduo_reputation_record where user_id = #{0}
+  	and update_date between #{1} and #{2} 
+  	and del_flag = '0' and reputation_type = 2 
+  </select>
+</mapper>

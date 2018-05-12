@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.UserMoneyRecordMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserMoneyRecord">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="money_type" jdbcType="CHAR" property="moneyType" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="dal_flag" jdbcType="CHAR" property="dalFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, money_type, remarks, create_date, update_date, dal_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_money_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user_money_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.UserMoneyRecord">
+    insert into user_money_record (id, user_id, money_type, 
+      remarks, create_date, update_date, 
+      dal_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{moneyType,jdbcType=CHAR}, 
+      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{dalFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserMoneyRecord">
+    insert into user_money_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="moneyType != null">
+        money_type,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="dalFlag != null">
+        dal_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="moneyType != null">
+        #{moneyType,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dalFlag != null">
+        #{dalFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.UserMoneyRecord">
+    update user_money_record
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="moneyType != null">
+        money_type = #{moneyType,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dalFlag != null">
+        dal_flag = #{dalFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserMoneyRecord">
+    update user_money_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      money_type = #{moneyType,jdbcType=CHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      dal_flag = #{dalFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByAstrict" resultType="java.lang.Integer">
+  	select
+    count(*)
+    from user_money_record
+    where user_id = #{0}
+    and money_type = #{1} 
+    and create_date &gt;= #{2}
+  </select>
+  <select id="selectBySignInCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select COUNT(*) from user_money_record  where user_id = #{userId,jdbcType=INTEGER} and money_type='3' and
+         DATE_FORMAT(create_date,'%Y%m%d')&gt;(
+           	select IFNULL(MAX(bb.date_b),'20180101') from
+				(select (@i := @i + 1) as ord_num,DATE_FORMAT(a.create_date,'%Y%m%d')as date_a from user_money_record a,
+				(select @i := 1) d where user_id = #{userId,jdbcType=INTEGER} and money_type = '3' order by create_date desc) aa
+				join 
+				(select (@j := @j + 1) as ord_num,DATE_FORMAT(a.create_date,'%Y%m%d') as date_b from user_money_record a,
+				(select @j := 0) d where user_id = #{userId,jdbcType=INTEGER} and money_type = '3' order by create_date desc) bb
+				on aa.ord_num = bb.ord_num and (aa.date_a-bb.date_b) != 1
+         ) 
+         <!-- order by create_date desc -->
+  </select>
+  <select id="meneyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  	select
+  	count(*)
+  	from user_money_record 
+  	where user_id = #{userId,jdbcType=INTEGER}
+    and money_type in ('1','2')
+  </select>
+  <select id="moneyList" resultType="map">
+  	select
+  	 id, money_type as moneyType, remarks, create_date as createDate 
+  	from user_money_record 
+  	where user_id = #{0}
+    and money_type in ('1','2')
+    order create_date desc
+    limit #{1},#{2}
+  </select>
+  <select id="weekSignInCount" resultType="java.lang.Integer">
+  	select 
+  	count(*)
+  	from user_money_record 
+  	where user_id = #{0}
+    and money_type = '3'
+    and create_date &gt;= #{1} and create_date &lt; #{2}
+  </select>
+</mapper>

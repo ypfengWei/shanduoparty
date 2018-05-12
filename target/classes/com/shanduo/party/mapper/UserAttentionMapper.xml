@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.UserAttentionMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserAttention">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="attention" jdbcType="INTEGER" property="attention" />
+    <result column="attention_type" jdbcType="CHAR" property="attentionType" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, attention, attention_type, remarks, create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_attention
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user_attention
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.UserAttention">
+    insert into user_attention (id, user_id, attention, 
+      attention_type, remarks, create_date, 
+      update_date, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{attention,jdbcType=INTEGER}, 
+      #{attentionType,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserAttention">
+    insert into user_attention
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="attention != null">
+        attention,
+      </if>
+      <if test="attentionType != null">
+        attention_type,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="attention != null">
+        #{attention,jdbcType=INTEGER},
+      </if>
+      <if test="attentionType != null">
+        #{attentionType,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.UserAttention">
+    update user_attention
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="attention != null">
+        attention = #{attention,jdbcType=INTEGER},
+      </if>
+      <if test="attentionType != null">
+        attention_type = #{attentionType,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserAttention">
+    update user_attention
+    set user_id = #{userId,jdbcType=INTEGER},
+      attention = #{attention,jdbcType=INTEGER},
+      attention_type = #{attentionType,jdbcType=CHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="checkAttention" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_attention
+    where user_id = #{0}
+    and attention = #{1}
+    and attention_type = #{2}
+    and del_flag = '0'
+  </select>
+  <select id="selectAttentionCount" resultType="java.lang.Integer">
+  	select
+  	count(*)
+  	from user_attention
+  	where user_id = #{0}
+  	and attention_type = #{1}
+  	and del_flag = '0'
+  </select>
+  <select id="selectAttentionList" resultType="map">
+  	select
+  	su.id as userId,su.user_name as `name`,su.head_portrait_id as picture,su.signature
+  	from user_attention ua
+	join shanduo_user su
+	on su.id = ua.attention 
+  	where ua.user_id = #{0}
+  	and ua.attention_type = #{1}
+  	and ua.del_flag = '0'
+    limit #{2},#{3}
+  </select>
+  <delete id="deleteAttention">
+  	delete from user_attention
+  	where (user_id = #{0} and attention = #{1})
+	or (user_id = #{1} and attention = #{0})
+	and attention_type = #{2}
+  </delete>
+</mapper>

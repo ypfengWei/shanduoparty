@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ShanduoActivityMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoActivity">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="activity_type" jdbcType="VARCHAR" property="activityType" />
+    <result column="activity_start_time" jdbcType="TIMESTAMP" property="activityStartTime" />
+    <result column="activity_address" jdbcType="VARCHAR" property="activityAddress" />
+    <result column="lat" jdbcType="DECIMAL" property="lat" />
+    <result column="lon" jdbcType="DECIMAL" property="lon" />
+    <result column="top_flag" jdbcType="CHAR" property="topFlag" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="activity_cutoff_time" jdbcType="TIMESTAMP" property="activityCutoffTime" />
+    <result column="activity_end_time" jdbcType="TIMESTAMP" property="activityEndTime" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <resultMap id="ActivityResultMap" type="com.shanduo.party.entity.service.ActivityInfo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="activity_type" jdbcType="VARCHAR" property="activityType" />
+    <result column="activity_start_time" jdbcType="TIMESTAMP" property="activityStartTime" />
+    <result column="activity_address" jdbcType="VARCHAR" property="activityAddress" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="mode" jdbcType="VARCHAR" property="mode" />
+    <result column="man_number" jdbcType="VARCHAR" property="manNumber" />
+    <result column="woman_number" jdbcType="VARCHAR" property="womanNumber" />
+    <result column="activity_cutoff_time" jdbcType="TIMESTAMP" property="activityCutoffTime" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="head_portrait_id" jdbcType="VARCHAR" property="headPortraitId"/>
+    <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+    <result column="age" jdbcType="INTEGER" property="age"/>
+    <result column="location" jdbcType="DOUBLE" property="location"/>
+    <result column="lat" jdbcType="DECIMAL" property="lat" />
+    <result column="lon" jdbcType="DECIMAL" property="lon" />
+    <result column="top_flag" jdbcType="CHAR" property="topFlag" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="mansum" jdbcType="VARCHAR" property="mansum" />
+    <result column="womenSum" jdbcType="VARCHAR" property="womenSum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
+    lat, lon, top_flag, remarks, create_date, update_date, activity_cutoff_time, activity_end_time, 
+    del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shanduo_activity
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from shanduo_activity
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoActivity">
+    insert into shanduo_activity (id, activity_name, user_id, 
+      activity_type, activity_start_time, activity_address, 
+      lat, lon, top_flag, remarks, 
+      create_date, update_date, activity_cutoff_time, 
+      activity_end_time, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{activityName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
+      #{activityType,jdbcType=VARCHAR}, #{activityStartTime,jdbcType=TIMESTAMP}, #{activityAddress,jdbcType=VARCHAR}, 
+      #{lat,jdbcType=DECIMAL}, #{lon,jdbcType=DECIMAL}, #{topFlag,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{activityCutoffTime,jdbcType=TIMESTAMP}, 
+      #{activityEndTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoActivity">
+    insert into shanduo_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="activityName != null">
+        activity_name,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="activityType != null">
+        activity_type,
+      </if>
+      <if test="activityStartTime != null">
+        activity_start_time,
+      </if>
+      <if test="activityAddress != null">
+        activity_address,
+      </if>
+      <if test="lat != null">
+        lat,
+      </if>
+      <if test="lon != null">
+        lon,
+      </if>
+      <if test="topFlag != null">
+        top_flag,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="activityCutoffTime != null">
+        activity_cutoff_time,
+      </if>
+      <if test="activityEndTime != null">
+        activity_end_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="activityName != null">
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="activityType != null">
+        #{activityType,jdbcType=VARCHAR},
+      </if>
+      <if test="activityStartTime != null">
+        #{activityStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityAddress != null">
+        #{activityAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="lon != null">
+        #{lon,jdbcType=DECIMAL},
+      </if>
+      <if test="topFlag != null">
+        #{topFlag,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityCutoffTime != null">
+        #{activityCutoffTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityEndTime != null">
+        #{activityEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ShanduoActivity">
+    update shanduo_activity
+    <set>
+      <if test="activityName != null">
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="activityType != null">
+        activity_type = #{activityType,jdbcType=VARCHAR},
+      </if>
+      <if test="activityStartTime != null">
+        activity_start_time = #{activityStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityAddress != null">
+        activity_address = #{activityAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        lat = #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="lon != null">
+        lon = #{lon,jdbcType=DECIMAL},
+      </if>
+      <if test="topFlag != null">
+        top_flag = #{topFlag,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityCutoffTime != null">
+        activity_cutoff_time = #{activityCutoffTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityEndTime != null">
+        activity_end_time = #{activityEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoActivity">
+    update shanduo_activity
+    set activity_name = #{activityName,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      activity_type = #{activityType,jdbcType=VARCHAR},
+      activity_start_time = #{activityStartTime,jdbcType=TIMESTAMP},
+      activity_address = #{activityAddress,jdbcType=VARCHAR},
+      lat = #{lat,jdbcType=DECIMAL},
+      lon = #{lon,jdbcType=DECIMAL},
+      top_flag = #{topFlag,jdbcType=CHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      activity_cutoff_time = #{activityCutoffTime,jdbcType=TIMESTAMP},
+      activity_end_time = #{activityEndTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="deleteByActivity" parameterType="java.lang.String">
+    update shanduo_activity
+    set del_flag = '1'
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByScoreCount" resultType="java.lang.Integer">
+    select count(*) from shanduo_activity where id in 
+    (select activity_id from 
+	activity_score where score is not null and del_flag = '0'
+	) and del_flag = '0'
+  </select>
+  <select id="selectByScore" resultMap="ActivityResultMap">
+    select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat
+    from shanduo_activity sa
+	join activity_score ye on sa.id = ye.activity_id 
+	join activity_requirement ar on sa.id = ar.activity_id
+	join shanduo_user su on sa.user_id = su.id
+	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
+	and ye.del_flag = '0'
+	GROUP BY sa.id
+	ORDER BY avg(ye.score) desc
+	limit #{0},#{1}
+  </select>
+  <select id="selectByFriendsUserIdCount" resultType="java.lang.Integer">
+   	select count(*) from shanduo_activity where (user_id = #{0} or 
+	user_id in (select attention from user_attention where del_flag = '0' and user_id = #{0}))
+	and del_flag = '0'
+  </select>
+  <select id="selectByFriendsUserId" parameterType="java.lang.String"  resultMap="ActivityResultMap">
+    select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat
+    from shanduo_activity sa join activity_requirement ar on sa.id = ar.activity_id
+    join shanduo_user su on sa.user_id = su.id
+	where sa.del_flag = '0' and ar.del_flag = '0' and (user_id in 
+	(select attention from user_attention where del_flag = '0' and user_id = #{0})
+	or user_id = #{0}) and su.del_flag = '0'
+	ORDER BY sa.create_date
+	limit #{1},#{2}
+  </select>
+  <select id="selectByNearbyUserIdCount" resultType="java.lang.Integer">
+  	select count(*) from shanduo_activity sa where del_flag = '0' 
+  	and sa.activity_cutoff_time &gt;= #{4}
+ 	and lon &gt;= #{0} and lon &lt;= #{1}
+ 	and lat &gt;= #{2} and lat &lt;= #{3}
+  </select>
+  <select id="selectByNearbyUserId" resultMap="ActivityResultMap">
+ 	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat
+    from shanduo_activity sa join activity_requirement ar on sa.id = ar.activity_id 
+    join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
+ 	where sa.del_flag = '0' and ar.del_flag = '0' and sa.activity_cutoff_time &gt;= #{4}
+ 	and lon &gt;= #{0} and lon &lt;= #{1}
+ 	and lat &gt;= #{2} and lat &lt;= #{3}
+ 	order by sa.top_flag DESC,sa.create_date DESC
+    limit #{5},#{6}
+  </select>
+  <select id="selectByUserIdCount" resultType="java.lang.Integer">
+   	select count(*) from shanduo_activity where del_flag = '0' and user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserId" resultMap="ActivityResultMap">
+	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat
+    from shanduo_activity sa join activity_requirement ar on sa.id = ar.activity_id
+    join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
+	where sa.del_flag = '0' and ar.del_flag = '0'
+    and user_id = #{0}
+    ORDER BY sa.create_date
+    limit #{1},#{2}
+  </select>
+  <select id="selectByActivityUserId" resultMap="BaseResultMap">
+ 	select 
+ 	<include refid="Base_Column_List" />
+	from shanduo_activity sa where user_id = #{0} and sa.del_flag = '0'
+ 	and activity_start_time &gt; #{1}
+  </select>
+  <select id="selectByAll" resultMap="BaseResultMap">
+  	select a.id from shanduo_activity a 
+  	LEFT JOIN activity_score b
+	on a.id = b.activity_id and a.del_flag = '0' and b.del_flag ='0'
+	where (a.user_id = #{0} or b.user_id = #{0}) 
+	and a.activity_start_time BETWEEN #{1} and #{2}
+  </select>
+  <select id="selectByUserIdTimeCount" resultType="java.lang.Integer">
+ 	select count(*) from activity_score ye join shanduo_activity sa 
+ 	on sa.id = ye.activity_id where ye.user_id = #{0} 
+ 	and sa.activity_start_time &gt; #{1} 
+ 	and sa.del_flag = '0' and ye.del_flag = '0'
+  </select>
+  <select id="selectByUserIdTime" resultMap="ActivityResultMap">
+ 	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat
+ 	from shanduo_activity sa 
+ 	join activity_score ye on sa.id = ye.activity_id 
+ 	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
+ 	join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
+ 	where ye.user_id = #{0}
+ 	and sa.activity_start_time &gt; #{1} and sa.del_flag = '0' and ye.del_flag = '0'
+ 	ORDER BY sa.create_date DESC
+ 	limit #{2},#{3}
+  </select>
+  <select id="selectByUserIdInTimeCount" resultType="java.lang.Integer">
+ 	select count(*) from activity_score ye join shanduo_activity sa 
+ 	on sa.id = ye.activity_id 
+ 	where ye.user_id = #{0} and sa.activity_start_time &lt;= #{1} 
+ 	and sa.del_flag = '0' and ye.del_flag = '0'
+  </select>
+  <select id="selectByUserIdInTime" resultMap="ActivityResultMap">
+ 	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat
+    from shanduo_activity sa 
+    join activity_score ye on sa.id = ye.activity_id 
+ 	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
+ 	join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
+ 	where ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
+ 	and sa.activity_start_time &lt;= #{1}
+ 	ORDER BY sa.create_date DESC
+ 	limit #{2},#{3}
+  </select>
+  <select id="selectByHistoricalCount" resultType="java.lang.Integer">
+ 	select count(*)
+  	from activity_score ye join shanduo_activity sa on ye.activity_id = sa.id 
+	where (sa.user_id = #{0} 
+  	or sa.id in (select activity_id from activity_score where user_id = #{0}))
+	and ye.del_flag = '0' and sa.del_flag = '0' and sa.activity_start_time &lt;= #{1}
+  </select>
+  <select id="selectByHistorical" resultMap="ActivityResultMap">
+  	select sa.id,sa.user_id,ye.score,ye.user_id,ye.others_score
+  	from activity_score ye 
+  	join shanduo_activity sa on ye.activity_id = sa.id 
+  	where (sa.user_id = #{0}  or sa.id in 
+  	(select activity_id from activity_score where user_id = #{0}))
+	and ye.del_flag = '0' and sa.del_flag = '0' and sa.activity_start_time &lt;= #{1}
+	order by sa.create_date DESC
+	limit #{2},#{3}
+  </select>
+  <update id="activityRefresh">
+    update shanduo_activity set create_date= now() where id = #{0} and del_flag = '0'
+  </update>
+  <update id="updateBysetTop">
+    update shanduo_activity set top_flag = '1' where id = #{0} and del_flag = '0'
+  </update>
+  <select id="selectByScoreActivity" resultMap="ActivityResultMap">
+	select su.user_name,su.id,su.birthday,su.gender,su.head_portrait_id,
+	ye.score,ye.evaluation_content from shanduo_user su
+	join activity_score ye on su.id = ye.user_id
+	where su.id in 
+	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
+	GROUP BY su.id
+	limit #{1},#{2}
+  </select>
+  <select id="selectByScoreActivityCount" resultType="java.lang.Integer">
+	select count(*)
+	from activity_score where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
+  </select>
+</mapper>

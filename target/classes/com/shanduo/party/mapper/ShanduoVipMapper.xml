@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ShanduoVipMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoVip">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="vip_type" jdbcType="CHAR" property="vipType" />
+    <result column="vip_start_time" jdbcType="TIMESTAMP" property="vipStartTime" />
+    <result column="vip_end_time" jdbcType="TIMESTAMP" property="vipEndTime" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <resultMap id="VipResultMap" type="hashMap">
+  	<id column="id" jdbcType="INTEGER" property="id" />
+  	<result column="user_id" jdbcType="INTEGER" property="userId" />
+  	<result column="vip_type" jdbcType="CHAR" property="vipType" />
+  	<result column="vip_start_time" jdbcType="TIMESTAMP" property="vipStartTime" />
+    <result column="vip_end_time" jdbcType="TIMESTAMP" property="vipEndTime" />
+    <result column="experience" jdbcType="TIMESTAMP" property="experience" />
+  </resultMap> 
+  <sql id="Base_Column_List">
+    id, user_id, vip_type, vip_start_time, vip_end_time, remarks, create_date, update_date, 
+    del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shanduo_vip
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from shanduo_vip
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoVip">
+    insert into shanduo_vip (id, user_id, vip_type, 
+      vip_start_time, vip_end_time, remarks, 
+      create_date, update_date, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{vipType,jdbcType=CHAR}, 
+      #{vipStartTime,jdbcType=TIMESTAMP}, #{vipEndTime,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoVip">
+    insert into shanduo_vip
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="vipType != null">
+        vip_type,
+      </if>
+      <if test="vipStartTime != null">
+        vip_start_time,
+      </if>
+      <if test="vipEndTime != null">
+        vip_end_time,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="vipType != null">
+        #{vipType,jdbcType=CHAR},
+      </if>
+      <if test="vipStartTime != null">
+        #{vipStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="vipEndTime != null">
+        #{vipEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ShanduoVip">
+    update shanduo_vip
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="vipType != null">
+        vip_type = #{vipType,jdbcType=CHAR},
+      </if>
+      <if test="vipStartTime != null">
+        vip_start_time = #{vipStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="vipEndTime != null">
+        vip_end_time = #{vipEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoVip">
+    update shanduo_vip
+    set user_id = #{userId,jdbcType=INTEGER},
+      vip_type = #{vipType,jdbcType=CHAR},
+      vip_start_time = #{vipStartTime,jdbcType=TIMESTAMP},
+      vip_end_time = #{vipEndTime,jdbcType=TIMESTAMP},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByUserIdAndTime" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from shanduo_vip where user_id = #{0}
+  </select>
+  <update id="updateByUserId" parameterType="com.shanduo.party.entity.ShanduoVip">
+    update shanduo_vip set vip_start_time = #{0},vip_end_time = #{1}
+	where user_id = #{2}
+  </update>
+  <update id="updateByUserIdTwo" parameterType="com.shanduo.party.entity.ShanduoVip">
+    update shanduo_vip set vip_end_time = #{1}
+	where user_id = #{2}
+  </update>
+</mapper>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ActivityScoreMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ActivityScore">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="others_score" jdbcType="INTEGER" property="othersScore" />
+    <result column="evaluation_content" jdbcType="VARCHAR" property="evaluationContent" />
+    <result column="be_evaluated" jdbcType="VARCHAR" property="beEvaluated" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, activity_id, score, others_score, evaluation_content, be_evaluated, 
+    remarks, create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from activity_score
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from activity_score
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ActivityScore">
+    insert into activity_score (id, user_id, activity_id, 
+      score, others_score, evaluation_content, 
+      be_evaluated, remarks, create_date, 
+      update_date, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
+      #{score,jdbcType=INTEGER}, #{othersScore,jdbcType=INTEGER}, #{evaluationContent,jdbcType=VARCHAR}, 
+      #{beEvaluated,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ActivityScore">
+    insert into activity_score
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="othersScore != null">
+        others_score,
+      </if>
+      <if test="evaluationContent != null">
+        evaluation_content,
+      </if>
+      <if test="beEvaluated != null">
+        be_evaluated,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="othersScore != null">
+        #{othersScore,jdbcType=INTEGER},
+      </if>
+      <if test="evaluationContent != null">
+        #{evaluationContent,jdbcType=VARCHAR},
+      </if>
+      <if test="beEvaluated != null">
+        #{beEvaluated,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ActivityScore">
+    update activity_score
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="othersScore != null">
+        others_score = #{othersScore,jdbcType=INTEGER},
+      </if>
+      <if test="evaluationContent != null">
+        evaluation_content = #{evaluationContent,jdbcType=VARCHAR},
+      </if>
+      <if test="beEvaluated != null">
+        be_evaluated = #{beEvaluated,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ActivityScore">
+    update activity_score
+    set user_id = #{userId,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=VARCHAR},
+      score = #{score,jdbcType=INTEGER},
+      others_score = #{othersScore,jdbcType=INTEGER},
+      evaluation_content = #{evaluationContent,jdbcType=VARCHAR},
+      be_evaluated = #{beEvaluated,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByIdScoreCount" resultType="java.lang.Integer">
+	select * from activity_score where activity_id in 
+	(select sa.id from shanduo_activity sa where sa.user_id = #{0} and sa.del_flag = '0') and del_flag = '0'
+  </select>
+  <select id="selectByIdScore" parameterType="java.lang.String" resultMap="BaseResultMap">
+	select sa.activity_type,ae.score,ae.evaluation_content from activity_score ae 
+	join shanduo_activity sa on sa.id = ae.activity_id 
+	where ae.activity_id in (select id from shanduo_activity where user_id = #{0})
+	and ae.score is not null and sa.del_flag = '0' and ae.del_flag = '0'
+	ORDER BY sa.activity_start_time desc,ae.create_date desc
+	limit #{1},#{2}
+  </select>
+  <update id="updateById" parameterType="java.lang.String">
+    update activity_score set score = '5' where id in ( select id  from 
+	(select ae.id from activity_score ae
+	join shanduo_activity sa on sa.id = ae.activity_id and ae.user_id in
+	(select user_id from activity_score where score is null and del_flag = '0') 
+	and sa.del_flag = '0' and ae.del_flag = '0'
+	and sa.activity_start_time &lt;= #{activityStartTime,jdbcType=VARCHAR}) as ids)
+	and del_flag = '0'
+  </update>
+  <update id="updateByIdTime" parameterType="java.lang.String">
+	update activity_score set others_score = '5' where id in ( select id  from 
+	(select ae.id from activity_score ae
+	join shanduo_activity sa on sa.id = ae.activity_id and ae.user_id in
+	(select user_id from activity_score where others_score is null and del_flag = '0') 
+	and sa.del_flag = '0' and ae.del_flag = '0'
+	and sa.activity_start_time &lt;= #{activityStartTime,jdbcType=VARCHAR}) as ids)
+	and del_flag = '0'
+  </update>
+  <update id="updateByUserId">
+    update activity_score set others_score = #{2},
+    be_evaluated = #{3},
+    remarks = #{4}
+    where user_id = #{0} and activity_id = #{1} and del_flag = '0'
+  </update>
+</mapper>

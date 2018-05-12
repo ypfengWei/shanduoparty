@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ActivityRequirementMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ActivityRequirement">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
+    <result column="mode" jdbcType="VARCHAR" property="mode" />
+    <result column="man_number" jdbcType="INTEGER" property="manNumber" />
+    <result column="woman_number" jdbcType="INTEGER" property="womanNumber" />
+    <result column="shanduo_label" jdbcType="VARCHAR" property="shanduoLabel" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_id, mode, man_number, woman_number, shanduo_label, remarks, create_date, 
+    update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from activity_requirement
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from activity_requirement
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ActivityRequirement">
+    insert into activity_requirement (id, activity_id, mode, 
+      man_number, woman_number, shanduo_label, 
+      remarks, create_date, update_date, 
+      del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{mode,jdbcType=VARCHAR}, 
+      #{manNumber,jdbcType=INTEGER}, #{womanNumber,jdbcType=INTEGER}, #{shanduoLabel,jdbcType=VARCHAR}, 
+      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ActivityRequirement">
+    insert into activity_requirement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="mode != null">
+        mode,
+      </if>
+      <if test="manNumber != null">
+        man_number,
+      </if>
+      <if test="womanNumber != null">
+        woman_number,
+      </if>
+      <if test="shanduoLabel != null">
+        shanduo_label,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null">
+        #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="manNumber != null">
+        #{manNumber,jdbcType=INTEGER},
+      </if>
+      <if test="womanNumber != null">
+        #{womanNumber,jdbcType=INTEGER},
+      </if>
+      <if test="shanduoLabel != null">
+        #{shanduoLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ActivityRequirement">
+    update activity_requirement
+    <set>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null">
+        mode = #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="manNumber != null">
+        man_number = #{manNumber,jdbcType=INTEGER},
+      </if>
+      <if test="womanNumber != null">
+        woman_number = #{womanNumber,jdbcType=INTEGER},
+      </if>
+      <if test="shanduoLabel != null">
+        shanduo_label = #{shanduoLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ActivityRequirement">
+    update activity_requirement
+    set activity_id = #{activityId,jdbcType=VARCHAR},
+      mode = #{mode,jdbcType=VARCHAR},
+      man_number = #{manNumber,jdbcType=INTEGER},
+      woman_number = #{womanNumber,jdbcType=INTEGER},
+      shanduo_label = #{shanduoLabel,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByActivityIdSelective" parameterType="com.shanduo.party.entity.ActivityRequirement">
+    update activity_requirement
+    <set>
+      <if test="mode != null">
+        mode = #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="manNumber != null">
+        man_number = #{manNumber,jdbcType=INTEGER},
+      </if>
+      <if test="womanNumber != null">
+        woman_number = #{womanNumber,jdbcType=INTEGER},
+      </if>
+      <if test="shanduoLabel != null">
+        shanduo_label = #{shanduoLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where activity_id = #{activityId,jdbcType=VARCHAR}
+  </update>
+  <update id="deleteByActivityId" parameterType="java.lang.String">
+    update activity_requirement
+    set del_flag = '1'
+    where activity_id = #{activityId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select man_number,woman_number from activity_requirement ar where ar.activity_id = #{activityId,jdbcType=VARCHAR}
+    and ar.del_flag = '0'
+  </select>
+</mapper>
