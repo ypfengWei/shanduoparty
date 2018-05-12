@@ -23,4 +23,15 @@ public interface BaseService {
 	 */
 	UserToken checkUserToken(String token);
 	
+	/**
+	 * 检查权限
+	 * @Title: checkUserRole
+	 * @Description: TODO
+	 * @param @param userId 用户ID
+	 * @param @param role 权限ID
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
+	boolean checkUserRole(Integer userId,String role);
 }

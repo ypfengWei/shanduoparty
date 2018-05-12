@@ -4,13 +4,11 @@ package com.shanduo.party.common;
 public class ShanduoConstants {
 
 
-	public static final String ROLE_SELLER = "11";// 店家
+	public static final String ROLE_MERCHANT = "1";//商家
 
-	public static final String ROLE_SELLER_SERVICE = "22";//用户
+	public static final String ROLE_USER = "2";//用户
 
-	public static final String USER_SUPNO = "33";//VIP
-	
-	public static final String USER_SUPNO_SERVICE  = "44";//超级VIP
+	public static final String ROLE_ADMIN = "3";//管理员
 
 	/**
 	 * 商家

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shanduo.party.entity.ShanduoCarousel;
 import com.shanduo.party.mapper.ShanduoCarouselMapper;
 import com.shanduo.party.service.CarouselService;
+import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
 /**
@@ -23,37 +24,38 @@ import com.shanduo.party.util.UUIDGenerator;
  *
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class CarouselServiceImpl implements CarouselService {
 
 	private static final Logger log = LoggerFactory.getLogger(CarouselServiceImpl.class);
 	
 	@Autowired
-	private ShanduoCarouselMapper carouselMapperl;
-	
-	@Override
-	public int saveCarousel(String picture) {
-		ShanduoCarousel carousel = new ShanduoCarousel();
-		carousel.setId(UUIDGenerator.getUUID());
-		carousel.setPicture(picture);
-		int i = carouselMapperl.insertSelective(carousel);
-		if(i < 1) {
-			log.error("轮播图信息录入失败");
-			throw new RuntimeException();
-		}
-		return 0;
-	}
-
-	@Override
-	public int delleteCarousel(String picture) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	private ShanduoCarouselMapper carouselMapper;
 
 	@Override
 	public List<Map<String, Object>> carouselList() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Map<String, Object>> resultList = carouselMapper.carouselList();
+		if(resultList == null) {
+			return null;
+		}
+		for (Map<String, Object> map : resultList) {
+			String picture = map.get("picture").toString();
+			map.put("picture", PictureUtils.getPictureUrl(picture));
+		}
+		return resultList;
+	}
+
+	@Override
+	public int updateCarousel(String carouselId, String picture) {
+		ShanduoCarousel carousel = new ShanduoCarousel();
+		carousel.setId(carouselId);
+		carousel.setPicture(picture);
+		int i = carouselMapper.updateByPrimaryKeySelective(carousel);
+		if(i < 1) {
+			log.error("轮播图信息修改失败");
+			throw new RuntimeException();
+		}
+		return 1;
 	}
 
 }

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserToken;
+import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.mapper.UserTokenMapper;
 import com.shanduo.party.service.BaseService;
 
@@ -26,15 +28,32 @@ public class BaseServiceImpl implements BaseService {
 	
 	@Autowired
 	private UserTokenMapper userTokenMapper;
+	@Autowired
+	private ShanduoUserMapper userMapper;
 	
 	@Override
 	public UserToken checkUserToken(String token) {
 		UserToken userToken = userTokenMapper.selectByToken(token);
 		if(userToken == null) {
-			log.error("token失效");
+			log.error("token为null");
 			return null;
 		}
 		return userToken;
+	}
+
+	@Override
+	public boolean checkUserRole(Integer userId,String role) {
+		if(userId == null) {
+			return true;
+		}
+		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
+		if(user == null) {
+			return true;
+		}
+		if(user.getHeadPortraitId().equals(role)) {
+			return false;
+		}
+		return true;
 	}
 
 }

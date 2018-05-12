@@ -13,10 +13,26 @@ import java.util.Map;
  */
 public interface CarouselService {
 
-	int saveCarousel(String picture);
-	
-	int delleteCarousel(String picture);
-	
+	/**
+	 * 查询所有的轮播图
+	 * @Title: carouselList
+	 * @Description: TODO
+	 * @param @return
+	 * @return List<Map<String,Object>>
+	 * @throws
+	 */
 	List<Map<String, Object>> carouselList();
+	
+	/**
+	 * 修改轮播图
+	 * @Title: updateCarousel
+	 * @Description: TODO
+	 * @param @param carouselId
+	 * @param @param picture
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int updateCarousel(String carouselId,String picture);
 	
 }
