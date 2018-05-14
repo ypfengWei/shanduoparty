@@ -293,15 +293,15 @@ public class UserController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(birthday) || PatternUtils.patternBirthday(birthday)) {
+		if(!StringUtils.isNull(birthday) && PatternUtils.patternBirthday(birthday)) {
 			log.error("生日错误");
 			return new ErrorBean("生日错误");
 		}
-		if(StringUtils.isNull(gender) || !gender.matches("^[01]$")) {
+		if(!StringUtils.isNull(gender) && !gender.matches("^[01]$")) {
 			log.error("性别错误");
 			return new ErrorBean("性别错误");
 		}
-		if(StringUtils.isNull(emotion) || !emotion.matches("^[012]$")) {
+		if(!StringUtils.isNull(emotion) && !emotion.matches("^[012]$")) {
 			log.error("情感状态错误");
 			return new ErrorBean("情感状态错误");
 		}

@@ -37,6 +37,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		ErrorBean errorBean = new ErrorBean();
 		String token = request.getParameter("token");
 		if ("".equals(token) || token == null) {
+			log.error(ErrorCodeConstants.TOKEN_TEXT_ISNULL);
 			errorBean = new ErrorBean(ErrorCodeConstants.TOKEN_TEXT_ISNULL);
 			check = true;
 		}

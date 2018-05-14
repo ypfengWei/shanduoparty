@@ -35,7 +35,7 @@ public class BaseServiceImpl implements BaseService {
 	public UserToken checkUserToken(String token) {
 		UserToken userToken = userTokenMapper.selectByToken(token);
 		if(userToken == null) {
-			log.error("token为null");
+			log.error("token已失效");
 			return null;
 		}
 		return userToken;
@@ -54,6 +54,12 @@ public class BaseServiceImpl implements BaseService {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean checkUserVip(Integer userId, String vip) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -34,4 +34,16 @@ public interface BaseService {
 	 * @throws
 	 */
 	boolean checkUserRole(Integer userId,String role);
+	
+	/**
+	 * 检查VIP权限
+	 * @Title: checkUserVip
+	 * @Description: TODO
+	 * @param @param userId 用户ID
+	 * @param @param vip VIP等级
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
+	boolean checkUserVip(Integer userId,String vip);
 }
