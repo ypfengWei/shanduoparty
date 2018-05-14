@@ -41,4 +41,6 @@ public interface DynamicCommentMapper {
     List<Map<String, Object>> selectByCommentId(String commentId);
     
     int updateByDelFlag(String id,Integer userId);
+    
+    int dynamicIdCount(String dynamicId);
 }

@@ -94,6 +94,8 @@ public class DynamicServiceImpl implements DynamicService {
 				picture = "";
 			}
 			map.put("picture", PictureUtils.getPictureUrlList(picture.toString()));
+			//评论数量
+			map.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 			//点赞人数
 			map.put("praise", praiseService.selectByCount(dynamicId));
 			//用户是否点赞
@@ -190,6 +192,8 @@ public class DynamicServiceImpl implements DynamicService {
 			picture = "";
 		}
 		dynamic.put("picture", PictureUtils.getPictureUrlList(picture.toString()));
+		//评论数量
+		dynamic.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 		//点赞人数
 		dynamic.put("praise", praiseService.selectByCount(dynamicId));
 		//用户是否点赞

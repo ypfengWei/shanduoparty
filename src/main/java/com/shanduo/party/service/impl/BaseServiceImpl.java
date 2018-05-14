@@ -56,4 +56,10 @@ public class BaseServiceImpl implements BaseService {
 		return true;
 	}
 
+	@Override
+	public boolean checkUserVip(Integer userId, String vip) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
