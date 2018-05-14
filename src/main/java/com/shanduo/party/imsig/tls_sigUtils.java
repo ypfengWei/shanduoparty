@@ -78,10 +78,4 @@ public class tls_sigUtils {
         return true;
 	}
 	
-	public static void main(String[] args) throws Exception {
-		String result = getSig("123456");
-	    System.out.println(result);
-        boolean b = checkSig(result, "123456");
-        System.out.println(b);
-	}
 }
