@@ -1,7 +1,5 @@
 package com.shanduo.party.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -35,7 +32,7 @@ public class VipController {
 	
 	@RequestMapping(value = "saveVip", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveActivity(HttpServletRequest request, String token, String vipType, String vipStartTime, String month) {
+	public ResultBean saveActivity(HttpServletRequest request, String token, String vipType, String month) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
@@ -45,31 +42,17 @@ public class VipController {
 			log.error("会员类别为空");
 			return new ErrorBean("会员类别为空");
 		}
-		if (StringUtils.isNull(vipStartTime)) {
-			log.error("会员开始时间为空");
-			return new ErrorBean("会员开始时间为空");
-		}
 		if (StringUtils.isNull(month)) {
-			log.error("会员时长为空");
-			return new ErrorBean("会员时长为空");
-		}
-		List<ShanduoVip> resultList = vipService.selectByUserIdAndTime(Integer.parseInt(token));
-		if (resultList != null) {
-			try {
-				vipService.updateByUserId(Integer.parseInt(token), Integer.parseInt(month));
-			} catch (Exception e) {
-				log.error("会员添加失败");
-				return new ErrorBean("添加失败");
-			}
-			return new SuccessBean("添加成功");
+			log.error("开通月数为空");
+			return new ErrorBean("开通月数为空");
 		}
 		try {
-			vipService.insertSelective(Integer.parseInt(token), vipType, vipStartTime);
+			vipService.updateByUserId(userToken.getUserId(), Integer.parseInt(month), vipType);
 		} catch (Exception e) {
-			log.error("成长值添加失败");
-			return new ErrorBean("添加失败");
+			log.error("失败");
+			return new ErrorBean("失败");
 		}
-		return new SuccessBean("添加成功");
+		return new SuccessBean("续费成功");
 	}
 	
 }	

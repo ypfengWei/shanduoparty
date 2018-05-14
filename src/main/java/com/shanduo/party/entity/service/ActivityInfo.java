@@ -8,13 +8,15 @@ public class ActivityInfo {
 	 
 	private String userName; //用户昵称
 	
-	private String activityName; 
+	private String activityName; //标题
 	
 	private String mode; //消费方式
 	
 	private String activityStartTime; //活动开始时间
 	
 	private String activityAddress; //活动地址
+	
+	private String detailedAddress; //详细地址
 	
 	private String remarks; //活动备注
 	
@@ -46,10 +48,6 @@ public class ActivityInfo {
     
     private String gender; //性别：0:女 1:男
     
-    private String manSum; //参加活动男生数量
-    
-    private String womenSum; //参加活动女生数量
-    
 	public ActivityInfo(){
 		
 	}
@@ -57,33 +55,51 @@ public class ActivityInfo {
 	public String getId() {
 		return id;
 	}
+	
 	public void setId(String id) {
 		this.id = id;
 	}
+	
 	public String getUserName() {
 		return userName;
 	}
+	
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	
 	public String getActivityName() {
 		return activityName;
 	}
+	
 	public void setActivityName(String activityName) {
 		this.activityName = activityName;
 	}
+	
 	public String getMode() {
 		return mode;
 	}
+	
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
+	
 	public String getActivityAddress() {
 		return activityAddress;
 	}
+	
 	public void setActivityAddress(String activityAddress) {
 		this.activityAddress = activityAddress;
 	}
+	
+	public String getDetailedAddress() {
+		return detailedAddress;
+	}
+
+	public void setDetailedAddress(String detailedAddress) {
+		this.detailedAddress = detailedAddress;
+	}
+
 	public String getRemarks() {
 		return remarks;
 	}
@@ -206,19 +222,4 @@ public class ActivityInfo {
 		this.gender = gender;
 	}
 
-	public String getManSum() {
-		return manSum;
-	}
-
-	public void setManSum(String manSum) {
-		this.manSum = manSum;
-	}
-
-	public String getWomenSum() {
-		return womenSum;
-	}
-
-	public void setWomenSum(String womenSum) {
-		this.womenSum = womenSum;
-	}
 }

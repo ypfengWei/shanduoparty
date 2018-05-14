@@ -147,16 +147,14 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="selectByUserIdAndTime" resultMap="BaseResultMap">
-  	select <include refid="Base_Column_List" />
-  	from shanduo_vip where user_id = #{0}
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+  	select user_id,vip_type
+  	from shanduo_vip where vip_end_time > now()
   </select>
-  <update id="updateByUserId" parameterType="com.shanduo.party.entity.ShanduoVip">
-    update shanduo_vip set vip_start_time = #{0},vip_end_time = #{1}
-	where user_id = #{2}
-  </update>
-  <update id="updateByUserIdTwo" parameterType="com.shanduo.party.entity.ShanduoVip">
-    update shanduo_vip set vip_end_time = #{1}
-	where user_id = #{2}
-  </update>
+  <select id="selectUserIdAndType" resultMap="BaseResultMap">
+  	select 
+  	id, vip_end_time
+  	from shanduo_vip where user_id = #{0} and vip_type = #{1}
+  </select>
 </mapper>

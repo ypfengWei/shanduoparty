@@ -32,7 +32,6 @@ import com.shanduo.party.util.StringUtils;
  * @Description: TODO(这里用一句话描述这个类的作用)
  * @author lishan
  * @date 2018年4月16日 下午3:12:29
- *
  */
 @Controller
 @RequestMapping(value = "activity")
@@ -72,25 +71,29 @@ public class ActivityController {
 //	http://localhost:8080/shanduoparty/activity/saveactivity?token=2&activityName=%E5%93%88%E5%93%88%E5%93%88&activityType=Ktv&activityStartTime=2018-4-25%2010:40:36&activityAddress=%E4%B8%8A%E6%B5%B7&mode=AA&manNumber=1&womanNumber=5&remarks=%E6%96%B9%E5%A8%81%E5%A4%A7%E5%82%BB%E9%80%BC&activityCutoffTime=2018-4-25%2010:00:00&activityEndTime=2018-4-25%2015:00:00
 	@RequestMapping(value = "saveactivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveActivity(HttpServletRequest request, String token, String activityType,
+	public ResultBean saveActivity(HttpServletRequest request, String token, String activityName,
 			String activityStartTime, String activityAddress, String mode, String manNumber, String womanNumber,
-			String remarks, String activityCutoffTime, String lon, String lat) {
+			String remarks, String activityCutoffTime, String lon, String lat, String detailedAddress) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
 			return new ErrorBean("请重新登录");
 		}
-		if (StringUtils.isNull(activityType)) {
-			log.error("类别为空");
-			return new ErrorBean("类别为空");
+		if (StringUtils.isNull(activityName)) {
+			log.error("标题为空");
+			return new ErrorBean("标题为空");
 		}
 		if (StringUtils.isNull(activityStartTime)) {
 			log.error("活动开始时间为空");
 			return new ErrorBean("活动开始时间为空");
 		}
 		if (StringUtils.isNull(activityAddress)) {
-			log.error("地址为空");
-			return new ErrorBean("地址为空");
+			log.error("活动地址为空");
+			return new ErrorBean("活动地址为空");
+		}
+		if (StringUtils.isNull(detailedAddress)) {
+			log.error("详细地址为空");
+			return new ErrorBean("详细地址为空");
 		}
 		if (StringUtils.isNull(mode)) {
 			log.error("方式为空");
@@ -135,8 +138,8 @@ public class ActivityController {
 			return new ErrorBean("您在本时间段有其他的活动");
 		}
 		try {
-			activityService.saveActivity(userToken.getUserId(), activityType, activityStartTime,
-					activityAddress, mode, manNumber, womanNumber, remarks, activityCutoffTime, lon, lat);
+			activityService.saveActivity(userToken.getUserId(), activityName, activityStartTime,
+					activityAddress, mode, manNumber, womanNumber, remarks, activityCutoffTime, lon, lat, detailedAddress);
 		} catch (Exception e) {
 			log.error("活动添加失败");
 			return new ErrorBean("添加失败");

@@ -8,6 +8,7 @@
     <result column="activity_type" jdbcType="VARCHAR" property="activityType" />
     <result column="activity_start_time" jdbcType="TIMESTAMP" property="activityStartTime" />
     <result column="activity_address" jdbcType="VARCHAR" property="activityAddress" />
+    <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     <result column="lat" jdbcType="DECIMAL" property="lat" />
     <result column="lon" jdbcType="DECIMAL" property="lon" />
     <result column="top_flag" jdbcType="CHAR" property="topFlag" />
@@ -26,6 +27,7 @@
     <result column="activity_type" jdbcType="VARCHAR" property="activityType" />
     <result column="activity_start_time" jdbcType="TIMESTAMP" property="activityStartTime" />
     <result column="activity_address" jdbcType="VARCHAR" property="activityAddress" />
+    <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="mode" jdbcType="VARCHAR" property="mode" />
     <result column="man_number" jdbcType="VARCHAR" property="manNumber" />
@@ -45,8 +47,8 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
-    lat, lon, top_flag, remarks, create_date, update_date, activity_cutoff_time, activity_end_time, 
-    del_flag
+    detailed_address, lat, lon, top_flag, remarks, create_date, update_date, activity_cutoff_time, 
+    activity_end_time, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -61,14 +63,16 @@
   <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoActivity">
     insert into shanduo_activity (id, activity_name, user_id, 
       activity_type, activity_start_time, activity_address, 
-      lat, lon, top_flag, remarks, 
-      create_date, update_date, activity_cutoff_time, 
-      activity_end_time, del_flag)
+      detailed_address, lat, lon, 
+      top_flag, remarks, create_date, 
+      update_date, activity_cutoff_time, activity_end_time, 
+      del_flag)
     values (#{id,jdbcType=VARCHAR}, #{activityName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
       #{activityType,jdbcType=VARCHAR}, #{activityStartTime,jdbcType=TIMESTAMP}, #{activityAddress,jdbcType=VARCHAR}, 
-      #{lat,jdbcType=DECIMAL}, #{lon,jdbcType=DECIMAL}, #{topFlag,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{activityCutoffTime,jdbcType=TIMESTAMP}, 
-      #{activityEndTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+      #{detailedAddress,jdbcType=VARCHAR}, #{lat,jdbcType=DECIMAL}, #{lon,jdbcType=DECIMAL}, 
+      #{topFlag,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{activityCutoffTime,jdbcType=TIMESTAMP}, #{activityEndTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoActivity">
     insert into shanduo_activity
@@ -90,6 +94,9 @@
       </if>
       <if test="activityAddress != null">
         activity_address,
+      </if>
+      <if test="detailedAddress != null">
+        detailed_address,
       </if>
       <if test="lat != null">
         lat,
@@ -138,6 +145,9 @@
       <if test="activityAddress != null">
         #{activityAddress,jdbcType=VARCHAR},
       </if>
+      <if test="detailedAddress != null">
+        #{detailedAddress,jdbcType=VARCHAR},
+      </if>
       <if test="lat != null">
         #{lat,jdbcType=DECIMAL},
       </if>
@@ -185,6 +195,9 @@
       <if test="activityAddress != null">
         activity_address = #{activityAddress,jdbcType=VARCHAR},
       </if>
+      <if test="detailedAddress != null">
+        detailed_address = #{detailedAddress,jdbcType=VARCHAR},
+      </if>
       <if test="lat != null">
         lat = #{lat,jdbcType=DECIMAL},
       </if>
@@ -222,6 +235,7 @@
       activity_type = #{activityType,jdbcType=VARCHAR},
       activity_start_time = #{activityStartTime,jdbcType=TIMESTAMP},
       activity_address = #{activityAddress,jdbcType=VARCHAR},
+      detailed_address = #{detailedAddress,jdbcType=VARCHAR},
       lat = #{lat,jdbcType=DECIMAL},
       lon = #{lon,jdbcType=DECIMAL},
       top_flag = #{topFlag,jdbcType=CHAR},
@@ -245,10 +259,10 @@
 	) and del_flag = '0'
   </select>
   <select id="selectByScore" resultMap="ActivityResultMap">
-    select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa
 	join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id
@@ -265,10 +279,10 @@
 	and del_flag = '0'
   </select>
   <select id="selectByFriendsUserId" parameterType="java.lang.String"  resultMap="ActivityResultMap">
-    select sa.activity_type,sa.activity_start_time,sa.activity_address,
+    select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id
 	where sa.del_flag = '0' and ar.del_flag = '0' and (user_id in 
@@ -284,10 +298,10 @@
  	and lat &gt;= #{2} and lat &lt;= #{3}
   </select>
   <select id="selectByNearbyUserId" resultMap="ActivityResultMap">
- 	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+ 	select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa join activity_requirement ar on sa.id = ar.activity_id 
     join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
  	where sa.del_flag = '0' and ar.del_flag = '0' and sa.activity_cutoff_time &gt;= #{4}
@@ -300,10 +314,10 @@
    	select count(*) from shanduo_activity where del_flag = '0' and user_id = #{userId,jdbcType=INTEGER}
   </select>
   <select id="selectByUserId" resultMap="ActivityResultMap">
-	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+	select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
 	where sa.del_flag = '0' and ar.del_flag = '0'
@@ -331,10 +345,10 @@
  	and sa.del_flag = '0' and ye.del_flag = '0'
   </select>
   <select id="selectByUserIdTime" resultMap="ActivityResultMap">
- 	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+ 	select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
  	from shanduo_activity sa 
  	join activity_score ye on sa.id = ye.activity_id 
  	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
@@ -351,10 +365,10 @@
  	and sa.del_flag = '0' and ye.del_flag = '0'
   </select>
   <select id="selectByUserIdInTime" resultMap="ActivityResultMap">
- 	select sa.activity_type,sa.activity_start_time,sa.activity_address,
+ 	select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa 
     join activity_score ye on sa.id = ye.activity_id 
  	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
