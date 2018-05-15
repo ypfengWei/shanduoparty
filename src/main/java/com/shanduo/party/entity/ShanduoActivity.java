@@ -16,6 +16,8 @@ public class ShanduoActivity {
 
     private String activityAddress;
 
+    private String detailedAddress;
+
     private BigDecimal lat;
 
     private BigDecimal lon;
@@ -80,6 +82,14 @@ public class ShanduoActivity {
 
     public void setActivityAddress(String activityAddress) {
         this.activityAddress = activityAddress == null ? null : activityAddress.trim();
+    }
+
+    public String getDetailedAddress() {
+        return detailedAddress;
+    }
+
+    public void setDetailedAddress(String detailedAddress) {
+        this.detailedAddress = detailedAddress == null ? null : detailedAddress.trim();
     }
 
     public BigDecimal getLat() {

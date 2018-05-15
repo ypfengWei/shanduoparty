@@ -14,4 +14,8 @@ public interface VipExperienceMapper {
     int updateByPrimaryKeySelective(VipExperience record);
 
     int updateByPrimaryKey(VipExperience record);
+    
+    int updateExperienceByUserId(Integer experience, Integer userId);
+    
+    VipExperience selectByUserId(Integer userId);
 }

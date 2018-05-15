@@ -1,8 +1,5 @@
 package com.shanduo.party.service;
 
-import java.util.List;
-
-import com.shanduo.party.entity.ShanduoVip;
 
 public interface VipService {
 	
@@ -17,21 +14,10 @@ public interface VipService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int insertSelective(Integer userId, String vipType, String vipStartTime);
+	int insertSelective(Integer userId, String vipType, Integer month);
 	
 	/**
-	 * 根据userid查询vip信息
-	 * @Title: selectByUserIdAndTime
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param userId
-	 * @param @return    设定文件
-	 * @return List<ShanduoVip>    返回类型
-	 * @throws
-	 */
-	List<ShanduoVip> selectByUserIdAndTime(Integer userId);
-	 
-	/**
-	 * 
+	 * 续费会员
 	 * @Title: updateByUserId
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param userId
@@ -40,5 +26,6 @@ public interface VipService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int updateByUserId(Integer userId, Integer month);
+	int updateByUserId(Integer userId, Integer month, String vipType);
+	
 }

@@ -1,7 +1,6 @@
 package com.shanduo.party.service.impl;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,6 +29,7 @@ import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.LocationUtils;
 import com.shanduo.party.util.Page;
+import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 import com.shanduo.party.util.WeekUtils;
@@ -131,14 +131,21 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public int saveActivity(Integer userId, String activityType, String activityStartTime,
-			String activityAddress, String mode, String manNumber,
-			String womanNumber, String remarks, String activityCutoffTime, String lon, String lat) {
+	public int saveActivity(Integer userId, String activityName, String activityStartTime,
+			String activityAddress, String mode, String manNumber,String womanNumber, String remarks,
+			String activityCutoffTime, String lon, String lat, String detailedAddress) {
 		ShanduoActivity activity = new ShanduoActivity();
 		activity.setId(UUIDGenerator.getUUID());
 		activity.setUserId(userId);
-		activity.setActivityType(activityType);
-		activity.setRemarks(remarks);
+		if(!StringUtils.isNull(activityName)) {
+			activity.setActivityName(SensitiveWord.filterInfo(activityName));
+		}
+		if(!StringUtils.isNull(remarks)) {
+			activity.setRemarks(SensitiveWord.filterInfo(remarks));
+		}
+		if(!StringUtils.isNull(detailedAddress)) {
+			activity.setDetailedAddress(SensitiveWord.filterInfo(detailedAddress));
+		}
 		activity.setLon(new BigDecimal(lon));
 		activity.setLat(new BigDecimal(lat));
 		SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm");
@@ -432,59 +439,50 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
-			if(0<Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
-				DecimalFormat df = new DecimalFormat("00");
-			    String str = df.format(Integer.parseInt(activityInfo.getWomanNumber()));
-	    		activityInfo.setWomanNumber(str);
-			}
-			if(0<Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
-				DecimalFormat df = new DecimalFormat("00");
-			    String str = df.format(Integer.parseInt(activityInfo.getManNumber()));
-	    		activityInfo.setManNumber(str);
-			}
         	List<Map<String, Object>> shanduoUsers = shanduoUserMapper.selectByGender(activityInfo.getId());
     		if(shanduoUsers != null) {
     			for (Map<String, Object> map : shanduoUsers) {
     				int count = Integer.parseInt(map.get("count").toString());
 	    			if(count < 10) {
-	    			    if(map.get("gender").toString().equals("1")) {
-	    			    	activityInfo.setManSum("0"+count);
+	    			    if(map.get("gender").toString().equals("0")) {
+	    			    	if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+	    			    		activityInfo.setWomanNumber("0"+count+"/"+"0"+activityInfo.getWomanNumber());
+	    					}
 	     				}else {
-	     					activityInfo.setWomenSum("0"+count);
+	     					if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+	     			    		activityInfo.setManNumber("0"+count+"/"+"0"+activityInfo.getManNumber());
+	     					}
 	     				}
 	    			} else {
 		    			if(map.get("gender").toString().equals("1")) {
-					    	activityInfo.setManSum(count + "");
+					    	activityInfo.setManNumber(count+"/"+activityInfo.getManNumber());
 		 				}
 		 				if(map.get("gender").toString().equals("0")) {
-		 					activityInfo.setWomenSum(count + "");
+		 					activityInfo.setWomanNumber(count+"/"+activityInfo.getWomanNumber());
 		    			} 
 	    			}
     			}
     		}
-    		if(activityInfo.getManSum() == null) {
-    			activityInfo.setManSum("0");
+    		if(activityInfo.getManNumber().matches("^\\d+$")) {
+    			activityInfo.setManNumber("0/"+activityInfo.getManNumber());
     		}
-    		if(activityInfo.getWomenSum() == null) {
-    			activityInfo.setWomenSum("0");
+    		if(activityInfo.getWomanNumber().matches("^\\d+$")) {
+    			activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
     		}
     		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
             String startString = activityInfo.getActivityStartTime();  
             String cutoffString = activityInfo.getActivityCutoffTime(); 
             StringBuffer buffer = new StringBuffer();
-            String startTime = buffer.append(startString).substring(0,19);
-            String cutoffTime = buffer.append(cutoffString).substring(0,19);
-            activityInfo.setActivityStartTime(startTime);
-            activityInfo.setActivityCutoffTime(cutoffTime);
+            String startTime = buffer.append(startString).substring(0,16).replace("-", "/").replace(" ", "/");
+            String cutoffTime = buffer.append(cutoffString).substring(0,16).replace("-", "/").replace(" ", "/");
             try {  
                 Date startDate = formatter.parse(startString);  
-                activityInfo.setActivityStartTime(startTime+"——"+WeekUtils.getWeek(startDate));
+                activityInfo.setActivityStartTime(startTime+WeekUtils.getWeek(startDate));
                 Date cutoffDate = formatter.parse(cutoffString);  
-                activityInfo.setActivityCutoffTime(cutoffString+"——"+WeekUtils.getWeek(cutoffDate));
+                activityInfo.setActivityCutoffTime(cutoffTime+WeekUtils.getWeek(cutoffDate));
             } catch (ParseException e) {  
                 e.printStackTrace();  
             }  
-            
 		}
 		return activityInfos;
 	}
