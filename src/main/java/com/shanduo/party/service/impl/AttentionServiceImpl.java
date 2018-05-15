@@ -15,6 +15,7 @@ import com.shanduo.party.entity.UserAttentionApply;
 import com.shanduo.party.mapper.UserAttentionApplyMapper;
 import com.shanduo.party.mapper.UserAttentionMapper;
 import com.shanduo.party.service.AttentionService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
@@ -38,6 +39,8 @@ public class AttentionServiceImpl implements AttentionService {
 	private UserAttentionMapper attentionMapper;
 	@Autowired
 	private UserAttentionApplyMapper attentionApplyMapper;
+	@Autowired
+	private VipService vipService;
 	
 	@Override
 	public boolean checkAttention(Integer userId, Integer attention,String typeId) {
@@ -163,7 +166,7 @@ public class AttentionServiceImpl implements AttentionService {
 		for(Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
-			map.put("vip", 0);
+			map.put("vip", vipService.selectVipExperience(userId));
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());

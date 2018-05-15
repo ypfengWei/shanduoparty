@@ -17,6 +17,7 @@ import com.shanduo.party.mapper.DynamicCommentMapper;
 import com.shanduo.party.mapper.ShanduoDynamicMapper;
 import com.shanduo.party.service.DynamicService;
 import com.shanduo.party.service.PraiseService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.AgeUtils;
@@ -45,6 +46,8 @@ public class DynamicServiceImpl implements DynamicService {
 	private DynamicCommentMapper commentMapper;
 	@Autowired
 	private PraiseService praiseService;
+	@Autowired
+	private VipService vipService;
 	
 	@Override
 	public int saveDynamic(Integer userId, String content, String picture, String lat, String lon,String location) {
@@ -89,7 +92,11 @@ public class DynamicServiceImpl implements DynamicService {
 			//用户是否点赞
 			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 			//vip等级
-			map.put("vip", 0);
+			if(userId != null) {
+				map.put("vip", vipService.selectVipExperience(userId));
+			}else {
+				map.put("vip", 0);
+			}
 		}
 	}
 	
@@ -189,7 +196,7 @@ public class DynamicServiceImpl implements DynamicService {
 		//用户是否点赞
 		dynamic.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 		//vip等级
-		dynamic.put("vip", 0);
+		dynamic.put("vip", vipService.selectVipExperience(userId));
 		if(lat != null && lon != null && dynamic.get("lon") != null && dynamic.get("lat") != null) {
 			double distance =
 					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat),
