@@ -1,6 +1,7 @@
 package com.shanduo.party.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -265,36 +266,25 @@ public class DynamicController {
 	}
 	
 	/**
-	 * 查看单个动态
-	 * @Title: queryDynamic
+	 * 查看单个动态的评论
+	 * @Title: commentList
 	 * @Description: TODO
 	 * @param @param requrst
 	 * @param @param token
 	 * @param @param dynamicId 动态ID
-	 * @param @param lat 纬度
-	 * @param @param lon 经度
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "querydynamic",method={RequestMethod.POST,RequestMethod.GET})
+	@RequestMapping(value = "commentList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean queryDynamic(HttpServletRequest requrst,String token,String dynamicId,String lat,String lon) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+	public ResultBean commentList(HttpServletRequest requrst,String token,String dynamicId) {
+		List<Map<String, Object>> resultList = dynamicService.commentList(dynamicId);
+		if(resultList == null) {
+			log.error("暂无评论");
+			return new ErrorBean("暂无评论");
 		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度错误");
-			return new ErrorBean("纬度错误");
-		}
-		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, userToken.getUserId(),lat,lon);
-		if(resultMap == null) {
-			log.error("动态不存在");
-			return new ErrorBean("动态不存在");
-		}
-		return new SuccessBean(resultMap);
+		return new SuccessBean(resultList);
 	}
 	
 	/**

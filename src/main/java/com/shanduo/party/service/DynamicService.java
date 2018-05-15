@@ -1,5 +1,6 @@
 package com.shanduo.party.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,7 +58,7 @@ public interface DynamicService {
 	Map<String, Object> nearbyList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
-	 * 我的动态
+	 * 个人动态
 	 * @Title: dynamicList
 	 * @Description: TODO
 	 * @param @param userId 用户Id
@@ -74,18 +75,15 @@ public interface DynamicService {
 	Map<String, Object> dynamicList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
-	 * 查看单个动态详情
-	 * @Title: selectById
+	 * 查看单个动态的评论
+	 * @Title: commentList
 	 * @Description: TODO
 	 * @param @param dynamicId 动态ID
-	 * @param @param userId 用户ID
-	 * @param @param lat 纬度
-	 * @param @param lon 经度
 	 * @param @return
-	 * @return Map<String,Object>
+	 * @return List<Map<String, Object>>
 	 * @throws
 	 */
-	Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon);
+	List<Map<String, Object>> commentList(String dynamicId);
 
 	/**
 	 * 评论动态和回复评论

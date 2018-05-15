@@ -3,6 +3,14 @@ package com.shanduo.party.entity.service;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 动态INFO
+ * @ClassName: DynamicInfo
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年5月15日 下午7:27:17
+ *
+ */
 public class DynamicInfo {
 	private String id;//动态ID
 	private Integer userId;//用户ID

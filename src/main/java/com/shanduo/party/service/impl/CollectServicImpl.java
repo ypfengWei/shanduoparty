@@ -82,7 +82,7 @@ public class CollectServicImpl implements CollectServic {
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = collectMapper.selectByUserList(userId, pageNum, page.getPageSize());
-		if(resultList == null) {
+		if(resultList.isEmpty()) {
 			return null;
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);

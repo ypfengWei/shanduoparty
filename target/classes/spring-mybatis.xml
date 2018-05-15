@@ -47,4 +47,5 @@
 	
 	<!-- 可通过注解控制事务-->
 	<tx:annotation-driven />
+	
 </beans>
