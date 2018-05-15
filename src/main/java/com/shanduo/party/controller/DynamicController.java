@@ -1,5 +1,6 @@
 package com.shanduo.party.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,13 +58,14 @@ public class DynamicController {
 	 * @param @param picture 图片
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
+	 * @param @param location 位置
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
 	@RequestMapping(value = "savedynamic",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean saveDynamic(HttpServletRequest request,String token,String content,String picture,String lat, String lon) {
+	public ResultBean saveDynamic(HttpServletRequest request,String token,String content,String picture,String lat, String lon,String location) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -83,7 +85,7 @@ public class DynamicController {
 		}
 		Integer userId = userToken.getUserId();
 		try {
-			dynamicService.saveDynamic(userId, content, picture, lat, lon);	
+			dynamicService.saveDynamic(userId, content, picture, lat, lon, location);
 		} catch (Exception e) {
 			log.error("发表动态失败");
 			return new ErrorBean("发表动态失败");
@@ -131,21 +133,21 @@ public class DynamicController {
 			log.error("记录错误");
 			return new ErrorBean("记录错误");
 		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度错误");
+			return new ErrorBean("纬度错误");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度错误");
+			return new ErrorBean("经度错误");
+		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = null;
+		Map<String, Object> resultMap = new HashMap<>();
 		if("1".equals(typeId)) {
 			Integer userId = null;
 			if(userToken != null) {
 				userId = userToken.getUserId();
-			}
-			if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-				log.error("纬度错误");
-				return new ErrorBean("纬度错误");
-			}
-			if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-				log.error("经度错误");
-				return new ErrorBean("经度错误");
 			}
 			resultMap = dynamicService.nearbyList(userId, lat, lon, pages, pageSizes);
 		}else {
@@ -154,7 +156,7 @@ public class DynamicController {
 				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
 			Integer userId = userToken.getUserId();
-			resultMap = dynamicService.attentionList(userId, pages, pageSizes);
+			resultMap = dynamicService.attentionList(userId, lat, lon, pages, pageSizes);
 		}
 		if(resultMap == null) {
 			log.error("没有更多了");
@@ -169,6 +171,8 @@ public class DynamicController {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
 	 * @param @param page 页码
 	 * @param @param pageSize 记录数
 	 * @param @return
@@ -177,11 +181,19 @@ public class DynamicController {
 	 */
 	@RequestMapping(value = "dynamicList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean dynamicList(HttpServletRequest request,String token,String page,String pageSize) {
+	public ResultBean dynamicList(HttpServletRequest request,String token,String lat,String lon,String page,String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度错误");
+			return new ErrorBean("纬度错误");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度错误");
+			return new ErrorBean("经度错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -194,7 +206,7 @@ public class DynamicController {
 		Integer userId = userToken.getUserId();
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = dynamicService.dynamicList(userId, pages, pageSizes);
+		Map<String, Object> resultMap = dynamicService.dynamicList(userId, lat, lon, pages, pageSizes);
 		if(resultMap == null) {
 			log.error("没有更多了");
 			return new ErrorBean("没有更多了");
@@ -273,9 +285,9 @@ public class DynamicController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(dynamicId)) {
-			log.error("动态ID为空");
-			return new ErrorBean("动态ID为空");
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度错误");
+			return new ErrorBean("纬度错误");
 		}
 		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, userToken.getUserId(),lat,lon);
 		if(resultMap == null) {

@@ -15,6 +15,7 @@ import com.shanduo.party.entity.UserAttentionApply;
 import com.shanduo.party.mapper.UserAttentionApplyMapper;
 import com.shanduo.party.mapper.UserAttentionMapper;
 import com.shanduo.party.service.AttentionService;
+import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.UUIDGenerator;
@@ -161,6 +162,8 @@ public class AttentionServiceImpl implements AttentionService {
 		List<Map<String, Object>> resultList = attentionMapper.selectAttentionList(userId, typeId, pageNum, pageSize);
 		for(Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+			map.put("vip", 0);
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());

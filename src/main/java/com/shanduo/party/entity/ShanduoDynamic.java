@@ -12,6 +12,8 @@ public class ShanduoDynamic {
 
     private String picture;
 
+    private String location;
+
     private BigDecimal lat;
 
     private BigDecimal lon;
@@ -54,6 +56,14 @@ public class ShanduoDynamic {
 
     public void setPicture(String picture) {
         this.picture = picture == null ? null : picture.trim();
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location == null ? null : location.trim();
     }
 
     public BigDecimal getLat() {

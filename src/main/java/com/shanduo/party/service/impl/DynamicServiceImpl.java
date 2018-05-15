@@ -47,7 +47,7 @@ public class DynamicServiceImpl implements DynamicService {
 	private PraiseService praiseService;
 	
 	@Override
-	public int saveDynamic(Integer userId, String content, String picture, String lat, String lon) {
+	public int saveDynamic(Integer userId, String content, String picture, String lat, String lon,String location) {
 		ShanduoDynamic dynamic = new ShanduoDynamic();
 		dynamic.setId(UUIDGenerator.getUUID());
 		dynamic.setUserId(userId);
@@ -55,6 +55,7 @@ public class DynamicServiceImpl implements DynamicService {
 		dynamic.setPicture(picture);
 		dynamic.setLat(new BigDecimal(lat));
 		dynamic.setLon(new BigDecimal(lon));
+		dynamic.setLocation(location);
 		int i = dynamicMapper.insertSelective(dynamic);
 		if(i < 1) {
 			log.error("动态发表失败");
@@ -78,17 +79,9 @@ public class DynamicServiceImpl implements DynamicService {
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			//保存头像图片URL
-			Object portraitId = map.get("portraitId");
-			if(portraitId == null) {
-				portraitId = "";
-			}
-			map.put("portraitId", PictureUtils.getPictureUrl(portraitId.toString()));
+			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
 			//动态图片
-			Object picture = map.get("picture");
-			if(picture == null) {
-				picture = "";
-			}
-			map.put("picture", PictureUtils.getPictureUrlList(picture.toString()));
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
 			//评论数量
 			map.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 			//点赞人数
@@ -101,7 +94,7 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> attentionList(Integer userId,Integer pageNum,Integer pageSize) {
+	public Map<String, Object> attentionList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize) {
 		int totalRecord = dynamicMapper.attentionCount(userId);
 		if(totalRecord == 0) {
 			return null;
@@ -113,6 +106,11 @@ public class DynamicServiceImpl implements DynamicService {
 			return null;
 		}
 		putMap(resultList, userId);
+		for (Map<String, Object> map : resultList) {
+			double distance = 
+					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
+			map.put("distance", distance);
+		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -135,9 +133,9 @@ public class DynamicServiceImpl implements DynamicService {
 		}
 		putMap(resultList, userId);
 		for (Map<String, Object> map : resultList) {
-			double location = 
+			double distance = 
 					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
-			map.put("location", location);
+			map.put("distance", distance);
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -147,7 +145,7 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> dynamicList(Integer userId, Integer pageNum, Integer pageSize) {
+	public Map<String, Object> dynamicList(Integer userId,String lat,String lon, Integer pageNum, Integer pageSize) {
 		int totalRecord = dynamicMapper.selectMyCount(userId);
 		if(totalRecord == 0) {
 			return null;
@@ -159,6 +157,11 @@ public class DynamicServiceImpl implements DynamicService {
 			return null;
 		}
 		putMap(resultList, userId);
+		for (Map<String, Object> map : resultList) {
+			double distance = 
+					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
+			map.put("distance", distance);
+		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -176,17 +179,9 @@ public class DynamicServiceImpl implements DynamicService {
 		//保存年龄
 		dynamic.put("age", AgeUtils.getAgeFromBirthTime(dynamic.get("age").toString()));
 		//保存头像图片URL
-		Object portraitId = dynamic.get("portraitId");
-		if(portraitId == null) {
-			portraitId = "";
-		}
-		dynamic.put("portraitId", PictureUtils.getPictureUrl(portraitId.toString()));
+		dynamic.put("portraitId", PictureUtils.getPictureUrl(dynamic.get("portraitId").toString()));
 		//动态图片
-		Object picture = dynamic.get("picture");
-		if(picture == null) {
-			picture = "";
-		}
-		dynamic.put("picture", PictureUtils.getPictureUrlList(picture.toString()));
+		dynamic.put("picture", PictureUtils.getPictureUrlList(dynamic.get("picture").toString()));
 		//评论数量
 		dynamic.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 		//点赞人数
@@ -195,12 +190,12 @@ public class DynamicServiceImpl implements DynamicService {
 		dynamic.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 		//vip等级
 		dynamic.put("vip", 0);
-		if(dynamic.get("lon") != null && dynamic.get("lat") != null && lat != null && lon != null) {
-			double location =
+		if(lat != null && lon != null && dynamic.get("lon") != null && dynamic.get("lat") != null) {
+			double distance =
 					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat),
 							Double.parseDouble(dynamic.get("lon").toString()),
 							Double.parseDouble(dynamic.get("lat").toString()));
-			dynamic.put("location", location);
+			dynamic.put("distance", distance);
 		}
 		//得到所有1级评论
 		List<Map<String, Object>> commentList = commentMapper.selectByDynamicId(dynamicId);
@@ -225,17 +220,9 @@ public class DynamicServiceImpl implements DynamicService {
 			String id = oneCommentMap.get("id").toString();
 			if(oneCommentMap.get("delFlag").toString().equals("0")) {
 				//保存评论人头像图片URL
-				Object portraitId = oneCommentMap.get("portraitId");
-				if(portraitId == null) {
-					portraitId = "";
-				}
-				oneCommentMap.put("portraitId", PictureUtils.getPictureUrl(portraitId.toString()));
+				oneCommentMap.put("portraitId", PictureUtils.getPictureUrl(oneCommentMap.get("portraitId").toString()));
 				//1级评论图片
-				Object picture = oneCommentMap.get("picture");
-				if(picture == null) {
-					picture = "";
-				}
-				oneCommentMap.put("picture",PictureUtils.getPictureUrlList(picture.toString()));
+				oneCommentMap.put("picture",PictureUtils.getPictureUrlList(oneCommentMap.get("picture").toString()));
 				oneCommentMap.put("twoComment", twoCommentList(id));
 			}else {
 				List<Map<String, Object>> twoCommentList = twoCommentList(id);
@@ -270,17 +257,9 @@ public class DynamicServiceImpl implements DynamicService {
 		}
 		for (Map<String, Object> twoCommentMap : twoCommentList) {
 			//保存评论人头像图片URL
-			Object portraitId = twoCommentMap.get("portraitId");
-			if(portraitId == null) {
-				portraitId = "";
-			}
-			twoCommentMap.put("portraitId", PictureUtils.getPictureUrl(portraitId.toString()));
+			twoCommentMap.put("portraitId", PictureUtils.getPictureUrl(twoCommentMap.get("portraitId").toString()));
 			//所有2级回复加入回复图片
-			Object picture = twoCommentMap.get("picture");
-			if(picture == null) {
-				picture ="";
-			}
-			twoCommentMap.put("picture",PictureUtils.getPictureUrlList(picture.toString()));
+			twoCommentMap.put("picture",PictureUtils.getPictureUrlList(twoCommentMap.get("picture").toString()));
 		}
 		return twoCommentList;
 	}

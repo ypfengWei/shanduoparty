@@ -6,6 +6,7 @@
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
     <result column="lat" jdbcType="DECIMAL" property="lat" />
     <result column="lon" jdbcType="DECIMAL" property="lon" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
@@ -14,7 +15,8 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, content, picture, lat, lon, remarks, create_date, update_date, del_flag
+    id, user_id, content, picture, location, lat, lon, remarks, create_date, update_date, 
+    del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -28,13 +30,13 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoDynamic">
     insert into shanduo_dynamic (id, user_id, content, 
-      picture, lat, lon, 
-      remarks, create_date, update_date, 
-      del_flag)
+      picture, location, lat, 
+      lon, remarks, create_date, 
+      update_date, del_flag)
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
-      #{picture,jdbcType=VARCHAR}, #{lat,jdbcType=DECIMAL}, #{lon,jdbcType=DECIMAL}, 
-      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{delFlag,jdbcType=CHAR})
+      #{picture,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{lat,jdbcType=DECIMAL}, 
+      #{lon,jdbcType=DECIMAL}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoDynamic">
     insert into shanduo_dynamic
@@ -50,6 +52,9 @@
       </if>
       <if test="picture != null">
         picture,
+      </if>
+      <if test="location != null">
+        location,
       </if>
       <if test="lat != null">
         lat,
@@ -83,6 +88,9 @@
       <if test="picture != null">
         #{picture,jdbcType=VARCHAR},
       </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
       <if test="lat != null">
         #{lat,jdbcType=DECIMAL},
       </if>
@@ -115,6 +123,9 @@
       <if test="picture != null">
         picture = #{picture,jdbcType=VARCHAR},
       </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
       <if test="lat != null">
         lat = #{lat,jdbcType=DECIMAL},
       </if>
@@ -141,6 +152,7 @@
     set user_id = #{userId,jdbcType=INTEGER},
       content = #{content,jdbcType=VARCHAR},
       picture = #{picture,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
       lat = #{lat,jdbcType=DECIMAL},
       lon = #{lon,jdbcType=DECIMAL},
       remarks = #{remarks,jdbcType=VARCHAR},
@@ -153,7 +165,8 @@
   <select id="selectById" parameterType="java.lang.String" resultType="map">
     select
     sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
-    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat,
+    sd.location
     from shanduo_dynamic sd
 	join shanduo_user su on sd.user_id = su.id
 	where sd.del_flag = '0'
@@ -175,7 +188,8 @@
   <select id="attentionList" resultType="map">
     select 
     sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
-    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat,
+    sd.location
     from shanduo_dynamic sd 
 	join shanduo_user su on sd.user_id = su.id
 	where sd.del_flag = '0'
@@ -195,7 +209,8 @@
   <select id="nearbyList" resultType="map">
     select 
     sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
-    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat,
+    sd.location
     from shanduo_dynamic sd 
 	join shanduo_user su on sd.user_id = su.id
 	where sd.del_flag = '0'
@@ -205,16 +220,17 @@
 	limit #{4},#{5}
   </select>
   <select id="selectMyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-    select 
+    select
     count(*)
     from shanduo_dynamic
 	where del_flag = '0'
 	and user_id = #{userId,jdbcType=INTEGER}
   </select>
   <select id="selectMyList" resultType="map">
-    select 
+    select
     sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
-    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat,
+    sd.location
     from shanduo_dynamic sd
 	join shanduo_user su on sd.user_id = su.id
 	where sd.del_flag = '0'
