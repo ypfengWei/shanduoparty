@@ -167,7 +167,7 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> selectById(String dynamicId,Integer userId) {
+	public Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon) {
 		Map<String, Object> dynamic = dynamicMapper.selectById(dynamicId);
 		if(dynamic == null) {
 			log.error("动态为空");
@@ -195,6 +195,13 @@ public class DynamicServiceImpl implements DynamicService {
 		dynamic.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 		//vip等级
 		dynamic.put("vip", 0);
+		if(dynamic.get("lon") != null && dynamic.get("lat") != null && lat != null && lon != null) {
+			double location =
+					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat),
+							Double.parseDouble(dynamic.get("lon").toString()),
+							Double.parseDouble(dynamic.get("lat").toString()));
+			dynamic.put("location", location);
+		}
 		//得到所有1级评论
 		List<Map<String, Object>> commentList = commentMapper.selectByDynamicId(dynamicId);
 		commentList(commentList);
@@ -217,6 +224,12 @@ public class DynamicServiceImpl implements DynamicService {
 			Map<String, Object> oneCommentMap = commentList.get(i);
 			String id = oneCommentMap.get("id").toString();
 			if(oneCommentMap.get("delFlag").toString().equals("0")) {
+				//保存评论人头像图片URL
+				Object portraitId = oneCommentMap.get("portraitId");
+				if(portraitId == null) {
+					portraitId = "";
+				}
+				oneCommentMap.put("portraitId", PictureUtils.getPictureUrl(portraitId.toString()));
 				//1级评论图片
 				Object picture = oneCommentMap.get("picture");
 				if(picture == null) {
@@ -255,11 +268,17 @@ public class DynamicServiceImpl implements DynamicService {
 		if(twoCommentList.isEmpty()) {
 			return twoCommentList;
 		}
-		//所有2级回复加入回复图片
 		for (Map<String, Object> twoCommentMap : twoCommentList) {
+			//保存评论人头像图片URL
+			Object portraitId = twoCommentMap.get("portraitId");
+			if(portraitId == null) {
+				portraitId = "";
+			}
+			twoCommentMap.put("portraitId", PictureUtils.getPictureUrl(portraitId.toString()));
+			//所有2级回复加入回复图片
 			Object picture = twoCommentMap.get("picture");
 			if(picture == null) {
-				picture = "";
+				picture ="";
 			}
 			twoCommentMap.put("picture",PictureUtils.getPictureUrlList(picture.toString()));
 		}
