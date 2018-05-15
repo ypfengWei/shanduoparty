@@ -24,6 +24,7 @@ import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ExperienceService;
+import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -207,11 +208,11 @@ public class ActivityController {
 	@RequestMapping(value = "showHotActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, String token) {
-		if(StringUtils.isNull(lon) || !lon.matches("^\\d{1,10}\\.\\d{0,7}$")) {
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
 			return new ErrorBean("经度格式错误");
 		}
-		if(StringUtils.isNull(lat) || !lat.matches("^\\d{1,10}\\.\\d{0,7}$")) {
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
 			log.error("纬度格式错误");
 			return new ErrorBean("纬度格式错误");
 		}
@@ -223,42 +224,30 @@ public class ActivityController {
 			log.error("记录错误");
 			return new ErrorBean("记录错误");
 		}
-		if(Integer.parseInt(type) == 1) {
-			Integer pages = Integer.valueOf(page);
-			Integer pageSizes = Integer.valueOf(pageSize);
-			Map<String, Object> activityInfos = activityService.selectByScore(pages, pageSizes, lon, lat);
-			if(activityInfos == null) {
-				log.error("没有查到记录");
-				return new ErrorBean("没有查到记录");
-			}
-			return new SuccessBean(activityInfos);
+		if(StringUtils.isNull(type) || type.matches("^[123]$")) {
+			log.error("类型错误");
+			return new ErrorBean("类型错误");
 		}
-		if(Integer.parseInt(type) == 2) {
-			Integer pages = Integer.valueOf(page);
-			Integer pageSizes = Integer.valueOf(pageSize);
-	        Map<String, Object> list = activityService.selectByNearbyUserId(lon, lat, pages, pageSizes);
-	        if(list == null) {
-	        	log.error("没有更多了");
-				return new ErrorBean("没有更多了");
-	        }
-	        return new SuccessBean(list);
-		}
-		if(Integer.parseInt(type) == 3) {
+		Integer pages = Integer.valueOf(page);
+		Integer pageSizes = Integer.valueOf(pageSize);
+		Map<String, Object> resultMap = null;
+		if("1".equals(type)) {
+			resultMap = activityService.selectByScore(pages, pageSizes, lon, lat);
+		}else if("2".equals(type)) {
+			resultMap = activityService.selectByNearbyUserId(lon, lat, pages, pageSizes);
+		}else {
 			UserToken userToken = baseService.checkUserToken(token);
 			if (userToken == null) {
 				log.error("请重新登录");
 				return new ErrorBean("请重新登录");
 			}
-			Integer pages = Integer.valueOf(page);
-			Integer pageSizes = Integer.valueOf(pageSize);
-			Map<String, Object> activities = activityService.selectByFriendsUserId(userToken.getUserId(), pages, pageSizes, lon, lat);
-			if(activities == null) {
-				log.error("没有更多了");
-				return new ErrorBean("没有更多了");
-			}
-			return new SuccessBean(activities);
+			resultMap = activityService.selectByFriendsUserId(userToken.getUserId(), pages, pageSizes, lon, lat);
 		}
-		return null;
+		if(resultMap == null) {
+			log.error("没有查到记录");
+			return new ErrorBean("没有查到记录");
+		}
+		return new SuccessBean(resultMap);
 	}
 
 	/**

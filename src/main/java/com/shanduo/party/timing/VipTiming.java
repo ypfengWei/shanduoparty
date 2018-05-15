@@ -1,16 +1,11 @@
 package com.shanduo.party.timing;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shanduo.party.entity.ShanduoVip;
-import com.shanduo.party.entity.VipExperience;
-import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
 
 /**
@@ -29,9 +24,6 @@ public class VipTiming {
 	@Autowired
 	private VipExperienceMapper vipExperienceMapper;
 	
-	@Autowired
-	private ShanduoVipMapper mapper;
-	
 	/**
 	 * 定时每天 0:0:0自动执行
 	 * @Title: delTiming
@@ -40,22 +32,13 @@ public class VipTiming {
 	 * @return void
 	 * @throws
 	 */
-//	@Scheduled(cron = "0 0 0 * * ? ")
-	@Scheduled(cron = "0/9 * * * * ? ")
+	@Scheduled(cron = "0 0 0 * * ? ")
 	public void updTiming() {
-		int experience = 0;
-		int i = 0;
-		List<ShanduoVip> list = mapper.selectAll();
-		for (ShanduoVip shanduoVip : list) {
-			if(shanduoVip.getVipType().equals("0")) {
-				VipExperience vipExperience = vipExperienceMapper.selectByUserId(shanduoVip.getUserId());
-				experience = vipExperience.getExperience() + 10;
-			} else {
-				VipExperience vipExperience = vipExperienceMapper.selectByUserId(shanduoVip.getUserId());
-				experience = vipExperience.getExperience() + 15;
-			}
-			i = vipExperienceMapper.updateExperienceByUserId(experience, shanduoVip.getUserId());
-		}
-		logger.info("vip成长值:"+i);
+		int i = vipExperienceMapper.updateByUserId();
+		int b = vipExperienceMapper.updateByUserIdTwo();
+		int a = vipExperienceMapper.updateByUserIdThree();
+		logger.info("svip成长值:"+i);
+		logger.info("vip成长值:"+b);
+		logger.info("扣除成长值:"+a);
 	}
 }

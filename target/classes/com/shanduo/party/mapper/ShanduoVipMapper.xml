@@ -148,10 +148,6 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <select id="selectAll" resultMap="BaseResultMap">
-  	select user_id,vip_type
-  	from shanduo_vip where vip_end_time > now()
-  </select>
   <select id="selectUserIdAndType" resultMap="BaseResultMap">
   	select 
   	id, vip_end_time
