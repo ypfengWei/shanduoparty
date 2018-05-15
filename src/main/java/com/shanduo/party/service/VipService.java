@@ -1,6 +1,5 @@
 package com.shanduo.party.service;
 
-
 public interface VipService {
 	
 	/**
@@ -27,5 +26,6 @@ public interface VipService {
 	 * @throws
 	 */
 	int updateByUserId(Integer userId, Integer month, String vipType);
-	
+
+	int selectVipExperience(Integer userId);
 }

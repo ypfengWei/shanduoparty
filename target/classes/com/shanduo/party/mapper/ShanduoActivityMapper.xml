@@ -44,6 +44,7 @@
     <result column="gender" jdbcType="CHAR" property="gender" />
     <result column="mansum" jdbcType="VARCHAR" property="mansum" />
     <result column="womenSum" jdbcType="VARCHAR" property="womenSum" />
+    <result column="vipGrade" jdbcType="INTEGER" property="vipGrade"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 

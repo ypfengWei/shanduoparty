@@ -48,10 +48,21 @@ public class ActivityInfo {
     
     private String gender; //性别：0:女 1:男
     
+    private Integer vipGrade; //会员等级
+    
+    
 	public ActivityInfo(){
 		
 	}
-	
+
+	public Integer getVipGrade() {
+		return vipGrade;
+	}
+
+	public void setVipGrade(Integer vipGrade) {
+		this.vipGrade = vipGrade;
+	}
+
 	public String getId() {
 		return id;
 	}

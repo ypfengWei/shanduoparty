@@ -107,9 +107,9 @@
   <update id="updateExperienceByUserId">
   	update vip_experience set experience = #{0} where user_id = #{1}
   </update>
-  <select id="selectByUserId" resultMap="BaseResultMap">
+  <select id="selectByUserId" resultType="java.lang.Integer">
   	select 
-  	<include refid="Base_Column_List" />
+  	experience
   	from vip_experience where user_id = #{0}
   </select>
   <update id="updateByUserId">
