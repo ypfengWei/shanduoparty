@@ -1,7 +1,5 @@
 package com.shanduo.party.mapper;
 
-import java.util.List;
-
 import com.shanduo.party.entity.ShanduoVip;
 
 public interface ShanduoVipMapper {
@@ -18,16 +16,6 @@ public interface ShanduoVipMapper {
     int updateByPrimaryKey(ShanduoVip record);
     
     /**
-     * 查询所有没过期的vip信息
-     * @Title: selectAll
-     * @Description: TODO(这里用一句话描述这个方法的作用)
-     * @param @return    设定文件
-     * @return List<ShanduoVip>    返回类型
-     * @throws
-     */
-    List<ShanduoVip> selectAll();
-    
-    /**
      * 根据用户Id查询vip信息
      * @Title: selectUserIdAndType
      * @Description: TODO(这里用一句话描述这个方法的作用)
@@ -36,4 +24,5 @@ public interface ShanduoVipMapper {
      * @throws
      */
     ShanduoVip selectUserIdAndType(Integer userId, String vipType);
+    
 }
