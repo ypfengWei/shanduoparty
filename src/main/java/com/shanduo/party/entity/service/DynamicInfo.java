@@ -10,14 +10,18 @@ public class DynamicInfo {
 	private String portraitId;//头像
 	private String age;//年龄
 	private String content;//动态内容
-	private List<String> picture;//动态图片或视频
+	private List<String> picture;//动态图片
 	private Integer praise;//点赞人数
+	private Integer dynamicCount;//评论数
 	private boolean isPraise;//是否点赞
-	private double location;//距离 好友动态没有
+	private double distance;//距离
+	private String location;//位置
 	private String remarks;//备注
 	private Date createDate;//发动态的时间
 	private Integer vip;//VIP等级
 	private String gender;//性别
+	private String lat;
+	private String lon;
 	
 	public String getId() {
 		return id;
@@ -67,16 +71,28 @@ public class DynamicInfo {
 	public void setPraise(Integer praise) {
 		this.praise = praise;
 	}
+	public Integer getDynamicCount() {
+		return dynamicCount;
+	}
+	public void setDynamicCount(Integer dynamicCount) {
+		this.dynamicCount = dynamicCount;
+	}
 	public boolean isPraise() {
 		return isPraise;
 	}
 	public void setPraise(boolean isPraise) {
 		this.isPraise = isPraise;
 	}
-	public double getLocation() {
+	public double getDistance() {
+		return distance;
+	}
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	public String getLocation() {
 		return location;
 	}
-	public void setLocation(double location) {
+	public void setLocation(String location) {
 		this.location = location;
 	}
 	public String getRemarks() {
@@ -103,4 +119,17 @@ public class DynamicInfo {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+	public String getLat() {
+		return lat;
+	}
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+	public String getLon() {
+		return lon;
+	}
+	public void setLon(String lon) {
+		this.lon = lon;
+	}
+	
 }

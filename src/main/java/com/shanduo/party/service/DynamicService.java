@@ -21,11 +21,12 @@ public interface DynamicService {
 	 * @param @param picture 图片或视频
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
+	 * @param @param location 位置
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int saveDynamic(Integer userId,String content,String picture,String lat,String lon);
+	int saveDynamic(Integer userId,String content,String picture,String lat,String lon,String location);
 
 	/**
 	 * 查看关注人的动态
@@ -38,7 +39,7 @@ public interface DynamicService {
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> attentionList(Integer userId,Integer pageNum,Integer pageSize);
+	Map<String, Object> attentionList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
 	 * 查看附件的人的动态
@@ -60,13 +61,17 @@ public interface DynamicService {
 	 * @Title: dynamicList
 	 * @Description: TODO
 	 * @param @param userId 用户Id
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
 	 * @param @param pageNum 页数
 	 * @param @param pageSize 记录数
+	 * @param @param pageNum
+	 * @param @param pageSize
 	 * @param @return
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> dynamicList(Integer userId,Integer pageNum,Integer pageSize);
+	Map<String, Object> dynamicList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
 	 * 查看单个动态详情

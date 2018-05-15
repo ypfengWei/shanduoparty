@@ -61,4 +61,6 @@ public interface ScoreService {
 	 * @throws
 	 */
 	int updateByIdTime(String time);
+	
+	int updateByReputation(Integer userId);
 }

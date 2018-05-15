@@ -15,6 +15,7 @@ import com.shanduo.party.entity.VipExperience;
 import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.VipService;
+import com.shanduo.party.util.UUIDGenerator;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -31,6 +32,7 @@ public class VipServiceImpl implements VipService {
 	@Override
 	public int insertSelective(Integer userId, String vipType, Integer month) {
 		ShanduoVip shanduoVip = new ShanduoVip();
+		shanduoVip.setId(UUIDGenerator.getUUID());
 		shanduoVip.setUserId(userId);
 		shanduoVip.setVipType(vipType);
 		shanduoVip.setVipStartTime(new Date());
@@ -131,6 +133,21 @@ public class VipServiceImpl implements VipService {
 		}
 	}
 
+	@Override
+	public int selectVipExperience(Integer userId) {
+		List<ShanduoVip> resultList = shanduoVipMapper.selectByUserId(userId);
+		if(resultList == null || resultList.isEmpty()) {
+			return 0;
+		}
+		if(resultList.size() == 2) {
+			return 10+getvipGrade(userId);
+		}
+		if("0".equals(resultList.get(0).getVipType())) {
+			return getvipGrade(userId);
+		}
+		return 10+getvipGrade(userId);
+	}
+	
 	public int getvipGrade(Integer userId) {
 		int experience = vipExperienceMapper.selectByUserId(userId);
 		if(experience < 100) {
@@ -149,20 +166,5 @@ public class VipServiceImpl implements VipService {
 			return 7;
 		}
 		return 8;
-	}
-	
-	@Override
-	public int selectVipExperience(Integer userId) {
-		List<ShanduoVip> resultList = shanduoVipMapper.selectByUserId(userId);
-		if(resultList == null || resultList.isEmpty()) {
-			return 0;
-		}
-		if(resultList.size() == 2) {
-			return 10+getvipGrade(userId);
-		}
-		if("0".equals(resultList.get(0).getVipType())) {
-			return getvipGrade(userId);
-		}
-		return 10+getvipGrade(userId);
 	}
 }

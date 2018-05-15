@@ -259,9 +259,9 @@
   
   <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.shanduo.party.entity.ShanduoUser">
     insert into shanduo_user (user_name, pass_word,
-      phone_number, signature)
+      phone_number, birthday,signature)
     values (#{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
-     #{phoneNumber,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR})
+     #{phoneNumber,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR})
   </insert>
   <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 

@@ -118,11 +118,6 @@
   <select id="selectByUserId" resultType="java.lang.Integer">
   	select sum(deduction_count) from shanduo_reputation_record where user_id = #{0}
 	and update_date between #{1} and #{2} 
-	and reputation_type = 1 and del_flag = '0'
-  </select>
-  <select id="selectByUserIdTwo" resultType="java.lang.Integer">
-  	select sum(deduction_count) from shanduo_reputation_record where user_id = #{0}
-  	and update_date between #{1} and #{2} 
-  	and del_flag = '0' and reputation_type = 2 
+	and reputation_type = #{3} and del_flag = '0'
   </select>
 </mapper>

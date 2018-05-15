@@ -93,10 +93,6 @@ public class ActivityController {
 			log.error("活动地址为空");
 			return new ErrorBean("活动地址为空");
 		}
-		if (StringUtils.isNull(detailedAddress)) {
-			log.error("详细地址为空");
-			return new ErrorBean("详细地址为空");
-		}
 		if (StringUtils.isNull(mode)) {
 			log.error("方式为空");
 			return new ErrorBean("方式为空");

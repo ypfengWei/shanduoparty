@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shanduo.party.mapper.ShanduoVipMapper">
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoVip">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="vip_type" jdbcType="CHAR" property="vipType" />
     <result column="vip_start_time" jdbcType="TIMESTAMP" property="vipStartTime" />
@@ -13,7 +13,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <resultMap id="VipResultMap" type="hashMap">
-  	<id column="id" jdbcType="INTEGER" property="id" />
+  	<id column="id" jdbcType="VARCHAR" property="id" />
   	<result column="user_id" jdbcType="INTEGER" property="userId" />
   	<result column="vip_type" jdbcType="CHAR" property="vipType" />
   	<result column="vip_start_time" jdbcType="TIMESTAMP" property="vipStartTime" />
@@ -24,22 +24,22 @@
     id, user_id, vip_type, vip_start_time, vip_end_time, remarks, create_date, update_date, 
     del_flag
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from shanduo_vip
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from shanduo_vip
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoVip">
     insert into shanduo_vip (id, user_id, vip_type, 
       vip_start_time, vip_end_time, remarks, 
       create_date, update_date, del_flag
       )
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{vipType,jdbcType=CHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{vipType,jdbcType=CHAR}, 
       #{vipStartTime,jdbcType=TIMESTAMP}, #{vipEndTime,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
       )
@@ -77,7 +77,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=VARCHAR},
       </if>
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
@@ -133,7 +133,7 @@
         del_flag = #{delFlag,jdbcType=CHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoVip">
     update shanduo_vip
@@ -145,7 +145,7 @@
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       del_flag = #{delFlag,jdbcType=CHAR}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
   </update>
   
   <select id="selectUserIdAndType" resultMap="BaseResultMap">
