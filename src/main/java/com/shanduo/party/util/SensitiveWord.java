@@ -23,17 +23,16 @@ public class SensitiveWord {
     private static int replceSize = 500;
     private static String fileName = "CensorWords.txt";
     private static List<String> arrayList;
-//    private static Set<String> sensitiveWordSet;//包含的敏感词列表，过滤掉重复项
-//    private static List<String> sensitiveWordList;//包含的敏感词列表，包括重复项，统计次数
     
     /** 
      * @param str 将要被过滤信息 
      * @return 过滤后的信息 
      */  
     public static String filterInfo(String str) {
+    	if(str == null || "".equals(str) || "null".equals(str)) {
+    		return "";
+    	}
     	InitializationWork();
-//    	sensitiveWordSet = new HashSet<String>();
-//    	sensitiveWordList= new ArrayList<>();
         StringBuilder buffer = new StringBuilder(str);  
         HashMap<Integer, Integer> hash = new HashMap<Integer, Integer>(arrayList.size());  
         String temp;  
@@ -41,26 +40,19 @@ public class SensitiveWord {
             temp = arrayList.get(x);
             int findIndexSize = 0;
             for(int start = -1;(start=buffer.indexOf(temp,findIndexSize)) > -1;) {  
-            	//System.out.println("###replace="+temp);
+            	System.out.println("###replace="+temp);
                 findIndexSize = start+temp.length();//从已找到的后面开始找  
                 Integer mapStart = hash.get(start);//起始位置  
                 if(mapStart == null || (mapStart != null && findIndexSize > mapStart))//满足1个，即可更新map  
                 {  
                     hash.put(start, findIndexSize); 
-                    //System.out.println("###敏感词："+buffer.substring(start, findIndexSize));
+                    System.out.println("###敏感词："+buffer.substring(start, findIndexSize));
                 }  
             }  
         }  
         Collection<Integer> values = hash.keySet();  
         for(Integer startIndex : values) {  
             Integer endIndex = hash.get(startIndex);  
-            //获取敏感词，并加入列表，用来统计数量
-//            String sensitive = buffer.substring(startIndex, endIndex);
-            //System.out.println("###敏感词："+sensitive);
-//            if (!sensitive.contains("*")) {//添加敏感词到集合
-//            	sensitiveWordSet.add(sensitive);
-//            	sensitiveWordList.add(sensitive);
-//			}
             buffer.replace(startIndex, endIndex, replaceAll.substring(0,endIndex-startIndex));
         }  
         hash.clear();  
@@ -105,5 +97,5 @@ public class SensitiveWord {
             }  
         }  
     }  
-    
+  
 }  

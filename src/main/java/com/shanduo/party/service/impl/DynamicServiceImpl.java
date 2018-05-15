@@ -48,16 +48,11 @@ public class DynamicServiceImpl implements DynamicService {
 	
 	@Override
 	public int saveDynamic(Integer userId, String content, String picture, String lat, String lon) {
-		String id = UUIDGenerator.getUUID();
 		ShanduoDynamic dynamic = new ShanduoDynamic();
-		dynamic.setId(id);
+		dynamic.setId(UUIDGenerator.getUUID());
 		dynamic.setUserId(userId);
-		if(!StringUtils.isNull(content)) {
-			dynamic.setContent(SensitiveWord.filterInfo(content));
-		}
-		if(!StringUtils.isNull(picture)) {
-			dynamic.setPicture(picture);
-		}
+		dynamic.setContent(SensitiveWord.filterInfo(content));
+		dynamic.setPicture(picture);
 		dynamic.setLat(new BigDecimal(lat));
 		dynamic.setLon(new BigDecimal(lon));
 		int i = dynamicMapper.insertSelective(dynamic);
@@ -278,12 +273,8 @@ public class DynamicServiceImpl implements DynamicService {
 		comments.setId(id);
 		comments.setUserId(userId);
 		comments.setDynamicId(dynamicId);
-		if(!StringUtils.isNull(comment)) {
-			comments.setComment(SensitiveWord.filterInfo(comment));
-		}
-		if(!StringUtils.isNull(picture)) {
-			comments.setPicture(picture);
-		}
+		comments.setComment(SensitiveWord.filterInfo(comment));
+		comments.setPicture(picture);
 		comments.setReplyType(typeId);
 		if("2".equals(typeId)) {
 			comments.setCommentId(commentId);
