@@ -74,11 +74,13 @@ public interface DynamicService {
 	 * @Description: TODO
 	 * @param @param dynamicId 动态ID
 	 * @param @param userId 用户ID
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
 	 * @param @return
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> selectById(String dynamicId,Integer userId);
+	Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon);
 
 	/**
 	 * 评论动态和回复评论

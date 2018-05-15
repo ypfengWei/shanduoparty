@@ -177,7 +177,7 @@
   
   <select id="selectByDynamicId" parameterType="java.lang.String" resultType="map">
 	select
-  		ac.id,ac.dynamic_id as dynamicId,su.id as userId,
+  		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
   		su.user_name as `name`,ac.`comment`,ac.picture,
   		ac.del_flag as delFlag
 	from dynamic_comment ac
@@ -189,7 +189,7 @@
   <select id="selectByCommentId" parameterType="java.lang.String" resultType="map">
 	select
 		dc.id,dc.dynamic_id as dynamicId,dc.comment_id as commentId,
- 		usOne.id as userIdOne,usOne.user_name as nameOne,
+ 		usOne.id as userIdOne,usOne.user_name as nameOne,usOne.head_portrait_id as portraitId,
  		usTwo.id as userIdTwo,usTwo.user_name as nameTwo,
  		dc.`comment`,dc.picture
 	from dynamic_comment dc

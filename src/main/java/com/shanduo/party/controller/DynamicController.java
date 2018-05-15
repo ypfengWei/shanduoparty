@@ -259,13 +259,15 @@ public class DynamicController {
 	 * @param @param requrst
 	 * @param @param token
 	 * @param @param dynamicId 动态ID
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
 	@RequestMapping(value = "querydynamic",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean queryDynamic(HttpServletRequest requrst,String token,String dynamicId) {
+	public ResultBean queryDynamic(HttpServletRequest requrst,String token,String dynamicId,String lat,String lon) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -275,7 +277,7 @@ public class DynamicController {
 			log.error("动态ID为空");
 			return new ErrorBean("动态ID为空");
 		}
-		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, userToken.getUserId());
+		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, userToken.getUserId(),lat,lon);
 		if(resultMap == null) {
 			log.error("动态不存在");
 			return new ErrorBean("动态不存在");

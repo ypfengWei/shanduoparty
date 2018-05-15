@@ -98,4 +98,7 @@ public class SensitiveWord {
         }  
     }  
   
+    public static void main(String[] args) {
+    	SensitiveWord.filterInfo("aa");
+	}
 }  
