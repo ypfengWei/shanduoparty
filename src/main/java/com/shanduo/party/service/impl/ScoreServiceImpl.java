@@ -1,5 +1,7 @@
 package com.shanduo.party.service.impl;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ActivityScore;
+import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoReputationRecord;
 import com.shanduo.party.mapper.ActivityScoreMapper;
+import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoReputationRecordMapper;
 import com.shanduo.party.service.ScoreService;
 import com.shanduo.party.util.Page;
@@ -28,8 +32,8 @@ public class ScoreServiceImpl implements ScoreService {
 	@Autowired
 	private ActivityScoreMapper activityScoreMapper;
 
-//	@Autowired
-//	private ShanduoReputationMapper shanduoReputationMapper;
+	@Autowired
+	private ShanduoReputationMapper shanduoReputationMapper;
 	
 	@Autowired
 	private ShanduoReputationRecordMapper reputationRecordMapper;
@@ -47,24 +51,19 @@ public class ScoreServiceImpl implements ScoreService {
 			log.error("评价失败");
 			throw new RuntimeException();
 		}
-//		ShanduoReputation shanduoReputation = shanduoReputationMapper.selectByPrimaryKey(userId);
 		ShanduoReputationRecord shanduoReputationRecord = new ShanduoReputationRecord();
-//		Integer reputation = null;
 		shanduoReputationRecord.setId(UUIDGenerator.getUUID());
 		shanduoReputationRecord.setUserId(userId);
 		switch (score) {
 			case 1:
 			case 2:
-//				reputation = shanduoReputation.getReputation() - 1;
 				shanduoReputationRecord.setDeductionCount(1);
 				shanduoReputationRecord.setReputationType("2");
 				break;
 			case 3:
-//				reputation = shanduoReputation.getReputation();
 				break;
 			case 4:
 			case 5:
-//				reputation = shanduoReputation.getReputation() + 1;
 				shanduoReputationRecord.setDeductionCount(1);
 				shanduoReputationRecord.setReputationType("1");
 				break;
@@ -77,11 +76,6 @@ public class ScoreServiceImpl implements ScoreService {
 			log.error("信誉历史记录添加失败");
 			throw new RuntimeException();
 		}
-//		int count = shanduoReputationMapper.updateByUserId(userId, reputation);
-//		if (count < 1) {
-//			log.error("信誉修改失败");
-//			throw new RuntimeException();
-//		}
 		return 1;
 	}
 
@@ -130,6 +124,30 @@ public class ScoreServiceImpl implements ScoreService {
 		int i = activityScoreMapper.updateByIdTime(time);
 		if (i < 1) {
 			log.error("修改失败");
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+	
+	@Override
+	public int updateByReputation(Integer userId) {
+		long time = System.currentTimeMillis();
+		Format format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+		String endTime = format.format(time);
+		String startTime = format.format(time - 1000*60*60*24);
+		int i = reputationRecordMapper.selectByUserId(userId, startTime, endTime, "0");
+		int count = reputationRecordMapper.selectByUserId(userId, startTime, endTime, "1");
+		int a = 0;
+		ShanduoReputation shanduoReputation = shanduoReputationMapper.selectByPrimaryKey(userId);
+		if(i - count > 10) {
+			a = shanduoReputationMapper.updateByUserId(userId, shanduoReputation.getDeduction()+10);
+		} else if(count - i > 10) {
+			a = shanduoReputationMapper.updateByUserId(userId, shanduoReputation.getDeduction()-10);
+		} else {
+			a = shanduoReputationMapper.updateByUserId(userId, shanduoReputation.getDeduction()+i-count);
+		}
+		if(a < 1) {
+			log.error("信誉修改失败");
 			throw new RuntimeException();
 		}
 		return 1;

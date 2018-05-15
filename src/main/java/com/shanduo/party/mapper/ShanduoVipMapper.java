@@ -1,5 +1,7 @@
 package com.shanduo.party.mapper;
 
+import java.util.List;
+
 import com.shanduo.party.entity.ShanduoVip;
 
 public interface ShanduoVipMapper {
@@ -24,5 +26,7 @@ public interface ShanduoVipMapper {
      * @throws
      */
     ShanduoVip selectUserIdAndType(Integer userId, String vipType);
+    
+    List<ShanduoVip> selectByUserId(Integer userId);
     
 }

@@ -17,7 +17,7 @@ public interface VipExperienceMapper {
     
     int updateExperienceByUserId(Integer experience, Integer userId);
     
-    VipExperience selectByUserId(Integer userId);
+    int selectByUserId(Integer userId);
     
     /**
      * 加svip成长值

@@ -28,7 +28,7 @@ public class ActivityScoreTiming {
 	private ScoreService scoreService;
 	
 	/**
-	 * 定时每天 0:0:0自动执行
+	 * 参与者默认好评定时每天 0:0:0自动执行
 	 * @Title: delTiming
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param 
@@ -46,7 +46,7 @@ public class ActivityScoreTiming {
 	}
 	
 	/**
-	 * 定时每天 0:0:0自动执行
+	 * 发起者默认好评定时每天 0:0:0自动执行
 	 * @Title: delTiming
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param 
@@ -62,29 +62,5 @@ public class ActivityScoreTiming {
 		logger.info("发起者默认好评:"+i);
 	}
 	
-//	@Scheduled(cron = "5 0 0 * * ? ")
-//	public void reputationTiming(Integer userId) {
-//		long time = System.currentTimeMillis();
-//		Format format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
-//		String endTime = format.format(time);
-//		String startTime = format.format(time - 1000*60*60*24);
-//		int i = recordMapper.selectByUserId(userId, startTime, endTime);
-//		int count = recordMapper.selectByUserIdTwo(userId, startTime, endTime);
-//		ShanduoReputation shanduoReputation = new ShanduoReputation();
-//		ShanduoReputation shanduoReputationRecord = shanduoReputationMapper.selectByPrimaryKey(userId);
-//		Integer reputation = null;
-//		if(-10<i-count && i-count<10) {
-//			reputation = shanduoReputation.getDeduction() + (i-count);
-//			shanduoReputationRecord.setReputation(reputation);
-//		} else if(-10>i-count){
-//			reputation = shanduoReputation.getDeduction() - 10;
-//			shanduoReputationRecord.setReputation(reputation);
-//		} else if(i-count>10){
-//			reputation = shanduoReputation.getDeduction() + 10;
-//			shanduoReputationRecord.setReputation(reputation);
-//		}
-//		int n = shanduoReputationMapper.updateByUserId(userId, reputation);
-//		logger.info("统计一天的信誉分:"+ n);
-//	}
 }
 

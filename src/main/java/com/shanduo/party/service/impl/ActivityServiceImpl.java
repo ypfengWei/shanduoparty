@@ -26,6 +26,7 @@ import com.shanduo.party.mapper.ActivityScoreMapper;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.service.ActivityService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.LocationUtils;
 import com.shanduo.party.util.Page;
@@ -59,6 +60,9 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Autowired
 	private ShanduoUserMapper shanduoUserMapper;
+	
+	@Autowired
+	private VipService vipService;
 	
 	@Override
 	public List<ShanduoActivity> selectByActivityUserId(Integer userId, String time) {
@@ -112,7 +116,7 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public boolean selectByTwoAll(Integer userId, String time) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		Date date = null;
+		Date date = new Date();
 		try {
 			date = format.parse(time);
 		} catch (ParseException e) {
@@ -439,6 +443,7 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
+        	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
         	List<Map<String, Object>> shanduoUsers = shanduoUserMapper.selectByGender(activityInfo.getId());
     		if(shanduoUsers != null) {
     			for (Map<String, Object> map : shanduoUsers) {

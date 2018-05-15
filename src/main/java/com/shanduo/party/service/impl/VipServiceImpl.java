@@ -1,6 +1,8 @@
 package com.shanduo.party.service.impl;
 
 import java.util.Date;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import com.shanduo.party.entity.VipExperience;
 import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.VipService;
+import com.shanduo.party.util.UUIDGenerator;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -29,6 +32,7 @@ public class VipServiceImpl implements VipService {
 	@Override
 	public int insertSelective(Integer userId, String vipType, Integer month) {
 		ShanduoVip shanduoVip = new ShanduoVip();
+		shanduoVip.setId(UUIDGenerator.getUUID());
 		shanduoVip.setUserId(userId);
 		shanduoVip.setVipType(vipType);
 		shanduoVip.setVipStartTime(new Date());
@@ -50,19 +54,6 @@ public class VipServiceImpl implements VipService {
 			}
 		}
 		return 1;
-	}
-
-	public void updateVip(ShanduoVip vip,Integer month,long time,String type) {
-		Date date = new Date(time);
-		if("1".equals(type)) {
-			vip.setVipStartTime(date);
-		}
-		vip.setVipEndTime(new Date(time + 1000L * 60L * 60L * 24L * 31L * month));
-		int i = shanduoVipMapper.updateByPrimaryKeySelective(vip);
-		if (i <= 0) {
-			log.error("会员开通失败");
-			throw new RuntimeException();
-		}
 	}
 	
 	@Override
@@ -127,5 +118,53 @@ public class VipServiceImpl implements VipService {
 			}
 		}
 		return 1;
+	}
+	
+	public void updateVip(ShanduoVip vip,Integer month,long time,String type) {
+		Date date = new Date(time);
+		if("1".equals(type)) {
+			vip.setVipStartTime(date);
+		}
+		vip.setVipEndTime(new Date(time + 1000L * 60L * 60L * 24L * 31L * month));
+		int i = shanduoVipMapper.updateByPrimaryKeySelective(vip);
+		if (i <= 0) {
+			log.error("会员开通失败");
+			throw new RuntimeException();
+		}
+	}
+
+	@Override
+	public int selectVipExperience(Integer userId) {
+		List<ShanduoVip> resultList = shanduoVipMapper.selectByUserId(userId);
+		if(resultList == null || resultList.isEmpty()) {
+			return 0;
+		}
+		if(resultList.size() == 2) {
+			return 10+getvipGrade(userId);
+		}
+		if("0".equals(resultList.get(0).getVipType())) {
+			return getvipGrade(userId);
+		}
+		return 10+getvipGrade(userId);
+	}
+	
+	public int getvipGrade(Integer userId) {
+		int experience = vipExperienceMapper.selectByUserId(userId);
+		if(experience < 100) {
+			return 1;
+		}else if(experience < 300) {
+			return 2;
+		}else if(experience < 600) {
+			return 3;
+		}else if(experience < 900) {
+			return 4;
+		}else if(experience < 1200) {
+			return 5;
+		}else if(experience < 1500) {
+			return 6;
+		}else if(experience < 1800) {
+			return 7;
+		}
+		return 8;
 	}
 }

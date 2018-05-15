@@ -37,8 +37,8 @@ public class VipTiming {
 		int i = vipExperienceMapper.updateByUserId();
 		int b = vipExperienceMapper.updateByUserIdTwo();
 		int a = vipExperienceMapper.updateByUserIdThree();
-		logger.info("svip成长值:"+i);
-		logger.info("vip成长值:"+b);
-		logger.info("扣除成长值:"+a);
+		logger.info("给"+i+"svip添加了成长值");
+		logger.info("给"+b+"vip添加了成长值");
+		logger.info("给"+a+"vip扣除了成长值");
 	}
 }
