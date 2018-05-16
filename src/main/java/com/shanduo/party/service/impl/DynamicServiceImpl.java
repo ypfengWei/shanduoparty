@@ -103,15 +103,9 @@ public class DynamicServiceImpl implements DynamicService {
 	@Override
 	public Map<String, Object> attentionList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize) {
 		int totalRecord = dynamicMapper.attentionCount(userId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.attentionList(userId, pageNum, page.getPageSize());
-		if(resultList.isEmpty()) {
-			return null;
-		}
 		putMap(resultList, userId);
 		for (Map<String, Object> map : resultList) {
 			double distance = 
@@ -129,15 +123,9 @@ public class DynamicServiceImpl implements DynamicService {
 	public Map<String, Object> nearbyList(Integer userId, String lat, String lon, Integer pageNum, Integer pageSize) {
 		Double[] doubles = LocationUtils.getDoubles(lon, lat);
 		int totalRecord = dynamicMapper.nearbyCount(doubles[0], doubles[1], doubles[2], doubles[3]);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.nearbyList(doubles[0], doubles[1], doubles[2], doubles[3], pageNum, page.getPageSize());
-		if(resultList.isEmpty()) {
-			return null;
-		}
 		putMap(resultList, userId);
 		for (Map<String, Object> map : resultList) {
 			double distance = 
@@ -152,18 +140,12 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> dynamicList(Integer userId,String lat,String lon, Integer pageNum, Integer pageSize) {
+	public Map<String, Object> dynamicList(Integer userId,Integer userIds,String lat,String lon, Integer pageNum, Integer pageSize) {
 		int totalRecord = dynamicMapper.selectMyCount(userId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.selectMyList(userId, pageNum, page.getPageSize());
-		if(resultList.isEmpty()) {
-			return null;
-		}
-		putMap(resultList, userId);
+		putMap(resultList, userIds);
 		for (Map<String, Object> map : resultList) {
 			double distance = 
 					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
@@ -180,9 +162,6 @@ public class DynamicServiceImpl implements DynamicService {
 	public List<Map<String, Object>> commentList(String dynamicId) {
 		//得到所有1级评论
 		List<Map<String, Object>> resultList = commentMapper.selectByDynamicId(dynamicId);
-		if(resultList.isEmpty()) {
-			return null;
-		}
 		commentList(resultList);
 		return resultList;
 	}

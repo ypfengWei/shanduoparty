@@ -61,7 +61,8 @@ public interface DynamicService {
 	 * 个人动态
 	 * @Title: dynamicList
 	 * @Description: TODO
-	 * @param @param userId 用户Id
+	 * @param @param userId 被查看用户Id
+	 * @param @param userIds 查看
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @param pageNum 页数
@@ -72,7 +73,7 @@ public interface DynamicService {
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> dynamicList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
+	Map<String, Object> dynamicList(Integer userId,Integer userIds,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
 	 * 查看单个动态的评论

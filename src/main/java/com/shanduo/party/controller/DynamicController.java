@@ -159,10 +159,6 @@ public class DynamicController {
 			Integer userId = userToken.getUserId();
 			resultMap = dynamicService.attentionList(userId, lat, lon, pages, pageSizes);
 		}
-		if(resultMap == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
-		}
 		return new SuccessBean(resultMap);
 	}
 	
@@ -172,6 +168,8 @@ public class DynamicController {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
+	 * @param @param typeId 类型:1.我的动态,2.别人的动态
+	 * @param @param userId 要看的别人的闪多号
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @param page 页码
@@ -182,11 +180,16 @@ public class DynamicController {
 	 */
 	@RequestMapping(value = "dynamicList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean dynamicList(HttpServletRequest request,String token,String lat,String lon,String page,String pageSize) {
+	public ResultBean dynamicList(HttpServletRequest request,String token,String typeId,String userId,
+			String lat,String lon,String page,String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean("类型错误");
 		}
 		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
 			log.error("纬度错误");
@@ -204,13 +207,17 @@ public class DynamicController {
 			log.error("记录错误");
 			return new ErrorBean("记录错误");
 		}
-		Integer userId = userToken.getUserId();
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = dynamicService.dynamicList(userId, lat, lon, pages, pageSizes);
-		if(resultMap == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
+		Map<String, Object> resultMap = new HashMap<>();
+		if("1".equals(typeId)) {
+			resultMap = dynamicService.dynamicList(userToken.getUserId(),userToken.getUserId(),lat, lon, pages, pageSizes);
+		}else {
+			if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
+				log.error("闪多号格式错误");
+				return new ErrorBean("闪多号格式错误");
+			}
+			resultMap = dynamicService.dynamicList(Integer.valueOf(userId),userToken.getUserId(),lat, lon, pages, pageSizes);
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -279,11 +286,11 @@ public class DynamicController {
 	@RequestMapping(value = "commentList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean commentList(HttpServletRequest requrst,String token,String dynamicId) {
-		List<Map<String, Object>> resultList = dynamicService.commentList(dynamicId);
-		if(resultList == null) {
-			log.error("暂无评论");
-			return new ErrorBean("暂无评论");
+		if(StringUtils.isNull(dynamicId)) {
+			log.error("动态ID为空");
+			return new ErrorBean("动态ID为空");
 		}
+		List<Map<String, Object>> resultList = dynamicService.commentList(dynamicId);
 		return new SuccessBean(resultList);
 	}
 	

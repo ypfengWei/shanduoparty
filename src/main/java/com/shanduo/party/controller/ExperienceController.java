@@ -19,7 +19,7 @@ import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ExperienceService;
 
 /**
- * 签到控制层
+ * 经验控制层
  * @ClassName: ExperienceController
  * @Description: TODO
  * @author fanshixin

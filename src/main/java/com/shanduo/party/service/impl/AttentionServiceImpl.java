@@ -78,15 +78,9 @@ public class AttentionServiceImpl implements AttentionService {
 	@Override
 	public Map<String, Object> attentionApplyList(Integer attention,Integer pageNum,Integer pageSize) {
 		int totalRecord = attentionApplyMapper.selectAttentionCount(attention);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = attentionApplyMapper.selectAttentionList(attention, pageNum, pageSize);
-		if(resultList.isEmpty()) {
-			return null;
-		}
 		for(Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 		}
@@ -160,15 +154,9 @@ public class AttentionServiceImpl implements AttentionService {
 	@Override
 	public Map<String, Object> attentionList(Integer userId,String typeId, Integer pageNum, Integer pageSize) {
 		int totalRecord = attentionMapper.selectAttentionCount(userId, typeId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = attentionMapper.selectAttentionList(userId, typeId, pageNum, pageSize);
-		if(resultList.isEmpty()) {
-			return null;
-		}
 		for(Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));

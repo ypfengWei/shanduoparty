@@ -51,15 +51,9 @@ public class MoneyServiceImpl implements MoneyService {
 	@Override
 	public Map<String, Object> moneyList(Integer userId, Integer pageNum, Integer pageSize) {
 		int totalRecord = moneyRecordMapper.meneyCount(userId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = moneyRecordMapper.moneyList(userId, pageNum, page.getPageSize());
-		if(resultList.isEmpty()) {
-			return null;
-		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());

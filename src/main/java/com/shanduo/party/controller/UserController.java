@@ -69,7 +69,6 @@ public class UserController {
 			log.error("验证码错误");
 			return new ErrorBean("验证码错误");
 		}
-		//8-16位
 		if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 			log.error("密码格式错误");
 			return new ErrorBean("密码格式错误");
