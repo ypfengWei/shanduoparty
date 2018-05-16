@@ -18,29 +18,66 @@ public interface DynamicCommentMapper {
 
     int updateByPrimaryKey(DynamicComment record);
     
-    /**
-     * 查询动态所有的一级回复
-     * @Title: selectByDynamicId
-     * @Description: TODO(这里用一句话描述这个方法的作用)
-     * @param @param dynamicId
-     * @param @return
-     * @return List<Map<String,Object>>
-     * @throws
-     */
-    List<Map<String, Object>> selectByDynamicId(String dynamicId);
-    
-    /**
-     * 查询2级回复的所有2级回复
-     * @Title: selectByCommentId
-     * @Description: TODO(这里用一句话描述这个方法的作用)
-     * @param @param commentId
-     * @param @return
-     * @return List<Map<String,Object>>
-     * @throws
-     */
-    List<Map<String, Object>> selectByCommentId(String commentId);
-    
     int updateByDelFlag(String id,Integer userId);
     
+    /**
+     * 查询动态的评论数量
+     * @Title: dynamicIdCount
+     * @Description: TODO
+     * @param @param dynamicId
+     * @param @return
+     * @return int
+     * @throws
+     */
     int dynamicIdCount(String dynamicId);
+    
+    /**
+     * 查询动态的1级评论数量
+     * @Title: commentCount
+     * @Description: TODO
+     * @param @param dynamicId
+     * @param @return
+     * @return int
+     * @throws
+     */
+    int commentCount(String dynamicId);
+    
+    /**
+     * 分页查询动态的一级回复
+     * @Title: oneCommentIdList
+     * @Description: TODO
+     * @param @param dynamicId
+     * @param @param page
+     * @param @param pageSize
+     * @param @return
+     * @return List<Map<String,Object>>
+     * @throws
+     */
+    List<Map<String, Object>> oneCommentIdList(String dynamicId,Integer page,Integer pageSize);
+    
+    /**
+     * 查询1级评论的回复数量
+     * @Title: commentsCount
+     * @Description: TODO
+     * @param @param commentId
+     * @param @return
+     * @return int
+     * @throws
+     */
+    int commentsCount(String commentId);
+    
+    /**
+     * 分页查询1级评论的2级回复
+     * @Title: twoCommentIdList
+     * @Description: TODO
+     * @param @param commentId
+     * @param @param page
+     * @param @param pageSize
+     * @param @return
+     * @return List<Map<String,Object>>
+     * @throws
+     */
+    List<Map<String, Object>> twoCommentIdList(String commentId,Integer page,Integer pageSize);
+    
+    
 }

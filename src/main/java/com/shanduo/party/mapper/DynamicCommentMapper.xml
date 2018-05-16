@@ -3,12 +3,12 @@
 <mapper namespace="com.shanduo.party.mapper.DynamicCommentMapper">
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.DynamicComment">
     <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="dynamic_id" jdbcType="VARCHAR" property="dynamicId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="comment" jdbcType="VARCHAR" property="comment" />
     <result column="picture" jdbcType="VARCHAR" property="picture" />
-    <result column="comment_id" jdbcType="VARCHAR" property="commentId" />
     <result column="reply_type" jdbcType="CHAR" property="replyType" />
+    <result column="comment_id" jdbcType="VARCHAR" property="commentId" />
     <result column="respondent" jdbcType="INTEGER" property="respondent" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -16,7 +16,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, dynamic_id, comment, picture, comment_id, reply_type, respondent, remarks, 
+    id, dynamic_id, user_id, comment, picture, reply_type, comment_id, respondent, remarks, 
     create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -30,14 +30,14 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.DynamicComment">
-    insert into dynamic_comment (id, user_id, dynamic_id, 
-      comment, picture, comment_id, 
-      reply_type, respondent, remarks, 
+    insert into dynamic_comment (id, dynamic_id, user_id, 
+      comment, picture, reply_type, 
+      comment_id, respondent, remarks, 
       create_date, update_date, del_flag
       )
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{dynamicId,jdbcType=VARCHAR}, 
-      #{comment,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{commentId,jdbcType=VARCHAR}, 
-      #{replyType,jdbcType=CHAR}, #{respondent,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{dynamicId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
+      #{comment,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{replyType,jdbcType=CHAR}, 
+      #{commentId,jdbcType=VARCHAR}, #{respondent,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
       )
   </insert>
@@ -47,11 +47,11 @@
       <if test="id != null">
         id,
       </if>
-      <if test="userId != null">
-        user_id,
-      </if>
       <if test="dynamicId != null">
         dynamic_id,
+      </if>
+      <if test="userId != null">
+        user_id,
       </if>
       <if test="comment != null">
         comment,
@@ -59,11 +59,11 @@
       <if test="picture != null">
         picture,
       </if>
-      <if test="commentId != null">
-        comment_id,
-      </if>
       <if test="replyType != null">
         reply_type,
+      </if>
+      <if test="commentId != null">
+        comment_id,
       </if>
       <if test="respondent != null">
         respondent,
@@ -85,11 +85,11 @@
       <if test="id != null">
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
-      </if>
       <if test="dynamicId != null">
         #{dynamicId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
       </if>
       <if test="comment != null">
         #{comment,jdbcType=VARCHAR},
@@ -97,11 +97,11 @@
       <if test="picture != null">
         #{picture,jdbcType=VARCHAR},
       </if>
-      <if test="commentId != null">
-        #{commentId,jdbcType=VARCHAR},
-      </if>
       <if test="replyType != null">
         #{replyType,jdbcType=CHAR},
+      </if>
+      <if test="commentId != null">
+        #{commentId,jdbcType=VARCHAR},
       </if>
       <if test="respondent != null">
         #{respondent,jdbcType=INTEGER},
@@ -123,11 +123,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.DynamicComment">
     update dynamic_comment
     <set>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
       <if test="dynamicId != null">
         dynamic_id = #{dynamicId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
       </if>
       <if test="comment != null">
         comment = #{comment,jdbcType=VARCHAR},
@@ -135,11 +135,11 @@
       <if test="picture != null">
         picture = #{picture,jdbcType=VARCHAR},
       </if>
-      <if test="commentId != null">
-        comment_id = #{commentId,jdbcType=VARCHAR},
-      </if>
       <if test="replyType != null">
         reply_type = #{replyType,jdbcType=CHAR},
+      </if>
+      <if test="commentId != null">
+        comment_id = #{commentId,jdbcType=VARCHAR},
       </if>
       <if test="respondent != null">
         respondent = #{respondent,jdbcType=INTEGER},
@@ -161,12 +161,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.DynamicComment">
     update dynamic_comment
-    set user_id = #{userId,jdbcType=INTEGER},
-      dynamic_id = #{dynamicId,jdbcType=VARCHAR},
+    set dynamic_id = #{dynamicId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
       comment = #{comment,jdbcType=VARCHAR},
       picture = #{picture,jdbcType=VARCHAR},
-      comment_id = #{commentId,jdbcType=VARCHAR},
       reply_type = #{replyType,jdbcType=CHAR},
+      comment_id = #{commentId,jdbcType=VARCHAR},
       respondent = #{respondent,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -175,31 +175,6 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
-  <select id="selectByDynamicId" parameterType="java.lang.String" resultType="map">
-	select
-  		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
-  		su.user_name as `name`,ac.`comment`,ac.picture,
-  		ac.del_flag as delFlag
-	from dynamic_comment ac
-	join shanduo_user su on ac.user_id = su.id
-	where ac.reply_type = '1'
-		and ac.dynamic_id = #{commentId,jdbcType=VARCHAR}
-	order by ac.create_date
-  </select>
-  <select id="selectByCommentId" parameterType="java.lang.String" resultType="map">
-	select
-		dc.id,dc.dynamic_id as dynamicId,dc.comment_id as commentId,
- 		usOne.id as userIdOne,usOne.user_name as nameOne,usOne.head_portrait_id as portraitId,
- 		usTwo.id as userIdTwo,usTwo.user_name as nameTwo,
- 		dc.`comment`,dc.picture
-	from dynamic_comment dc
-	 	join shanduo_user usOne on usOne.id = dc.user_id
-	 	join shanduo_user usTwo on usTwo.id = dc.respondent
-	where dc.del_flag = '0'
-		and dc.reply_type = '2'
-		and dc.comment_id = #{commentId,jdbcType=VARCHAR}
-	order by dc.create_date;
-  </select>
   <update id="updateByDelFlag">
     update dynamic_comment
     set
@@ -211,5 +186,49 @@
     count(*)
     from dynamic_comment
     where dynamic_id = #{dynamicId,jdbcType=VARCHAR}
+  </select>
+  <select id="commentCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+    count(*)
+    from dynamic_comment
+    where del_flag = '0'
+    and reply_type = '1'
+    and dynamic_id = #{dynamicId,jdbcType=VARCHAR}
+  </select>
+  <select id="oneCommentIdList" parameterType="java.lang.String" resultType="map">
+	select
+  		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
+  		su.user_name as `name`,ac.`comment`,ac.picture,su.gender,su.birthday as age,
+  		ac.create_date as createDate
+	from dynamic_comment ac
+	join shanduo_user su on ac.user_id = su.id
+	where ac.del_flag = '0'
+	and ac.reply_type = '1'
+	and ac.dynamic_id = #{0}
+	order by ac.create_date
+	limit #{1},#{2}
+  </select>
+  <select id="commentsCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+    count(*)
+    from dynamic_comment
+    where del_flag = '0'
+    and reply_type = '2'
+    and comment_id = #{commentId,jdbcType=VARCHAR}
+  </select>
+  <select id="twoCommentIdList" resultType="map">
+	select
+		dc.id,dc.dynamic_id as dynamicId,dc.comment_id as commentId,
+ 		usOne.id as userId,usOne.user_name as userName,usOne.head_portrait_id as portraitId,
+ 		usTwo.id as replyId,usTwo.user_name as replyName,
+ 		dc.`comment`,dc.picture,dc.create_date
+	from dynamic_comment dc
+	 	join shanduo_user usOne on usOne.id = dc.user_id
+	 	join shanduo_user usTwo on usTwo.id = dc.respondent
+	where dc.del_flag = '0'
+	and dc.reply_type = '2'
+	and dc.comment_id = #{0}
+	order by dc.create_date
+	limit #{1},#{2}
   </select>
 </mapper>

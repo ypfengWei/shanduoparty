@@ -159,71 +159,47 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> commentList(String dynamicId) {
-		//得到所有1级评论
-		List<Map<String, Object>> resultList = commentMapper.selectByDynamicId(dynamicId);
-		commentList(resultList);
-		return resultList;
-	}
-	
-	/**
-	 * 查询1级评论的图片,2级回复,2级回复图片
-	 * @Title: commentList
-	 * @Description: TODO
-	 * @param @param commentList 1级评论集合
-	 * @return void
-	 * @throws
-	 */
-	public void commentList(List<Map<String, Object>> commentList) {
-		for (int i = commentList.size()-1;i >= 0;i--) {
-			Map<String, Object> oneCommentMap = commentList.get(i);
-			String id = oneCommentMap.get("id").toString();
-			if(oneCommentMap.get("delFlag").toString().equals("0")) {
-				//保存评论人头像图片URL
-				oneCommentMap.put("portraitId", PictureUtils.getPictureUrl(oneCommentMap.get("portraitId").toString()));
-				//1级评论图片
-				oneCommentMap.put("picture",PictureUtils.getPictureUrlList(oneCommentMap.get("picture").toString()));
-				oneCommentMap.put("comments", twoCommentList(id));
-			}else {
-				List<Map<String, Object>> twoCommentList = twoCommentList(id);
-				if(twoCommentList.isEmpty()) {
-					commentList.remove(i);
-				}else {
-					oneCommentMap.remove("id");
-					oneCommentMap.remove("portraitId");
-					oneCommentMap.remove("picture");
-					oneCommentMap.remove("dynamicId");
-					oneCommentMap.remove("userId");
-					oneCommentMap.remove("name");
-					oneCommentMap.remove("comment");
-					oneCommentMap.remove("delFlag");
-					oneCommentMap.put("twoComment",twoCommentList);
-				}
-			}
+	public Map<String, Object> commentList(String dynamicId, Integer pageNum, Integer pageSize) {
+		int totalRecord = commentMapper.commentCount(dynamicId);
+		Page page = new Page(totalRecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> resultList = commentMapper.oneCommentIdList(dynamicId, pageNum, page.getPageSize());
+		for (Map<String, Object> map : resultList) {
+			//保存头像图片URL
+			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			//动态图片
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
+			//回复数量
+			map.put("count", commentMapper.commentsCount(map.get("id").toString()));
+			//保存年龄
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+			//3条2级回复
+			map.put("comments", commentMapper.twoCommentIdList(map.get("id").toString(), 0, 3));
 		}
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalPage", page.getTotalPage());
+		resultMap.put("list", resultList);
+		return resultMap;
 	}
 
-	/**
-	 * 查询2级回复,2级回复图片
-	 * @Title: twoCommentList
-	 * @Description: TODO
-	 * @param @param commentId
-	 * @param @return
-	 * @return List<Map<String,Object>>
-	 * @throws
-	 */
-	public List<Map<String, Object>> twoCommentList(String commentId) {
-		List<Map<String, Object>> twoCommentList = commentMapper.selectByCommentId(commentId);
-		if(twoCommentList.isEmpty()) {
-			return twoCommentList;
+	@Override
+	public Map<String, Object> commentsList(String commentId, Integer pageNum, Integer pageSize) {
+		int totalRecord = commentMapper.commentsCount(commentId);
+		Page page = new Page(totalRecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> resultList = commentMapper.twoCommentIdList(commentId, pageNum, page.getPageSize());
+		for (Map<String, Object> map : resultList) {
+			//保存头像图片URL
+			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			//动态图片
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
 		}
-		for (Map<String, Object> twoCommentMap : twoCommentList) {
-			//保存评论人头像图片URL
-			twoCommentMap.put("portraitId", PictureUtils.getPictureUrl(twoCommentMap.get("portraitId").toString()));
-			//所有2级回复加入回复图片
-			twoCommentMap.put("picture",PictureUtils.getPictureUrlList(twoCommentMap.get("picture").toString()));
-		}
-		return twoCommentList;
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalPage", page.getTotalPage());
+		resultMap.put("list", resultList);
+		return resultMap;
 	}
 	
 	@Override
