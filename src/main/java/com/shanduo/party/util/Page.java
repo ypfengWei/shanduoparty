@@ -21,11 +21,11 @@ public class Page {
 	
 	//用来计算总页数
 	public Page(int totalRecord,int pageSize,int pageNum){
-	    this.pageSize = pageSize==0?10:pageSize;
+	    this.pageSize = pageSize < 1?10:pageSize;
 	    this.totalRecord = totalRecord;
-	    this.totalPage = totalRecord % pageSize==0?totalRecord/pageSize:totalRecord/pageSize+1;
+	    this.totalPage = this.totalRecord % this.pageSize==0?this.totalRecord/this.pageSize:this.totalRecord/this.pageSize+1;
 	    this.pageNum = pageNum > this.totalPage?totalPage:pageNum;
-	    this.pageNum = pageNum < 0?1:pageNum;
+	    this.pageNum = pageNum < 1?1:this.pageNum;
 	}
 
 	public int getTotalPage() {

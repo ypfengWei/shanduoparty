@@ -5,17 +5,17 @@ import java.util.Date;
 public class DynamicComment {
     private String id;
 
-    private Integer userId;
-
     private String dynamicId;
+
+    private Integer userId;
 
     private String comment;
 
     private String picture;
 
-    private String commentId;
-
     private String replyType;
+
+    private String commentId;
 
     private Integer respondent;
 
@@ -35,20 +35,20 @@ public class DynamicComment {
         this.id = id == null ? null : id.trim();
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
     public String getDynamicId() {
         return dynamicId;
     }
 
     public void setDynamicId(String dynamicId) {
         this.dynamicId = dynamicId == null ? null : dynamicId.trim();
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getComment() {
@@ -67,20 +67,20 @@ public class DynamicComment {
         this.picture = picture == null ? null : picture.trim();
     }
 
-    public String getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(String commentId) {
-        this.commentId = commentId == null ? null : commentId.trim();
-    }
-
     public String getReplyType() {
         return replyType;
     }
 
     public void setReplyType(String replyType) {
         this.replyType = replyType == null ? null : replyType.trim();
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId == null ? null : commentId.trim();
     }
 
     public Integer getRespondent() {
