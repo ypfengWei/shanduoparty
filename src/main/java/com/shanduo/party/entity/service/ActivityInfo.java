@@ -50,9 +50,18 @@ public class ActivityInfo {
     
     private Integer vipGrade; //会员等级
     
+    private Integer evaluationSign; // 评价标识
     
 	public ActivityInfo(){
 		
+	}
+	
+	public Integer getEvaluationSign() {
+		return evaluationSign;
+	}
+
+	public void setEvaluationSign(Integer evaluationSign) {
+		this.evaluationSign = evaluationSign;
 	}
 
 	public Integer getVipGrade() {

@@ -193,8 +193,12 @@
   </update>
   <update id="updateByUserId">
     update activity_score set others_score = #{2},
-    be_evaluated = #{3},
-    remarks = #{4}
+    be_evaluated = #{3}
+    where user_id = #{0} and activity_id = #{1} and del_flag = '0'
+  </update>
+  <update id="updateByUserIdTwo">
+    update activity_score set score = #{2},
+    evaluation_content = #{3}
     where user_id = #{0} and activity_id = #{1} and del_flag = '0'
   </update>
 </mapper>

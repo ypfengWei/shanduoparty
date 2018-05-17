@@ -53,29 +53,33 @@ public class ScoreController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "saveScore", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "updateScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveScore(HttpServletRequest request, String token, String activityId, String score,
-			String evaluationcontent) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+	public ResultBean updateScore(HttpServletRequest request, String token, String activityId, String score,
+			String evaluationcontent, String evaluationSign) {
+		if(("0").equals(evaluationSign)) {
+			UserToken userToken = baseService.checkUserToken(token);
+			if (userToken == null) {
+				log.error("请重新登录");
+				return new ErrorBean("请重新登录");
+			}
+			if(StringUtils.isNull(activityId)) {
+				log.error("活动ID为空");
+				return new ErrorBean("活动ID为空");
+			}
+			if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
+				log.error("评分为空");
+				return new ErrorBean("评分为空");
+			}
+			try {
+				scoreService.updateActivityScore(userToken.getUserId(), activityId, Integer.parseInt(score), evaluationcontent);
+			} catch (Exception e) {
+				return new ErrorBean("添加失败");
+			}
+			return new SuccessBean("添加成功");
+		} else {
+			return new ErrorBean("已评价");
 		}
-		if(StringUtils.isNull(activityId)) {
-			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
-		}
-		if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
-			log.error("评分为空");
-			return new ErrorBean("评分为空");
-		}
-		try {
-			scoreService.saveActivityScore(userToken.getUserId(), activityId, Integer.parseInt(score), evaluationcontent);
-		} catch (Exception e) {
-			return new ErrorBean("添加失败");
-		}
-		return new SuccessBean("添加成功");
 	}
 	
 	/**
@@ -95,7 +99,7 @@ public class ScoreController {
 	@RequestMapping(value = "updateOthersScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId, String othersScore,
-			String beEvaluated, String remarks) {
+			String beEvaluated) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
@@ -110,7 +114,7 @@ public class ScoreController {
 			return new ErrorBean("评分为空");
 		}
 		try {
-			scoreService.updateByUserId(userToken.getUserId(), activityId, Integer.parseInt(othersScore), beEvaluated, remarks);
+			scoreService.updateByUserId(userToken.getUserId(), activityId, Integer.parseInt(othersScore), beEvaluated);
 		} catch (Exception e) {
 			return new ErrorBean("评价失败");
 		}

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.UserOrderMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserOrder">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="order_type" jdbcType="CHAR" property="orderType" />
+    <result column="money" jdbcType="DECIMAL" property="money" />
+    <result column="month" jdbcType="INTEGER" property="month" />
+    <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="payment_type" jdbcType="CHAR" property="paymentType" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, order_type, money, month, activity_id, status, payment_type, remarks, 
+    create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_order
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user_order
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.UserOrder">
+    insert into user_order (id, user_id, order_type, 
+      money, month, activity_id, 
+      status, payment_type, remarks, 
+      create_date, update_date, del_flag
+      )
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{orderType,jdbcType=CHAR}, 
+      #{money,jdbcType=DECIMAL}, #{month,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
+      #{status,jdbcType=CHAR}, #{paymentType,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserOrder">
+    insert into user_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="orderType != null">
+        order_type,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="month != null">
+        month,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="paymentType != null">
+        payment_type,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orderType != null">
+        #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="month != null">
+        #{month,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="paymentType != null">
+        #{paymentType,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.UserOrder">
+    update user_order
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orderType != null">
+        order_type = #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="month != null">
+        month = #{month,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="paymentType != null">
+        payment_type = #{paymentType,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserOrder">
+    update user_order
+    set user_id = #{userId,jdbcType=INTEGER},
+      order_type = #{orderType,jdbcType=CHAR},
+      money = #{money,jdbcType=DECIMAL},
+      month = #{month,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=CHAR},
+      payment_type = #{paymentType,jdbcType=CHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectById" resultMap="BaseResultMap">
+    select 
+    id, user_id, order_type, money, month, activity_id, status, remarks, create_date, 
+    update_date, del_flag
+    from user_order
+    where del_flag = '0'
+    and status = '1'
+    and id = #{0}
+    and user_id = #{1}
+  </select>
+</mapper>

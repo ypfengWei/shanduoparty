@@ -281,4 +281,15 @@ public interface ShanduoActivityMapper {
      * @throws
      */
     int updateBysetTop(String activityId);
+    
+    /**
+     * 根据活动id查userId
+     * @Title: selectById
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param ativityId
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
+    int selectById(String ativityId);
 }

@@ -140,29 +140,29 @@ public class VipServiceImpl implements VipService {
 			return 0;
 		}
 		if(resultList.size() == 2) {
-			return 10+getvipGrade(userId);
+			return 10+getVipGrade(userId);
 		}
 		if("0".equals(resultList.get(0).getVipType())) {
-			return getvipGrade(userId);
+			return getVipGrade(userId);
 		}
-		return 10+getvipGrade(userId);
+		return 10+getVipGrade(userId);
 	}
 	
-	public int getvipGrade(Integer userId) {
+	public int getVipGrade(Integer userId) {
 		int experience = vipExperienceMapper.selectByUserId(userId);
-		if(experience < 100) {
+		if(experience < 300) {
 			return 1;
-		}else if(experience < 300) {
-			return 2;
-		}else if(experience < 600) {
-			return 3;
 		}else if(experience < 900) {
-			return 4;
-		}else if(experience < 1200) {
-			return 5;
-		}else if(experience < 1500) {
-			return 6;
+			return 2;
 		}else if(experience < 1800) {
+			return 3;
+		}else if(experience < 3600) {
+			return 4;
+		}else if(experience < 7200) {
+			return 5;
+		}else if(experience < 14400) {
+			return 6;
+		}else if(experience < 28800) {
 			return 7;
 		}
 		return 8;

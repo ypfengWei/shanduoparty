@@ -130,7 +130,7 @@
   </delete>
   <select id="selectByCount" resultType="java.lang.Integer">
     select 
-    count(*)
+    count(id)
     from dynamic_praise
     where del_flag = '0'
     and dynamic_id = #{0}

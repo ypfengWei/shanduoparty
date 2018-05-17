@@ -1,5 +1,6 @@
 package com.shanduo.party.service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import com.shanduo.party.entity.UserMoney;
@@ -39,7 +40,7 @@ public interface MoneyService {
 	Map<String, Object> moneyList(Integer userId,Integer pageNum,Integer pageSize);
 	
 	/**
-	 * 充值闪多币
+	 * 充值余额
 	 * @Title: payMoney
 	 * @Description: TODO
 	 * @param @param userId 用户ID
@@ -48,7 +49,7 @@ public interface MoneyService {
 	 * @return int
 	 * @throws
 	 */
-	int payMoney(Integer userId,String amount);
+	int payMoney(Integer userId,BigDecimal amount);
 	
 	/**
 	 * 消费闪多币前检查余额是否做够支付
@@ -60,10 +61,10 @@ public interface MoneyService {
 	 * @return int
 	 * @throws
 	 */
-	int checkMoney(Integer userId,String amount);
+	int checkMoney(Integer userId,BigDecimal amount);
 	
 	/**
-	 * 消费闪多币
+	 * 消费余额
 	 * @Title: consumeMoney
 	 * @Description: TODO
 	 * @param @param userId 用户ID
@@ -73,7 +74,7 @@ public interface MoneyService {
 	 * @return int
 	 * @throws
 	 */
-	int consumeMoney(Integer userId,String amount,String remarks);
+	int consumeMoney(Integer userId,BigDecimal amount,String remarks);
 	
 	/**
 	 * 赠送闪多豆
