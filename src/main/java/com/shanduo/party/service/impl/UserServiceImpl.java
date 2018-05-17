@@ -55,7 +55,8 @@ public class UserServiceImpl implements UserService {
 	public int saveUser(String phone,String password) {
 		password = MD5Utils.getInstance().getMD5(password);
 		ShanduoUser user = new ShanduoUser();
-		user.setUserName(phone);
+		String name = phone.substring(0,3)+"****"+phone.substring(7,11);
+		user.setUserName(name);
 		user.setPhoneNumber(phone);
 		user.setPassWord(password);
 		long time = System.currentTimeMillis();
