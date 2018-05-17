@@ -27,4 +27,6 @@ public interface ShanduoReputationMapper {
      */
     int updateByUserId(Integer userId, Integer reputation);
     
+    int selectByUserId(Integer userId);
+    
 }

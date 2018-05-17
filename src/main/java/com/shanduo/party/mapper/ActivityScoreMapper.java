@@ -77,5 +77,19 @@ public interface ActivityScoreMapper {
      * @return int    返回类型
      * @throws
      */
-    int updateByUserId(Integer userId, String activityId, Integer othersScore, String beEvaluated, String remarks);
+    int updateByUserId(Integer userId, String activityId, Integer othersScore, String beEvaluated);
+    
+    /**
+     * 参与者对活动发起人进行评价
+     * @Title: updateByUserIdTwo
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param userId
+     * @param @param activityId
+     * @param @param score
+     * @param @param evaluated
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
+    int updateByUserIdTwo(Integer userId, String activityId, Integer score, String evaluated);
 }

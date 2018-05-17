@@ -7,6 +7,8 @@ public class ShanduoReputationRecord {
 
     private Integer userId;
 
+    private Integer otheruserId;
+
     private String reputationType;
 
     private Integer deductionCount;
@@ -31,6 +33,14 @@ public class ShanduoReputationRecord {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getOtheruserId() {
+        return otheruserId;
+    }
+
+    public void setOtheruserId(Integer otheruserId) {
+        this.otheruserId = otheruserId;
     }
 
     public String getReputationType() {
