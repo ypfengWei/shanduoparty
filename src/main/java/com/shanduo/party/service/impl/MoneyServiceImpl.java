@@ -131,4 +131,25 @@ public class MoneyServiceImpl implements MoneyService {
 		return 1;
 	}
 
+	@Override
+	public boolean checkPassword(Integer userId, String password) {
+		UserMoney money = moneyMapper.checkPassword(userId, password);
+		if(money != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int updatePassWord(Integer userId, String password) {
+		UserMoney money = new UserMoney();
+		money.setUserId(userId);
+		money.setPassword(password);
+		int i = moneyMapper.updateByPrimaryKeySelective(money);
+		if(i < 1) {
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+
 }

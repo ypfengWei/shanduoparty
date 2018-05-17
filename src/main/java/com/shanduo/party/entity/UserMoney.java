@@ -6,6 +6,8 @@ import java.util.Date;
 public class UserMoney {
     private Integer userId;
 
+    private String password;
+
     private BigDecimal money;
 
     private Integer experience;
@@ -26,6 +28,14 @@ public class UserMoney {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password == null ? null : password.trim();
     }
 
     public BigDecimal getMoney() {

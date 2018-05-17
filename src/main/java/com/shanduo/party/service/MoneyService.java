@@ -88,4 +88,8 @@ public interface MoneyService {
 	 * @throws
 	 */
 	int payBeans(Integer userId,Integer beans,String typeId);
+	
+	boolean checkPassword(Integer userId,String password);
+	
+	int updatePassWord(Integer userId,String password);
 }
