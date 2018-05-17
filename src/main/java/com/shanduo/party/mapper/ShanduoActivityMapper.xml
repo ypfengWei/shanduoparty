@@ -45,6 +45,7 @@
     <result column="mansum" jdbcType="VARCHAR" property="mansum" />
     <result column="womenSum" jdbcType="VARCHAR" property="womenSum" />
     <result column="vipGrade" jdbcType="INTEGER" property="vipGrade"/>
+    <result column="evaluationSign" jdbcType="INTEGER" property="evaluationSign"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
@@ -248,6 +249,7 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
   <update id="deleteByActivity" parameterType="java.lang.String">
     update shanduo_activity
     set del_flag = '1'
@@ -369,7 +371,7 @@
  	select sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address
+    sa.lon,sa.lat,sa.detailed_address,ye.score
     from shanduo_activity sa 
     join activity_score ye on sa.id = ye.activity_id 
  	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
@@ -414,5 +416,8 @@
   <select id="selectByScoreActivityCount" resultType="java.lang.Integer">
 	select count(*)
 	from activity_score where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
+  </select>
+  <select id="selectById" resultType="java.lang.Integer">
+  	select user_id from shanduo_activity where id = #{0}
   </select>
 </mapper>

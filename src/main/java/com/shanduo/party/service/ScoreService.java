@@ -17,7 +17,7 @@ public interface ScoreService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int saveActivityScore(Integer userId, String activityid, Integer score, String evaluationcontent);
+	int updateActivityScore(Integer userId, String activityid, Integer score, String evaluation);
 	
 	/**
 	 * 活动发起人对活动参与人进行评价
@@ -29,7 +29,7 @@ public interface ScoreService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int updateByUserId(Integer userId, String activityId, Integer othersScore, String beEvaluated, String remarks);
+	int updateByUserId(Integer userId, String activityId, Integer othersScore, String beEvaluated);
 	
 	/**
 	 * 根据用户发起的所有活动查询此用户活动下的评论信息
@@ -62,5 +62,14 @@ public interface ScoreService {
 	 */
 	int updateByIdTime(String time);
 	
-	int updateByReputation(Integer userId);
+	/**
+	 * 修改会员成长值
+	 * @Title: updateByReputation
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @return    设定文件
+	 * @return int    返回类型
+	 * @throws
+	 */
+	int updateByReputation();
+	
 }

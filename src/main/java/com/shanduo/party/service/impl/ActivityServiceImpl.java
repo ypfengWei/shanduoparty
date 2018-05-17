@@ -386,6 +386,13 @@ public class ActivityServiceImpl implements ActivityService {
 			log.error("活动为空");
 			return null;
 		}
+		for (ActivityInfo activityInfo : activityInfos) {
+			if(activityInfo.getScore() == null) {
+				activityInfo.setEvaluationSign(0);
+			} else {
+				activityInfo.setEvaluationSign(1);
+			}
+		}
 		activity(activityInfos, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("page", page.getPageNum());

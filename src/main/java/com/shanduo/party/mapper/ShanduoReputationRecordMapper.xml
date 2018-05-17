@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoReputationRecord">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="otheruser_id" jdbcType="INTEGER" property="otheruserId" />
     <result column="reputation_type" jdbcType="CHAR" property="reputationType" />
     <result column="deduction_count" jdbcType="INTEGER" property="deductionCount" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -11,7 +12,8 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, reputation_type, deduction_count, create_date, update_date, del_flag
+    id, user_id, otheruser_id, reputation_type, deduction_count, create_date, update_date, 
+    del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -24,12 +26,12 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
-    insert into shanduo_reputation_record (id, user_id, reputation_type, 
-      deduction_count, create_date, update_date, 
-      del_flag)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{reputationType,jdbcType=CHAR}, 
-      #{deductionCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{delFlag,jdbcType=CHAR})
+    insert into shanduo_reputation_record (id, user_id, otheruser_id, 
+      reputation_type, deduction_count, create_date, 
+      update_date, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{otheruserId,jdbcType=INTEGER}, 
+      #{reputationType,jdbcType=CHAR}, #{deductionCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
     insert into shanduo_reputation_record
@@ -39,6 +41,9 @@
       </if>
       <if test="userId != null">
         user_id,
+      </if>
+      <if test="otheruserId != null">
+        otheruser_id,
       </if>
       <if test="reputationType != null">
         reputation_type,
@@ -63,6 +68,9 @@
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>
+      <if test="otheruserId != null">
+        #{otheruserId,jdbcType=INTEGER},
+      </if>
       <if test="reputationType != null">
         #{reputationType,jdbcType=CHAR},
       </if>
@@ -86,6 +94,9 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
+      <if test="otheruserId != null">
+        otheruser_id = #{otheruserId,jdbcType=INTEGER},
+      </if>
       <if test="reputationType != null">
         reputation_type = #{reputationType,jdbcType=CHAR},
       </if>
@@ -107,6 +118,7 @@
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoReputationRecord">
     update shanduo_reputation_record
     set user_id = #{userId,jdbcType=INTEGER},
+      otheruser_id = #{otheruserId,jdbcType=INTEGER},
       reputation_type = #{reputationType,jdbcType=CHAR},
       deduction_count = #{deductionCount,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -116,8 +128,22 @@
   </update>
   
   <select id="selectByUserId" resultType="java.lang.Integer">
-  	select sum(deduction_count) from shanduo_reputation_record where user_id = #{0}
-	and update_date between #{1} and #{2} 
-	and reputation_type = #{3} and del_flag = '0'
+  	select count(deduction_count) from shanduo_reputation_record where user_id = #{0}
+	and create_date &gt; #{1}
+	and reputation_type = #{2} and del_flag = '0'
+  </select>
+  <select id="selectByTime" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from shanduo_reputation_record 
+  	where create_date &gt; #{0} and del_flag = '0'
+  	GROUP BY user_id
+  </select>
+  <select id="selectByMany" resultType="java.lang.Integer">
+  	select count(*) 
+  	from shanduo_reputation_record 
+  	where user_id = #{0} and otheruser_id = #{1}
+  	and reputation_type = #{2}
+  	and create_date &gt; #{3}
   </select>
 </mapper>

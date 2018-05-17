@@ -101,13 +101,21 @@ public class ActivityController {
 			log.error("人数为空");
 			return new ErrorBean("人数为空");
 		}
-		if(!manNumber.matches("^[1-9]\\d*$") || !womanNumber.matches("^[1-9]\\d*$")) {
+		if(!manNumber.matches("^[0-9]+$") || !womanNumber.matches("^[0-9]+$")) {
 			log.error("人数必须为正整数");
 			return new ErrorBean("人数必须为正整数");
 		}
 		if (StringUtils.isNull(activityCutoffTime)) {
 			log.error("活动截止时间为空");
 			return new ErrorBean("活动截止时间为空");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度格式错误");
+			return new ErrorBean("经度格式错误");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度格式错误");
+			return new ErrorBean("纬度格式错误");
 		}
 		if(System.currentTimeMillis() < convertTimeToLong(activityStartTime)) {
 			log.error("活动开始时间不能小于系统当前时间");
@@ -120,14 +128,6 @@ public class ActivityController {
 		if (System.currentTimeMillis() < convertTimeToLong(activityCutoffTime)) {
 			log.error("活动报名截止时间不能小于系统当前时间");
 			return new ErrorBean("活动报名截止时间不能小于系统当前时间");
-		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-			log.error("经度格式错误");
-			return new ErrorBean("经度格式错误");
-		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度格式错误");
-			return new ErrorBean("纬度格式错误");
 		}
 		if(activityService.selectByTwoAll(userToken.getUserId(), activityStartTime)) {
 			log.error("您在本时间段有其他的活动");
@@ -265,6 +265,15 @@ public class ActivityController {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
+			return new ErrorBean("请重新登录");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度格式错误");
+			return new ErrorBean("经度格式错误");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度格式错误");
+			return new ErrorBean("纬度格式错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -304,6 +313,14 @@ public class ActivityController {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度格式错误");
+			return new ErrorBean("经度格式错误");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度格式错误");
+			return new ErrorBean("纬度格式错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -345,6 +362,14 @@ public class ActivityController {
 		if (userToken == null) {
 			log.error("请重新登录");
 			return new ErrorBean("请重新登录");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度格式错误");
+			return new ErrorBean("经度格式错误");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度格式错误");
+			return new ErrorBean("纬度格式错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
