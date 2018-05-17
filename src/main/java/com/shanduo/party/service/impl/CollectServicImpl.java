@@ -76,15 +76,9 @@ public class CollectServicImpl implements CollectServic {
 	@Override
 	public Map<String, Object> selectByUserList(Integer userId, Integer pageNum, Integer pageSize) {
 		int totalRecord = collectMapper.selectByCount(userId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = collectMapper.selectByUserList(userId, pageNum, page.getPageSize());
-		if(resultList == null) {
-			return null;
-		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());

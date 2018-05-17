@@ -35,7 +35,7 @@ public class CarouselServiceImpl implements CarouselService {
 	@Override
 	public List<Map<String, Object>> carouselList() {
 		List<Map<String, Object>> resultList = carouselMapper.carouselList();
-		if(resultList == null) {
+		if(resultList.isEmpty()) {
 			return null;
 		}
 		for (Map<String, Object> map : resultList) {

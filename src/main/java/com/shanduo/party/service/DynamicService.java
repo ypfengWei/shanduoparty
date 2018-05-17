@@ -57,10 +57,11 @@ public interface DynamicService {
 	Map<String, Object> nearbyList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
-	 * 我的动态
+	 * 个人动态
 	 * @Title: dynamicList
 	 * @Description: TODO
-	 * @param @param userId 用户Id
+	 * @param @param userId 被查看用户Id
+	 * @param @param userIds 查看
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @param pageNum 页数
@@ -71,21 +72,33 @@ public interface DynamicService {
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> dynamicList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
+	Map<String, Object> dynamicList(Integer userId,Integer userIds,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
-	 * 查看单个动态详情
-	 * @Title: selectById
+	 * 查看动态的1级评论
+	 * @Title: commentList
 	 * @Description: TODO
 	 * @param @param dynamicId 动态ID
-	 * @param @param userId 用户ID
-	 * @param @param lat 纬度
-	 * @param @param lon 经度
+	 * @param @param pageNum 页码
+	 * @param @param pageSize 记录数
 	 * @param @return
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon);
+	Map<String, Object> commentList(String dynamicId,Integer pageNum,Integer pageSize);
+	
+	/**
+	 * 查看1级评论的2级回复
+	 * @Title: commentsList
+	 * @Description: TODO
+	 * @param @param commentId
+	 * @param @param pageNum
+	 * @param @param pageSize
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> commentsList(String commentId,Integer pageNum,Integer pageSize);
 
 	/**
 	 * 评论动态和回复评论

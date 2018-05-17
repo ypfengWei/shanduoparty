@@ -17,6 +17,7 @@ import com.shanduo.party.mapper.DynamicCommentMapper;
 import com.shanduo.party.mapper.ShanduoDynamicMapper;
 import com.shanduo.party.service.DynamicService;
 import com.shanduo.party.service.PraiseService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.AgeUtils;
@@ -45,6 +46,8 @@ public class DynamicServiceImpl implements DynamicService {
 	private DynamicCommentMapper commentMapper;
 	@Autowired
 	private PraiseService praiseService;
+	@Autowired
+	private VipService vipService;
 	
 	@Override
 	public int saveDynamic(Integer userId, String content, String picture, String lat, String lon,String location) {
@@ -89,22 +92,20 @@ public class DynamicServiceImpl implements DynamicService {
 			//用户是否点赞
 			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 			//vip等级
-			map.put("vip", 0);
+			if(userId != null) {
+				map.put("vip", vipService.selectVipExperience(userId));
+			}else {
+				map.put("vip", 0);
+			}
 		}
 	}
 	
 	@Override
 	public Map<String, Object> attentionList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize) {
 		int totalRecord = dynamicMapper.attentionCount(userId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.attentionList(userId, pageNum, page.getPageSize());
-		if(resultList == null) {
-			return null;
-		}
 		putMap(resultList, userId);
 		for (Map<String, Object> map : resultList) {
 			double distance = 
@@ -122,15 +123,9 @@ public class DynamicServiceImpl implements DynamicService {
 	public Map<String, Object> nearbyList(Integer userId, String lat, String lon, Integer pageNum, Integer pageSize) {
 		Double[] doubles = LocationUtils.getDoubles(lon, lat);
 		int totalRecord = dynamicMapper.nearbyCount(doubles[0], doubles[1], doubles[2], doubles[3]);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.nearbyList(doubles[0], doubles[1], doubles[2], doubles[3], pageNum, page.getPageSize());
-		if(resultList == null) {
-			return null;
-		}
 		putMap(resultList, userId);
 		for (Map<String, Object> map : resultList) {
 			double distance = 
@@ -145,18 +140,12 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> dynamicList(Integer userId,String lat,String lon, Integer pageNum, Integer pageSize) {
+	public Map<String, Object> dynamicList(Integer userId,Integer userIds,String lat,String lon, Integer pageNum, Integer pageSize) {
 		int totalRecord = dynamicMapper.selectMyCount(userId);
-		if(totalRecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.selectMyList(userId, pageNum, page.getPageSize());
-		if(resultList == null) {
-			return null;
-		}
-		putMap(resultList, userId);
+		putMap(resultList, userIds);
 		for (Map<String, Object> map : resultList) {
 			double distance = 
 					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
@@ -170,98 +159,47 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon) {
-		Map<String, Object> dynamic = dynamicMapper.selectById(dynamicId);
-		if(dynamic == null) {
-			log.error("动态为空");
-			return null;
+	public Map<String, Object> commentList(String dynamicId, Integer pageNum, Integer pageSize) {
+		int totalRecord = commentMapper.commentCount(dynamicId);
+		Page page = new Page(totalRecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> resultList = commentMapper.oneCommentIdList(dynamicId, pageNum, page.getPageSize());
+		for (Map<String, Object> map : resultList) {
+			//保存头像图片URL
+			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			//动态图片
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
+			//回复数量
+			map.put("count", commentMapper.commentsCount(map.get("id").toString()));
+			//保存年龄
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+			//3条2级回复
+			map.put("comments", commentMapper.twoCommentIdList(map.get("id").toString(), 0, 3));
 		}
-		//保存年龄
-		dynamic.put("age", AgeUtils.getAgeFromBirthTime(dynamic.get("age").toString()));
-		//保存头像图片URL
-		dynamic.put("portraitId", PictureUtils.getPictureUrl(dynamic.get("portraitId").toString()));
-		//动态图片
-		dynamic.put("picture", PictureUtils.getPictureUrlList(dynamic.get("picture").toString()));
-		//评论数量
-		dynamic.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
-		//点赞人数
-		dynamic.put("praise", praiseService.selectByCount(dynamicId));
-		//用户是否点赞
-		dynamic.put("isPraise",praiseService.checkPraise(userId, dynamicId));
-		//vip等级
-		dynamic.put("vip", 0);
-		if(lat != null && lon != null && dynamic.get("lon") != null && dynamic.get("lat") != null) {
-			double distance =
-					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat),
-							Double.parseDouble(dynamic.get("lon").toString()),
-							Double.parseDouble(dynamic.get("lat").toString()));
-			dynamic.put("distance", distance);
-		}
-		//得到所有1级评论
-		List<Map<String, Object>> commentList = commentMapper.selectByDynamicId(dynamicId);
-		commentList(commentList);
-		Map<String, Object> resultMap = new HashMap<>(2);
-		resultMap.put("dynamic", dynamic);
-		resultMap.put("comment", commentList);
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalPage", page.getTotalPage());
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
-	
-	/**
-	 * 查询1级评论的图片,2级回复,2级回复图片
-	 * @Title: commentList
-	 * @Description: TODO
-	 * @param @param commentList 1级评论集合
-	 * @return void
-	 * @throws
-	 */
-	public void commentList(List<Map<String, Object>> commentList) {
-		for (int i = commentList.size()-1;i >= 0;i--) {
-			Map<String, Object> oneCommentMap = commentList.get(i);
-			String id = oneCommentMap.get("id").toString();
-			if(oneCommentMap.get("delFlag").toString().equals("0")) {
-				//保存评论人头像图片URL
-				oneCommentMap.put("portraitId", PictureUtils.getPictureUrl(oneCommentMap.get("portraitId").toString()));
-				//1级评论图片
-				oneCommentMap.put("picture",PictureUtils.getPictureUrlList(oneCommentMap.get("picture").toString()));
-				oneCommentMap.put("twoComment", twoCommentList(id));
-			}else {
-				List<Map<String, Object>> twoCommentList = twoCommentList(id);
-				if(twoCommentList.isEmpty()) {
-					commentList.remove(i);
-				}else {
-					oneCommentMap.remove("id");
-					oneCommentMap.remove("dynamicId");
-					oneCommentMap.remove("userId");
-					oneCommentMap.remove("name");
-					oneCommentMap.remove("comment");
-					oneCommentMap.remove("delFlag");
-					oneCommentMap.put("twoComment",twoCommentList);
-				}
-			}
-		}
-	}
 
-	/**
-	 * 查询2级回复,2级回复图片
-	 * @Title: twoCommentList
-	 * @Description: TODO
-	 * @param @param commentId
-	 * @param @return
-	 * @return List<Map<String,Object>>
-	 * @throws
-	 */
-	public List<Map<String, Object>> twoCommentList(String commentId) {
-		List<Map<String, Object>> twoCommentList = commentMapper.selectByCommentId(commentId);
-		if(twoCommentList.isEmpty()) {
-			return twoCommentList;
+	@Override
+	public Map<String, Object> commentsList(String commentId, Integer pageNum, Integer pageSize) {
+		int totalRecord = commentMapper.commentsCount(commentId);
+		Page page = new Page(totalRecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> resultList = commentMapper.twoCommentIdList(commentId, pageNum, page.getPageSize());
+		for (Map<String, Object> map : resultList) {
+			//保存头像图片URL
+			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			//动态图片
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
 		}
-		for (Map<String, Object> twoCommentMap : twoCommentList) {
-			//保存评论人头像图片URL
-			twoCommentMap.put("portraitId", PictureUtils.getPictureUrl(twoCommentMap.get("portraitId").toString()));
-			//所有2级回复加入回复图片
-			twoCommentMap.put("picture",PictureUtils.getPictureUrlList(twoCommentMap.get("picture").toString()));
-		}
-		return twoCommentList;
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalPage", page.getTotalPage());
+		resultMap.put("list", resultList);
+		return resultMap;
 	}
 	
 	@Override

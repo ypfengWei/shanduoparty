@@ -286,10 +286,6 @@ public class ActivityController {
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> activities = activityService.selectByUserId(userToken.getUserId(),pages,pageSizes,lon,lat);
-		if(activities == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
-		}
 		return new SuccessBean(activities);
 	}
 	

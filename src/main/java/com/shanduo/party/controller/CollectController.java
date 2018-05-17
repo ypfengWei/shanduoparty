@@ -142,10 +142,6 @@ public class CollectController {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = 
 				collectServic.selectByUserList(userId, pages, pageSizes);
-		if(resultMap == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
-		}
 		return new SuccessBean(resultMap);
 	}
 }

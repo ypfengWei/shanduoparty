@@ -99,10 +99,6 @@ public class MoneyControllrt {
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = moneyService.moneyList(userId, pages, pageSizes);
-		if(resultMap == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
-		}
 		return new SuccessBean(resultMap);
 	}
 
