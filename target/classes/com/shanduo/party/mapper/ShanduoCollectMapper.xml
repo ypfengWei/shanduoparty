@@ -129,7 +129,7 @@
   </delete>
   <select id="selectByCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select 
-    count(*)
+    count(id)
     from shanduo_collect
     where user_id = #{userId,jdbcType=INTEGER}
   </select>

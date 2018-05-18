@@ -62,9 +62,9 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 	
 	@Override
-	public int payMoney(Integer userId, String amount) {
+	public int payMoney(Integer userId, BigDecimal amount) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		BigDecimal money = userMoney.getMoney().add(new BigDecimal(amount));
+		BigDecimal money = userMoney.getMoney().add(amount);
 		userMoney.setMoney(money);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -80,9 +80,9 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 	
 	@Override
-	public int checkMoney(Integer userId, String amount) {
+	public int checkMoney(Integer userId, BigDecimal amount) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		if(userMoney.getMoney().compareTo(new BigDecimal(amount)) < 0) {
+		if(userMoney.getMoney().compareTo(amount) < 0) {
 			log.error("余额不足");
 			throw new RuntimeException();
 		}
@@ -90,9 +90,9 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 	
 	@Override
-	public int consumeMoney(Integer userId, String amount, String remarks) {
+	public int consumeMoney(Integer userId, BigDecimal amount, String remarks) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		BigDecimal money = userMoney.getMoney().subtract(new BigDecimal(amount));
+		BigDecimal money = userMoney.getMoney().subtract(amount);
 		userMoney.setMoney(money);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -126,6 +126,27 @@ public class MoneyServiceImpl implements MoneyService {
 		try {
 			experienceService.saveMoneyRecord(userId, "9", remarks);
 		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+
+	@Override
+	public boolean checkPassword(Integer userId, String password) {
+		UserMoney money = moneyMapper.checkPassword(userId, password);
+		if(money != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int updatePassWord(Integer userId, String password) {
+		UserMoney money = new UserMoney();
+		money.setUserId(userId);
+		money.setPassword(password);
+		int i = moneyMapper.updateByPrimaryKeySelective(money);
+		if(i < 1) {
 			throw new RuntimeException();
 		}
 		return 1;

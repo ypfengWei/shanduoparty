@@ -141,7 +141,11 @@
   	GROUP BY user_id
   </select>
   <select id="selectByMany" resultType="java.lang.Integer">
+<<<<<<< HEAD
   	select sum(deduction_count) 
+=======
+  	select count(id) 
+>>>>>>> bdbceeb1937a5b7051751ef8440611adf6ab6fe0
   	from shanduo_reputation_record 
   	where user_id = #{0} and otheruser_id = #{1}
   	and reputation_type = #{2}

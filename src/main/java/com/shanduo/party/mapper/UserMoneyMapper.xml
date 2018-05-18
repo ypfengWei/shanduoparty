@@ -3,6 +3,7 @@
 <mapper namespace="com.shanduo.party.mapper.UserMoneyMapper">
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserMoney">
     <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="money" jdbcType="DECIMAL" property="money" />
     <result column="experience" jdbcType="INTEGER" property="experience" />
     <result column="beans" jdbcType="INTEGER" property="beans" />
@@ -12,7 +13,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    user_id, money, experience, beans, remarks, create_date, update_date, del_flag
+    user_id, password, money, experience, beans, remarks, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -25,18 +26,23 @@
     where user_id = #{userId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.UserMoney">
-    insert into user_money (user_id, money, experience, 
-      beans, remarks, create_date, 
-      update_date, del_flag)
-    values (#{userId,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL}, #{experience,jdbcType=INTEGER}, 
-      #{beans,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+    insert into user_money (user_id, password, money, 
+      experience, beans, remarks, 
+      create_date, update_date, del_flag
+      )
+    values (#{userId,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, 
+      #{experience,jdbcType=INTEGER}, #{beans,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserMoney">
     insert into user_money
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="userId != null">
         user_id,
+      </if>
+      <if test="password != null">
+        password,
       </if>
       <if test="money != null">
         money,
@@ -64,6 +70,9 @@
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
       <if test="money != null">
         #{money,jdbcType=DECIMAL},
       </if>
@@ -90,6 +99,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.UserMoney">
     update user_money
     <set>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
       <if test="money != null">
         money = #{money,jdbcType=DECIMAL},
       </if>
@@ -116,7 +128,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserMoney">
     update user_money
-    set money = #{money,jdbcType=DECIMAL},
+    set password = #{password,jdbcType=VARCHAR},
+      money = #{money,jdbcType=DECIMAL},
       experience = #{experience,jdbcType=INTEGER},
       beans = #{beans,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
@@ -131,5 +144,12 @@
     user_id, money, experience, beans, remarks
     from user_money
     where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="checkPassword" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_money
+    where user_id = #{0}
+    and password = #{1}
   </select>
 </mapper>
