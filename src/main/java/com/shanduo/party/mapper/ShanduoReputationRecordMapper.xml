@@ -128,19 +128,20 @@
   </update>
   
   <select id="selectByUserId" resultType="java.lang.Integer">
-  	select count(deduction_count) from shanduo_reputation_record where user_id = #{0}
+  	select coalesce(sum(deduction_count),0)
+  	 from shanduo_reputation_record where user_id = #{0}
 	and create_date &gt; #{1}
 	and reputation_type = #{2} and del_flag = '0'
   </select>
-  <select id="selectByTime" resultMap="BaseResultMap">
+  <select id="selectByTime" resultType="map">
   	select 
-  	<include refid="Base_Column_List" />
+  	user_id,SUM(deduction_count) as deductionCount
   	from shanduo_reputation_record 
-  	where create_date &gt; #{0} and del_flag = '0'
+  	where create_date &gt; #{0} and del_flag = '0' and reputation_type='1' 
   	GROUP BY user_id
   </select>
   <select id="selectByMany" resultType="java.lang.Integer">
-  	select count(id) 
+	select sum(deduction_count) 
   	from shanduo_reputation_record 
   	where user_id = #{0} and otheruser_id = #{1}
   	and reputation_type = #{2}
