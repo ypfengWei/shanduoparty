@@ -18,17 +18,6 @@ import com.shanduo.party.entity.ShanduoUser;
 public interface ActivityService {
 	
 	/**
-	 * 查询活动开始时间大于新创建活动时间的活动信息
-	 * @Title: selectByActivityUserId
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param userId
-	 * @param @return    设定文件
-	 * @return List<ShanduoActivity>    返回类型
-	 * @throws
-	 */
-	List<ShanduoActivity> selectByActivityUserId(Integer userId, String time);
-	
-	/**
 	 * 参加活动时查询活动有无冲突信息
 	 * @Title: selectByAll
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
@@ -258,4 +247,5 @@ public interface ActivityService {
      * @throws
      */
     int updateBysetTop(String activityId);
+    
 }

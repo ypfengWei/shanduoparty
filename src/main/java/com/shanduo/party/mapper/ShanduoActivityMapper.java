@@ -1,5 +1,6 @@
  package com.shanduo.party.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import com.shanduo.party.entity.ShanduoActivity;
@@ -88,7 +89,7 @@ public interface ShanduoActivityMapper {
      * @return int    返回类型
      * @throws
      */
-    int selectByNearbyUserIdCount(double minlon, double maxlon, double minlat, double maxlat, String time);
+    int selectByNearbyUserIdCount(double minlon, double maxlon, double minlat, double maxlat);
     
     /**
      * 附近活动
@@ -105,7 +106,7 @@ public interface ShanduoActivityMapper {
      * @return List<ActivityInfo>    返回类型
      * @throws
      */
-    List<ActivityInfo> selectByNearbyUserId(double minlon, double maxlon, double minlat, double maxlat, String time, Integer page, Integer pageSize);
+    List<ActivityInfo> selectByNearbyUserId(double minlon, double maxlon, double minlat, double maxlat, Integer page, Integer pageSize);
     
     /**
      * 用户举办活动记录数
@@ -166,7 +167,7 @@ public interface ShanduoActivityMapper {
      * @return int    返回类型
      * @throws
      */
-    int selectByUserIdTimeCount(Integer userId, String time);
+    int selectByUserIdTimeCount(Integer userId);
     
     /**
      * 报名活动
@@ -180,7 +181,7 @@ public interface ShanduoActivityMapper {
      * @return List<ActivityInfo>    返回类型
      * @throws
      */
-    List<ActivityInfo> selectByUserIdTime(Integer userId, String time, Integer page, Integer pageSize);
+    List<ActivityInfo> selectByUserIdTime(Integer userId, Integer page, Integer pageSize);
     
     /**
      * 参加活动记录数
@@ -192,7 +193,7 @@ public interface ShanduoActivityMapper {
      * @return int    返回类型
      * @throws
      */
-    int selectByUserIdInTimeCount(Integer userId, String time);
+    int selectByUserIdInTimeCount(Integer userId);
     
     /**
      * 参加活动
@@ -206,7 +207,7 @@ public interface ShanduoActivityMapper {
      * @return List<ActivityInfo>    返回类型
      * @throws
      */
-    List<ActivityInfo> selectByUserIdInTime(Integer userId, String time, Integer page, Integer pageSize);
+    List<ActivityInfo> selectByUserIdInTime(Integer userId, Integer page, Integer pageSize);
     
     /**
      * 发起者评价以及用户者评价记录数
@@ -218,7 +219,7 @@ public interface ShanduoActivityMapper {
      * @return int    返回类型
      * @throws
      */
-    int selectByHistoricalCount(Integer userId, String time);
+    int selectByHistoricalCount(Integer userId);
     
     /**
      * 发起者评价以及用户者评价
@@ -232,10 +233,10 @@ public interface ShanduoActivityMapper {
      * @return List<ActivityInfo>    返回类型
      * @throws
      */
-    List<ActivityInfo> selectByHistorical(Integer userId, String time, Integer page, Integer pageSize);
+    List<ActivityInfo> selectByHistorical(Integer userId, Integer page, Integer pageSize);
     
     /**
-     * 根据活动Id查询记录数
+     * 根据活动Id查询参加活动的用户记录数
      * @Title: selectByUserIdCount
      * @Description: TODO(这里用一句话描述这个方法的作用)
      * @param @param activityId
@@ -281,6 +282,17 @@ public interface ShanduoActivityMapper {
      * @throws
      */
     int updateBysetTop(String activityId);
+    
+    /**
+     * 将置顶时间超过12小时的活动取消置顶
+     * @Title: updateById
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param time
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
+    int updateById(Date time);
     
     /**
      * 根据活动id查userId

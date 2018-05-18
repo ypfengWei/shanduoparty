@@ -161,12 +161,18 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
   <select id="selectByIdScoreCount" resultType="java.lang.Integer">
-	select * from activity_score where activity_id in 
+	select 
+	count(id) 
+	from activity_score 
+	where activity_id in 
 	(select sa.id from shanduo_activity sa where sa.user_id = #{0} and sa.del_flag = '0') and del_flag = '0'
   </select>
   <select id="selectByIdScore" parameterType="java.lang.String" resultMap="BaseResultMap">
-	select sa.activity_type,ae.score,ae.evaluation_content from activity_score ae 
+	select 
+	sa.activity_type,ae.score,ae.evaluation_content 
+	from activity_score ae 
 	join shanduo_activity sa on sa.id = ae.activity_id 
 	where ae.activity_id in (select id from shanduo_activity where user_id = #{0})
 	and ae.score is not null and sa.del_flag = '0' and ae.del_flag = '0'
@@ -174,7 +180,10 @@
 	limit #{1},#{2}
   </select>
   <update id="updateById" parameterType="java.lang.String">
-    update activity_score set score = '5' where id in ( select id  from 
+    update 
+    activity_score 
+    set score = '5' 
+    where id in ( select id  from 
 	(select ae.id from activity_score ae
 	join shanduo_activity sa on sa.id = ae.activity_id and ae.user_id in
 	(select user_id from activity_score where score is null and del_flag = '0') 
@@ -183,7 +192,10 @@
 	and del_flag = '0'
   </update>
   <update id="updateByIdTime" parameterType="java.lang.String">
-	update activity_score set others_score = '5' where id in ( select id  from 
+	update 
+	activity_score 
+	set others_score = '5' 
+	where id in ( select id  from 
 	(select ae.id from activity_score ae
 	join shanduo_activity sa on sa.id = ae.activity_id and ae.user_id in
 	(select user_id from activity_score where others_score is null and del_flag = '0') 
@@ -192,12 +204,16 @@
 	and del_flag = '0'
   </update>
   <update id="updateByUserId">
-    update activity_score set others_score = #{2},
+    update 
+    activity_score 
+    set others_score = #{2},
     be_evaluated = #{3}
     where user_id = #{0} and activity_id = #{1} and del_flag = '0'
   </update>
   <update id="updateByUserIdTwo">
-    update activity_score set score = #{2},
+    update 
+    activity_score 
+    set score = #{2},
     evaluation_content = #{3}
     where user_id = #{0} and activity_id = #{1} and del_flag = '0'
   </update>

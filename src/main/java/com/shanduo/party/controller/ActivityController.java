@@ -70,7 +70,6 @@ public class ActivityController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-//	http://localhost:8080/shanduoparty/activity/saveactivity?token=2&activityName=%E5%93%88%E5%93%88%E5%93%88&activityType=Ktv&activityStartTime=2018-4-25%2010:40:36&activityAddress=%E4%B8%8A%E6%B5%B7&mode=AA&manNumber=1&womanNumber=5&remarks=%E6%96%B9%E5%A8%81%E5%A4%A7%E5%82%BB%E9%80%BC&activityCutoffTime=2018-4-25%2010:00:00&activityEndTime=2018-4-25%2015:00:00
 	@RequestMapping(value = "saveactivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean saveActivity(HttpServletRequest request, String token, String activityName,
@@ -242,15 +241,13 @@ public class ActivityController {
 			}
 			resultMap = activityService.selectByFriendsUserId(userToken.getUserId(), pages, pageSizes, lon, lat);
 		}
-		if(resultMap == null) {
-			log.error("没有查到记录");
-			return new ErrorBean("没有查到记录");
-		}
 		return new SuccessBean(resultMap);
 	}
 
 	/**
-	 * 查看单个用户举办的活动
+	 * type = 1 查看单个用户举办的活动
+	 * type = 2 查看用户报名的活动
+	 * type = 3 查看用户参加的已经结束的活动
 	 * @Title: showOneActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
@@ -265,7 +262,7 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "showOneActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean showOneActivity(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat) {
+	public ResultBean showOneActivity(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat, String type) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
@@ -287,107 +284,21 @@ public class ActivityController {
 			log.error("记录错误");
 			return new ErrorBean("记录错误");
 		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> activities = activityService.selectByUserId(userToken.getUserId(),pages,pageSizes,lon,lat);
-		return new SuccessBean(activities);
-	}
-	
-	/**
-	 * 已报名活动
-	 * @Title: registrationActivities
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param token
-	 * @param @param page
-	 * @param @param pageSize
-	 * @param @param lon
-	 * @param @param lat
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "registrationActivities", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean registrationActivities(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error("请重新登录");
-		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-			log.error("经度格式错误");
-			return new ErrorBean("经度格式错误");
-		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度格式错误");
-			return new ErrorBean("纬度格式错误");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean("页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean("记录错误");
+		if(StringUtils.isNull(type) || !type.matches("^[123]$")) {
+			log.error("类型错误");
+			return new ErrorBean("类型错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> shanduoActivities = activityService.selectByUserIdTime(userToken.getUserId(),pages,pageSizes,lon,lat);
-//		Map<String, Object> shanduoActivities = activityService.selectByUserIdTime(Integer.parseInt(token),pages,pageSizes);
-		if(shanduoActivities == null) {
-			log.error("暂无记录");
-			return new ErrorBean("暂无记录");
+		Map<String, Object> resultMap = new HashMap<>();
+		if("1".equals(type)) {
+			resultMap = activityService.selectByUserId(userToken.getUserId(),pages,pageSizes,lon,lat);
+		} else if("2".equals(type)){
+			resultMap = activityService.selectByUserIdTime(userToken.getUserId(),pages,pageSizes,lon,lat);
+		} else{
+			resultMap = activityService.selectByUserIdInTime(userToken.getUserId(),pages,pageSizes,lon,lat);
 		}
-		return new SuccessBean(shanduoActivities);
-	}
-	
-	/**
-	 * 我参加的已经下架的活动
-	 * @Title: participatedActivities
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param token
-	 * @param @param page
-	 * @param @param pageSize
-	 * @param @param lon
-	 * @param @param lat
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "participatedActivities", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean participatedActivities(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
-		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-			log.error("经度格式错误");
-			return new ErrorBean("经度格式错误");
-		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度格式错误");
-			return new ErrorBean("纬度格式错误");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean("页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean("记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> shanduoActivities = activityService.selectByUserIdInTime(userToken.getUserId(),pages,pageSizes,lon,lat);
-//		Map<String, Object> shanduoActivities = activityService.selectByUserIdInTime(Integer.parseInt(token),pages,pageSizes);
-		if(shanduoActivities == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
-		}
-		return new SuccessBean(shanduoActivities);
+		return new SuccessBean(resultMap);
 	}
 	
 	/**
@@ -425,12 +336,8 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> list = activityService.selectByScoreActivity(activityId, pages, pageSizes);
-		if(list == null) {
-			log.error("没有更多了");
-			return new ErrorBean("没有更多了");
-		}
-		return new SuccessBean(list);
+		Map<String, Object> resultMap = activityService.selectByScoreActivity(activityId, pages, pageSizes);
+		return new SuccessBean(resultMap);
 	}
 	
 	/**
@@ -462,10 +369,10 @@ public class ActivityController {
 		}
 		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
 		ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
-		List<Map<String, Object>> shanduoUsers = activityService.selectByGender(activityId);
-		if(shanduoUsers != null) {
+		List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
+		if(resultMap != null) {
 			ShanduoUser shanduoUser = activityService.selectById(userToken.getUserId());
-			for (Map<String, Object> map : shanduoUsers) {
+			for (Map<String, Object> map : resultMap) {
 				if (shanduoUser.getGender().equals(map.get("gender").toString())) {
 					int count = Integer.parseInt(map.get("count").toString());
 					if (shanduoUser.getGender().equals("0") && activityRequirement.getWomanNumber() <= count) {
@@ -528,12 +435,8 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> activityInfos = activityService.selectByHistorical(userToken.getUserId(), pages, pageSizes);
-		if(activityInfos == null) {
-			log.error("暂无记录");
-			return new ErrorBean("暂无记录");
-		}
-		return new SuccessBean(activityInfos);
+		Map<String, Object> resultMap = activityService.selectByHistorical(userToken.getUserId(), pages, pageSizes);
+		return new SuccessBean(resultMap);
 	}
 	
 	/**

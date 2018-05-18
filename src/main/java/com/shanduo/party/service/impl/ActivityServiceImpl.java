@@ -65,15 +65,6 @@ public class ActivityServiceImpl implements ActivityService {
 	private VipService vipService;
 	
 	@Override
-	public List<ShanduoActivity> selectByActivityUserId(Integer userId, String time) {
-		List<ShanduoActivity> shanduoActivities = shanduoActivityMapper.selectByActivityUserId(userId,time);
-		if(shanduoActivities == null || shanduoActivities.isEmpty()) {
-			return null;
-		}
-		return shanduoActivities;
-	}
-
-	@Override
 	public boolean selectByAll(Integer userId, String activityId){
 		ShanduoActivity shanduoActivity = shanduoActivityMapper.selectByPrimaryKey(activityId);
 		long starttime = shanduoActivity.getActivityStartTime().getTime()-1*60*60*1000;
@@ -81,8 +72,8 @@ public class ActivityServiceImpl implements ActivityService {
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String mintime = format.format(starttime);
 		String maxtime = format.format(endtime);
-		List<ShanduoActivity> shanduoActivities = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
-		if(shanduoActivities.isEmpty() || shanduoActivities == null) {
+		List<ShanduoActivity> resultList = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
+		if(resultList.isEmpty() || resultList == null) {
 			return false;
 		}
 		return true;
@@ -91,25 +82,18 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public Map<String, Object> selectByScoreActivity(String activityId, Integer pageNum, Integer pageSize) {
 		int totalrecord = shanduoActivityMapper.selectByScoreActivityCount(activityId);
-		if (totalrecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByScoreActivity(activityId, pageNum,page.getTotalPage());
-		if (activityInfos == null || activityInfos.isEmpty()) {
-			log.error("参与人为空");
-			return null;
-		}
-		for (ActivityInfo activityInfo : activityInfos) {
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByScoreActivity(activityId, pageNum,page.getTotalPage());
+		for (ActivityInfo activityInfo : resultList) {
 			if(!activityInfo.getBirthday().isEmpty()) {
 				activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			}
 		}
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 	
@@ -126,9 +110,9 @@ public class ActivityServiceImpl implements ActivityService {
 		long endtime = date.getTime()+1*60*60*1000;
 		String mintime = format.format(starttime);
 		String maxtime = format.format(endtime);
-		List<ShanduoActivity> shanduoActivities = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
+		List<ShanduoActivity> resultList = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
 		List<ShanduoActivity> list = shanduoActivityMapper.selectByActivityUserId(userId,time);
-		if(shanduoActivities.isEmpty() || list.isEmpty() || shanduoActivities == null || list == null) {
+		if(resultList.isEmpty() || list.isEmpty() || resultList == null || list == null) {
 			return false;
 		}
 		return true;
@@ -188,11 +172,6 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public int deleteActivity(String activityId) {
 		int i = shanduoActivityMapper.deleteByActivity(activityId);
-//		long longtime = System.currentTimeMillis();
-//		if(shanduoActivityMapper.selectByPrimaryKey(activityId).getActivityStartTime().getTime() < longtime) {
-//			log.error("此活动不允许删除");
-//			throw new RuntimeException();
-//		}
 		if(i < 1) {
 			log.error("删除活动失败");
 			throw new RuntimeException();
@@ -208,88 +187,65 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public Map<String, Object> selectByScore(Integer pageNum, Integer pageSize, String lon,String lat) {
 		int totalrecord = shanduoActivityMapper.selectByScoreCount();
-		if(totalrecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByScore(pageNum,page.getPageSize());
-		if(activityInfos == null || activityInfos.isEmpty()) {
-			return null;
-		}
-		activity(activityInfos, lon, lat);
-		Map<String, Object> resultMap = new HashMap<>();
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByScore(pageNum,page.getPageSize());
+		activity(resultList, lon, lat);
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 	
 	@Override
 	public Map<String, Object> selectByFriendsUserId(Integer userId, Integer pageNum, Integer pageSize, String lon,String lat) {
 		int totalrecord = shanduoActivityMapper.selectByFriendsUserIdCount(userId);
-		if(totalrecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByFriendsUserId(userId, pageNum, page.getPageSize());
-		if(activityInfos == null || activityInfos.isEmpty()) {
-			log.error("活动为空");
-			return null;
-		}
-		activity(activityInfos, lon, lat);
-		Map<String, Object> resultMap = new HashMap<>();
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByFriendsUserId(userId, pageNum, page.getPageSize());
+		activity(resultList, lon, lat);
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 	
 	@Override
 	public Map<String, Object> selectByNearbyUserId(String lon,String lat, Integer pageNum, Integer pageSize) {
 		long longtime = System.currentTimeMillis();
-		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String createDate = format.format(longtime);
-		Double[] doubles = LocationUtils.getDoubles(lon, lat);
-		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(doubles[0], doubles[1], doubles[2], doubles[3], createDate);
-		if(totalrecord == 0) {
-			return null;
+		Date time = new Date(longtime - 1000*60*60*12);
+		int i = 0;
+		i = shanduoActivityMapper.updateById(time);
+		if(i < 1) {
+			log.error("暂无活动取消置顶");
 		}
+		Double[] doubles = LocationUtils.getDoubles(lon, lat);
+		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(doubles[0], doubles[1], doubles[2], doubles[3]);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByNearbyUserId(doubles[0], doubles[1], 
-				doubles[2], doubles[3], createDate, pageNum, page.getPageSize());
-		if(activityInfos == null || activityInfos.isEmpty()) {
-			log.error("活动为空");
-			return null;
-		}
-		activity(activityInfos, lon, lat);
-		Map<String, Object> resultMap = new HashMap<>();
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByNearbyUserId(doubles[0], doubles[1], 
+				doubles[2], doubles[3], pageNum, page.getPageSize());
+		activity(resultList, lon, lat);
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 	
 	@Override
 	public Map<String, Object> selectByUserId(Integer userId, Integer pageNum, Integer pageSize, String lon, String lat) {
 		int totalrecord = shanduoActivityMapper.selectByUserIdCount(userId);
-		if(totalrecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByUserId(userId, pageNum, page.getPageSize());
-		if(activityInfos == null || activityInfos.isEmpty()) {
-			log.error("活动为空");
-			return null;
-		}
-		activity(activityInfos, lon, lat);
-		Map<String, Object> resultMap = new HashMap<>();
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserId(userId, pageNum, page.getPageSize());
+		activity(resultList, lon, lat);
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 
@@ -348,78 +304,49 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Map<String, Object> selectByUserIdTime(Integer userId, Integer pageNum, Integer pageSize, String lon, String lat) {
-		long longtime = System.currentTimeMillis();
-		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String createDate = format.format(longtime);
-		int totalrecord = shanduoActivityMapper.selectByUserIdTimeCount(userId, createDate);
-		if(totalrecord == 0) {
-			return null;
-		}
+		int totalrecord = shanduoActivityMapper.selectByUserIdTimeCount(userId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByUserIdTime(userId, createDate, pageNum, page.getPageSize());
-		if(activityInfos == null || activityInfos.isEmpty()) {
-			log.error("活动为空");
-			return null;
-		}
-		activity(activityInfos, lon, lat);
-		Map<String, Object> resultMap = new HashMap<>();
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserIdTime(userId, pageNum, page.getPageSize());
+		activity(resultList, lon, lat);
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 
 	@Override
 	public Map<String, Object> selectByUserIdInTime(Integer userId, Integer pageNum, Integer pageSize, String lon, String lat) {
-		long longtime = System.currentTimeMillis();
-		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String createDate = format.format(longtime);
-		int totalrecord = shanduoActivityMapper.selectByUserIdInTimeCount(userId, createDate);
-		if(totalrecord == 0) {
-			return null;
-		}
+		int totalrecord = shanduoActivityMapper.selectByUserIdInTimeCount(userId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> activityInfos = shanduoActivityMapper.selectByUserIdInTime(userId, createDate, pageNum, page.getPageSize());
-		if(activityInfos == null || activityInfos.isEmpty()) {
-			log.error("活动为空");
-			return null;
-		}
-		for (ActivityInfo activityInfo : activityInfos) {
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserIdInTime(userId, pageNum, page.getPageSize());
+		for (ActivityInfo activityInfo : resultList) {
 			if(activityInfo.getScore() == null) {
 				activityInfo.setEvaluationSign(0);
 			} else {
 				activityInfo.setEvaluationSign(1);
 			}
 		}
-		activity(activityInfos, lon, lat);
-		Map<String, Object> resultMap = new HashMap<>();
+		activity(resultList, lon, lat);
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", activityInfos);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 
 	@Override
 	public Map<String, Object> selectByHistorical(Integer userId, Integer pageNum, Integer pageSize) {
-		long longtime = System.currentTimeMillis();
-		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		String createDate = format.format(longtime);
-		int totalrecord =  shanduoActivityMapper.selectByHistoricalCount(userId, createDate);
-		if(totalrecord == 0) {
-			return null;
-		}
+		int totalrecord =  shanduoActivityMapper.selectByHistoricalCount(userId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> list = shanduoActivityMapper.selectByHistorical(userId, createDate, pageNum, page.getPageSize());
-		if(list == null || list.isEmpty()) {
-			return null;
-		}
-		Map<String, Object> resultMap = new HashMap<>();
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByHistorical(userId, pageNum, page.getPageSize());
+		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", list);
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 	
@@ -443,17 +370,17 @@ public class ActivityServiceImpl implements ActivityService {
 		return 1;
 	}
 	
-	public List<ActivityInfo> activity(List<ActivityInfo> activityInfos, String lon, String lat){
-		for (ActivityInfo activityInfo : activityInfos) {
-			if(!activityInfo.getBirthday().isEmpty()) {
+	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat){
+		for (ActivityInfo activityInfo : resultList) {
+			if(activityInfo.getBirthday() != null) {
 				activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			}
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
         	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
-        	List<Map<String, Object>> shanduoUsers = shanduoUserMapper.selectByGender(activityInfo.getId());
-    		if(shanduoUsers != null) {
-    			for (Map<String, Object> map : shanduoUsers) {
+        	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());
+    		if(resultMap != null) {
+    			for (Map<String, Object> map : resultMap) {
     				int count = Integer.parseInt(map.get("count").toString());
 	    			if(count < 10) {
 	    			    if(map.get("gender").toString().equals("0")) {
@@ -496,6 +423,6 @@ public class ActivityServiceImpl implements ActivityService {
                 e.printStackTrace();  
             }  
 		}
-		return activityInfos;
+		return resultList;
 	}
 }
