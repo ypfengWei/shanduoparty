@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
@@ -19,6 +20,7 @@ import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.MoneyService;
+import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -50,7 +52,7 @@ public class MoneyControllrt {
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "getmoney")
+	@RequestMapping(value = "getmoney",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean getMoney(HttpServletRequest request,String token) {
 		UserToken userToken = baseService.checkUserToken(token);
@@ -79,7 +81,7 @@ public class MoneyControllrt {
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "moneyList")
+	@RequestMapping(value = "moneyList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean moneyList(HttpServletRequest request,String token,String page,String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
@@ -100,6 +102,39 @@ public class MoneyControllrt {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = moneyService.moneyList(userId, pages, pageSizes);
 		return new SuccessBean(resultMap);
+	}
+	
+	/**
+	 * 修改支付密码
+	 * @Title: updatepassword
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param password
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "updatepassword",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean updatepassword(HttpServletRequest request,String token,String password) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if(userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		Integer userId = userToken.getUserId();
+		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
+			log.error("密码格式错误");
+			return new ErrorBean("密码格式错误");
+		}
+		try {
+			moneyService.updatePassWord(userId, password);
+		} catch (Exception e) {
+			log.error("支付密码修改失败");
+			return new ErrorBean("修改失败");
+		}
+		return new SuccessBean("修改成功");
 	}
 
 }

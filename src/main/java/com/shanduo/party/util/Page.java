@@ -25,7 +25,7 @@ public class Page {
 	    this.totalRecord = totalRecord;
 	    this.totalPage = this.totalRecord % this.pageSize==0?this.totalRecord/this.pageSize:this.totalRecord/this.pageSize+1;
 	    this.pageNum = pageNum > this.totalPage?totalPage:pageNum;
-	    this.pageNum = pageNum < 1?1:this.pageNum;
+	    this.pageNum = this.pageNum < 1?1:this.pageNum;
 	}
 
 	public int getTotalPage() {
@@ -58,6 +58,12 @@ public class Page {
 
 	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
+	}
+
+	@Override
+	public String toString() {
+		return "Page [totalPage=" + totalPage + ", totalRecord=" + totalRecord + ", pageSize=" + pageSize + ", pageNum="
+				+ pageNum + "]";
 	}
 
 }

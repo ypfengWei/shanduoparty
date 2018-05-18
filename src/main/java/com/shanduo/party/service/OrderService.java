@@ -23,7 +23,7 @@ public interface OrderService {
 	 * @return String
 	 * @throws
 	 */
-	String saveOrder(Integer userId,String orderType,String money,Integer month,String activityId);
+	String saveOrder(Integer userId,String orderType,String money,String month,String activityId);
 	
 	/**
 	 * 余额支付订单

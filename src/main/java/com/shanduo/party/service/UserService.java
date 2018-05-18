@@ -131,4 +131,15 @@ public interface UserService {
 	 * @throws
 	 */
 	List<Map<String, Object>> labelList();
+	
+	/**
+	 * 查出手机号
+	 * @Title: selectByPhone
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return String
+	 * @throws
+	 */
+	String selectByPhone(Integer userId);
 }

@@ -89,7 +89,27 @@ public interface MoneyService {
 	 */
 	int payBeans(Integer userId,Integer beans,String typeId);
 	
+	/**
+	 * 检查支付密码是否正确
+	 * @Title: checkPassword
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param password
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
 	boolean checkPassword(Integer userId,String password);
 	
+	/**
+	 * 修改支付密码
+	 * @Title: updatePassWord
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param password
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
 	int updatePassWord(Integer userId,String password);
 }

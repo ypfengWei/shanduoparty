@@ -41,15 +41,44 @@ public class OrderServiceImpl implements OrderService {
 	private ActivityService activityService;
 	
 	@Override
-	public String saveOrder(Integer userId, String orderType, String money, Integer month, String activityId) {
+	public String saveOrder(Integer userId, String orderType, String money, String month, String activityId) {
 		String id = UUIDGenerator.getUUID();
 		UserOrder order = new UserOrder();
 		order.setId(id);
 		order.setUserId(userId);
 		order.setOrderType(orderType);
-		order.setMoney(new BigDecimal(money));
-		order.setMonth(month);
-		order.setActivityId(activityId);
+		BigDecimal moneys = new BigDecimal("0");
+		if("1".equals(orderType)) {
+			order.setMonth(Integer.parseInt(month));
+			moneys = new BigDecimal(month+"").multiply(new BigDecimal("8.8"));
+			order.setMoney(moneys);
+		}else if("2".equals(orderType)) {
+			order.setMonth(Integer.parseInt(month));
+			moneys = new BigDecimal(month+"").multiply(new BigDecimal("12.8"));
+			order.setMoney(moneys);
+		}else if("3".equals(orderType)) {
+			order.setMoney(new BigDecimal(money));
+		}else if("4".equals(orderType)) {
+			order.setActivityId(activityId);
+			int vip = vipService.selectVipExperience(userId);
+			if(vip == 0) {
+				order.setMoney(new BigDecimal("0.2"));
+			}else if(vip < 11) {
+				order.setMoney(new BigDecimal("0.15"));
+			}else {
+				order.setMoney(new BigDecimal("0.1"));
+			}
+		}else {
+			order.setActivityId(activityId);
+			int vip = vipService.selectVipExperience(userId);
+			if(vip == 0) {
+				order.setMoney(new BigDecimal("2"));
+			}else if(vip < 11) {
+				order.setMoney(new BigDecimal("1.5"));
+			}else {
+				order.setMoney(new BigDecimal("1"));
+			}
+		}
 		int i = orderMapper.insertSelective(order);
 		if(i < 1) {
 			log.error("生成订单失败");

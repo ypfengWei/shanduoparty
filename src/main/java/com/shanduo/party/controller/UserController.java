@@ -200,7 +200,6 @@ public class UserController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param typeId 类型 1.验证码修改密码,2.原始密码修改密码
-	 * @param @param phone 手机号
 	 * @param @param code 验证码
 	 * @param @param password 原始密码
 	 * @param @param newPassword 新密码
@@ -210,22 +209,20 @@ public class UserController {
 	 */
 	@RequestMapping(value = "updatepassword",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean updatePassword(HttpServletRequest request,String token,String typeId,String phone,String code,
+	public ResultBean updatePassword(HttpServletRequest request,String token,String typeId,String code,
 			String password,String newPassword) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
+		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
 		if("1".equals(typeId)) {
-			if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
-				log.error("手机号格式错误");
-				return new ErrorBean("手机号格式错误");
-			}
+			String phone = userService.selectByPhone(userId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean("验证码错误");
@@ -254,7 +251,7 @@ public class UserController {
 				return new ErrorBean("新密码格式错误");
 			}
 			try {
-				userService.updatePassword(userToken.getUserId(), password, newPassword);
+				userService.updatePassword(userId, password, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
 				return new ErrorBean("原始密码错误");

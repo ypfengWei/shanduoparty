@@ -300,13 +300,4 @@
     and ae.activity_id = #{activityId,jdbcType=VARCHAR} and su.del_flag = '0' and ae.del_flag = '0'
 	group by su.gender
   </select>
-  <select id="selectById" resultType="map">
-  	select
-  	id, user_name, head_portrait_id, phone_number, gender
-  	from shanduo_user
-  	where id = #{0}
-  	or phone_number = #{0}
-  	or user_name like "'"#{0}"'"
-  	limit 10
-  </select>
 </mapper>

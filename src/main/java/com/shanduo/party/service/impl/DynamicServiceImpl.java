@@ -174,7 +174,12 @@ public class DynamicServiceImpl implements DynamicService {
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			//3条2级回复
-			map.put("comments", commentMapper.twoCommentIdList(map.get("id").toString(), 0, 3));
+			List<Map<String, Object>> resultLists = commentMapper.twoCommentIdList(map.get("id").toString(), 0, 3);
+			for (Map<String, Object> maps : resultLists) {
+				//动态图片
+				map.put("picture", PictureUtils.getPictureUrlList(maps.get("picture").toString()));
+			}
+			map.put("comments", resultLists);
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());

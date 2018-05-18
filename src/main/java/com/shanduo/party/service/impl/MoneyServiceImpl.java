@@ -16,6 +16,7 @@ import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserMoneyRecordMapper;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.MoneyService;
+import com.shanduo.party.util.MD5Utils;
 import com.shanduo.party.util.Page;
 
 /**
@@ -144,7 +145,7 @@ public class MoneyServiceImpl implements MoneyService {
 	public int updatePassWord(Integer userId, String password) {
 		UserMoney money = new UserMoney();
 		money.setUserId(userId);
-		money.setPassword(password);
+		money.setPassword(MD5Utils.getInstance().getMD5(password));
 		int i = moneyMapper.updateByPrimaryKeySelective(money);
 		if(i < 1) {
 			throw new RuntimeException();

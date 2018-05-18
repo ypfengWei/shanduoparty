@@ -192,4 +192,13 @@ public class UserServiceImpl implements UserService {
 		return labelList;
 	}
 
+	@Override
+	public String selectByPhone(Integer userId) {
+		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
+		if(user == null) {
+			return "";
+		}
+		return user.getPhoneNumber();
+	}
+
 }

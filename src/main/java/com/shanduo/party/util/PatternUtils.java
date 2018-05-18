@@ -34,7 +34,7 @@ public class PatternUtils {
 	 * @throws
 	 */
 	public static boolean patternCode(String code) {
-		String regEx = "^[1-9]\\d{5}$";
+		String regEx = "^\\d{6}$";
 		return !code.matches(regEx);
 	}
 	

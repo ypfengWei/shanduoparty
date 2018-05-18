@@ -32,5 +32,4 @@ public interface ShanduoUserMapper {
     
     List<Map<String, Object>> selectByGender(String activityId);
     
-    List<Map<String, Object>> selectById(Object query);
 }
