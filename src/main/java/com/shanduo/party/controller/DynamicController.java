@@ -277,7 +277,6 @@ public class DynamicController {
 	 * @Description: TODO
 	 * @param @param requrst
 	 * @param @param token
-	 * @param @param typeId 类型:1.1级,2.2级
 	 * @param @param dynamicId 动态ID
 	 * @param @param commentId 1级评论ID
 	 * @param @param page 页码
@@ -288,16 +287,12 @@ public class DynamicController {
 	 */
 	@RequestMapping(value = "commentList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean commentList(HttpServletRequest requrst,String token,String typeId,String dynamicId,
+	public ResultBean commentList(HttpServletRequest requrst,String token,String dynamicId,
 			String commentId,String page,String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean("类型错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -310,17 +305,14 @@ public class DynamicController {
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>();
-		if("1".equals(typeId)) {
-			if(StringUtils.isNull(dynamicId)) {
-				log.error("动态ID为空");
-				return new ErrorBean("动态ID为空");
-			}
+		if(StringUtils.isNull(dynamicId) && StringUtils.isNull(commentId)) {
+			log.error(ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(ErrorCodeConstants.PARAMETER);
+		}
+		if(!StringUtils.isNull(dynamicId)) {
 			resultMap = dynamicService.commentList(dynamicId, pages, pageSizes);
-		}else {
-			if(StringUtils.isNull(commentId)) {
-				log.error("评论ID为空");
-				return new ErrorBean("评论ID为空");
-			}
+		}
+		if(!StringUtils.isNull(commentId)) {
 			resultMap = dynamicService.commentsList(commentId, pages, pageSizes);
 		}
 		return new SuccessBean(resultMap);
