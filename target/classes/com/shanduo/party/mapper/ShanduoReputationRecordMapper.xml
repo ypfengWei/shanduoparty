@@ -141,7 +141,7 @@
   	GROUP BY user_id
   </select>
   <select id="selectByMany" resultType="java.lang.Integer">
-  	select sum(deduction_count) 
+	select sum(deduction_count) 
   	from shanduo_reputation_record 
   	where user_id = #{0} and otheruser_id = #{1}
   	and reputation_type = #{2}
