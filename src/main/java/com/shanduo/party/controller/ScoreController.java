@@ -57,19 +57,19 @@ public class ScoreController {
 	@ResponseBody
 	public ResultBean updateScore(HttpServletRequest request, String token, String activityId, String score,
 			String evaluationcontent, String evaluationSign) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error("请重新登录");
+			return new ErrorBean("请重新登录");
+		}
 		if(("0").equals(evaluationSign)) {
-			UserToken userToken = baseService.checkUserToken(token);
-			if (userToken == null) {
-				log.error("请重新登录");
-				return new ErrorBean("请重新登录");
-			}
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动ID为空");
 				return new ErrorBean("活动ID为空");
 			}
 			if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
-				log.error("评分为空");
-				return new ErrorBean("评分为空");
+				log.error("评分错误");
+				return new ErrorBean("评分错误");
 			}
 			try {
 				scoreService.updateActivityScore(userToken.getUserId(), activityId, Integer.parseInt(score), evaluationcontent);
@@ -99,26 +99,30 @@ public class ScoreController {
 	@RequestMapping(value = "updateOthersScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId, String othersScore,
-			String beEvaluated) {
+			String beEvaluated, String evaluationSign) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error("请重新登录");
 			return new ErrorBean("请重新登录");
 		}
-		if(StringUtils.isNull(activityId)) {
-			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+		if(("0").equals(evaluationSign)) {
+			if(StringUtils.isNull(activityId)) {
+				log.error("活动ID为空");
+				return new ErrorBean("活动ID为空");
+			}
+			if (StringUtils.isNull(othersScore) || !othersScore.matches("^[1-5]$")) {
+				log.error("评分为空");
+				return new ErrorBean("评分为空");
+			}
+			try {
+				scoreService.updateByUserId(userToken.getUserId(), activityId, Integer.parseInt(othersScore), beEvaluated);
+			} catch (Exception e) {
+				return new ErrorBean("评价失败");
+			}
+			return new SuccessBean("评价成功");
+		} else {
+			return new ErrorBean("已评价");
 		}
-		if (StringUtils.isNull(othersScore) || !othersScore.matches("^[1-5]$")) {
-			log.error("评分为空");
-			return new ErrorBean("评分为空");
-		}
-		try {
-			scoreService.updateByUserId(userToken.getUserId(), activityId, Integer.parseInt(othersScore), beEvaluated);
-		} catch (Exception e) {
-			return new ErrorBean("评价失败");
-		}
-		return new SuccessBean("评价成功");
 	}
 	
 	/**
@@ -150,10 +154,6 @@ public class ScoreController {
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> activityScores = scoreService.selectByIdScore(userToken.getUserId(), pages, pageSizes);
-		if(activityScores == null) {
-			log.error("暂无记录");
-			return new ErrorBean("暂无记录");
-		}
 		return new SuccessBean(activityScores);
 	}
 	

@@ -2,7 +2,6 @@ package com.shanduo.party.service.impl;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,13 @@ import com.shanduo.party.util.Page;
 import com.shanduo.party.util.ScoreUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
+/**
+ * 评价操作实现类
+ * @ClassName: ScoreServiceImpl
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author lishan
+ * @date 2018年5月18日 下午4:18:25
+ */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ScoreServiceImpl implements ScoreService {
@@ -113,28 +119,24 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Override
 	public int updateByReputation() {
-
-			long time = System.currentTimeMillis();
-			Format format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
-			String startTime = format.format(time);
-			int a = 0;
-			List<Map<String,Integer>> resultList = reputationRecordMapper.selectByTime(startTime);
-			if(resultList == null || resultList.isEmpty()) {
-				return 0;
-			} else {
-				for (Map<String,Integer> shanduoReputationRecord : resultList) {
-					int otherUserId = shanduoReputationRecord.get("user_id");
-					Integer shanduoReputation = shanduoReputationMapper.selectByUserId(otherUserId);
-					System.out.println(ScoreUtils.getScore(otherUserId));
-					System.out.println(shanduoReputation+ScoreUtils.getScore(otherUserId));
-					a = shanduoReputationMapper.updateByUserId(otherUserId, shanduoReputation+ScoreUtils.getScore(otherUserId));
-				}
-				if(a < 1) {
-					log.error("信誉修改失败");
-					throw new RuntimeException();
-				}
+		long time = System.currentTimeMillis();
+		Format format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+		String startTime = format.format(time);
+		int i = 0;
+		List<Map<String,Integer>> resultList = reputationRecordMapper.selectByTime(startTime);
+		if(resultList == null || resultList.isEmpty()) {
+			return 0;
+		} else {
+			for (Map<String,Integer> shanduoReputationRecord : resultList) {
+				int otherUserId = shanduoReputationRecord.get("user_id");
+				Integer shanduoReputation = shanduoReputationMapper.selectByUserId(otherUserId);
+				i = shanduoReputationMapper.updateByUserId(otherUserId, shanduoReputation+ScoreUtils.getScore(otherUserId));
 			}
-
+			if(i < 1) {
+				log.error("信誉修改失败");
+				throw new RuntimeException();
+			}
+		}
 		return 1;
 	}
 	

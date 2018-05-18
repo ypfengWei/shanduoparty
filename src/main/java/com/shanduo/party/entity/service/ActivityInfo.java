@@ -50,12 +50,22 @@ public class ActivityInfo {
     
     private Integer vipGrade; //会员等级
     
-    private Integer evaluationSign; // 评价标识
+    private Integer evaluationSign; // 参与者评论标识
+    
+    private Integer beEvaluationSign; // 发起者评论标识
     
 	public ActivityInfo(){
 		
 	}
 	
+	public Integer getBeEvaluationSign() {
+		return beEvaluationSign;
+	}
+
+	public void setBeEvaluationSign(Integer beEvaluationSign) {
+		this.beEvaluationSign = beEvaluationSign;
+	}
+
 	public Integer getEvaluationSign() {
 		return evaluationSign;
 	}
