@@ -89,6 +89,18 @@ public class ActivityController {
 			log.error("活动开始时间为空");
 			return new ErrorBean("活动开始时间为空");
 		}
+		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
+			log.error("人数为空");
+			return new ErrorBean("人数为空");
+		}
+		if ("0".equals(manNumber) && "0".equals(womanNumber)) {
+			log.error("人数为空");
+			return new ErrorBean("人数为空");
+		}
+		if(!manNumber.matches("^\\d+$") || !womanNumber.matches("^\\d+$")) {
+			log.error("人数必须为正整数");
+			return new ErrorBean("人数必须为正整数");
+		}
 		if (StringUtils.isNull(activityAddress)) {
 			log.error("活动地址为空");
 			return new ErrorBean("活动地址为空");
@@ -96,14 +108,6 @@ public class ActivityController {
 		if (StringUtils.isNull(mode)) {
 			log.error("方式为空");
 			return new ErrorBean("方式为空");
-		}
-		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
-			log.error("人数为空");
-			return new ErrorBean("人数为空");
-		}
-		if(!manNumber.matches("^[0-9]+$") || !womanNumber.matches("^[0-9]+$")) {
-			log.error("人数必须为正整数");
-			return new ErrorBean("人数必须为正整数");
 		}
 		if (StringUtils.isNull(activityCutoffTime)) {
 			log.error("活动截止时间为空");

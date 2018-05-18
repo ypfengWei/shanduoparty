@@ -23,8 +23,8 @@ public class ReputationTiming {
 	@Autowired
 	private ScoreService scoreService;
 	
-	@Scheduled(cron = "0/9 * * * * ? ")
-//	@Scheduled(cron = "0 0 0 * * ? ")
+//	@Scheduled(cron = "0/9 * * * * ? ")
+	@Scheduled(cron = "0 0 0 * * ? ")
 	public void reputationTiming() {
 		int i =  scoreService.updateByReputation();
 		logger.info("信誉分:" + i);

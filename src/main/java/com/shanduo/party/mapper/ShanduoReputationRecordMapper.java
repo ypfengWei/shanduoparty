@@ -1,6 +1,7 @@
 package com.shanduo.party.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.shanduo.party.entity.ShanduoReputationRecord;
 
@@ -26,9 +27,9 @@ public interface ShanduoReputationRecordMapper {
      * @return ShanduoReputationRecord    返回类型
      * @throws
      */
-    int selectByUserId(Integer userId, String startTime, String reputationType);
+    Integer selectByUserId(Integer userId, String startTime, String reputationType);
     
-    List<ShanduoReputationRecord> selectByTime(String startTime);
+    List<Map<String,Integer>> selectByTime(String startTime);
     
-    int selectByMany(Integer userId, Integer otheruserId, String reputationType, String startTime);
+    Integer selectByMany(Integer userId, Integer otherUserId, String reputationType, String startTime);
 }
