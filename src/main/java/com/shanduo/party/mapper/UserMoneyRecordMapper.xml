@@ -117,14 +117,14 @@
   
   <select id="selectByAstrict" resultType="java.lang.Integer">
   	select
-    count(*)
+    count(id)
     from user_money_record
     where user_id = #{0}
     and money_type = #{1} 
     and create_date &gt;= #{2}
   </select>
   <select id="selectBySignInCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-    select COUNT(*) from user_money_record  where user_id = #{userId,jdbcType=INTEGER} and money_type='3' and
+    select COUNT(id) from user_money_record  where user_id = #{userId,jdbcType=INTEGER} and money_type='3' and
          DATE_FORMAT(create_date,'%Y%m%d')&gt;(
            	select IFNULL(MAX(bb.date_b),'20180101') from
 				(select (@i := @i + 1) as ord_num,DATE_FORMAT(a.create_date,'%Y%m%d')as date_a from user_money_record a,
@@ -138,7 +138,7 @@
   </select>
   <select id="meneyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
   	select
-  	count(*)
+  	count(id)
   	from user_money_record 
   	where user_id = #{userId,jdbcType=INTEGER}
     and money_type in ('1','2')
@@ -154,7 +154,7 @@
   </select>
   <select id="weekSignInCount" resultType="java.lang.Integer">
   	select 
-  	count(*)
+  	count(id)
   	from user_money_record 
   	where user_id = #{0}
     and money_type = '3'

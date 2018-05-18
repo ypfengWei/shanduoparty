@@ -3,16 +3,22 @@ package com.shanduo.party.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class UserMoney {
+public class UserOrder {
+    private String id;
+
     private Integer userId;
 
-    private String password;
+    private String orderType;
 
     private BigDecimal money;
 
-    private Integer experience;
+    private Integer month;
 
-    private Integer beans;
+    private String activityId;
+
+    private String status;
+
+    private String paymentType;
 
     private String remarks;
 
@@ -22,6 +28,14 @@ public class UserMoney {
 
     private String delFlag;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
     public Integer getUserId() {
         return userId;
     }
@@ -30,12 +44,12 @@ public class UserMoney {
         this.userId = userId;
     }
 
-    public String getPassword() {
-        return password;
+    public String getOrderType() {
+        return orderType;
     }
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+    public void setOrderType(String orderType) {
+        this.orderType = orderType == null ? null : orderType.trim();
     }
 
     public BigDecimal getMoney() {
@@ -46,20 +60,36 @@ public class UserMoney {
         this.money = money;
     }
 
-    public Integer getExperience() {
-        return experience;
+    public Integer getMonth() {
+        return month;
     }
 
-    public void setExperience(Integer experience) {
-        this.experience = experience;
+    public void setMonth(Integer month) {
+        this.month = month;
     }
 
-    public Integer getBeans() {
-        return beans;
+    public String getActivityId() {
+        return activityId;
     }
 
-    public void setBeans(Integer beans) {
-        this.beans = beans;
+    public void setActivityId(String activityId) {
+        this.activityId = activityId == null ? null : activityId.trim();
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType == null ? null : paymentType.trim();
     }
 
     public String getRemarks() {

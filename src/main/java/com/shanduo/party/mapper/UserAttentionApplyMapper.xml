@@ -137,7 +137,7 @@
   </select>
   <select id="selectAttentionCount" resultType="java.lang.Integer">
     select
-    count(*)
+    count(id)
     from user_attention_apply
     where attention = #{1}
     and del_flag = '0'

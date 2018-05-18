@@ -179,7 +179,7 @@
   </update>
   <select id="attentionCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select 
-    count(*)
+    count(id)
     from shanduo_dynamic
 	where del_flag = '0'
 	and (user_id in (select attention from user_attention where user_id = #{userId,jdbcType=INTEGER} and attention_type = '1')
@@ -200,7 +200,7 @@
   </select>
   <select id="nearbyCount" resultType="java.lang.Integer">
     select 
-    count(*)
+    count(id)
     from shanduo_dynamic
 	where del_flag = '0'
 	and lon >= #{0} and lon &lt;= #{1}
@@ -221,7 +221,7 @@
   </select>
   <select id="selectMyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select
-    count(*)
+    count(id)
     from shanduo_dynamic
 	where del_flag = '0'
 	and user_id = #{userId,jdbcType=INTEGER}

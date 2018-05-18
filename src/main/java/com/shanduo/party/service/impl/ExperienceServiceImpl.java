@@ -1,5 +1,6 @@
 package com.shanduo.party.service.impl;
 
+import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,6 +18,7 @@ import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserMoneyRecordMapper;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.MoneyService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.GradeUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
@@ -40,6 +42,8 @@ public class ExperienceServiceImpl implements ExperienceService {
 	private UserMoneyRecordMapper moneyRecordMapper;
 	@Autowired
 	private MoneyService moneyService;
+	@Autowired
+	private VipService vipService;
 	
 	@Override
 	public int saveMoneyRecord(Integer userId, String moneyType, String remarks) {
@@ -56,66 +60,116 @@ public class ExperienceServiceImpl implements ExperienceService {
 		return 1;
 	}
 
+	/**
+	 * 根据类型返回每日添加经验次数限制
+	 * @Title: getCount
+	 * @Description: TODO
+	 * @param @param moneyType
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	public int getCount(String moneyType) {
+		if("3".equals(moneyType)) {
+			//签到
+			return 1;
+		}else if("4".equals(moneyType)) {
+			//发表动态
+			return 2;
+		}else if("5".equals(moneyType)) {
+			//发起活动
+			return 2;
+		}else if("6".equals(moneyType)) {
+			//动态点赞
+			return 10;
+		}else if("7".equals(moneyType)) {
+			//动态评论
+			return 5;
+		}else if("8".equals(moneyType)) {
+			//参加活动
+			return 2;
+		}
+		return 0;
+	}
+	
 	@Override
 	public boolean checkCount(Integer userId, String moneyType) {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
 		String createDate = format.format(time);
 		int i = moneyRecordMapper.selectByAstrict(userId, moneyType, createDate);
-		if(i >= getMoneyType(moneyType)[0]) {
+		if(i >= getCount(moneyType)) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * 根据类型返回每日添加经验次数限制和经验
-	 * @Title: getMoneyType
+	 * 根据VIP等级返回加倍后的检验值
+	 * @Title: getVipExperience
 	 * @Description: TODO
+	 * @param @param userId
 	 * @param @param moneyType
 	 * @param @return
-	 * @return int[]
+	 * @return int
 	 * @throws
 	 */
-	public int[] getMoneyType(String moneyType) {
-		int[] ints = {0,0};
-		if("3".equals(moneyType)) {
-			//签到
-			ints[0] = 1;
-		}else if("4".equals(moneyType)) {
-			//发表动态
-			ints[0] = 2;
-			ints[1] = 5;
-			return ints;
-		}else if("5".equals(moneyType)) {
-			//发起活动
-			ints[0] = 2;
-			ints[1] = 20;
-			return ints;
-		}else if("6".equals(moneyType)) {
-			//动态点赞
-			ints[0] = 10;
-			ints[1] = 1;
-			return ints;
-		}else if("7".equals(moneyType)) {
-			//动态评论
-			ints[0] = 5;
-			ints[1] = 2;
-			return ints;
-		}else if("8".equals(moneyType)) {
-			//参加活动
-			ints[0] = 2;
-			ints[1] = 10;
-			return ints;
+	public int getVipExperience(Integer userId,String moneyType) {
+		int vip = vipService.selectVipExperience(userId);
+		BigDecimal rate = new BigDecimal(vip).divide(new BigDecimal("10"));
+		if(vip < 10) {
+			rate = rate.add(new BigDecimal("1"));
+		}else {
+			rate = rate.add(new BigDecimal("0.1"));
 		}
-		return ints;
+		switch (moneyType) {
+		case "0":
+			//每个星期第1次签到
+			rate = rate.multiply(new BigDecimal("10"));
+			break;
+		case "1":
+			rate = rate.multiply(new BigDecimal("15"));
+			//每个星期第3次签到
+			break;
+		case "2":
+			rate = rate.multiply(new BigDecimal("20"));
+			//每个星期第5次签到
+			break;
+		case "3":
+			rate = rate.multiply(new BigDecimal("25"));
+			//每个星期第6次签到
+			break;
+		case "4":
+			//发表动态
+			rate = rate.multiply(new BigDecimal("5"));
+			break;
+		case "5":
+			//发起活动
+			rate = rate.multiply(new BigDecimal("20"));
+			break;
+		case "6":
+			//动态点赞
+			rate = rate.multiply(new BigDecimal("1"));
+			break;
+		case "7":
+			//动态评论
+			rate = rate.multiply(new BigDecimal("2"));
+			break;
+		case "8":
+			//参加活动
+			rate = rate.multiply(new BigDecimal("10"));
+			break;
+		}
+		rate = rate.setScale(0,BigDecimal.ROUND_HALF_UP);
+		return rate.intValue();
 	}
-
+	
 	@Override
 	public int addExperience(Integer userId, String moneyType) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
 		int gradeA = GradeUtils.getGrade(userMoney.getExperience());
-		Integer experience = userMoney.getExperience() + getMoneyType(moneyType)[1];
+		int addExperience = getVipExperience(userId,moneyType);
+		Integer experience = userMoney.getExperience() + addExperience;
 		int gradeB = GradeUtils.getGrade(experience);
 		userMoney.setExperience(experience);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
@@ -125,15 +179,15 @@ public class ExperienceServiceImpl implements ExperienceService {
 		}
 		String remarks = "";
 		if("4".equals(moneyType)) {
-			remarks = "发表动态获得经验值:+"+getMoneyType(moneyType)[1];
+			remarks = "发表动态获得经验值:+"+addExperience;
 		}else if("5".equals(moneyType)) {
-			remarks = "发起活动获得经验值:+"+getMoneyType(moneyType)[1];
+			remarks = "发起活动获得经验值:+"+addExperience;
 		}else if("6".equals(moneyType)) {
-			remarks = "动态点赞获得经验值:+"+getMoneyType(moneyType)[1];
+			remarks = "动态点赞获得经验值:+"+addExperience;
 		}else if("7".equals(moneyType)) {
-			remarks = "动态评论获得经验值:+"+getMoneyType(moneyType)[1];
+			remarks = "动态评论获得经验值:+"+addExperience;
 		}else if("8".equals(moneyType)) {
-			remarks = "参加活动获得经验值:+"+getMoneyType(moneyType)[1];
+			remarks = "参加活动获得经验值:+"+addExperience;
 		}
 		try {
 			saveMoneyRecord(userId, moneyType,remarks);
@@ -179,27 +233,28 @@ public class ExperienceServiceImpl implements ExperienceService {
 	public int signin(Integer userId) {
 		int weekSignInCount = weekSignInCount(userId)+1;
 		if(weekSignInCount == 1) {
-			saveSignin(userId, 10);
+			saveSignin(userId, "0");
 		}else if(weekSignInCount == 2) {
 			moneyService.payBeans(userId, 10,"1");
 		}else if(weekSignInCount == 3) {
-			saveSignin(userId, 15);
+			saveSignin(userId, "1");
 		}else if(weekSignInCount == 4) {
 			moneyService.payBeans(userId, 15,"1");
 		}else if(weekSignInCount == 5) {
-			saveSignin(userId, 20);
+			saveSignin(userId, "2");
 		}else if(weekSignInCount == 6) {
-			saveSignin(userId, 25);
+			saveSignin(userId, "3");
 		}else if(weekSignInCount == 7) {
 			moneyService.payBeans(userId, 20,"1");
 		}
 		return 1;
 	}
 	
-	public int saveSignin(Integer userId,Integer aomout) {
+	public int saveSignin(Integer userId,String signinType) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
 		int gradeA = GradeUtils.getGrade(userMoney.getExperience());
-		Integer experience = userMoney.getExperience() + aomout;
+		int addExperience = getVipExperience(userId,signinType);
+		Integer experience = userMoney.getExperience() + addExperience;
 		int gradeB = GradeUtils.getGrade(experience);
 		userMoney.setExperience(experience);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
@@ -208,7 +263,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 			throw new RuntimeException();
 		}
 		try {
-			saveMoneyRecord(userId, "3","签到获得经验值:+"+aomout);
+			saveMoneyRecord(userId, "3","签到获得经验值:+"+addExperience);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -218,6 +273,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 			} catch (Exception e) {
 				throw new RuntimeException();
 			}
+			//推送升级奖励
 		}
 		return 1;
 	}
