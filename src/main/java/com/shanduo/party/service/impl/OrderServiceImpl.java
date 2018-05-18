@@ -115,13 +115,13 @@ public class OrderServiceImpl implements OrderService {
 					throw new RuntimeException();
 				}
 				break;
-			case "3":
-				try {
-					moneyService.payMoney(userId, money);
-				} catch (Exception e) {
-					throw new RuntimeException();
-				}
-				break;
+//			case "3":
+//				try {
+//					moneyService.payMoney(userId, money);
+//				} catch (Exception e) {
+//					throw new RuntimeException();
+//				}
+//				break;
 			case "4":
 				try {
 					moneyService.consumeMoney(userId, money, "活动刷新");

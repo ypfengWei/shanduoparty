@@ -21,6 +21,7 @@ import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserTokenMapper;
 import com.shanduo.party.service.UserService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.MD5Utils;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
@@ -50,6 +51,9 @@ public class UserServiceImpl implements UserService {
 	private ShanduoLabelMapper labelMapper;
 	@Autowired
 	private ShanduoReputationMapper shanduoReputationMapper;
+	@Autowired
+	private VipService vipService;
+	
 	
 	@Override
 	public int saveUser(String phone,String password) {
@@ -110,7 +114,7 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isNull(token)) {
 			return null;
 		}
-		return new TokenInfo(user,token);
+		return new TokenInfo(user,token,vipService.selectVipExperience(user.getId()));
 	}
 
 	@Override

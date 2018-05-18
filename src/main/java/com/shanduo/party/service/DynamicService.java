@@ -29,7 +29,7 @@ public interface DynamicService {
 	int saveDynamic(Integer userId,String content,String picture,String lat,String lon,String location);
 
 	/**
-	 * 查看关注人的动态
+	 * 查看好友的动态
 	 * @Title: attentionList
 	 * @Description: TODO
 	 * @param @param userId 用户ID
@@ -73,6 +73,31 @@ public interface DynamicService {
 	 * @throws
 	 */
 	Map<String, Object> dynamicList(Integer userId,Integer userIds,String lat,String lon,Integer pageNum,Integer pageSize);
+	
+	/**
+	 * 查看单个动态详情
+	 * @Title: selectById
+	 * @Description: TODO
+	 * @param @param dynamicId 动态ID
+	 * @param @param userId 用户ID
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon);
+	
+	/**
+	 * 查看单个一级评论
+	 * @Title: selectByCommentId
+	 * @Description: TODO
+	 * @param @param commentId
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> selectByCommentId(String commentId);
 	
 	/**
 	 * 查看动态的1级评论

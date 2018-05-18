@@ -195,7 +195,7 @@
     and reply_type = '1'
     and dynamic_id = #{dynamicId,jdbcType=VARCHAR}
   </select>
-  <select id="oneCommentIdList" parameterType="java.lang.String" resultType="map">
+  <select id="oneCommentIdList" resultType="map">
 	select
   		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
   		su.user_name as `name`,ac.`comment`,ac.picture,su.gender,su.birthday as age,
@@ -230,5 +230,16 @@
 	and dc.comment_id = #{0}
 	order by dc.create_date
 	limit #{1},#{2}
+  </select>
+  <select id="selectByCommentId" parameterType="java.lang.String" resultType="map">
+	select
+  		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
+  		su.user_name as `name`,ac.`comment`,ac.picture,su.gender,su.birthday as age,
+  		ac.create_date as createDate
+	from dynamic_comment ac
+	join shanduo_user su on ac.user_id = su.id
+	where ac.del_flag = '0'
+	and ac.reply_type = '1'
+	and ac.id = #{commentId}
   </select>
 </mapper>

@@ -79,5 +79,5 @@ public interface DynamicCommentMapper {
      */
     List<Map<String, Object>> twoCommentIdList(String commentId,Integer page,Integer pageSize);
     
-    
+    Map<String, Object> selectByCommentId(String commentId);
 }
