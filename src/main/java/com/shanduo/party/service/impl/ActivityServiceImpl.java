@@ -412,8 +412,9 @@ public class ActivityServiceImpl implements ActivityService {
             String startString = activityInfo.getActivityStartTime();  
             String cutoffString = activityInfo.getActivityCutoffTime(); 
             StringBuffer buffer = new StringBuffer();
+            StringBuffer buffers = new StringBuffer();
             String startTime = buffer.append(startString).substring(0,16).replace("-", "/").replace(" ", "/");
-            String cutoffTime = buffer.append(cutoffString).substring(0,16).replace("-", "/").replace(" ", "/");
+            String cutoffTime = buffers.append(cutoffString).substring(0,16).replace("-", "/").replace(" ", "/");
             try {  
                 Date startDate = formatter.parse(startString);  
                 activityInfo.setActivityStartTime(startTime+WeekUtils.getWeek(startDate));
