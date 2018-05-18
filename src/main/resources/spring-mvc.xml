@@ -67,6 +67,8 @@
 	 		<mvc:mapping path="/jdynamic/savedynamic"/>
 	 		<mvc:mapping path="/jdynamic/dynamicList"/>
 	 		<mvc:mapping path="/jdynamic/ispraise"/>
+	 		<mvc:mapping path="/jdynamic/bydynamic"/>
+	 		<mvc:mapping path="/jdynamic/bycomment"/>
 	 		<mvc:mapping path="/jdynamic/commentList"/>
 	 		<mvc:mapping path="/jdynamic/savecomment"/>
 	 		<mvc:mapping path="/jdynamic/hidedynamics"/>

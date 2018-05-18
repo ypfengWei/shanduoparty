@@ -36,4 +36,6 @@ public interface ShanduoDynamicMapper {
     
     List<Map<String, Object>> selectMyList(Integer userId,Integer page,Integer pageSize);
     
+    Map<String, Object> selectByDynamicId(String dynamicId);
+    
 }

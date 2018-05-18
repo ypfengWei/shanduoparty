@@ -71,16 +71,35 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 
 	/**
-	 * 给返回的map添加其他信息
-	 * @Title: putMap
+	 * 给返回的list添加其他信息
+	 * @Title: addList
 	 * @Description: TODO
-	 * @param @param resultList
+	 * @param @param list
 	 * @param @param userId
+	 * @param @param lon
+	 * @param @param lat
 	 * @return void
 	 * @throws
 	 */
-	public void putMap(List<Map<String, Object>> resultList,Integer userId) {
-		for (Map<String, Object> map : resultList) {
+	public void addList(List<Map<String, Object>> list,Integer userId,String lon,String lat) {
+		for (Map<String, Object> map : list) {
+			putMap(map, userId, lon, lat);
+			
+		}
+	}
+	
+	/**
+	 * 给返回的map添加其他信息
+	 * @Title: putMap
+	 * @Description: TODO
+	 * @param @param map
+	 * @param @param userId
+	 * @param @param lon
+	 * @param @param lat
+	 * @return void
+	 * @throws
+	 */
+	public void putMap(Map<String, Object> map,Integer userId,String lon,String lat) {
 			String dynamicId = map.get("id").toString();
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
@@ -95,12 +114,11 @@ public class DynamicServiceImpl implements DynamicService {
 			//用户是否点赞
 			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 			//vip等级
-			if(userId != null) {
-				map.put("vip", vipService.selectVipExperience(userId));
-			}else {
-				map.put("vip", 0);
-			}
-		}
+			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
+			//距离
+			double distance = 
+					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
+			map.put("distance", distance);
 	}
 	
 	@Override
@@ -109,12 +127,7 @@ public class DynamicServiceImpl implements DynamicService {
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.attentionList(userId, pageNum, page.getPageSize());
-		putMap(resultList, userId);
-		for (Map<String, Object> map : resultList) {
-			double distance = 
-					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
-			map.put("distance", distance);
-		}
+		addList(resultList, userId, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -129,12 +142,7 @@ public class DynamicServiceImpl implements DynamicService {
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.nearbyList(doubles[0], doubles[1], doubles[2], doubles[3], pageNum, page.getPageSize());
-		putMap(resultList, userId);
-		for (Map<String, Object> map : resultList) {
-			double distance = 
-					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
-			map.put("distance", distance);
-		}
+		addList(resultList, userId, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -148,16 +156,38 @@ public class DynamicServiceImpl implements DynamicService {
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.selectMyList(userId, pageNum, page.getPageSize());
-		putMap(resultList, userIds);
-		for (Map<String, Object> map : resultList) {
-			double distance = 
-					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
-			map.put("distance", distance);
-		}
+		addList(resultList, userIds, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
 		resultMap.put("list", resultList);
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon) {
+		Map<String, Object> resultMap = dynamicMapper.selectByDynamicId(dynamicId);
+		if(resultMap == null) {
+			return null;
+		}
+		putMap(resultMap, userId, lon, lat);
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, Object> selectByCommentId(String commentId) {
+		Map<String, Object> resultMap = commentMapper.selectByCommentId(commentId);
+		if(resultMap == null) {
+			return null;
+		}
+		//保存头像图片URL
+		resultMap.put("portraitId", PictureUtils.getPictureUrl(resultMap.get("portraitId").toString()));
+		//动态图片
+		resultMap.put("picture", PictureUtils.getPictureUrlList(resultMap.get("picture").toString()));
+		//回复数量
+		resultMap.put("count", commentMapper.commentsCount(resultMap.get("id").toString()));
+		//保存年龄
+		resultMap.put("age", AgeUtils.getAgeFromBirthTime(resultMap.get("age").toString()));
 		return resultMap;
 	}
 	

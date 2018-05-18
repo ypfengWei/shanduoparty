@@ -272,6 +272,79 @@ public class DynamicController {
 	}
 	
 	/**
+	 * 查看单个动态详情
+	 * @Title: byDynamic
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param dynamicId 动态ID
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "bydynamic",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean byDynamic(HttpServletRequest request,String token,String dynamicId,String lat,String lon) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if(userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		Integer userId = userToken.getUserId();
+		if(StringUtils.isNull(dynamicId)) {
+			log.error("动态ID为空");
+			return new ErrorBean("动态ID为空");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度错误");
+			return new ErrorBean("纬度错误");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度错误");
+			return new ErrorBean("经度错误");
+		}
+		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, userId, lat, lon);
+		if(resultMap == null) {
+			log.error("动态不存在");
+			return new ErrorBean("动态不存在");
+		}
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
+	 * 查看单个一级评论
+	 * @Title: byComment
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param commentId 评论ID
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "bycomment",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean byComment(HttpServletRequest request,String token,String commentId) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if(userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(commentId)) {
+			log.error("评论ID为空");
+			return new ErrorBean("评论ID为空");
+		}
+		Map<String, Object> resultMap = dynamicService.selectByCommentId(commentId);
+		if(resultMap == null) {
+			log.error("评论不存在");
+			return new ErrorBean("评论不存在");
+		}
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
 	 * 查看单个动态的评论或者2级回复
 	 * @Title: commentList
 	 * @Description: TODO

@@ -134,7 +134,7 @@ public class MoneyServiceImpl implements MoneyService {
 
 	@Override
 	public boolean checkPassword(Integer userId, String password) {
-		UserMoney money = moneyMapper.checkPassword(userId, password);
+		UserMoney money = moneyMapper.checkPassword(userId, MD5Utils.getInstance().getMD5(password));
 		if(money != null) {
 			return true;
 		}

@@ -238,4 +238,14 @@
 	order by sd.create_date desc 
 	limit #{1},#{2}
   </select>
+  <select id="selectByDynamicId" resultType="map">
+    select
+    sd.id,sd.user_id as userId,su.user_name as name,su.gender,su.head_portrait_id as portraitId,
+    su.birthday as age,sd.content,sd.picture,sd.remarks,sd.create_date as createDate,sd.lon,sd.lat,
+    sd.location
+    from shanduo_dynamic sd
+	join shanduo_user su on sd.user_id = su.id
+	where sd.del_flag = '0'
+	and sd.id = #{0}
+  </select>
 </mapper>
