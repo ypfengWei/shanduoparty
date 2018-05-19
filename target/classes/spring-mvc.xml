@@ -46,7 +46,6 @@
 			<!-- 活动操作接口拦截 -->
 	 		<mvc:mapping path="/activity/saveactivity"/>
 	 		<mvc:mapping path="/activity/deleteActivity"/>
-	 		<mvc:mapping path="/activity/showHotActivity"/>
 	 		<mvc:mapping path="/activity/showOneActivity"/>
 	 		<mvc:mapping path="/activity/participant"/>
 	 		<mvc:mapping path="/activity/participateActivities"/>
