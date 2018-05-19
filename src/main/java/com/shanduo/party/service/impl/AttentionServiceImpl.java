@@ -21,6 +21,7 @@ import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
+
 /**
  * 
  * @ClassName: AttentionServiceImpl
@@ -152,21 +153,14 @@ public class AttentionServiceImpl implements AttentionService {
 	}
 
 	@Override
-	public Map<String, Object> attentionList(Integer userId,String typeId, Integer pageNum, Integer pageSize) {
-		int totalRecord = attentionMapper.selectAttentionCount(userId, typeId);
-		Page page = new Page(totalRecord, pageSize, pageNum);
-		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> resultList = attentionMapper.selectAttentionList(userId, typeId, pageNum, pageSize);
+	public List<Map<String, Object>> attentionList(Integer userId,String typeId) {
+		List<Map<String, Object>> resultList = attentionMapper.selectAttentionList(userId, typeId);
 		for(Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
-			map.put("vip", vipService.selectVipExperience(userId));
+			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
 		}
-		Map<String, Object> resultMap = new HashMap<>(3);
-		resultMap.put("page", page.getPageNum());
-		resultMap.put("totalPage", page.getTotalPage());
-		resultMap.put("list", resultList);
-		return resultMap;
+		return resultList;
 	}
 
 	@Override

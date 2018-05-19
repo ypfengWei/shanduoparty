@@ -1,5 +1,6 @@
 package com.shanduo.party.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -213,23 +214,13 @@ public class AttentionController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
+		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean("页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean("记录错误");
-		}
-		Integer userId = userToken.getUserId();
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = attentionService.attentionList(userId, typeId, pages, pageSizes);
-		return new SuccessBean(resultMap);
+		List<Map<String, Object>> resultList = attentionService.attentionList(userId, typeId);
+		return new SuccessBean(resultList);
 	}
 	
 	

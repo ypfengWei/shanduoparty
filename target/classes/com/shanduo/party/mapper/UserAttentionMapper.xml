@@ -147,7 +147,7 @@
   	select
   	su.id as userId,su.user_name as `name`,
 	su.birthday as age,su.signature,
-	su.head_portrait_id as picture
+	su.head_portrait_id as picture,su.gender
   	from user_attention ua
 	join shanduo_user su
 	on su.id = ua.attention 
@@ -155,7 +155,6 @@
   	and ua.attention_type = #{1}
   	and ua.del_flag = '0'
   	order by convert(su.user_name USING gbk)
-    limit #{2},#{3}
   </select>
   <delete id="deleteAttention">
   	delete from user_attention

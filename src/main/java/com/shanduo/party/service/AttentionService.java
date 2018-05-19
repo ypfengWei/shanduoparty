@@ -1,5 +1,6 @@
 package com.shanduo.party.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,13 +93,11 @@ public interface AttentionService {
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param typeId 类型:1,好友;2,拉黑
-	 * @param @param pageNum 页码
-	 * @param @param pageSize 记录数
 	 * @param @return
-	 * @return Map<String,Object>
+	 * @return List<Map<String, Object>>
 	 * @throws
 	 */
-	Map<String, Object> attentionList(Integer userId,String typeId,Integer pageNum,Integer pageSize);
+	List<Map<String, Object>> attentionList(Integer userId,String typeId);
 	
 	/**
 	 * 双向删除好友或删除黑名单

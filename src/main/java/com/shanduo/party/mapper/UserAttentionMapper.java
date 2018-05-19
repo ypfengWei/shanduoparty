@@ -22,7 +22,7 @@ public interface UserAttentionMapper {
     
     int selectAttentionCount(Integer userId,String typeId);
     
-    List<Map<String, Object>> selectAttentionList(Integer userId,String typeId,Integer pageNum, Integer pageSize);
+    List<Map<String, Object>> selectAttentionList(Integer userId,String typeId);
     
     int deleteAttention(Integer userId,Integer attention, String typeId);
 }
