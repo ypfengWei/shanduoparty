@@ -80,13 +80,12 @@ public interface UserService {
 	 * @Title: updatePasswordByPhone
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param phone 手机号
 	 * @param @param password 新密码
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int updatePasswordByPhone(Integer userId,String phone,String password);
+	int updatePasswordByPhone(Integer userId,String password);
 	
 	
 	/**

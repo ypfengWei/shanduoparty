@@ -290,10 +290,8 @@
   </update>
   <update id="updateByPhone">
     update shanduo_user
-    set
-      pass_word = #{2}
+    set pass_word = #{1}
     where id = #{0}
-    and phone_number = #{1}
   </update>
   <select id="selectByGender" parameterType="java.lang.String" resultType="map">
     select su.gender as gender,count(su.gender) as count from  shanduo_user su join activity_score ae on ae.user_id = su.id 

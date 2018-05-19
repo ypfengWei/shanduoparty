@@ -72,6 +72,9 @@ public class SmsUtils {
 		case "3":
 			request.setTemplateCode("SMS_121185040");
 			break;
+		case "4":
+			request.setTemplateCode("SMS_121185040");
+			break;
 		default:
 			break;
 		}

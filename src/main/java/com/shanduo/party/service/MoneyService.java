@@ -112,4 +112,6 @@ public interface MoneyService {
 	 * @throws
 	 */
 	int updatePassWord(Integer userId,String password);
+	
+	
 }

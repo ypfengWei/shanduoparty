@@ -198,7 +198,7 @@
   <select id="oneCommentIdList" resultType="map">
 	select
   		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
-  		su.user_name as `name`,ac.`comment`,ac.picture,su.gender,su.birthday as age,
+  		su.user_name as `name`,ac.`comment`,su.gender,su.birthday as age,
   		ac.create_date as createDate
 	from dynamic_comment ac
 	join shanduo_user su on ac.user_id = su.id
@@ -221,7 +221,7 @@
 		dc.id,dc.dynamic_id as dynamicId,dc.comment_id as commentId,
  		usOne.id as userId,usOne.user_name as userName,usOne.head_portrait_id as portraitId,
  		usTwo.id as replyId,usTwo.user_name as replyName,
- 		dc.`comment`,dc.picture,dc.create_date
+ 		dc.`comment`,dc.create_date
 	from dynamic_comment dc
 	 	join shanduo_user usOne on usOne.id = dc.user_id
 	 	join shanduo_user usTwo on usTwo.id = dc.respondent
@@ -234,7 +234,7 @@
   <select id="selectByCommentId" parameterType="java.lang.String" resultType="map">
 	select
   		ac.id,ac.dynamic_id as dynamicId,su.id as userId,su.head_portrait_id as portraitId,
-  		su.user_name as `name`,ac.`comment`,ac.picture,su.gender,su.birthday as age,
+  		su.user_name as `name`,ac.`comment`,su.gender,su.birthday as age,
   		ac.create_date as createDate
 	from dynamic_comment ac
 	join shanduo_user su on ac.user_id = su.id

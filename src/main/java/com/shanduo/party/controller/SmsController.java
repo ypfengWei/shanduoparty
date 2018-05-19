@@ -45,7 +45,7 @@ public class SmsController {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param phone 手机号码
-	 * @param @param typeId 短信类型ID 1.注册,2.换手机号,3.修改密码
+	 * @param @param typeId 短信类型ID 1.注册,2.换手机号,3.修改密码,4.修改支付密码
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
@@ -57,7 +57,7 @@ public class SmsController {
 			log.error("手机号格式错误");
 			return new ErrorBean("手机号格式错误");
 		}
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[123]$")) {
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[1234]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}

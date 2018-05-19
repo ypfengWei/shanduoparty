@@ -200,15 +200,13 @@ public class AttentionController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param typeId 类型:1,好友;2,拉黑
-	 * @param @param page 页码
-	 * @param @param pageSize 记录数
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
 	@RequestMapping(value = "attentionList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean attentionList(HttpServletRequest request,String token,String typeId,String page,String pageSize) {
+	public ResultBean attentionList(HttpServletRequest request,String token,String typeId) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if(userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);

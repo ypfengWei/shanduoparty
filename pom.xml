@@ -397,6 +397,12 @@
 			<artifactId>Xg-Push-SDK-JAVA</artifactId>
 			<version>1.1.8</version>
 		</dependency>
+		<!-- 支付宝支付jar -->
+		<dependency>
+   	 		<groupId>com.alipay.sdk</groupId>
+    		<artifactId>alipay-sdk-java</artifactId>
+    		<version>3.0.1</version>
+		</dependency>
   </dependencies>
   <build>
     <finalName>shanduo</finalName>

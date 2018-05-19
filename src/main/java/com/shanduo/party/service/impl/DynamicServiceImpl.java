@@ -116,9 +116,11 @@ public class DynamicServiceImpl implements DynamicService {
 			//vip等级
 			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
 			//距离
-			double distance = 
-					LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
-			map.put("distance", distance);
+			if(lon != null && lat != null) {
+				double distance = 
+						LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
+				map.put("distance", distance);
+			}
 	}
 	
 	@Override
@@ -182,8 +184,6 @@ public class DynamicServiceImpl implements DynamicService {
 		}
 		//保存头像图片URL
 		resultMap.put("portraitId", PictureUtils.getPictureUrl(resultMap.get("portraitId").toString()));
-		//动态图片
-		resultMap.put("picture", PictureUtils.getPictureUrlList(resultMap.get("picture").toString()));
 		//回复数量
 		resultMap.put("count", commentMapper.commentsCount(resultMap.get("id").toString()));
 		//保存年龄
@@ -200,18 +200,12 @@ public class DynamicServiceImpl implements DynamicService {
 		for (Map<String, Object> map : resultList) {
 			//保存头像图片URL
 			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
-			//动态图片
-			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
 			//回复数量
 			map.put("count", commentMapper.commentsCount(map.get("id").toString()));
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			//3条2级回复
 			List<Map<String, Object>> resultLists = commentMapper.twoCommentIdList(map.get("id").toString(), 0, 3);
-			for (Map<String, Object> maps : resultLists) {
-				//动态图片
-				map.put("picture", PictureUtils.getPictureUrlList(maps.get("picture").toString()));
-			}
 			map.put("comments", resultLists);
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
@@ -230,8 +224,6 @@ public class DynamicServiceImpl implements DynamicService {
 		for (Map<String, Object> map : resultList) {
 			//保存头像图片URL
 			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
-			//动态图片
-			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());

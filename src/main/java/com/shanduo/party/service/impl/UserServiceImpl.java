@@ -143,9 +143,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int updatePasswordByPhone(Integer userId, String phone, String password) {
+	public int updatePasswordByPhone(Integer userId, String password) {
 		password = MD5Utils.getInstance().getMD5(password);
-		int i = userMapper.updateByPhone(userId, phone, password);
+		int i = userMapper.updateByPhone(userId, password);
 		if(i < 1) {
 			log.error("修改密码失败");
 			throw new RuntimeException();

@@ -297,11 +297,11 @@ public class DynamicController {
 			log.error("动态ID为空");
 			return new ErrorBean("动态ID为空");
 		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+		if(!StringUtils.isNull(lat) && !PatternUtils.patternLatitude(lat)) {
 			log.error("纬度错误");
 			return new ErrorBean("纬度错误");
 		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+		if(!StringUtils.isNull(lon) && !PatternUtils.patternLatitude(lon)) {
 			log.error("经度错误");
 			return new ErrorBean("经度错误");
 		}

@@ -221,22 +221,22 @@ public class UserController {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
+		if(StringUtils.isNull(newPassword) || PatternUtils.patternPassword(newPassword)) {
+			log.error("新密码格式错误");
+			return new ErrorBean("新密码格式错误");
+		}
 		if("1".equals(typeId)) {
 			String phone = userService.selectByPhone(userId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean("验证码错误");
 			}
-			if(StringUtils.isNull(newPassword) || PatternUtils.patternPassword(newPassword)) {
-				log.error("新密码格式错误");
-				return new ErrorBean("新密码格式错误");
-			}
 			if(codeService.selectByQuery(phone, code, "3")) {
 				log.error("验证码超时或错误");
 				return new ErrorBean("验证码超时或错误");
 			}
 			try {
-				userService.updatePasswordByPhone(userToken.getUserId(), phone, newPassword);
+				userService.updatePasswordByPhone(userToken.getUserId(), newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
 				return new ErrorBean("修改失败");
@@ -245,10 +245,6 @@ public class UserController {
 			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 				log.error("密码格式错误");
 				return new ErrorBean("密码格式错误");
-			}
-			if(StringUtils.isNull(newPassword) || PatternUtils.patternPassword(newPassword)) {
-				log.error("新密码格式错误");
-				return new ErrorBean("新密码格式错误");
 			}
 			try {
 				userService.updatePassword(userId, password, newPassword);

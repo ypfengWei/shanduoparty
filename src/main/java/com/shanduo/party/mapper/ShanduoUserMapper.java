@@ -28,7 +28,7 @@ public interface ShanduoUserMapper {
     
     int updateByPassword(Integer userId,String password,String newPassword);
     
-    int updateByPhone(Integer userId,String phone,String password);
+    int updateByPhone(Integer userId,String password);
     
     List<Map<String, Object>> selectByGender(String activityId);
     
