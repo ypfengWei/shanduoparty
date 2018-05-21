@@ -88,18 +88,85 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public int updateOrder(String orderId,Integer userId) {
-		UserOrder order = orderMapper.selectById(orderId, userId);
+	public UserOrder selectByOrderId(String orderId) {
+		UserOrder order = orderMapper.selectById(orderId);
 		if(order == null) {
-			log.error("订单出错:"+orderId);
-			throw new RuntimeException();
+			return null;
 		}
+		return order;
+	}
+	
+	@Override
+	public int updateOrder(String orderId) {
+		UserOrder order = selectByOrderId(orderId);
+		Integer userId = order.getUserId();
 		BigDecimal money = order.getMoney();
 		Integer month = order.getMonth();
 		String activityId = order.getActivityId();
-		//类型:1.vip,2.svip,3.充值,4.活动刷新,5.活动置顶
-		switch (order.getOrderType()) {
-			case "1":
+		payOrder(orderId, userId, money, month, activityId, order.getOrderType());
+		return 1;
+	}
+
+	@Override
+	public int zfbUpdateOrder(String orderId) {
+		pay(orderId, "2");
+		return 1;
+	}
+	
+	@Override
+	public int wxUpdateOrder(String orderId) {
+		pay(orderId, "3");
+		return 1;
+	}
+	
+	/**
+	 * 第三方支付订单
+	 * @Title: pay
+	 * @Description: TODO
+	 * @param @param orderId 订单ID
+	 * @param @param type 1.余额,2.支付宝,3.微信,4.小程序
+	 * @return void
+	 * @throws
+	 */
+	public void pay(String orderId,String type) {
+		UserOrder order = selectByOrderId(orderId);
+		Integer userId = order.getUserId();
+		BigDecimal money = order.getMoney();
+		Integer month = order.getMonth();
+		String activityId = order.getActivityId();
+		String remarks = "";
+		if("2".equals(type)) {
+			remarks = "支付宝";
+		}else if("3".equals(type)) {
+			remarks = "微信";
+		}else {
+			remarks = "小程序";
+		}
+		try {
+			moneyService.payMoney(userId, money, remarks);
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+		payOrder(orderId, userId, money, month, activityId, order.getOrderType());
+	}
+	
+	/**
+	 * 支付订单
+	 * @Title: payOrder
+	 * @Description: TODO
+	 * @param @param orderId
+	 * @param @param userId
+	 * @param @param money
+	 * @param @param month
+	 * @param @param activityId
+	 * @param @param type
+	 * @return void
+	 * @throws
+	 */
+	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String type) {
+		//1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
+		switch (type) {
+			case "2":
 				try {
 					moneyService.consumeMoney(userId, money, "开通VIP");
 					vipService.updateByUserId(userId, month, "0");
@@ -107,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
 					throw new RuntimeException();
 				}
 				break;
-			case "2":
+			case "3":
 				try {
 					moneyService.consumeMoney(userId, money, "开通SVIP");
 					vipService.updateByUserId(userId, month, "1");
@@ -115,13 +182,6 @@ public class OrderServiceImpl implements OrderService {
 					throw new RuntimeException();
 				}
 				break;
-//			case "3":
-//				try {
-//					moneyService.payMoney(userId, money);
-//				} catch (Exception e) {
-//					throw new RuntimeException();
-//				}
-//				break;
 			case "4":
 				try {
 					moneyService.consumeMoney(userId, money, "活动刷新");
@@ -140,16 +200,14 @@ public class OrderServiceImpl implements OrderService {
 				break;
 		}
 		//修改订单状态
-		order = new UserOrder();
+		UserOrder order = new UserOrder();
 		order.setId(orderId);
 		order.setStatus("2");
-		order.setPaymentType("1");
+		order.setPaymentType(type);
 		int i = orderMapper.updateByPrimaryKeySelective(order);
 		if(i < 1) {
 			log.error("修改订单失败");
 			throw new RuntimeException();
 		}
-		return 1;
 	}
-
 }

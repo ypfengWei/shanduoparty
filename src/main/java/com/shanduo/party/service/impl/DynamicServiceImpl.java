@@ -84,7 +84,6 @@ public class DynamicServiceImpl implements DynamicService {
 	public void addList(List<Map<String, Object>> list,Integer userId,String lon,String lat) {
 		for (Map<String, Object> map : list) {
 			putMap(map, userId, lon, lat);
-			
 		}
 	}
 	
@@ -111,7 +110,7 @@ public class DynamicServiceImpl implements DynamicService {
 			map.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 			//点赞人数
 			map.put("praise", praiseService.selectByCount(dynamicId));
-			//用户是否点赞
+			//当前用户是否点赞
 			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 			//vip等级
 			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));

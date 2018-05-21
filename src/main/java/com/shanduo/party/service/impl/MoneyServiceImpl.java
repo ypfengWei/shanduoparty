@@ -63,9 +63,9 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 	
 	@Override
-	public int payMoney(Integer userId, BigDecimal amount) {
+	public int payMoney(Integer userId, BigDecimal money,String remarks) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		BigDecimal money = userMoney.getMoney().add(amount);
+		money = userMoney.getMoney().add(money);
 		userMoney.setMoney(money);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -73,7 +73,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "1", "充值闪多币:"+"+"+amount);
+			experienceService.saveMoneyRecord(userId, "1", remarks+"充值余额:"+"+"+money);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -81,19 +81,18 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 	
 	@Override
-	public int checkMoney(Integer userId, BigDecimal amount) {
+	public boolean checkMoney(Integer userId, BigDecimal money) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		if(userMoney.getMoney().compareTo(amount) < 0) {
-			log.error("余额不足");
-			throw new RuntimeException();
+		if(userMoney.getMoney().compareTo(money) < 0) {
+			return true;
 		}
-		return 1;
+		return false;
 	}
 	
 	@Override
-	public int consumeMoney(Integer userId, BigDecimal amount, String remarks) {
+	public int consumeMoney(Integer userId, BigDecimal money, String remarks) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		BigDecimal money = userMoney.getMoney().subtract(amount);
+		money = userMoney.getMoney().subtract(money);
 		userMoney.setMoney(money);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -101,7 +100,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "2", remarks+":-"+amount);
+			experienceService.saveMoneyRecord(userId, "2", remarks+":-"+money);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
