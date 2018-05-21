@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ShanduoActivity;
 import com.shanduo.party.entity.ShanduoUser;
@@ -77,8 +78,8 @@ public class ActivityController {
 			String remarks, String activityCutoffTime, String lon, String lat, String detailedAddress) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if (StringUtils.isNull(activityName)) {
 			log.error("标题为空");
@@ -170,8 +171,8 @@ public class ActivityController {
 	public ResultBean deleteActivity(HttpServletRequest request, String avtivityId, String token) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(avtivityId)) {
 			log.error("活动Id为空");
@@ -236,8 +237,8 @@ public class ActivityController {
 		}else {
 			UserToken userToken = baseService.checkUserToken(token);
 			if (userToken == null) {
-				log.error("请重新登录");
-				return new ErrorBean("请重新登录");
+				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
 			resultMap = activityService.selectByFriendsUserId(userToken.getUserId(), pages, pageSizes, lon, lat);
 		}
@@ -265,8 +266,8 @@ public class ActivityController {
 	public ResultBean showOneActivity(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat, String type) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
@@ -319,8 +320,8 @@ public class ActivityController {
 	public ResultBean selectByUserId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
@@ -356,8 +357,8 @@ public class ActivityController {
 	public ResultBean participateActivities(HttpServletRequest request, String token, String activityId){
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
@@ -366,6 +367,15 @@ public class ActivityController {
 		if(activityService.selectByAll(userToken.getUserId(), activityId)) {
 			log.error("您在本时间段有其他的活动");
 			return new ErrorBean("您在本时间段有其他的活动");
+		}
+		if(activityService.selectByAll(userToken.getUserId(), activityId)) {
+			log.error("您在本时间段有其他的活动");
+			return new ErrorBean("您在本时间段有其他的活动");
+		}
+		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
+		if(shanduoActivity.getActivityCutoffTime().getTime() < System.currentTimeMillis()) {
+			log.error("此活动报名时间已过");
+			return new ErrorBean("此活动报名时间已过");
 		}
 		List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
 		if(resultMap != null) {
@@ -400,7 +410,6 @@ public class ActivityController {
 			}
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm" ); 
-		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
         String str = sdf.format(shanduoActivity.getActivityStartTime());
 		return new SuccessBean("参加活动成功,活动开始时间" + str + ",活动地址为" + shanduoActivity.getActivityAddress());
 	}
@@ -422,8 +431,8 @@ public class ActivityController {
 	public ResultBean selectByHistorical(HttpServletRequest request, String token, String page, String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -455,8 +464,8 @@ public class ActivityController {
 	public ResultBean activityRefresh(HttpServletRequest request, String token, String activityId){
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
@@ -487,8 +496,8 @@ public class ActivityController {
 	public ResultBean updateBysetTop(HttpServletRequest request, String token, String activityId) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
