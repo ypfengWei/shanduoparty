@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.VipExperience;
+import com.shanduo.party.entity.service.ActivityInfo;
+import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.VipService;
@@ -36,6 +38,9 @@ public class VipServiceImpl implements VipService {
 
 	@Autowired
 	private VipExperienceMapper vipExperienceMapper;
+	
+	@Autowired
+	private ShanduoActivityMapper activityMapper;
 
 	@Override
 	public int insertSelective(Integer userId, String vipType, Integer month) {
@@ -156,6 +161,16 @@ public class VipServiceImpl implements VipService {
 		return 10+getVipGrade(userId);
 	}
 	
+	@Override
+	public ActivityInfo selectByUserIds(Integer userId) {
+		ActivityInfo activityInfo = activityMapper.selectByUserIds(userId);
+		if(activityInfo == null) {
+			return null;
+		}
+		activityInfo.setVipGrade(selectVipExperience(userId));
+		return activityInfo;
+	}
+	
 	public int getVipGrade(Integer userId) {
 		int experience = vipExperienceMapper.selectByUserId(userId);
 		if(experience < 300) {
@@ -175,4 +190,5 @@ public class VipServiceImpl implements VipService {
 		}
 		return 8;
 	}
+
 }

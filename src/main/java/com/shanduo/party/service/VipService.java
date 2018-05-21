@@ -1,5 +1,7 @@
 package com.shanduo.party.service;
 
+import com.shanduo.party.entity.service.ActivityInfo;
+
 /**
  * vip业务层
  * @ClassName: VipService
@@ -35,5 +37,25 @@ public interface VipService {
 	 */
 	int updateByUserId(Integer userId, Integer month, String vipType);
 
+	/**
+	 * 查会员成长值
+	 * @Title: selectVipExperience
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userId
+	 * @param @return    设定文件
+	 * @return int    返回类型
+	 * @throws
+	 */
 	int selectVipExperience(Integer userId);
+	
+	/**
+	 * 会员中心
+	 * @Title: selectByUserIds
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userId
+	 * @param @return    设定文件
+	 * @return ActivityInfo    返回类型
+	 * @throws
+	 */
+	ActivityInfo selectByUserIds(Integer userId);
 }
