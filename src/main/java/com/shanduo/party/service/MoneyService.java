@@ -44,37 +44,38 @@ public interface MoneyService {
 	 * @Title: payMoney
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param amount 充值数量
+	 * @param @param money 充值金额
+	 * @param @param remarks 备注：充值方式等
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int payMoney(Integer userId,BigDecimal amount);
+	int payMoney(Integer userId,BigDecimal money,String remarks);
 	
 	/**
-	 * 消费闪多币前检查余额是否做够支付
+	 * 消费闪多币前检查余额是否足够支付
 	 * @Title: checkMoney
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param amount 消费数量
+	 * @param @param money 消费金额
 	 * @param @return
-	 * @return int
+	 * @return boolean
 	 * @throws
 	 */
-	int checkMoney(Integer userId,BigDecimal amount);
+	boolean checkMoney(Integer userId,BigDecimal money);
 	
 	/**
 	 * 消费余额
 	 * @Title: consumeMoney
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param amount 消费数量
+	 * @param @param money 消费金额
 	 * @param @param remarks 备注：消费方式等
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int consumeMoney(Integer userId,BigDecimal amount,String remarks);
+	int consumeMoney(Integer userId,BigDecimal money,String remarks);
 	
 	/**
 	 * 赠送闪多豆

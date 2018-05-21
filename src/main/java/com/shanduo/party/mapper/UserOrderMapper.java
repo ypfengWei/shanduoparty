@@ -15,5 +15,5 @@ public interface UserOrderMapper {
 
     int updateByPrimaryKey(UserOrder record);
     
-    UserOrder selectById(String id,Integer userId);
+    UserOrder selectById(String id);
 }

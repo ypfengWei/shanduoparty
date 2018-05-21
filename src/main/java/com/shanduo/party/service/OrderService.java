@@ -1,5 +1,7 @@
 package com.shanduo.party.service;
 
+import com.shanduo.party.entity.UserOrder;
+
 /**
  * 订单业务层
  * @ClassName: OrderService
@@ -26,6 +28,17 @@ public interface OrderService {
 	String saveOrder(Integer userId,String orderType,String money,String month,String activityId);
 	
 	/**
+	 * 返回订单信息
+	 * @Title: selectByOrderId
+	 * @Description: TODO
+	 * @param @param orderId
+	 * @param @return
+	 * @return UserOrder
+	 * @throws
+	 */
+	UserOrder selectByOrderId(String orderId);
+	
+	/**
 	 * 余额支付订单
 	 * @Title: updateOrder
 	 * @Description: TODO
@@ -35,6 +48,27 @@ public interface OrderService {
 	 * @return int
 	 * @throws
 	 */
-	int updateOrder(String orderId,Integer userId);
+	int updateOrder(String orderId);
 	
+	/**
+	 * 支付宝支付订单
+	 * @Title: zfbUpdateOrder
+	 * @Description: TODO
+	 * @param @param orderId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int zfbUpdateOrder(String orderId);
+	
+	/**
+	 * 微信支付订单
+	 * @Title: wxUpdateOrder
+	 * @Description: TODO
+	 * @param @param orderId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int wxUpdateOrder(String orderId);
 }

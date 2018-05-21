@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.UserMoney;
+import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -138,6 +139,11 @@ public class MoneyControllrt {
 			log.error("订单号为空");
 			return new ErrorBean("订单号为空");
 		}
+		UserOrder order = orderService.selectByOrderId(orderId);
+		if(order == null) {
+			log.error("订单不存在或已支付");
+			return new ErrorBean("订单不存在或已支付");
+		}
 		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
 			log.error("密码格式错误");
 			return new ErrorBean("密码格式错误");
@@ -146,8 +152,12 @@ public class MoneyControllrt {
 			log.error("支付密码错误");
 			return new ErrorBean("密码错误");
 		}
+		if(moneyService.checkMoney(userId,order.getMoney())) {
+			log.error("余额不足");
+			return new ErrorBean("余额不足");
+		}
 		try {
-			orderService.updateOrder(orderId, userId);
+			orderService.updateOrder(orderId);
 		} catch (Exception e) {
 			log.error("支付失败");
 			return new ErrorBean("支付失败");

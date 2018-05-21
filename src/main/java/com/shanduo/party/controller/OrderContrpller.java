@@ -39,12 +39,12 @@ public class OrderContrpller {
 	private OrderService orderService;
 
 	/**
-	 * 生成订单
+	 * 余额支付生成订单
 	 * @Title: saveorder
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
-	 * @param @param typeId 订单类型:1.vip,2.svip,3.充值,4.活动刷新,5.活动置顶
+	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
 	 * @param @param money 金额,充值才传
 	 * @param @param month 月份,开通vip才传
 	 * @param @param activityId 活动ID,刷新置顶才传
