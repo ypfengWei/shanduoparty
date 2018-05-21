@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.VipExperience;
-import com.shanduo.party.entity.service.ActivityInfo;
-import com.shanduo.party.mapper.ShanduoActivityMapper;
+import com.shanduo.party.entity.service.VipInfo;
 import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.VipService;
+import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
 /**
@@ -38,9 +38,6 @@ public class VipServiceImpl implements VipService {
 
 	@Autowired
 	private VipExperienceMapper vipExperienceMapper;
-	
-	@Autowired
-	private ShanduoActivityMapper activityMapper;
 
 	@Override
 	public int insertSelective(Integer userId, String vipType, Integer month) {
@@ -162,13 +159,14 @@ public class VipServiceImpl implements VipService {
 	}
 	
 	@Override
-	public ActivityInfo selectByUserIds(Integer userId) {
-		ActivityInfo activityInfo = activityMapper.selectByUserIds(userId);
-		if(activityInfo == null) {
+	public VipInfo selectByUserIds(Integer userId) {
+		VipInfo vipInfo = shanduoVipMapper.selectByUserIds(userId);
+		if(vipInfo == null) {
 			return null;
 		}
-		activityInfo.setVipGrade(selectVipExperience(userId));
-		return activityInfo;
+		vipInfo.setVipGrade(selectVipExperience(userId));
+		vipInfo.setAge(AgeUtils.getAgeFromBirthTime(vipInfo.getBirthday()));
+		return vipInfo;
 	}
 	
 	public int getVipGrade(Integer userId) {

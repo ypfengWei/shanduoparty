@@ -12,13 +12,15 @@
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
-  <resultMap id="VipResultMap" type="hashMap">
-  	<id column="id" jdbcType="VARCHAR" property="id" />
-  	<result column="user_id" jdbcType="INTEGER" property="userId" />
-  	<result column="vip_type" jdbcType="CHAR" property="vipType" />
-  	<result column="vip_start_time" jdbcType="TIMESTAMP" property="vipStartTime" />
-    <result column="vip_end_time" jdbcType="TIMESTAMP" property="vipEndTime" />
+  <resultMap id="VipResultMap" type="com.shanduo.party.entity.service.VipInfo">
+  	<result column="id" jdbcType="INTEGER" property="userId" />
+  	<result column="user_name" jdbcType="CHAR" property="userName" />
     <result column="experience" jdbcType="TIMESTAMP" property="experience" />
+    <result column="head_portrait_id" jdbcType="VARCHAR" property="headPortraitId"/>
+    <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+    <result column="age" jdbcType="INTEGER" property="age"/>
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="vipGrade" jdbcType="INTEGER" property="vipGrade"/>
   </resultMap> 
   <sql id="Base_Column_List">
     id, user_id, vip_type, vip_start_time, vip_end_time, remarks, create_date, update_date, 
@@ -157,5 +159,12 @@
   	select 
   	vip_type
   	from shanduo_vip where user_id = #{0} and vip_end_time > now()
+  </select>
+  <select id="selectByUserIds" resultMap="VipResultMap">
+  	select 
+  	su.id,su.user_name,su.gender,su.birthday,su.head_portrait_id,ve.experience 
+  	from shanduo_user su 
+	join vip_experience ve on su.id = ve.user_id
+	where su.id = #{0} and su.del_flag = '0' and ve.del_flag = '0'
   </select>
 </mapper>

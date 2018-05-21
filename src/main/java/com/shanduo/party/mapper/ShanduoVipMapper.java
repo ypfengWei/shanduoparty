@@ -3,6 +3,7 @@ package com.shanduo.party.mapper;
 import java.util.List;
 
 import com.shanduo.party.entity.ShanduoVip;
+import com.shanduo.party.entity.service.VipInfo;
 
 public interface ShanduoVipMapper {
     int deleteByPrimaryKey(Integer id);
@@ -28,5 +29,15 @@ public interface ShanduoVipMapper {
     ShanduoVip selectUserIdAndType(Integer userId, String vipType);
     
     List<ShanduoVip> selectByUserId(Integer userId);
-    
+ 
+    /**
+     * 会员中心
+     * @Title: selectByUserIds
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param userId
+     * @param @return    设定文件
+     * @return ActivityInfo    返回类型
+     * @throws
+     */
+    VipInfo selectByUserIds(Integer userId);
 }

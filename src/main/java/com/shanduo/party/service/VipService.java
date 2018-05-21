@@ -1,6 +1,6 @@
 package com.shanduo.party.service;
 
-import com.shanduo.party.entity.service.ActivityInfo;
+import com.shanduo.party.entity.service.VipInfo;
 
 /**
  * vip业务层
@@ -57,5 +57,5 @@ public interface VipService {
 	 * @return ActivityInfo    返回类型
 	 * @throws
 	 */
-	ActivityInfo selectByUserIds(Integer userId);
+	VipInfo selectByUserIds(Integer userId);
 }
