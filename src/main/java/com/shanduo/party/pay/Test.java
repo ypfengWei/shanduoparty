@@ -16,11 +16,11 @@ public class Test {
 		AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
 		//SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
 		AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-		model.setBody("开通闪多vip");
-		model.setSubject("App支付测试Java");
+		model.setBody("刷新闪多活动");
+		model.setSubject("刷新闪多活动0e72555d7c924b3290f10a7febaad772");
 		model.setOutTradeNo("59d6124585884e00bcd0c796673a1a51");
 		model.setTimeoutExpress("30m");
-		model.setTotalAmount("0.01");
+		model.setTotalAmount("0.1");
 		model.setProductCode("QUICK_MSECURITY_PAY");
 		request.setBizModel(model);
 		request.setNotifyUrl(AlipayConfig.NOTIFY_URL);

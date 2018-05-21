@@ -17,6 +17,10 @@ public class AlipayConfig {
 	// 商家pid
 	public static String SELLERID = "2088821849609065";
 	
+	public static String APP_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4HYOvUnQ0pS1/71SnSMsGZKWlbMcw1nAGCGdmk"
+			+ "wn3P0eozX0tujgNzjC0GRhUZtoWh6/Sg3jICDRsK2A0IW6ncD0dyTZuiISD8kbHbXptdLpMhG9nn8pVgaMot5fupOxh4IlRoqMLHWRIq+wI0Wp"
+			+ "2+2nvcU+vMQNrWZ+oYcpdODjJMMCXHcwHm2himIl/248BQFlY9eMHf1ACWXRs/NXAxRw7NeEJrqaKn4zLSA7zA/ZIgT8kShxCgfeGvJtJmb707"
+			+ "DBMn9WVCdzpQgahP4hxjXY/0GyfrgvCy2dB3UDUh3rzi/e1pesglVNoVzm2Mfez4rd1bIVYd5xMoRa7jjnzQIDAQAB";
 	//商户私钥
 	public static String APP_PRIVATE_KEY = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCZG42bFyXfPeLRqYjYyTmmB/QQ/eSQO"
 			+ "AaJq44Rgyz/xBCn9NlROjd1aa/gQsKZnlbDuhNbn06GC1hpNYnZ7faVt3tDzpKiwwhs7nhWsQyaUIUXNWWJtoAN5o3r9tqLa+/P2+R4ZaC+GeA"
