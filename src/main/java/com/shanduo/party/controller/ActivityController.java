@@ -367,13 +367,12 @@ public class ActivityController {
 			log.error("您在本时间段有其他的活动");
 			return new ErrorBean("您在本时间段有其他的活动");
 		}
-		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
-		ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
 		List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
 		if(resultMap != null) {
 			ShanduoUser shanduoUser = activityService.selectById(userToken.getUserId());
 			for (Map<String, Object> map : resultMap) {
 				if (shanduoUser.getGender().equals(map.get("gender").toString())) {
+					ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
 					int count = Integer.parseInt(map.get("count").toString());
 					if (shanduoUser.getGender().equals("0") && activityRequirement.getWomanNumber() <= count) {
 						log.error("该性别人数已满");
@@ -401,6 +400,7 @@ public class ActivityController {
 			}
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm" ); 
+		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
         String str = sdf.format(shanduoActivity.getActivityStartTime());
 		return new SuccessBean("参加活动成功,活动开始时间" + str + ",活动地址为" + shanduoActivity.getActivityAddress());
 	}
