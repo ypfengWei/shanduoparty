@@ -304,4 +304,15 @@ public interface ShanduoActivityMapper {
      * @throws
      */
     int selectById(String ativityId);
+    
+    /**
+     * 会员中心
+     * @Title: selectByUserIds
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param userId
+     * @param @return    设定文件
+     * @return ActivityInfo    返回类型
+     * @throws
+     */
+    ActivityInfo selectByUserIds(Integer userId);
 }

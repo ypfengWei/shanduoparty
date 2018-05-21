@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -59,8 +60,8 @@ public class ScoreController {
 			String evaluationcontent, String evaluationSign) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(("0").equals(evaluationSign)) {
 			if(StringUtils.isNull(activityId)) {
@@ -102,8 +103,8 @@ public class ScoreController {
 			String beEvaluated, String evaluationSign) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(("0").equals(evaluationSign)) {
 			if(StringUtils.isNull(activityId)) {
@@ -140,8 +141,8 @@ public class ScoreController {
 	public ResultBean selActivityScore(HttpServletRequest request, String token, String page, String pageSize) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error("请重新登录");
-			return new ErrorBean("请重新登录");
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
