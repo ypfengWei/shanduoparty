@@ -20,7 +20,7 @@ public class WeekUtils {
         String week;
         switch (dayWeek) {
 		case 1:
-			week = "星期天";
+			week = "星期日";
 			break;
 		case 2:
 			week = "星期一";

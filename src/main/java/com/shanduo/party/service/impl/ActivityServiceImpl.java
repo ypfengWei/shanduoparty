@@ -125,18 +125,12 @@ public class ActivityServiceImpl implements ActivityService {
 		ShanduoActivity activity = new ShanduoActivity();
 		activity.setId(UUIDGenerator.getUUID());
 		activity.setUserId(userId);
-		if(!StringUtils.isNull(activityName)) {
-			activity.setActivityName(SensitiveWord.filterInfo(activityName));
-		}
-		if(!StringUtils.isNull(remarks)) {
-			activity.setRemarks(SensitiveWord.filterInfo(remarks));
-		}
-		if(!StringUtils.isNull(detailedAddress)) {
-			activity.setDetailedAddress(SensitiveWord.filterInfo(detailedAddress));
-		}
+		activity.setActivityName(SensitiveWord.filterInfo(activityName));
+		activity.setRemarks(SensitiveWord.filterInfo(remarks));
+		activity.setDetailedAddress(SensitiveWord.filterInfo(detailedAddress));
 		activity.setLon(new BigDecimal(lon));
 		activity.setLat(new BigDecimal(lat));
-		SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		try {  
             Date date = formatter.parse(activityStartTime);  
             activity.setActivityStartTime(date);
@@ -411,19 +405,42 @@ public class ActivityServiceImpl implements ActivityService {
     		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
             String startString = activityInfo.getActivityStartTime();  
             String cutoffString = activityInfo.getActivityCutoffTime(); 
-            StringBuffer buffer = new StringBuffer();
-            StringBuffer buffers = new StringBuffer();
-            String startTime = buffer.append(startString).substring(0,16).replace("-", "/").replace(" ", "/");
-            String cutoffTime = buffers.append(cutoffString).substring(0,16).replace("-", "/").replace(" ", "/");
+            String startTime = startString.substring(0,16).replace("-", "/").replace(" ", "/");
+            String cutoffTime = cutoffString.substring(0,16).replace("-", "/").replace(" ", "/");
+            Long time = get(null, "yyyy-MM-dd 00:00", 1);
+            Long endTime = get(null, "yyyy-MM-dd 23:59", 1);
+            Long times = get(cutoffString, null, 2);
+            String nowTime = formatter.format(new Date());
+            if(time <= times &&  times <= endTime) {
+            	cutoffTime = cutoffTime.substring(cutoffTime.length()-5, cutoffTime.length());
+            }else if(nowTime.substring(0, 4).equals(cutoffString.substring(0, 4))) {
+            	cutoffTime = cutoffTime.substring(cutoffTime.length()-11, cutoffTime.length());
+            }
             try {  
                 Date startDate = formatter.parse(startString);  
                 activityInfo.setActivityStartTime(startTime+WeekUtils.getWeek(startDate));
-                Date cutoffDate = formatter.parse(cutoffString);  
-                activityInfo.setActivityCutoffTime(cutoffTime+WeekUtils.getWeek(cutoffDate));
+                activityInfo.setActivityCutoffTime(cutoffTime);
             } catch (ParseException e) {  
                 e.printStackTrace();  
             }  
 		}
 		return resultList;
+	}
+	
+	public Long get(String time, String timeType, Integer type) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
+		Date cutoff = new Date();
+		try {
+			if(type == 1) {
+				Format format = new SimpleDateFormat(timeType);
+				String createDate = format.format(cutoff);
+				cutoff = formatter.parse(createDate);
+			} else {
+				cutoff = formatter.parse(time);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return cutoff.getTime();
 	}
 }

@@ -245,9 +245,9 @@ public class ActivityController {
 	}
 
 	/**
-	 * type = 1 查看单个用户举办的活动
+	 * type = 1 查看用户参加的已经结束的活动
 	 * type = 2 查看用户报名的活动
-	 * type = 3 查看用户参加的已经结束的活动
+	 * type = 3 查看单个用户举办的活动
 	 * @Title: showOneActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
@@ -292,11 +292,11 @@ public class ActivityController {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>();
 		if("1".equals(type)) {
-			resultMap = activityService.selectByUserId(userToken.getUserId(),pages,pageSizes,lon,lat);
+			resultMap = activityService.selectByUserIdInTime(userToken.getUserId(),pages,pageSizes,lon,lat);
 		} else if("2".equals(type)){
 			resultMap = activityService.selectByUserIdTime(userToken.getUserId(),pages,pageSizes,lon,lat);
 		} else{
-			resultMap = activityService.selectByUserIdInTime(userToken.getUserId(),pages,pageSizes,lon,lat);
+			resultMap = activityService.selectByUserId(userToken.getUserId(),pages,pageSizes,lon,lat);
 		}
 		return new SuccessBean(resultMap);
 	}
