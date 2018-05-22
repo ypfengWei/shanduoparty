@@ -19,6 +19,13 @@ import com.shanduo.party.entity.service.VipInfo;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.VipService;
 
+/**
+ * vip控制层
+ * @ClassName: VipController
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author lishan
+ * @date 2018年5月22日 上午11:52:56
+ */
 @Controller
 @RequestMapping(value = "vip")
 public class VipController {

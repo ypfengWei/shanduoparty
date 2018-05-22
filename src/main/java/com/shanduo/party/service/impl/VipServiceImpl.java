@@ -71,7 +71,7 @@ public class VipServiceImpl implements VipService {
 		long longtime = System.currentTimeMillis();
 		ShanduoVip vip = shanduoVipMapper.selectUserIdAndType(userId,"0");
 		ShanduoVip svip = shanduoVipMapper.selectUserIdAndType(userId,"1");
-		if(vipType.equals("0")) {
+		if(("0").equals(vipType)) {
 			if(vip != null) {
 				if(svip != null) {
 					if(svip.getVipEndTime().getTime() < longtime && vip.getVipEndTime().getTime() < longtime) {
