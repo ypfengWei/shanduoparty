@@ -54,5 +54,5 @@ public class AlipayConfig {
 	public static String SIGNTYPE = "RSA2";
 	
 	// 回调地址
-	public static String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/zfbpay";
+	public static String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/alipay";
 }

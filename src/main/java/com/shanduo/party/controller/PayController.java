@@ -43,50 +43,6 @@ public class PayController {
 	@Autowired
 	private OrderService orderService;
 	
-	public Object set(String orderId) {
-		UserOrder order = orderService.selectByOrderId(orderId);
-		String body = "";
-		String subject = "";
-		if("1".equals(order.getOrderType())) {
-			body = "充值闪多余额";
-			subject = body + order.getMoney();
-		}else if("2".equals(order.getOrderType())){
-			body = "开通闪多VIP"+order.getMonth()+"个月";
-		}else if("3".equals(order.getOrderType())){
-			body = "开通闪多SVIP"+order.getMonth()+"个月";
-		}else if("4".equals(order.getOrderType())){
-			body = "刷新闪多活动"+order.getActivityId();
-		}else {
-			body = "置顶闪多活动"+order.getActivityId();
-		}
-		//实例化客户端
-		AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", AlipayConfig.APPID, AlipayConfig.APP_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
-		//实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
-		AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
-		//SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
-		AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-		//一笔交易的具体描述信息
-		model.setBody(body);
-		//交易标题
-		model.setSubject(subject);
-		//订单号
-		model.setOutTradeNo(orderId);
-		model.setTimeoutExpress("30m");
-		//订单金额
-		model.setTotalAmount(order.getMoney().toString());
-		model.setProductCode("QUICK_MSECURITY_PAY");
-		request.setBizModel(model);
-		request.setNotifyUrl(AlipayConfig.NOTIFY_URL);
-		try {
-		        //这里和普通的接口调用不同，使用的是sdkExecute
-		        AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
-		        System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
-		    } catch (AlipayApiException e) {
-		        e.printStackTrace();
-		}
-		return model;
-	}
-	
 	/**
 	 * 支付宝支付回调
 	 * @Title: pay
