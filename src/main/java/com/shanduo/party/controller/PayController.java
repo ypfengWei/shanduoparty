@@ -16,12 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradeAppPayRequest;
-import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.pay.AlipayConfig;
 import com.shanduo.party.service.OrderService;
@@ -53,7 +48,7 @@ public class PayController {
 	 * @return String
 	 * @throws
 	 */
-	@RequestMapping(value = "zfbpay",produces = "text/html;charset=UTF-8",method={RequestMethod.POST})
+	@RequestMapping(value = "alipay",produces = "text/html;charset=UTF-8",method={RequestMethod.POST})
 	@ResponseBody
 	public String pay(HttpServletRequest request) throws AlipayApiException {
 		//获取支付宝POST过来反馈信息
