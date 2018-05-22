@@ -15,7 +15,7 @@ import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.entity.service.ActivityInfo;
+import com.shanduo.party.entity.service.VipInfo;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.VipService;
 
@@ -39,11 +39,11 @@ public class VipController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		ActivityInfo activityInfo = vipService.selectByUserIds(userToken.getUserId());
-		if(activityInfo == null) {
+		VipInfo vipInfo = vipService.selectByUserIds(userToken.getUserId());
+		if(vipInfo == null) {
 			log.error("您不是会员");
 			return new ErrorBean("您不是会员");
 		}
-		return new SuccessBean(activityInfo);
+		return new SuccessBean(vipInfo);
 	}
 }
