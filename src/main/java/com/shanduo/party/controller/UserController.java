@@ -321,6 +321,11 @@ public class UserController {
 	@RequestMapping(value = "queryuser",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean queryUser(HttpServletRequest request,String token,String userId) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if(userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
 		return null;
 	}
 	
@@ -349,4 +354,26 @@ public class UserController {
 		}
 		return new SuccessBean(labelList);
 	}
+	
+	/**
+	 * 检查token是否有效
+	 * @Title: checkToken
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "checktoken",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean checkToken(HttpServletRequest request,String token) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if(userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		return new SuccessBean();
+	}
+		
 }

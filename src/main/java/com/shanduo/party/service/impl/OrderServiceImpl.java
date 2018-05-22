@@ -49,15 +49,15 @@ public class OrderServiceImpl implements OrderService {
 		order.setOrderType(orderType);
 		BigDecimal moneys = new BigDecimal("0");
 		if("1".equals(orderType)) {
+			order.setMoney(new BigDecimal(money));
+		}else if("2".equals(orderType)) {
 			order.setMonth(Integer.parseInt(month));
 			moneys = new BigDecimal(month+"").multiply(new BigDecimal("8.8"));
 			order.setMoney(moneys);
-		}else if("2".equals(orderType)) {
+		}else if("3".equals(orderType)) {
 			order.setMonth(Integer.parseInt(month));
 			moneys = new BigDecimal(month+"").multiply(new BigDecimal("12.8"));
 			order.setMoney(moneys);
-		}else if("3".equals(orderType)) {
-			order.setMoney(new BigDecimal(money));
 		}else if("4".equals(orderType)) {
 			order.setActivityId(activityId);
 			int vip = vipService.selectVipExperience(userId);
