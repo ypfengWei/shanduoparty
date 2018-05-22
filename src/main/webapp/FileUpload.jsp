@@ -8,8 +8,7 @@
 </head>
 <body>
 <form id = "aaa" action="file/upload" method="post" enctype="multipart/form-data">
-<input type="text" name="token" value="111111"/><br>
-<input type="file" name= "file"><br>
+<input type="text" name="token" value="token"/><br>
 <input type="file" name= "file"><br>
 <input type="submit" value = "点击上传">
 </form>
