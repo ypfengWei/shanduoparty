@@ -30,7 +30,7 @@ public class Test {
 		        System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
 		    } catch (AlipayApiException e) {
 		        e.printStackTrace();
-		}
+		    }
 		
 	}
 }
