@@ -54,6 +54,8 @@ public class ActivityInfo {
     
     private Integer beEvaluationSign; // 发起者评论标识
     
+    private Integer otherScore; //被评分
+    
 	public ActivityInfo(){
 		
 	}
@@ -250,6 +252,14 @@ public class ActivityInfo {
 
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+
+	public Integer getOtherScore() {
+		return otherScore;
+	}
+
+	public void setOtherScore(Integer otherScore) {
+		this.otherScore = otherScore;
 	}
 
 }

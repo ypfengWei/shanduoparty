@@ -384,11 +384,11 @@ public class ActivityController {
 				if (shanduoUser.getGender().equals(map.get("gender").toString())) {
 					ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
 					int count = Integer.parseInt(map.get("count").toString());
-					if (shanduoUser.getGender().equals("0") && activityRequirement.getWomanNumber() <= count) {
+					if ("0".equals(shanduoUser.getGender()) && activityRequirement.getWomanNumber() <= count) {
 						log.error("该性别人数已满");
 						return new ErrorBean("该性别人数已满");
 					}
-					if (shanduoUser.getGender().equals("1") && activityRequirement.getManNumber() <= count) {
+					if ("1".equals(shanduoUser.getGender()) && activityRequirement.getManNumber() <= count) {
 						log.error("该性别人数已满");
 						return new ErrorBean("该性别人数已满");
 					}

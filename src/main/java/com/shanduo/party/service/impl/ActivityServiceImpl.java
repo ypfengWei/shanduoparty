@@ -214,11 +214,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public Map<String, Object> selectByNearbyUserId(String lon,String lat, Integer pageNum, Integer pageSize) {
 		long longtime = System.currentTimeMillis();
 		Date time = new Date(longtime - 1000*60*60*12);
-		int i = 0;
-		i = shanduoActivityMapper.updateById(time);
-		if(i < 1) {
-			log.error("暂无活动取消置顶");
-		}
+		shanduoActivityMapper.updateById(time); // 取消活动置顶
 		Double[] doubles = LocationUtils.getDoubles(lon, lat);
 		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(doubles[0], doubles[1], doubles[2], doubles[3]);
 		Page page = new Page(totalrecord, pageSize, pageNum);
@@ -239,6 +235,13 @@ public class ActivityServiceImpl implements ActivityService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserId(userId, pageNum, page.getPageSize());
+		for (ActivityInfo activityInfo : resultList) {
+			if(activityInfo.getOtherScore() == null) {
+				activityInfo.setBeEvaluationSign(0);
+			} else {
+				activityInfo.setBeEvaluationSign(1);
+			}
+		}
 		activity(resultList, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -370,7 +373,9 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat){
 		for (ActivityInfo activityInfo : resultList) {
-			if(activityInfo.getBirthday() != null) {
+			if(activityInfo.getBirthday() == null || activityInfo.getBirthday().isEmpty()) {
+				activityInfo.setAge(0);
+			} else {
 				activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			}
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());

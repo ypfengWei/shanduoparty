@@ -100,13 +100,13 @@ public class ScoreController {
 	@RequestMapping(value = "updateOthersScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId, String othersScore,
-			String beEvaluated, String evaluationSign) {
+			String beEvaluated, String beEvaluationSign) {
 		UserToken userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(("0").equals(evaluationSign)) {
+		if(("0").equals(beEvaluationSign)) {
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动ID为空");
 				return new ErrorBean("活动ID为空");
