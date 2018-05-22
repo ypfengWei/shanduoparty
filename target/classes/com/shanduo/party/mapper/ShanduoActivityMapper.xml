@@ -461,10 +461,4 @@
   	user_id 
   	from shanduo_activity where id = #{0}
   </select>
-  <select id="selectByUserIds" resultMap="ActivityResultMap">
-  	select 
-  	id,user_name,gender,birthday,head_portrait_id from 
-	shanduo_user  
-	where id = #{0} and del_flag = '0'
-  </select>
 </mapper>
