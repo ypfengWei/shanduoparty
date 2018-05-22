@@ -22,7 +22,7 @@ import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.pay.AlipayConfig;
+import com.shanduo.party.pay.AliPayConfig;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.StringUtils;
@@ -167,7 +167,7 @@ public class OrderContrpller {
 		}
 		subject = body + order.getMoney();
 		//实例化客户端
-		AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", AlipayConfig.APPID, AlipayConfig.APP_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
+		AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", AliPayConfig.APPID, AliPayConfig.APP_PRIVATE_KEY, AliPayConfig.FORMAT, AliPayConfig.CHARSET, AliPayConfig.ALIPAY_PUBLIC_KEY,AliPayConfig.SIGNTYPE);
 		//实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
 		AlipayTradeAppPayRequest requests = new AlipayTradeAppPayRequest();
 		//SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
@@ -183,12 +183,12 @@ public class OrderContrpller {
 		model.setTotalAmount(order.getMoney().toString());
 		model.setProductCode("QUICK_MSECURITY_PAY");
 		requests.setBizModel(model);
-		requests.setNotifyUrl(AlipayConfig.NOTIFY_URL);
+		requests.setNotifyUrl(AliPayConfig.NOTIFY_URL);
 		AlipayTradeAppPayResponse response = null;
 		try {
 	        //这里和普通的接口调用不同，使用的是sdkExecute
 	        response = alipayClient.sdkExecute(requests);
-	        System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
+//	        System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
 		} catch (AlipayApiException e) {
 		       log.error("生成支付宝订单信息错误");
 		       return new ErrorBean("订单错误");

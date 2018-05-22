@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ctc.wstx.util.StringUtil;
 import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
@@ -158,16 +159,36 @@ public class UserServiceImpl implements UserService {
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
 		ShanduoUser user = new ShanduoUser();
 		user.setId(userId);
-		user.setUserName(name);
-		user.setHeadPortraitId(headPortraitId);
-		user.setBirthday(birthday);
-		user.setGender(gender);
-		user.setEmotion(emotion);
-		user.setSignature(signature);
-		user.setBackgroundPicture(background);
-		user.setHometown(hometown);
-		user.setOccupation(occupation);
-		user.setSchool(school);
+		if(!StringUtils.isNull(name)) {
+			user.setUserName(name);
+		}
+		if(!StringUtils.isNull(headPortraitId)) {
+			user.setHeadPortraitId(headPortraitId);
+		}
+		if(!StringUtils.isNull(birthday)) {
+			user.setBirthday(birthday);
+		}
+		if(!StringUtils.isNull(gender)) {
+			user.setGender(gender);
+		}
+		if(!StringUtils.isNull(emotion)) {
+			user.setEmotion(emotion);
+		}
+		if(!StringUtils.isNull(signature)) {
+			user.setSignature(signature);
+		}
+		if(!StringUtils.isNull(background)) {
+			user.setBackgroundPicture(background);
+		}
+		if(!StringUtils.isNull(hometown)) {
+			user.setHometown(hometown);
+		}
+		if(!StringUtils.isNull(occupation)) {
+			user.setOccupation(occupation);
+		}
+		if(!StringUtils.isNull(occupation)) {
+			user.setSchool(occupation);
+		}
 		int i = userMapper.updateByPrimaryKeySelective(user);
 		if(i < 1) {
 			log.error("修改个人资料失败");

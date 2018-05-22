@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.shanduo.party.entity.UserOrder;
-import com.shanduo.party.pay.AlipayConfig;
+import com.shanduo.party.pay.AliPayConfig;
 import com.shanduo.party.service.OrderService;
 
 /**
@@ -69,7 +69,7 @@ public class PayController {
 		log.info(params.toString());
 		//切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
 		//boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
-		boolean flag = AlipaySignature.rsaCheckV1(params, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.CHARSET,AlipayConfig.SIGNTYPE);
+		boolean flag = AlipaySignature.rsaCheckV1(params, AliPayConfig.ALIPAY_PUBLIC_KEY, AliPayConfig.CHARSET,AliPayConfig.SIGNTYPE);
 		if(flag) {
 			//订单支付状态
 			String trade_status = params.get("trade_status");
@@ -84,13 +84,13 @@ public class PayController {
 				}
 				//应用ID
 				String appId = params.get("app_id");
-				if(!AlipayConfig.APPID.equals(appId)) {
+				if(!AliPayConfig.APPID.equals(appId)) {
 					log.error("应用ID不匹配:"+appId);
 					return "SUCCESS";
 				}
 				//商家ID
 				String sellerId = params.get("seller_id");
-				if(!AlipayConfig.SELLERID.equals(sellerId)) {
+				if(!AliPayConfig.SELLERID.equals(sellerId)) {
 					log.error("商家ID不匹配:"+sellerId);
 					return "SUCCESS";
 				}
