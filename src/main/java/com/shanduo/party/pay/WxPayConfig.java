@@ -24,16 +24,19 @@ public class WxPayConfig {
     
     //交易类型
     public static final String TRADETYPE_APP = "APP";
+    public static final String TRADETYPE_JSAPI = "JSAPI";
     
     //微信统一下单接口地址
     public static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     
-    //回调url
-    public static final String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/wxpay";
+    //支付回调url
+    public static final String NOTIFY_URL_APP = "https://yapinkeji.com/shanduoparty/jpay/appwxpay";
+    public static final String NOTIFY_URL_JSAPI = "https://yapinkeji.com/shanduoparty/jpay/jsapiwxpay";
     
     //调用微信接口的返回值的false
     public static final String FAIL = "FAIL";
     
     //调用微信接口的返回值的ture
     public static final String SUCCESS = "SUCCESS";
+    
 }

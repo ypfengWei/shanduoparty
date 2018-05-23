@@ -1,11 +1,14 @@
 package com.shanduo.party.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.pay.AliPayConfig;
 import com.shanduo.party.service.OrderService;
+import com.shanduo.party.util.WxPayUtils;
 
 /**
  * 第三方支付控制层
@@ -48,7 +52,7 @@ public class PayController {
 	 * @return String
 	 * @throws
 	 */
-	@RequestMapping(value = "alipay",produces = "text/html;charset=UTF-8",method={RequestMethod.POST})
+	@RequestMapping(value = "alipay",produces="text/html;charset=UTF-8",method={RequestMethod.POST})
 	@ResponseBody
 	public String pay(HttpServletRequest request) throws AlipayApiException {
 		//获取支付宝POST过来反馈信息
@@ -112,4 +116,39 @@ public class PayController {
 		return "SUCCESS";
 	}
 	
+	/**
+	 * @Description: 微信支付回调
+	 * @param request
+	 * @throws IOException 
+	 * @throws Exception 
+	 */
+	@RequestMapping(value = "appwxpay")
+	@ResponseBody
+	public String Tune(HttpServletRequest request) throws IOException {
+		BufferedReader reader = null;
+        reader = request.getReader();
+        String line = "";
+        String xmlString = null;
+        StringBuffer inputString = new StringBuffer();
+        while ((line = reader.readLine()) != null) {
+            inputString.append(line);
+        }
+        xmlString = inputString.toString();
+        request.getReader().close();
+        log.info("微信支付回调接口返回XML数据:" + xmlString);
+        Map<String, Object> resultMap = WxPayUtils.Str2Map(xmlString);
+        //验证签名是否微信调用
+    	return returnXML("");
+	}
+	
+	/**
+	 * 回调返回XML
+	 * @param return_code
+	 * @return
+	 */
+	private String returnXML(String return_code) {
+        return "<xml><return_code><![CDATA["
+                + return_code
+                + "]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+    }
 }
