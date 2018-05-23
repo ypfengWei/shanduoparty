@@ -308,28 +308,6 @@ public class UserController {
 	}
 	
 	/**
-	 * 查看用户信息
-	 * @Title: queryUser
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @param userId
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "queryuser",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean queryUser(HttpServletRequest request,String token,String userId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		return null;
-	}
-	
-	/**
 	 * 查询所有个性标签
 	 * @Title: labelList
 	 * @Description: TODO

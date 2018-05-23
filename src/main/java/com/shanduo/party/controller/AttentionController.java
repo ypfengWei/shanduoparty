@@ -20,6 +20,7 @@ import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.AttentionService;
 import com.shanduo.party.service.BaseService;
+import com.shanduo.party.service.UserService;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -40,6 +41,31 @@ public class AttentionController {
 	private BaseService baseService;
 	@Autowired
 	private AttentionService attentionService;
+	@Autowired
+	private UserService userService;
+	
+	/**
+	 * 搜索好友
+	 * @Title: seekUser
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param userId
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "seekuser",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean seekUser(HttpServletRequest request,String token,String query) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if(userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		List<Map<String, Object>> resultList = userService.seekUser(query);
+		return new SuccessBean(resultList);
+	}
 	
 	/**
 	 * 申请添加好友

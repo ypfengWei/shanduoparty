@@ -22,6 +22,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.pay.AliPayConfig;
+import com.shanduo.party.pay.WxPayConfig;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.WxPayUtils;
 
@@ -138,6 +139,7 @@ public class PayController {
         log.info("微信支付回调接口返回XML数据:" + xmlString);
         Map<String, Object> resultMap = WxPayUtils.Str2Map(xmlString);
         //验证签名是否微信调用
+//        WxPayUtils.isWechatSign(resultMap, WxPayConfig.KEY, "utf-8");
     	return returnXML("");
 	}
 	

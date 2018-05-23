@@ -87,7 +87,6 @@ public interface UserService {
 	 */
 	int updatePasswordByPhone(Integer userId,String password);
 	
-	
 	/**
 	 * 修改个人信息
 	 * @Title: updateUser
@@ -141,4 +140,16 @@ public interface UserService {
 	 * @throws
 	 */
 	String selectByPhone(Integer userId);
+	
+	/**
+	 * 搜索用户
+	 * @Title: seekUser
+	 * @Description: TODO
+	 * @param @param query
+	 * @param @return
+	 * @return List<Map<String,Object>>
+	 * @throws
+	 */
+	List<Map<String, Object>> seekUser(String query);
+	
 }

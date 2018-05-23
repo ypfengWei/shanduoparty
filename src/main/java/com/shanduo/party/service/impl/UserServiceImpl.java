@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ctc.wstx.util.StringUtil;
 import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
@@ -23,7 +22,9 @@ import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserTokenMapper;
 import com.shanduo.party.service.UserService;
 import com.shanduo.party.service.VipService;
+import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.MD5Utils;
+import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
@@ -224,6 +225,17 @@ public class UserServiceImpl implements UserService {
 			return "";
 		}
 		return user.getPhoneNumber();
+	}
+
+	@Override
+	public List<Map<String, Object>> seekUser(String query) {
+		List<Map<String, Object>> resultList = userMapper.seekUser(query);
+		for (Map<String, Object> map : resultList) {
+			map.put("portraitId", PictureUtils.getPictureUrl(map.get("portraitId").toString()));
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("id").toString())));
+		}
+		return resultList;
 	}
 
 }
