@@ -82,36 +82,42 @@ public class ActivityController {
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if (StringUtils.isNull(activityName)) {
-			log.error("标题为空");
-			return new ErrorBean("标题为空");
+			log.error("标题不能为空");
+			return new ErrorBean("标题不能为空");
 		}
 		if (StringUtils.isNull(activityStartTime)) {
-			log.error("活动开始时间为空");
-			return new ErrorBean("活动开始时间为空");
+			log.error("活动开始时间不能为空");
+			return new ErrorBean("活动开始时间不能为空");
 		}
 		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
-			log.error("人数为空");
-			return new ErrorBean("人数为空");
+			log.error("人数不能为空");
+			return new ErrorBean("人数不能为空");
 		}
 		if ("0".equals(manNumber) && "0".equals(womanNumber)) {
-			log.error("人数为空");
-			return new ErrorBean("人数为空");
+			log.error("人数不能为空");
+			return new ErrorBean("人数不能为空");
+		}
+		if(StringUtils.isNull(manNumber)) {
+			womanNumber = "0";
+		}
+		if(StringUtils.isNull(womanNumber)) {
+			womanNumber = "0";
 		}
 		if(!manNumber.matches("^\\d+$") || !womanNumber.matches("^\\d+$")) {
 			log.error("人数必须为正整数");
 			return new ErrorBean("人数必须为正整数");
 		}
 		if (StringUtils.isNull(activityAddress)) {
-			log.error("活动地址为空");
-			return new ErrorBean("活动地址为空");
+			log.error("活动地址不能为空");
+			return new ErrorBean("活动地址不能为空");
 		}
 		if (StringUtils.isNull(mode)) {
-			log.error("方式为空");
-			return new ErrorBean("方式为空");
+			log.error("方式不能为空");
+			return new ErrorBean("方式不能为空");
 		}
 		if (StringUtils.isNull(activityCutoffTime)) {
-			log.error("活动截止时间为空");
-			return new ErrorBean("活动截止时间为空");
+			log.error("活动截止时间不能为空");
+			return new ErrorBean("活动截止时间不能为空");
 		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
