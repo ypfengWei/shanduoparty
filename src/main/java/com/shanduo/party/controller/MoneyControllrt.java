@@ -53,7 +53,7 @@ public class MoneyControllrt {
 	private CodeService codeService;
 	
 	/**
-	 * 查询用户余额
+	 * 查询钱包信息
 	 * @Title: getMoney
 	 * @Description: TODO
 	 * @param @param request

@@ -298,4 +298,14 @@
     and ae.activity_id = #{activityId,jdbcType=VARCHAR} and su.del_flag = '0' and ae.del_flag = '0'
 	group by su.gender
   </select>
+  <select id="seekUser" parameterType="java.lang.String" resultType="map">
+  	select
+  	id, user_name as name, head_portrait_id as portraitId, birthday as age, gender,
+    signature, hometown
+  	from shanduo_user
+  	where id like "%"#{query}"%"
+ 	or user_name like "%"#{query}"%"
+ 	or phone_number = #{query}
+ 	limit 10
+  </select>
 </mapper>

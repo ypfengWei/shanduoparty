@@ -12,7 +12,10 @@ import java.util.Calendar;
  */
 public class AgeUtils {
     // 根据年月日计算年龄,birthTimeString:"1994-11-14"  
-    public static int getAgeFromBirthTime(String birthTimeString) {  
+    public static int getAgeFromBirthTime(String birthTimeString) {
+    	if(birthTimeString == null || "".equals(birthTimeString)) {
+    		return 0;
+    	}
         // 先截取到字符串中的年、月、日 
         String strs[] = birthTimeString.trim().split("-");  
         int selectYear = Integer.parseInt(strs[0]);  
