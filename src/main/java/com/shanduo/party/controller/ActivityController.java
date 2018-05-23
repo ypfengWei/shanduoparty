@@ -127,21 +127,21 @@ public class ActivityController {
 			log.error("纬度格式错误");
 			return new ErrorBean("纬度格式错误");
 		}
-		if(System.currentTimeMillis() < convertTimeToLong(activityStartTime)) {
+		if(System.currentTimeMillis() > convertTimeToLong(activityStartTime)) {
 			log.error("活动开始时间不能小于系统当前时间");
 			return new ErrorBean("活动开始时间不能小于系统当前时间");
+		}
+		if (System.currentTimeMillis() > convertTimeToLong(activityCutoffTime)) {
+			log.error("活动报名截止时间不能小于系统当前时间");
+			return new ErrorBean("活动报名截止时间不能小于系统当前时间");
 		}
 		if (convertTimeToLong(activityStartTime) < convertTimeToLong(activityCutoffTime)) {
 			log.error("活动报名截止时间不能大于活动开始时间");
 			return new ErrorBean("活动报名截止时间不能大于活动开始时间");
 		}
-		if (System.currentTimeMillis() < convertTimeToLong(activityCutoffTime)) {
-			log.error("活动报名截止时间不能小于系统当前时间");
-			return new ErrorBean("活动报名截止时间不能小于系统当前时间");
-		}
 		if(activityService.selectByTwoAll(userToken.getUserId(), activityStartTime)) {
-			log.error("您在本时间段有其他的活动");
-			return new ErrorBean("您在本时间段有其他的活动");
+			log.error("只能举办上一活动之后的活动");
+			return new ErrorBean("只能举办上一活动之后的活动");
 		}
 		try {
 			activityService.saveActivity(userToken.getUserId(), activityName, activityStartTime,
@@ -374,10 +374,6 @@ public class ActivityController {
 			log.error("您在本时间段有其他的活动");
 			return new ErrorBean("您在本时间段有其他的活动");
 		}
-		if(activityService.selectByAll(userToken.getUserId(), activityId)) {
-			log.error("您在本时间段有其他的活动");
-			return new ErrorBean("您在本时间段有其他的活动");
-		}
 		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
 		if(shanduoActivity.getActivityCutoffTime().getTime() < System.currentTimeMillis()) {
 			log.error("此活动报名时间已过");
@@ -523,7 +519,7 @@ public class ActivityController {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			date = sdf.parse(time);
-			return date.getTime() / 1000;
+			return date.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0L;

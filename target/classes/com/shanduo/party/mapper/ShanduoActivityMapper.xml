@@ -333,25 +333,24 @@
 	sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address,ye.other_score
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa 
-    join activity_score ye on sa.id = ye.activity_id 
     join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
 	where sa.del_flag = '0' and ar.del_flag = '0'
-    and user_id = #{0} and activity_start_time &gt; now()
+    and user_id = #{0}
     ORDER BY sa.update_date
     limit #{1},#{2}
   </select>
-  <select id="selectByActivityUserId" resultMap="BaseResultMap">
+  <select id="selectByActivityUserId" resultType="java.lang.Integer">
  	select 
- 	<include refid="Base_Column_List" />
+ 	count(sa.id)
 	from shanduo_activity sa where user_id = #{0} and sa.del_flag = '0'
  	and activity_start_time &gt; #{1}
   </select>
-  <select id="selectByAll" resultMap="BaseResultMap">
+  <select id="selectByAll" resultType="java.lang.Integer">
   	select 
-  	a.id 
+  	count(a.id) 
   	from shanduo_activity a 
   	LEFT JOIN activity_score b
 	on a.id = b.activity_id and a.del_flag = '0' and b.del_flag ='0'

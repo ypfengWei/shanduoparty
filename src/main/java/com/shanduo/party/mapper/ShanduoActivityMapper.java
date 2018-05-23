@@ -142,7 +142,7 @@ public interface ShanduoActivityMapper {
      * @return List<ShanduoActivity>    返回类型
      * @throws
      */
-    List<ShanduoActivity> selectByActivityUserId(Integer userId, String time);
+    int selectByActivityUserId(Integer userId, String time);
     
     /**
      * 参加活动时查询活动有无冲突信息
@@ -155,7 +155,7 @@ public interface ShanduoActivityMapper {
      * @return List<ShanduoActivity>    返回类型
      * @throws
      */
-    List<ShanduoActivity> selectByAll(Integer userId, String mintime, String maxtime);
+    int selectByAll(Integer userId, String mintime, String maxtime);
     
     /**
      * 报名活动记录数
