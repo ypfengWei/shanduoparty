@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int updateUser(Integer userId,String name,String headPortraitId,String birthday,String gender,
+	public TokenInfo updateUser(String token,Integer userId,String name,String headPortraitId,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
 		ShanduoUser user = new ShanduoUser();
 		user.setId(userId);
@@ -195,7 +195,8 @@ public class UserServiceImpl implements UserService {
 			log.error("修改个人资料失败");
 			throw new RuntimeException();
 		}
-		return 1;
+		user = userMapper.selectByPrimaryKey(userId);
+		return new TokenInfo(user,token,vipService.selectVipExperience(user.getId()));
 	}
 
 	@Override

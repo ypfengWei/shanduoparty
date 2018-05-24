@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.imsig.tls_sigUtils;
+import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.PictureUtils;
 
 /**
@@ -22,6 +23,7 @@ public class TokenInfo {
     private String picture;//头像图片URL
     private String phone;//手机号
     private String birthday;//生日
+    private Integer age;//年龄
     private String gender;//性别 ,0女,1男
     private String emotion;//情感状态,0,保密,1,已婚,2,未婚
     private String signature;//个性签名
@@ -45,6 +47,7 @@ public class TokenInfo {
     	this.picture = PictureUtils.getPictureUrl(shanduoUser.getHeadPortraitId());
     	this.phone = shanduoUser.getPhoneNumber();
     	this.birthday = shanduoUser.getBirthday();
+    	this.age = AgeUtils.getAgeFromBirthTime(this.birthday);
     	this.gender = shanduoUser.getGender();
     	this.emotion = shanduoUser.getEmotion();
     	this.signature = shanduoUser.getSignature();
@@ -108,6 +111,14 @@ public class TokenInfo {
 
 	public void setBirthday(String birthday) {
 		this.birthday = birthday;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 
 	public String getGender() {
@@ -197,5 +208,5 @@ public class TokenInfo {
 	public void setUserSig(String userSig) {
 		this.userSig = userSig;
 	}
-    
+
 }

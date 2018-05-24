@@ -91,6 +91,7 @@ public interface UserService {
 	 * 修改个人信息
 	 * @Title: updateUser
 	 * @Description: TODO
+	 * @param @param token 用户ID
 	 * @param @param userId 用户ID
 	 * @param @param name 昵称
 	 * @param @param headPortraitId 头像
@@ -103,10 +104,10 @@ public interface UserService {
 	 * @param @param occupation 职业
 	 * @param @param school 学校
 	 * @param @return
-	 * @return int
+	 * @return TokenInfo
 	 * @throws
 	 */
-	int updateUser(Integer userId,String name,String headPortraitId,String birthday,String gender,
+	TokenInfo updateUser(String token,Integer userId,String name,String headPortraitId,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school);
 	
 	/**

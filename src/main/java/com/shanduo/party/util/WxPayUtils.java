@@ -13,18 +13,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-
-import com.shanduo.party.pay.WxPayConfig;
-
 
 /**
  * 微信支付工具类
@@ -107,13 +101,14 @@ public class WxPayUtils {
      * @return String
      * @throws
      */
-    public static String map2Xmlstring(Map<String,String> map){
+    public static String map2Xmlstring(Map<String,String> params){
+    	List<String> keys = new ArrayList<String>(params.keySet());
+    	Collections.sort(keys);
         StringBuffer sb = new StringBuffer("");
         sb.append("<xml>");
-        Set<String> set = map.keySet();
-        for(Iterator<String> it=set.iterator(); it.hasNext();){
-            String key = it.next();
-            Object value = map.get(key);
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            String value = params.get(key);
             sb.append("<").append(key).append(">");
             sb.append(value);
             sb.append("</").append(key).append(">");
@@ -249,68 +244,36 @@ public class WxPayUtils {
     }
     
     /**
-     * 是否微信V3签名,规则是:按参数名称a-z排序,遇到空值的参数不参加签名
-     * 传入微信返回信息解析后的SortedMap格式参数数据
-     * 验证消息是否是微信发出的合法消息
-     * @param smap
-     * @param apiKey 设置的密钥
-     * @return 验证结果
-     */
-    @SuppressWarnings("rawtypes")
-    public static boolean isWechatSign(SortedMap<String, String> smap,String apiKey,String input_charset) {
-        StringBuffer sb = new StringBuffer();
-        Set es = smap.entrySet();
-        Iterator it = es.iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String k = (String) entry.getKey();
-            String v = (String) entry.getValue();
-            if (!"sign".equals(k) && null != v && !"".equals(v) && !"key".equals(k)) {
-                sb.append(k + "=" + v + "&");
-            }
-        }
-        //去掉最后一个&
-        sb.deleteCharAt(sb.length());
-        /** 验证的签名 */
-        String sign = sign(sb.toString(), apiKey, input_charset);
-        /** 微信端返回的合法签名 */
-        String validSign = ((String) smap.get("sign")).toUpperCase();
-        return validSign.equals(sign);
-    }
-    
-    
-    
-    public String getSign(Map<String, String> map) {
-        SortedMap<String, String> signParams = new TreeMap<String, String>();
-        for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
-            signParams.put(stringStringEntry.getKey(), stringStringEntry.getValue().toString());
-        }
-        signParams.remove("sign");
-        String prestr = createLinkString(signParams);
-        String sign = sign(prestr, WxPayConfig.KEY, "utf-8").toUpperCase();
-        return sign;
-    }
-    
-	/**
      * 效验签名
-     * @Title: verify
+     * @Title: isWechatSigns
      * @Description: TODO
-     * @param @param text 需要签名的字符串
-     * @param @param sign 签名结果
-     * @param @param key 密钥
-     * @param @param input_charset 编码格式
-     * @param @return 签名结果
+     * @param @param map xml装换的map
+     * @param @param apiKey 商户秘钥
+     * @param @param input_charset 编码方式(utf-8)
+     * @param @return
      * @return boolean
      * @throws
      */
-    public static boolean verify(String text, String sign, String key, String input_charset) {
-        text = text + key;
-        String signs = DigestUtils.md5Hex(getContentBytes(text, input_charset));
-        if (signs.equals(sign)) {
-            return true;
-        } else {
-            return false;
+    public static boolean isWechatSigns(Map<String, Object> map,String apiKey,String input_charset) {
+    	Object sign = map.get("sign");
+    	if(sign == null) {
+    		return false;
+    	}
+    	List<String> keys = new ArrayList<String>(map.keySet());
+    	Map<String, String> resultMap = new HashMap<>();
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            Object value = map.get(key);
+            if ("sign".equals(key)) {
+                continue;
+            }
+            resultMap.put(key, value.toString());
         }
+    	//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
+		String response = WxPayUtils.createLinkString(resultMap);
+		//MD5运算生成签名
+		String isSign = WxPayUtils.sign(response, apiKey, input_charset).toUpperCase();
+		return sign.equals(isSign);
     }
     
 }

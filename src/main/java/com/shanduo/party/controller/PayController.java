@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,41 +77,41 @@ public class PayController {
 		if(flag) {
 			//订单支付状态
 			String trade_status = params.get("trade_status");
+			if(!trade_status.equals("TRADE_SUCCESS")) {
+				return "SUCCESS";
+			}
 			//订单号
 			String orderId = params.get("out_trade_no");
-			if(trade_status.equals("TRADE_SUCCESS")) {
-				//
-				UserOrder order = orderService.selectByOrderId(orderId);
-				if(order == null) {
-					log.error("订单已操作或不存在");
-					return "SUCCESS";
-				}
-				//应用ID
-				String appId = params.get("app_id");
-				if(!AliPayConfig.APPID.equals(appId)) {
-					log.error("应用ID不匹配:"+appId);
-					return "SUCCESS";
-				}
-				//商家ID
-				String sellerId = params.get("seller_id");
-				if(!AliPayConfig.SELLERID.equals(sellerId)) {
-					log.error("商家ID不匹配:"+sellerId);
-					return "SUCCESS";
-				}
-				//订单金额
-				String money = params.get("total_amount");
-				if(order.getMoney().compareTo(new BigDecimal(money)) != 0){
-					log.error("订单金额错误:"+money+","+order.getMoney());
-					return "SUCCESS";
-				}
-				try {
-					orderService.zfbUpdateOrder(orderId);
-				} catch (Exception e) {
-					log.error("修改订单错误");
-					return "SUCCESS";
-				}
+			UserOrder order = orderService.selectByOrderId(orderId);
+			if(order == null) {
+				log.error("订单已操作或不存在");
+				return "SUCCESS";
 			}
-			return "SUCCESS";
+			//应用ID
+			String appId = params.get("app_id");
+			if(!AliPayConfig.APPID.equals(appId)) {
+				log.error("应用ID不匹配:"+appId);
+				return "SUCCESS";
+			}
+			//商家ID
+			String sellerId = params.get("seller_id");
+			if(!AliPayConfig.SELLERID.equals(sellerId)) {
+				log.error("商家ID不匹配:"+sellerId);
+				return "SUCCESS";
+			}
+			//订单金额
+			String money = params.get("total_amount");
+			if(order.getMoney().compareTo(new BigDecimal(money)) != 0){
+				log.error("订单金额错误:"+money+","+order.getMoney());
+				return "SUCCESS";
+			}
+			try {
+				orderService.zfbUpdateOrder(orderId);
+			} catch (Exception e) {
+				log.error("修改订单错误");
+				return "SUCCESS";
+			}
+			
 		}
 		return "SUCCESS";
 	}
@@ -126,25 +125,65 @@ public class PayController {
 	@RequestMapping(value = "appwxpay")
 	@ResponseBody
 	public String Tune(HttpServletRequest request) throws IOException {
-		BufferedReader reader = null;
-        reader = request.getReader();
+		BufferedReader reader = request.getReader();
         String line = "";
-        String xmlString = null;
         StringBuffer inputString = new StringBuffer();
         while ((line = reader.readLine()) != null) {
             inputString.append(line);
         }
-        xmlString = inputString.toString();
+        String xmlString  = inputString.toString();
         request.getReader().close();
         log.info("微信支付回调接口返回XML数据:" + xmlString);
         Map<String, Object> resultMap = WxPayUtils.Str2Map(xmlString);
         //验证签名是否微信调用
-//        WxPayUtils.isWechatSign(resultMap, WxPayConfig.KEY, "utf-8");
-    	return returnXML("");
+        boolean flag = WxPayUtils.isWechatSigns(resultMap, WxPayConfig.KEY, "utf-8");
+        if(flag) {
+        	String returnCode = resultMap.get("return_code").toString();
+    		if(!returnCode.equals("SUCCESS")) {
+    			log.error(resultMap.get("return_msg").toString());
+    			return returnXML(WxPayConfig.FAIL);
+    		}
+    		String resultCode = resultMap.get("result_code").toString();
+    		if(!resultCode.equals("SUCCESS")) {
+    			log.error(resultMap.get("err_code_des").toString());
+    			return returnXML(WxPayConfig.FAIL);
+    		}
+    		String appid = resultMap.get("appid").toString();
+    		if(!appid.equals(WxPayConfig.APPID)) {
+    			log.error("APPID不匹配");
+    			return returnXML(WxPayConfig.FAIL);
+    		}
+    		String mchId = resultMap.get("mch_id").toString();
+    		if(!mchId.equals(WxPayConfig.MCH_ID)) {
+    			log.error("商户号不匹配");
+    			return returnXML(WxPayConfig.FAIL);
+    		}
+    		String orderId = resultMap.get("out_trade_no").toString();
+    		UserOrder order = orderService.selectByOrderId(orderId);
+			if(order == null) {
+				log.error("订单已操作或不存在");
+				return returnXML(WxPayConfig.FAIL);
+			}
+    		String totalFee = resultMap.get("total_fee").toString();
+    		BigDecimal amount = order.getMoney();//价格，单位为分
+    		amount = amount.multiply(new BigDecimal("100"));
+    		if(amount.compareTo(new BigDecimal(totalFee)) != 0) {
+    			log.error("订单金额错误:"+totalFee+","+order.getMoney());
+    			return returnXML(WxPayConfig.FAIL);
+    		}
+    		try {
+				orderService.wxUpdateOrder(orderId);
+			} catch (Exception e) {
+				log.error("修改订单错误");
+				return returnXML(WxPayConfig.FAIL);
+			}
+    		return returnXML(WxPayConfig.SUCCESS);
+        }
+    	return returnXML(WxPayConfig.FAIL);
 	}
 	
 	/**
-	 * 回调返回XML
+	 * 微信回调返回XML
 	 * @param return_code
 	 * @return
 	 */

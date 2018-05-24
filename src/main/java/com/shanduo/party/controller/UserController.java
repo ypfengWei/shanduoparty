@@ -285,6 +285,7 @@ public class UserController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
+		Integer userId = userToken.getUserId();
 		if(!StringUtils.isNull(birthday) && PatternUtils.patternBirthday(birthday)) {
 			log.error("生日错误");
 			return new ErrorBean("生日错误");
@@ -297,14 +298,15 @@ public class UserController {
 			log.error("情感状态错误");
 			return new ErrorBean("情感状态错误");
 		}
+		TokenInfo tokenInfo = null;
 		try {
-			userService.updateUser(userToken.getUserId(), name, headPortraitId, birthday, 
+			tokenInfo = userService.updateUser(token,userId, name, headPortraitId, birthday, 
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");
 			return new ErrorBean("修改失败");
 		}
-		return new SuccessBean("修改成功");
+		return new SuccessBean(tokenInfo);
 	}
 	
 	/**
