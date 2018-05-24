@@ -82,36 +82,42 @@ public class ActivityController {
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if (StringUtils.isNull(activityName)) {
-			log.error("标题为空");
-			return new ErrorBean("标题为空");
+			log.error("标题不能为空");
+			return new ErrorBean("标题不能为空");
 		}
 		if (StringUtils.isNull(activityStartTime)) {
-			log.error("活动开始时间为空");
-			return new ErrorBean("活动开始时间为空");
+			log.error("活动开始时间不能为空");
+			return new ErrorBean("活动开始时间不能为空");
 		}
 		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
-			log.error("人数为空");
-			return new ErrorBean("人数为空");
+			log.error("人数不能为空");
+			return new ErrorBean("人数不能为空");
 		}
 		if ("0".equals(manNumber) && "0".equals(womanNumber)) {
-			log.error("人数为空");
-			return new ErrorBean("人数为空");
+			log.error("人数不能为空");
+			return new ErrorBean("人数不能为空");
+		}
+		if(StringUtils.isNull(manNumber)) {
+			womanNumber = "0";
+		}
+		if(StringUtils.isNull(womanNumber)) {
+			womanNumber = "0";
 		}
 		if(!manNumber.matches("^\\d+$") || !womanNumber.matches("^\\d+$")) {
 			log.error("人数必须为正整数");
 			return new ErrorBean("人数必须为正整数");
 		}
 		if (StringUtils.isNull(activityAddress)) {
-			log.error("活动地址为空");
-			return new ErrorBean("活动地址为空");
+			log.error("活动地址不能为空");
+			return new ErrorBean("活动地址不能为空");
 		}
 		if (StringUtils.isNull(mode)) {
-			log.error("方式为空");
-			return new ErrorBean("方式为空");
+			log.error("方式不能为空");
+			return new ErrorBean("方式不能为空");
 		}
 		if (StringUtils.isNull(activityCutoffTime)) {
-			log.error("活动截止时间为空");
-			return new ErrorBean("活动截止时间为空");
+			log.error("活动截止时间不能为空");
+			return new ErrorBean("活动截止时间不能为空");
 		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
@@ -121,21 +127,21 @@ public class ActivityController {
 			log.error("纬度格式错误");
 			return new ErrorBean("纬度格式错误");
 		}
-		if(System.currentTimeMillis() < convertTimeToLong(activityStartTime)) {
+		if(System.currentTimeMillis() > convertTimeToLong(activityStartTime)) {
 			log.error("活动开始时间不能小于系统当前时间");
 			return new ErrorBean("活动开始时间不能小于系统当前时间");
+		}
+		if (System.currentTimeMillis() > convertTimeToLong(activityCutoffTime)) {
+			log.error("活动报名截止时间不能小于系统当前时间");
+			return new ErrorBean("活动报名截止时间不能小于系统当前时间");
 		}
 		if (convertTimeToLong(activityStartTime) < convertTimeToLong(activityCutoffTime)) {
 			log.error("活动报名截止时间不能大于活动开始时间");
 			return new ErrorBean("活动报名截止时间不能大于活动开始时间");
 		}
-		if (System.currentTimeMillis() < convertTimeToLong(activityCutoffTime)) {
-			log.error("活动报名截止时间不能小于系统当前时间");
-			return new ErrorBean("活动报名截止时间不能小于系统当前时间");
-		}
 		if(activityService.selectByTwoAll(userToken.getUserId(), activityStartTime)) {
-			log.error("您在本时间段有其他的活动");
-			return new ErrorBean("您在本时间段有其他的活动");
+			log.error("只能举办上一活动之后的活动");
+			return new ErrorBean("只能举办上一活动之后的活动");
 		}
 		try {
 			activityService.saveActivity(userToken.getUserId(), activityName, activityStartTime,
@@ -368,10 +374,6 @@ public class ActivityController {
 			log.error("您在本时间段有其他的活动");
 			return new ErrorBean("您在本时间段有其他的活动");
 		}
-		if(activityService.selectByAll(userToken.getUserId(), activityId)) {
-			log.error("您在本时间段有其他的活动");
-			return new ErrorBean("您在本时间段有其他的活动");
-		}
 		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
 		if(shanduoActivity.getActivityCutoffTime().getTime() < System.currentTimeMillis()) {
 			log.error("此活动报名时间已过");
@@ -517,7 +519,7 @@ public class ActivityController {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			date = sdf.parse(time);
-			return date.getTime() / 1000;
+			return date.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0L;

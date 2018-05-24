@@ -72,8 +72,8 @@ public class ActivityServiceImpl implements ActivityService {
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String mintime = format.format(starttime);
 		String maxtime = format.format(endtime);
-		List<ShanduoActivity> resultList = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
-		if(resultList.isEmpty() || resultList == null) {
+		int i = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
+		if(i == 0) {
 			return false;
 		}
 		return true;
@@ -99,20 +99,8 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public boolean selectByTwoAll(Integer userId, String time) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		Date date = new Date();
-		try {
-			date = format.parse(time);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		long starttime = date.getTime()-1*60*60*1000;
-		long endtime = date.getTime()+1*60*60*1000;
-		String mintime = format.format(starttime);
-		String maxtime = format.format(endtime);
-		List<ShanduoActivity> resultList = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
-		List<ShanduoActivity> list = shanduoActivityMapper.selectByActivityUserId(userId,time);
-		if(resultList.isEmpty() || list.isEmpty() || resultList == null || list == null) {
+		int count = shanduoActivityMapper.selectByActivityUserId(userId,time);
+		if(count == 0) {
 			return false;
 		}
 		return true;
@@ -235,13 +223,6 @@ public class ActivityServiceImpl implements ActivityService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserId(userId, pageNum, page.getPageSize());
-		for (ActivityInfo activityInfo : resultList) {
-			if(activityInfo.getOtherScore() == null) {
-				activityInfo.setBeEvaluationSign(0);
-			} else {
-				activityInfo.setBeEvaluationSign(1);
-			}
-		}
 		activity(resultList, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
