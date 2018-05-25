@@ -19,26 +19,27 @@ import com.shanduo.party.mapper.VipExperienceMapper;
 @Component
 public class VipTiming {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ActivityScoreTiming.class);
+	private static final Logger log = LoggerFactory.getLogger(ActivityScoreTiming.class);
 	
 	@Autowired
 	private VipExperienceMapper vipExperienceMapper;
 	
 	/**
 	 * 定时每天 0:0:0自动执行
-	 * @Title: delTiming
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * 增减vip成长值
+	 * @Title: updateTiming
+	 * @Description: TODO
 	 * @param 
 	 * @return void
 	 * @throws
 	 */
 	@Scheduled(cron = "0 0 0 * * ? ")
-	public void updTiming() {
-		int i = vipExperienceMapper.updateByUserId();
-		int b = vipExperienceMapper.updateByUserIdTwo();
-		int a = vipExperienceMapper.updateByUserIdThree();
-		logger.info("给"+i+"svip添加了成长值");
-		logger.info("给"+b+"vip添加了成长值");
-		logger.info("给"+a+"vip扣除了成长值");
+	public void updateTiming() {
+		int x = vipExperienceMapper.updateByUserId();
+		log.info("给"+x+"个SVIP添加了15点成长值");
+		int y = vipExperienceMapper.updateByUserIdTwo();
+		log.info("给"+y+"个VIP添加了10点成长值");
+		int z = vipExperienceMapper.updateByUserIdThree();
+		log.info("给"+z+"非VIP扣除了10点成长值");
 	}
 }

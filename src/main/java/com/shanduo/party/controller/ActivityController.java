@@ -234,7 +234,7 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		if("1".equals(type)) {
 			resultMap = activityService.selectByScore(pages, pageSizes, lon, lat);
 		}else if("2".equals(type)) {
@@ -296,7 +296,7 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>(3);
 		if("1".equals(type)) {
 			resultMap = activityService.selectByUserIdInTime(userToken,pages,pageSizes,lon,lat);
 		} else if("2".equals(type)){

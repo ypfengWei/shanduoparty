@@ -94,7 +94,7 @@ public interface UserService {
 	 * @param @param token 用户ID
 	 * @param @param userId 用户ID
 	 * @param @param name 昵称
-	 * @param @param headPortraitId 头像
+	 * @param @param picture 头像
 	 * @param @param birthday 生日
 	 * @param @param gender 性别
 	 * @param @param emotion 情感状态
@@ -107,7 +107,7 @@ public interface UserService {
 	 * @return TokenInfo
 	 * @throws
 	 */
-	TokenInfo updateUser(String token,Integer userId,String name,String headPortraitId,String birthday,String gender,
+	TokenInfo updateUser(String token,Integer userId,String name,String picture,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school);
 	
 	/**
