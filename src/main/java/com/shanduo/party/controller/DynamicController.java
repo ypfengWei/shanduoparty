@@ -105,7 +105,8 @@ public class DynamicController {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
-	 * @param @param typeId 1,附近;2,好友
+	 * @param @param typeId 1.附近;2.好友;3.我的动态;4.别人的动态
+	 * @param @param userId
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @param page 页码
@@ -114,11 +115,15 @@ public class DynamicController {
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "homeList",method={RequestMethod.POST,RequestMethod.GET})
+	@RequestMapping(value = "dynamicList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean homeList(HttpServletRequest request,String token,String typeId,String lat,String lon,
+	public ResultBean homeList(HttpServletRequest request,String token,String typeId,String userId,String lat,String lon,
 			String page,String pageSize) {
 		Integer isUserId = baseService.checkUserToken(token);
+		if(StringUtils.isNull(typeId) || !page.matches("^[1234]$")) {
+			log.error("类型错误");
+			return new ErrorBean("类型错误");
+		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
 			return new ErrorBean("页码错误");
@@ -137,68 +142,18 @@ public class DynamicController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>(3);
 		if("1".equals(typeId)) {
 			resultMap = dynamicService.nearbyList(isUserId, lat, lon, pages, pageSizes);
-		}else {
-			if(isUserId == null) {
-				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			}
-			resultMap = dynamicService.attentionList(isUserId, lat, lon, pages, pageSizes);
+			return new SuccessBean(resultMap);
 		}
-		return new SuccessBean(resultMap);
-	}
-	
-	/**
-	 * 我的动态或别人的动态
-	 * @Title: dynamicList
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @param typeId 类型:1.我的动态,2.别人的动态
-	 * @param @param userId 要看的别人的闪多号
-	 * @param @param lat 纬度
-	 * @param @param lon 经度
-	 * @param @param page 页码
-	 * @param @param pageSize 记录数
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "dynamicList",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean dynamicList(HttpServletRequest request,String token,String typeId,String userId,
-			String lat,String lon,String page,String pageSize) {
-		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean("类型错误");
-		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度错误");
-			return new ErrorBean("纬度错误");
-		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-			log.error("经度错误");
-			return new ErrorBean("经度错误");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean("页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean("记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<>();
-		if("1".equals(typeId)) {
+		if("2".equals(typeId)) {
+			resultMap = dynamicService.attentionList(isUserId, lat, lon, pages, pageSizes);
+		}else if("3".equals(typeId)) {
 			resultMap = dynamicService.dynamicList(isUserId,isUserId,lat, lon, pages, pageSizes);
 		}else {
 			if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
@@ -276,10 +231,10 @@ public class DynamicController {
 	@ResponseBody
 	public ResultBean byDynamic(HttpServletRequest request,String token,String dynamicId,String lat,String lon) {
 		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
+//		if(isUserId == null) {
+//			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//		}
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
 			return new ErrorBean("动态ID为空");
@@ -364,7 +319,7 @@ public class DynamicController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>(3);
 		if(StringUtils.isNull(dynamicId) && StringUtils.isNull(commentId)) {
 			log.error(ErrorCodeConstants.PARAMETER);
 			return new ErrorBean(ErrorCodeConstants.PARAMETER);

@@ -22,7 +22,6 @@ import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.UserOrder;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -198,10 +197,12 @@ public class OrderContrpller {
 			body = "置顶闪多活动"+order.getActivityId();
 		}
 		body = body + order.getMoney();
-		BigDecimal amount = order.getMoney();//价格，单位为分
+		//价格，单位为分
+		BigDecimal amount = order.getMoney();
 		amount = amount.multiply(new BigDecimal("100"));
-		Integer moneys = amount.intValue();//订单总金额
-		Map<String, String> paramsMap = new HashMap<>();
+		//订单总金额
+		Integer moneys = amount.intValue();
+		Map<String, String> paramsMap = new HashMap<>(10);
 		paramsMap.put("appid", WxPayConfig.APPID);
 		paramsMap.put("mch_id", WxPayConfig.MCH_ID);
 		paramsMap.put("nonce_str", UUIDGenerator.getUUID());
@@ -215,7 +216,8 @@ public class OrderContrpller {
 		String paramsString = WxPayUtils.createLinkString(paramsMap);
 		//MD5运算生成签名
 		String sign = WxPayUtils.sign(paramsString, WxPayConfig.KEY, "utf-8").toUpperCase();
-		paramsMap.put("sign", sign);//签名
+		//签名
+		paramsMap.put("sign", sign);
 		String paramsXml = WxPayUtils.map2Xmlstring(paramsMap);
 		String result = WxPayUtils.httpRequest(WxPayConfig.PAY_URL, "POST", paramsXml);
 		Map<String, Object> resultMap = WxPayUtils.Str2Map(result);
@@ -229,11 +231,11 @@ public class OrderContrpller {
 			log.error(resultMap.get("err_code_des").toString());
 			return new ErrorBean("连接超时");
 		}
-		String prepay_id = resultMap.get("prepay_id").toString();
-		Map<String, String> responseMap = new HashMap<String, String>();
+		String prepayId = resultMap.get("prepay_id").toString();
+		Map<String, String> responseMap = new HashMap<String, String>(7);
 		responseMap.put("appid", WxPayConfig.APPID);
 		responseMap.put("partnerid", WxPayConfig.MCH_ID);
-		responseMap.put("prepayid", prepay_id);
+		responseMap.put("prepayid", prepayId);
 		responseMap.put("package", "Sign=WXPay");
 		responseMap.put("nonceStr", UUIDGenerator.getUUID());
 		Long timeStamp = System.currentTimeMillis() / 1000;

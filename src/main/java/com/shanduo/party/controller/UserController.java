@@ -261,7 +261,7 @@ public class UserController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param name 昵称
-	 * @param @param headPortraitId 头像图片ID
+	 * @param @param picture 头像图片ID
 	 * @param @param birthday 生日
 	 * @param @param gender 性别
 	 * @param @param emotion 情感状态
@@ -276,7 +276,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "updateuser",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean updateUser(HttpServletRequest request,String token,String name,String headPortraitId,String birthday,String gender,
+	public ResultBean updateUser(HttpServletRequest request,String token,String name,String picture,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
@@ -297,7 +297,7 @@ public class UserController {
 		}
 		TokenInfo tokenInfo = null;
 		try {
-			tokenInfo = userService.updateUser(token,isUserId, name, headPortraitId, birthday, 
+			tokenInfo = userService.updateUser(token,isUserId, name, picture, birthday, 
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");

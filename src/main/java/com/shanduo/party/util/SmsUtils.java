@@ -20,17 +20,17 @@ public class SmsUtils {
 	/**
 	 * 产品名称:云通信短信API产品,开发者无需替换
 	 */
-    static final String product = "Dysmsapi";
+    static final String PRODUCT = "Dysmsapi";
     /**
      * 产品域名,开发者无需替换
      */
-    static final String domain = "dysmsapi.aliyuncs.com";
+    static final String DOMAIN = "dysmsapi.aliyuncs.com";
 
     /**
      * 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
      */
-    static final String accessKeyId = "LTAIZn1pl4XmYPGG";
-    static final String accessKeySecret = "3zyatcwOr2j6iuGUollzPzTJ4ERvSp";
+    static final String ACCESS_KEY_ID = "LTAIZn1pl4XmYPGG";
+    static final String ACCESS_KEY_SECRET = "3zyatcwOr2j6iuGUollzPzTJ4ERvSp";
 
     /**
      * 阿里云发送短信验证码
@@ -51,8 +51,8 @@ public class SmsUtils {
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
 
         //初始化acsClient,暂不支持region化
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", ACCESS_KEY_ID, ACCESS_KEY_SECRET);
+        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", PRODUCT, DOMAIN);
         IAcsClient acsClient = new DefaultAcsClient(profile);
 
         //组装请求对象-具体描述见控制台-文档部分内容

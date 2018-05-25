@@ -171,15 +171,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TokenInfo updateUser(String token,Integer userId,String name,String headPortraitId,String birthday,String gender,
+	public TokenInfo updateUser(String token,Integer userId,String name,String picture,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
 		ShanduoUser user = new ShanduoUser();
 		user.setId(userId);
 		if(!StringUtils.isNull(name)) {
 			user.setUserName(name);
 		}
-		if(!StringUtils.isNull(headPortraitId)) {
-			user.setHeadPortraitId(headPortraitId);
+		if(!StringUtils.isNull(picture)) {
+			user.setHeadPortraitId(picture);
 		}
 		if(!StringUtils.isNull(birthday)) {
 			user.setBirthday(birthday);

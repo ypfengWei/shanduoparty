@@ -54,10 +54,10 @@ public class PayController {
 	 */
 	@RequestMapping(value = "alipay",produces="text/html;charset=UTF-8",method={RequestMethod.POST})
 	@ResponseBody
-	public String pay(HttpServletRequest request) throws AlipayApiException {
+	public String aliPay(HttpServletRequest request) throws AlipayApiException {
 		//获取支付宝POST过来反馈信息
-		Map<String,String> params = new HashMap<String,String>();
 		Map requestParams = request.getParameterMap();
+		Map<String,String> params = new HashMap<String,String>(requestParams.size());
 		for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
 		    String name = iter.next();
 		    String[] values = (String[]) requestParams.get(name);
@@ -76,8 +76,8 @@ public class PayController {
 		boolean flag = AlipaySignature.rsaCheckV1(params, AliPayConfig.ALIPAY_PUBLIC_KEY, AliPayConfig.CHARSET,AliPayConfig.SIGNTYPE);
 		if(flag) {
 			//订单支付状态
-			String trade_status = params.get("trade_status");
-			if(!trade_status.equals("TRADE_SUCCESS")) {
+			String tradeStatus = params.get("trade_status");
+			if(!tradeStatus.equals("TRADE_SUCCESS")) {
 				return "SUCCESS";
 			}
 			//订单号
@@ -124,7 +124,7 @@ public class PayController {
 	 */
 	@RequestMapping(value = "appwxpay")
 	@ResponseBody
-	public String Tune(HttpServletRequest request) throws IOException {
+	public String appWxPay(HttpServletRequest request) throws IOException {
 		BufferedReader reader = request.getReader();
         String line = "";
         StringBuffer inputString = new StringBuffer();
@@ -165,7 +165,8 @@ public class PayController {
 				return returnXML(WxPayConfig.FAIL);
 			}
     		String totalFee = resultMap.get("total_fee").toString();
-    		BigDecimal amount = order.getMoney();//价格，单位为分
+    		//价格，单位为分
+    		BigDecimal amount = order.getMoney();
     		amount = amount.multiply(new BigDecimal("100"));
     		if(amount.compareTo(new BigDecimal(totalFee)) != 0) {
     			log.error("订单金额错误:"+totalFee+","+order.getMoney());
@@ -184,12 +185,12 @@ public class PayController {
 	
 	/**
 	 * 微信回调返回XML
-	 * @param return_code
+	 * @param returnCode
 	 * @return
 	 */
-	private String returnXML(String return_code) {
+	private String returnXML(String returnCode) {
         return "<xml><return_code><![CDATA["
-                + return_code
+                + returnCode
                 + "]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
     }
 }

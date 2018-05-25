@@ -389,11 +389,11 @@
   </select>
   <select id="selectByUserIdInTimeCount" resultType="java.lang.Integer">
  	select 
- 	count(ye.id) 
- 	from activity_score ye 
- 	join shanduo_activity sa on sa.id = ye.activity_id 
- 	where ye.user_id = #{0} and sa.activity_start_time &lt;= now()
- 	and sa.del_flag = '0' and ye.del_flag = '0'
+ 	count(sa.id) 
+	from shanduo_activity sa 
+	left join activity_score ye on sa.id = ye.activity_id 
+	where sa.user_id = #{0} or ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
+ 	and sa.activity_start_time &lt; now()
   </select>
   <select id="selectByUserIdInTime" resultMap="ActivityResultMap">
  	select 

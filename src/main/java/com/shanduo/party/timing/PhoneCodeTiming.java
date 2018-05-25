@@ -23,7 +23,7 @@ import com.shanduo.party.service.CodeService;
 @Component
 public class PhoneCodeTiming {
 
-	private static final Logger logger = LoggerFactory.getLogger(PhoneCodeTiming.class);
+	private static final Logger log = LoggerFactory.getLogger(PhoneCodeTiming.class);
 	
 	@Autowired
 	private CodeService codeService;
@@ -43,7 +43,7 @@ public class PhoneCodeTiming {
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String createDate = format.format(time - 1000 * 60 * 10);
 		int i = codeService.deleteTimer(createDate);
-		logger.info("删除过期验证码记录"+i+"条");
+		log.info("删除过期验证码记录"+i+"条");
 	}
 	
 }
