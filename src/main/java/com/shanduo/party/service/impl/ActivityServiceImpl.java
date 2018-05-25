@@ -132,11 +132,7 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (ParseException e) {  
             e.printStackTrace();  
         }  
-		if(activityAddress.substring(activityAddress.length()-1, activityAddress.length()).equals(",")) {
-			activity.setActivityAddress(activityAddress.substring(0,activityAddress.length()-1));
-		} else {
-			activity.setActivityAddress(activityAddress);
-		}
+		activity.setActivityAddress(activityAddress.substring(0,activityAddress.indexOf(",")));
 		int i = shanduoActivityMapper.insertSelective(activity);
 		if (i < 1) {
 			log.error("活动添加失败");

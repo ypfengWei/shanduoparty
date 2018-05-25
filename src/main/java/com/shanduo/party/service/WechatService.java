@@ -18,10 +18,10 @@ public interface WechatService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int insertSelective(String appid, String secret, String code);
+	int insertSelective(String code);
 	
-	Integer selectByUserId(String appid, String secret, String code); 
+	Integer selectByUserId(String code); 
 	
-	boolean selectByPrimaryKey(String appid, String secret, String code);
+	boolean selectByPrimaryKey(String code);
 	
 }

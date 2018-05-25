@@ -13,6 +13,7 @@ import com.shanduo.party.entity.AccessToken;
 import com.shanduo.party.entity.UserWechat;
 import com.shanduo.party.mapper.AccessTokenMapper;
 import com.shanduo.party.mapper.UserWechatMapper;
+import com.shanduo.party.pay.WechatPayConfig;
 import com.shanduo.party.service.WechatService;
 import com.shanduo.party.util.GetAccessTokenUtils;
 
@@ -29,9 +30,9 @@ public class WechatServiceImpl implements WechatService{
 	private AccessTokenMapper accessTokenMapper;
 
 	@Override
-	public boolean selectByPrimaryKey(String appid, String secret, String code) {
-		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
-			UserWechat userWechat = userWechatMapper.selectByPrimaryKey(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId());
+	public boolean selectByPrimaryKey(String code) {
+		if(GetAccessTokenUtils.getUserWechat(code).getUserId() != null) {
+			UserWechat userWechat = userWechatMapper.selectByPrimaryKey(GetAccessTokenUtils.getUserWechat(code).getUserId());
 			if(userWechat != null) {
 				return false;
 			}
@@ -42,11 +43,11 @@ public class WechatServiceImpl implements WechatService{
 	}
 	
 	@Override
-	public int insertSelective(String appid, String secret, String code) {
-		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
-			a(appid, secret, code);
-			if(selectByPrimaryKey(appid, secret, code)) {
-				UserWechat userWechat = GetAccessTokenUtils.getUserWechat(appid, secret, code);
+	public int insertSelective(String code) {
+		if(GetAccessTokenUtils.getUserWechat(code).getUserId() != null) {
+			a(code);
+			if(selectByPrimaryKey(code)) {
+				UserWechat userWechat = GetAccessTokenUtils.getUserWechat(code);
 	        	int i = userWechatMapper.insertSelective(userWechat);
 	        	if(i < 1) {
 	        		log.error("绑定失败");
@@ -63,10 +64,10 @@ public class WechatServiceImpl implements WechatService{
 	}
 	
 	@Override
-	public Integer selectByUserId(String appid, String secret, String code) {
-		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
-			a(appid, secret, code);
-			Integer a = userWechatMapper.selectByUserId(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUnionId());
+	public Integer selectByUserId(String code) {
+		if(GetAccessTokenUtils.getUserWechat(code).getUserId() != null) {
+			a(code);
+			Integer a = userWechatMapper.selectByUserId(GetAccessTokenUtils.getUserWechat(code).getUnionId());
 			if(a == null) {
 				log.error("该用户没有注册");
 	    		throw new RuntimeException();
@@ -77,11 +78,11 @@ public class WechatServiceImpl implements WechatService{
 		return 1;
 	}
 
-	public boolean a(String appid, String secret, String code) {
-		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
-			AccessToken accessToken = accessTokenMapper.selectByAppId(appid);
+	public boolean a(String code) {
+		if(GetAccessTokenUtils.getUserWechat(code).getUserId() != null) {
+			AccessToken accessToken = accessTokenMapper.selectByAppId(WechatPayConfig.APPID);
 	        if (accessToken == null) {
-	        	AccessToken newAccessToken = GetAccessTokenUtils.getAccessToken(appid, secret, code);
+	        	AccessToken newAccessToken = GetAccessTokenUtils.getAccessToken(code);
 	        	if(newAccessToken != null) {
 	        		int i = accessTokenMapper.insertSelective(newAccessToken);
 	        		if(i < 1) {
@@ -93,7 +94,7 @@ public class WechatServiceImpl implements WechatService{
 	            long newTime = System.currentTimeMillis() / 1000;
 	            long oldTime = accessToken.getCreateDate().getTime() / 1000;
 	            if (newTime - oldTime >= accessToken.getExpiresIn()) {
-	            	AccessToken newAccessToken = GetAccessTokenUtils.getAccessToken(appid, secret, code);
+	            	AccessToken newAccessToken = GetAccessTokenUtils.getAccessToken(code);
 	                if (newAccessToken != null) {
 	                	accessToken.setAccessToken(newAccessToken.getAccessToken());
 	                	accessToken.setAppId(newAccessToken.getAppId());

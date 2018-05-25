@@ -196,6 +196,10 @@ public class ActivityController {
 	 * type=1 展示热门活动
 	 * type=2 根据经纬度查询附近活动
 	 * type=3 展示好友活动
+	 * type=4查看用户参加的已经结束的活动
+	 * type=5 查看用户报名的活动
+	 * type=6 查看单个用户举办的活动
+	 * type=7 根据userId查询别人举报的活动
 	 * @Title: queryHotActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
@@ -205,13 +209,14 @@ public class ActivityController {
 	 * @param @param lon
 	 * @param @param lat
 	 * @param @param token
+	 * @param @param userId
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "showHotActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, String token) {
+	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, String token, String userId) {
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
 			return new ErrorBean("经度格式错误");
@@ -245,64 +250,21 @@ public class ActivityController {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
-			resultMap = activityService.selectByFriendsUserId(userToken, pages, pageSizes, lon, lat);
-		}
-		return new SuccessBean(resultMap);
-	}
-
-	/**
-	 * type = 1 查看用户参加的已经结束的活动
-	 * type = 2 查看用户报名的活动
-	 * type = 3 查看单个用户举办的活动
-	 * @Title: showOneActivity
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param token
-	 * @param @param page
-	 * @param @param pageSize
-	 * @param @param lon
-	 * @param @param lat
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "showOneActivity", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean showOneActivity(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat, String type) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-			log.error("经度格式错误");
-			return new ErrorBean("经度格式错误");
-		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度格式错误");
-			return new ErrorBean("纬度格式错误");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean("页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean("记录错误");
-		}
-		if(StringUtils.isNull(type) || !type.matches("^[123]$")) {
-			log.error("类型错误");
-			return new ErrorBean("类型错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<>();
-		if("1".equals(type)) {
-			resultMap = activityService.selectByUserIdInTime(userToken,pages,pageSizes,lon,lat);
-		} else if("2".equals(type)){
-			resultMap = activityService.selectByUserIdTime(userToken,pages,pageSizes,lon,lat);
-		} else{
-			resultMap = activityService.selectByUserId(userToken,pages,pageSizes,lon,lat);
+			if("3".equals(type)) {
+				resultMap = activityService.selectByFriendsUserId(userToken, pages, pageSizes, lon, lat);
+			} else if("4".equals(type)) {
+				resultMap = activityService.selectByUserIdInTime(userToken,pages,pageSizes,lon,lat);
+			} else if("5".equals(type)){
+				resultMap = activityService.selectByUserIdTime(userToken,pages,pageSizes,lon,lat);
+			} else if("6".equals(type)) {
+				resultMap = activityService.selectByUserId(userToken,pages,pageSizes,lon,lat);
+			} else {
+				if(StringUtils.isNull(userId)) {
+					log.error("userId为空");
+					return new ErrorBean("userId为空");
+				}
+				resultMap = activityService.selectByUserId(Integer.parseInt(userId),pages,pageSizes,lon,lat);
+			}
 		}
 		return new SuccessBean(resultMap);
 	}
