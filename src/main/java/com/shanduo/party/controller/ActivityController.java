@@ -233,7 +233,7 @@ public class ActivityController {
 			log.error("记录错误");
 			return new ErrorBean("记录错误");
 		}
-		if(StringUtils.isNull(type) || !type.matches("^[123]$")) {
+		if(StringUtils.isNull(type) || !type.matches("^[1234567]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
@@ -242,29 +242,30 @@ public class ActivityController {
 		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		if("1".equals(type)) {
 			resultMap = activityService.selectByScore(pages, pageSizes, lon, lat);
+			return new SuccessBean(resultMap);
 		}else if("2".equals(type)) {
 			resultMap = activityService.selectByNearbyUserId(lon, lat, pages, pageSizes);
-		}else {
-			Integer userToken = baseService.checkUserToken(token);
-			if (userToken == null) {
-				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new SuccessBean(resultMap);
+		}
+		Integer userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if("3".equals(type)) {
+			resultMap = activityService.selectByFriendsUserId(userToken, pages, pageSizes, lon, lat);
+		} else if("4".equals(type)) {
+			resultMap = activityService.selectByUserIdInTime(userToken,pages,pageSizes,lon,lat);
+		} else if("5".equals(type)){
+			resultMap = activityService.selectByUserIdTime(userToken,pages,pageSizes,lon,lat);
+		} else if("6".equals(type)) {
+			resultMap = activityService.selectByUserId(userToken,pages,pageSizes,lon,lat);
+		} else {
+			if(StringUtils.isNull(userId)) {
+				log.error("userId为空");
+				return new ErrorBean("userId为空");
 			}
-			if("3".equals(type)) {
-				resultMap = activityService.selectByFriendsUserId(userToken, pages, pageSizes, lon, lat);
-			} else if("4".equals(type)) {
-				resultMap = activityService.selectByUserIdInTime(userToken,pages,pageSizes,lon,lat);
-			} else if("5".equals(type)){
-				resultMap = activityService.selectByUserIdTime(userToken,pages,pageSizes,lon,lat);
-			} else if("6".equals(type)) {
-				resultMap = activityService.selectByUserId(userToken,pages,pageSizes,lon,lat);
-			} else {
-				if(StringUtils.isNull(userId)) {
-					log.error("userId为空");
-					return new ErrorBean("userId为空");
-				}
-				resultMap = activityService.selectByUserId(Integer.parseInt(userId),pages,pageSizes,lon,lat);
-			}
+			resultMap = activityService.selectByUserId(Integer.parseInt(userId),pages,pageSizes,lon,lat);
 		}
 		return new SuccessBean(resultMap);
 	}
