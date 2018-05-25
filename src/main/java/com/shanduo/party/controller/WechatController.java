@@ -32,16 +32,16 @@ public class WechatController {
 			log.error("code不能为空");
 			return new ErrorBean("code不能为空");
 		}
-		if(wechatService.selectByPrimaryKey(null, null, code)) {
+		if(wechatService.selectByPrimaryKey(code)) {
 			try {
-				wechatService.insertSelective(null, null, code);
+				wechatService.insertSelective(code);
 			} catch (Exception e) {
 				log.error("绑定失败");
 				return new ErrorBean("绑定失败");
 			}
 		} else {
 			try {
-				wechatService.selectByUserId(null, null, code);
+				wechatService.selectByUserId(code);
 			} catch (Exception e) {
 				log.error("登录失败");
 				return new ErrorBean("登录失败");

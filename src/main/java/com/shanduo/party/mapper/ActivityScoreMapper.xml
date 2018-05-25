@@ -176,7 +176,7 @@
 	join shanduo_activity sa on sa.id = ae.activity_id 
 	where ae.activity_id in (select id from shanduo_activity where user_id = #{0} and del_flag = '0')
 	and ae.score is not null and sa.del_flag = '0' and ae.del_flag = '0'
-	ORDER BY sa.activity_start_time desc,ae.create_date desc
+	order by sa.activity_start_time desc,ae.create_date desc
 	limit #{1},#{2}
   </select>
   <update id="updateById" parameterType="java.lang.String">

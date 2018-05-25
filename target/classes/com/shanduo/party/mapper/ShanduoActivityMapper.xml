@@ -278,8 +278,8 @@
 	join shanduo_user su on sa.user_id = su.id
 	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
 	and ye.del_flag = '0' and ye.score is not null
-	GROUP BY sa.id
-	ORDER BY avg(ye.score) desc
+	group by sa.id
+	order by avg(ye.score) desc
 	limit #{0},#{1}
   </select>
   <select id="selectByFriendsUserIdCount" resultType="java.lang.Integer">
@@ -299,7 +299,7 @@
 	where sa.del_flag = '0' and ar.del_flag = '0' and (user_id in 
 	(select attention from user_attention where del_flag = '0' and user_id = #{0})
 	or user_id = #{0}) and su.del_flag = '0'
-	ORDER BY sa.update_date
+	order by sa.update_date desc
 	limit #{1},#{2}
   </select>
   <select id="selectByNearbyUserIdCount" resultType="java.lang.Integer">
@@ -324,7 +324,7 @@
  	and lon &gt;= #{0} and lon &lt;= #{1}
  	and lat &gt;= #{2} and lat &lt;= #{3}
  	and su.del_flag = '0'
- 	order by sa.top_flag DESC,sa.update_date DESC
+ 	order by sa.top_flag desc,sa.update_date desc
     limit #{4},#{5}
   </select>
   <select id="selectByUserIdCount" resultType="java.lang.Integer">
@@ -344,7 +344,7 @@
     join shanduo_user su on sa.user_id = su.id 
 	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
     and user_id = #{0}
-    ORDER BY sa.update_date
+    order by sa.update_date desc
     limit #{1},#{2}
   </select>
   <select id="selectByActivityUserId" resultType="java.lang.Integer">
@@ -357,10 +357,10 @@
   	select 
   	count(a.id) 
   	from shanduo_activity a 
-  	LEFT JOIN activity_score b
+  	left join activity_score b
 	on a.id = b.activity_id and a.del_flag = '0' and b.del_flag ='0'
 	where (a.user_id = #{0} or b.user_id = #{0}) 
-	and a.activity_start_time BETWEEN #{1} and #{2}
+	and a.activity_start_time between #{1} and #{2}
   </select>
   <select id="selectByUserIdTimeCount" resultType="java.lang.Integer">
  	select 
@@ -384,30 +384,30 @@
  	where ye.user_id = #{0} and ar.del_flag = '0' and su.del_flag = '0'
  	and sa.activity_start_time &gt; now()  
  	and sa.del_flag = '0' and ye.del_flag = '0'
- 	ORDER BY sa.update_date DESC
+ 	order by sa.update_date desc
  	limit #{1},#{2}
   </select>
   <select id="selectByUserIdInTimeCount" resultType="java.lang.Integer">
  	select 
- 	count(ye.id) 
- 	from activity_score ye 
- 	join shanduo_activity sa on sa.id = ye.activity_id 
- 	where ye.user_id = #{0} and sa.activity_start_time &lt;= now()
- 	and sa.del_flag = '0' and ye.del_flag = '0'
+ 	count(sa.id) 
+	from shanduo_activity sa 
+	left join activity_score ye on sa.id = ye.activity_id 
+	where sa.user_id = #{0} or ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
+ 	and sa.activity_start_time &lt; now()
   </select>
   <select id="selectByUserIdInTime" resultMap="ActivityResultMap">
  	select 
 	sa.activity_name,sa.activity_start_time,sa.activity_address,
 	sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
 	su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-	sa.lon,sa.lat,sa.detailed_address,ye.score,ye.user_id as userIds
+	sa.lon,sa.lat,sa.detailed_address,ye.score,ye.user_id as userids
 	from shanduo_activity sa 
 	left join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id 
 	join shanduo_user su on sa.user_id = su.id 
 	where sa.user_id = #{0} or ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
  	and sa.activity_start_time &lt; now() and ar.del_flag = '0' and su.del_flag = '0'
- 	ORDER BY sa.update_date DESC
+ 	order by sa.update_date desc
  	limit #{1},#{2}
   </select>
   <select id="selectByScoreActivity" resultMap="ActivityResultMap">
@@ -419,7 +419,7 @@
 	where su.id in 
 	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
 	and su.del_flag = '0'
-	GROUP BY su.id
+	group by su.id
 	limit #{1},#{2}
   </select>
   <select id="selectByScoreActivityCount" resultType="java.lang.Integer">
@@ -444,7 +444,7 @@
   	where (sa.user_id = #{0}  or sa.id in 
   	(select activity_id from activity_score where user_id = #{0} and del_flag = '0'))
 	and ye.del_flag = '0' and sa.del_flag = '0' and sa.activity_start_time &lt;= now()
-	order by sa.update_date DESC
+	order by sa.update_date desc
 	limit #{1},#{2}
   </select>
   <update id="activityRefresh">
