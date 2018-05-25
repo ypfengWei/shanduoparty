@@ -174,7 +174,7 @@
 	sa.activity_type,ae.score,ae.evaluation_content 
 	from activity_score ae 
 	join shanduo_activity sa on sa.id = ae.activity_id 
-	where ae.activity_id in (select id from shanduo_activity where user_id = #{0})
+	where ae.activity_id in (select id from shanduo_activity where user_id = #{0} and del_flag = '0')
 	and ae.score is not null and sa.del_flag = '0' and ae.del_flag = '0'
 	ORDER BY sa.activity_start_time desc,ae.create_date desc
 	limit #{1},#{2}
@@ -185,7 +185,7 @@
     set score = '5' 
     where id in ( select id  from 
 	(select ae.id from activity_score ae
-	join shanduo_activity sa on sa.id = ae.activity_id and ae.user_id in
+	join shanduo_activity sa on sa.id = ae.activity_id where ae.user_id in
 	(select user_id from activity_score where score is null and del_flag = '0') 
 	and sa.del_flag = '0' and ae.del_flag = '0'
 	and sa.activity_start_time &lt;= #{activityStartTime,jdbcType=VARCHAR}) as ids)
@@ -197,7 +197,7 @@
 	set others_score = '5' 
 	where id in ( select id  from 
 	(select ae.id from activity_score ae
-	join shanduo_activity sa on sa.id = ae.activity_id and ae.user_id in
+	join shanduo_activity sa on sa.id = ae.activity_id where ae.user_id in
 	(select user_id from activity_score where others_score is null and del_flag = '0') 
 	and sa.del_flag = '0' and ae.del_flag = '0'
 	and sa.activity_start_time &lt;= #{activityStartTime,jdbcType=VARCHAR}) as ids)
@@ -216,5 +216,11 @@
     set score = #{2},
     evaluation_content = #{3}
     where user_id = #{0} and activity_id = #{1} and del_flag = '0'
+  </update>
+  <update id="deleteByUserId">
+    update 
+    activity_score 
+    set del_flag = '1' 
+    where activity_id = #{0} and user_id = #{1}
   </update>
 </mapper>

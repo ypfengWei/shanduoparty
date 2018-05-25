@@ -9,6 +9,8 @@ public class AccessToken {
 
     private Integer expiresIn;
 
+    private String appId;
+
     private String remarks;
 
     private Date createDate;
@@ -39,6 +41,14 @@ public class AccessToken {
 
     public void setExpiresIn(Integer expiresIn) {
         this.expiresIn = expiresIn;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId == null ? null : appId.trim();
     }
 
     public String getRemarks() {

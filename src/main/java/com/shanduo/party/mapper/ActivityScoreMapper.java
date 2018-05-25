@@ -92,4 +92,6 @@ public interface ActivityScoreMapper {
      * @throws
      */
     int updateByUserIdTwo(Integer userId, String activityId, Integer score, String evaluated);
+    
+    int deleteByUserId(String activityId, Integer userId);
 }

@@ -1,17 +1,12 @@
 package com.shanduo.party.service.impl;
 
-import java.io.IOException;
-import java.util.Map;
+import java.util.Date;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.AccessToken;
@@ -19,9 +14,10 @@ import com.shanduo.party.entity.UserWechat;
 import com.shanduo.party.mapper.AccessTokenMapper;
 import com.shanduo.party.mapper.UserWechatMapper;
 import com.shanduo.party.service.WechatService;
-import com.shanduo.party.util.JsonStringUtils;
-import com.shanduo.party.util.UUIDGenerator;
+import com.shanduo.party.util.GetAccessTokenUtils;
 
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class WechatServiceImpl implements WechatService{
 	
 	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
@@ -33,76 +29,89 @@ public class WechatServiceImpl implements WechatService{
 	private AccessTokenMapper accessTokenMapper;
 
 	@Override
-	public int insertSelective(Integer userId, String appid, String secret, String code) {
-    	UserWechat userWechat = new UserWechat();
-    	AccessToken accessToken = new AccessToken();
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet method = new HttpGet("https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code".replace("APPID", appid).replace("SECRET", secret).replace("CODE", code));
-        CloseableHttpResponse response = null;
-        try {
-            response = httpClient.execute(method);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            	Map<String,Object> resultMap = JsonStringUtils.getMap(EntityUtils.toString(response.getEntity()));
-            	accessToken.setAccessToken(resultMap.get("access_token").toString());
-            	accessToken.setExpiresIn(Integer.parseInt(resultMap.get("expires_in").toString()));
-            	userWechat.setOpenId(resultMap.get("openid").toString());
-            }
-            CloseableHttpResponse responses = null;
-            HttpGet methods = new HttpGet("https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID".replace("access_token", accessToken.getAccessToken()).replace("openid", userWechat.getOpenId()));
-            responses = httpClient.execute(methods);
-            if (responses.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            	Map<String,Object> resultMap = JsonStringUtils.getMap(EntityUtils.toString(response.getEntity()));
-            	userWechat.setUnionId(resultMap.get("unionid").toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        accessToken.setId(UUIDGenerator.getUUID());
-        int count = accessTokenMapper.insertSelective(accessToken);
-        if(count < 1) {
-        	log.error("凭证添加失败");
-        	throw new RuntimeException();
-        }
-        userWechat.setUserId(userId);
-        int i = userWechatMapper.insertSelective(userWechat);
-        if(i < 1) {
-        	log.error("openId添加失败");
-			throw new RuntimeException();
-        }
-		return 1;
+	public boolean selectByPrimaryKey(String appid, String secret, String code) {
+		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
+			UserWechat userWechat = userWechatMapper.selectByPrimaryKey(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId());
+			if(userWechat != null) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
 	}
 	
 	@Override
-	public Integer selectByUserId(String union_id) {
-		
-		return null;
+	public int insertSelective(String appid, String secret, String code) {
+		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
+			a(appid, secret, code);
+			if(selectByPrimaryKey(appid, secret, code)) {
+				UserWechat userWechat = GetAccessTokenUtils.getUserWechat(appid, secret, code);
+	        	int i = userWechatMapper.insertSelective(userWechat);
+	        	if(i < 1) {
+	        		log.error("绑定失败");
+	        		throw new RuntimeException();
+	        	}
+	        } else { 
+	        	log.error("该用户已绑定");
+	    		throw new RuntimeException();
+	        }
+		} else {
+			return 0;
+		}
+        return 1;
 	}
 	
-	//本地获取AccessToken如果失效才向微信服务器获取最新的AccessToken再更新本地AccessToken
-	AccessToken getAccessToken() {
-		return null;
-//	        AccessToken accessToken = tokenService.getLocalAccessToken(Config.APPID);
-//	        if (accessToken == null) {
-//	            accessToken = getWXAccess_token(Config.APPID, Config.SECRET);
-//	            if (accessToken != null) {
-//	                accessToken.setAppid(Config.APPID);
-//	                accessToken.setCreate_date(System.currentTimeMillis());
-//	                tokenService.saveOrUpdateAccessToken(accessToken);
-//	            }
-//	        } else {
-//	            long newTime = System.currentTimeMillis() / 1000;
-//	            long oldTime = accessToken.getCreate_date() / 1000;
-//	            if ((int) (newTime - oldTime) >= accessToken.getExpires_in()) {
-//	                AccessToken newAccessToken = getWXAccess_token(Config.APPID, Config.SECRET);
-//	                if (newAccessToken != null) {
-//	                    accessToken.setCreate_date(System.currentTimeMillis());
-//	                    accessToken.setAccess_token(newAccessToken.getAccess_token());
-//	                    accessToken.setExpires_in(newAccessToken.getExpires_in());
-//	                    tokenService.saveOrUpdateAccessToken(accessToken);
-//	                }
-//	            }
-//	        }
-//	        return accessToken;
+	@Override
+	public Integer selectByUserId(String appid, String secret, String code) {
+		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
+			a(appid, secret, code);
+			Integer a = userWechatMapper.selectByUserId(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUnionId());
+			if(a == null) {
+				log.error("该用户没有注册");
+	    		throw new RuntimeException();
+			}
+		} else {
+			return 0;
+		}
+		return 1;
+	}
+
+	public boolean a(String appid, String secret, String code) {
+		if(GetAccessTokenUtils.getUserWechat(appid, secret, code).getUserId() != null) {
+			AccessToken accessToken = accessTokenMapper.selectByAppId(appid);
+	        if (accessToken == null) {
+	        	AccessToken newAccessToken = GetAccessTokenUtils.getAccessToken(appid, secret, code);
+	        	if(newAccessToken != null) {
+	        		int i = accessTokenMapper.insertSelective(newAccessToken);
+	        		if(i < 1) {
+	        			log.error("凭证添加失败");
+	        			throw new RuntimeException();
+	        		}
+	        	}
+	        } else {
+	            long newTime = System.currentTimeMillis() / 1000;
+	            long oldTime = accessToken.getCreateDate().getTime() / 1000;
+	            if (newTime - oldTime >= accessToken.getExpiresIn()) {
+	            	AccessToken newAccessToken = GetAccessTokenUtils.getAccessToken(appid, secret, code);
+	                if (newAccessToken != null) {
+	                	accessToken.setAccessToken(newAccessToken.getAccessToken());
+	                	accessToken.setAppId(newAccessToken.getAppId());
+	                	accessToken.setExpiresIn(newAccessToken.getExpiresIn());
+	                	accessToken.setCreateDate(new Date());
+	                	accessToken.getId();
+	                	int i = accessTokenMapper.updateByPrimaryKey(accessToken);
+	                	if(i < 1) {
+	                		log.error("凭证修改失败");
+	            			throw new RuntimeException();
+	                	}
+	                }
+	            }
+	        }
+		} else {
+			return false;
+		}
+		return true;
 	}
 
 }

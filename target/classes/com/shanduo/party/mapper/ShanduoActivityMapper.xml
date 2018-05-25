@@ -24,7 +24,6 @@
     <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
-    <result column="activity_type" jdbcType="VARCHAR" property="activityType" />
     <result column="activity_start_time" jdbcType="TIMESTAMP" property="activityStartTime" />
     <result column="activity_address" jdbcType="VARCHAR" property="activityAddress" />
     <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
@@ -46,6 +45,10 @@
     <result column="womenSum" jdbcType="VARCHAR" property="womenSum" />
     <result column="vipGrade" jdbcType="INTEGER" property="vipGrade"/>
     <result column="evaluationSign" jdbcType="INTEGER" property="evaluationSign"/>
+    <result column="beEvaluationSign" jdbcType="INTEGER" property="beEvaluationSign"/>
+    <result column="others_score" jdbcType="INTEGER" property="othersScore"/>
+    <result column="userIds" jdbcType="INTEGER" property="userIds"/>
+    <result column="typeId" jdbcType="INTEGER" property="typeId"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
@@ -315,10 +318,12 @@
     sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id 
-    join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
- 	where sa.del_flag = '0' and ar.del_flag = '0' and sa.activity_cutoff_time &gt;= now()
+    join shanduo_user su on sa.user_id = su.id 
+ 	where sa.del_flag = '0' and ar.del_flag = '0' 
+ 	and sa.activity_cutoff_time &gt;= now()
  	and lon &gt;= #{0} and lon &lt;= #{1}
  	and lat &gt;= #{2} and lat &lt;= #{3}
+ 	and su.del_flag = '0'
  	order by sa.top_flag DESC,sa.update_date DESC
     limit #{4},#{5}
   </select>
@@ -336,16 +341,16 @@
     sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id
-    join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
-	where sa.del_flag = '0' and ar.del_flag = '0'
+    join shanduo_user su on sa.user_id = su.id 
+	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
     and user_id = #{0}
     ORDER BY sa.update_date
     limit #{1},#{2}
   </select>
   <select id="selectByActivityUserId" resultType="java.lang.Integer">
  	select 
- 	count(sa.id)
-	from shanduo_activity sa where user_id = #{0} and sa.del_flag = '0'
+ 	count(id)
+	from shanduo_activity where user_id = #{0} and del_flag = '0'
  	and activity_start_time &gt; #{1}
   </select>
   <select id="selectByAll" resultType="java.lang.Integer">
@@ -360,8 +365,9 @@
   <select id="selectByUserIdTimeCount" resultType="java.lang.Integer">
  	select 
  	count(ye.id) 
- 	from activity_score ye join shanduo_activity sa 
- 	on sa.id = ye.activity_id where ye.user_id = #{0} 
+ 	from activity_score ye 
+ 	join shanduo_activity sa on sa.id = ye.activity_id 
+ 	where ye.user_id = #{0} 
  	and sa.activity_start_time &gt; now() 
  	and sa.del_flag = '0' and ye.del_flag = '0'
   </select>
@@ -373,9 +379,9 @@
     sa.lon,sa.lat,sa.detailed_address,ye.score
  	from shanduo_activity sa 
  	join activity_score ye on sa.id = ye.activity_id 
- 	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
- 	join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
- 	where ye.user_id = #{0}
+ 	join activity_requirement ar on sa.id = ar.activity_id 
+ 	join shanduo_user su on sa.user_id = su.id 
+ 	where ye.user_id = #{0} and ar.del_flag = '0' and su.del_flag = '0'
  	and sa.activity_start_time &gt; now()  
  	and sa.del_flag = '0' and ye.del_flag = '0'
  	ORDER BY sa.update_date DESC
@@ -384,32 +390,50 @@
   <select id="selectByUserIdInTimeCount" resultType="java.lang.Integer">
  	select 
  	count(ye.id) 
- 	from activity_score ye join shanduo_activity sa 
- 	on sa.id = ye.activity_id 
+ 	from activity_score ye 
+ 	join shanduo_activity sa on sa.id = ye.activity_id 
  	where ye.user_id = #{0} and sa.activity_start_time &lt;= now()
  	and sa.del_flag = '0' and ye.del_flag = '0'
   </select>
   <select id="selectByUserIdInTime" resultMap="ActivityResultMap">
  	select 
- 	sa.activity_name,sa.activity_start_time,sa.activity_address,
-    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
-    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address,ye.score
-    from shanduo_activity sa 
-    join activity_score ye on sa.id = ye.activity_id 
- 	join activity_requirement ar on sa.id = ar.activity_id and ar.del_flag = '0'
- 	join shanduo_user su on sa.user_id = su.id and su.del_flag = '0'
- 	where ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
- 	and sa.activity_start_time &lt;= now()
+	sa.activity_name,sa.activity_start_time,sa.activity_address,
+	sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+	su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+	sa.lon,sa.lat,sa.detailed_address,ye.score,ye.user_id as userIds
+	from shanduo_activity sa 
+	left join activity_score ye on sa.id = ye.activity_id 
+	join activity_requirement ar on sa.id = ar.activity_id 
+	join shanduo_user su on sa.user_id = su.id 
+	where sa.user_id = #{0} or ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
+ 	and sa.activity_start_time &lt; now() and ar.del_flag = '0' and su.del_flag = '0'
  	ORDER BY sa.update_date DESC
  	limit #{1},#{2}
+  </select>
+  <select id="selectByScoreActivity" resultMap="ActivityResultMap">
+	select 
+	su.user_name,su.id,su.birthday,su.gender,su.head_portrait_id,
+	ye.score,ye.evaluation_content,ye.others_score
+	from shanduo_user su
+	join activity_score ye on su.id = ye.user_id
+	where su.id in 
+	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
+	and su.del_flag = '0'
+	GROUP BY su.id
+	limit #{1},#{2}
+  </select>
+  <select id="selectByScoreActivityCount" resultType="java.lang.Integer">
+	select 
+	count(activity_id)
+	from activity_score where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
   </select>
   <select id="selectByHistoricalCount" resultType="java.lang.Integer">
  	select 
  	count(ye.id)
-  	from activity_score ye join shanduo_activity sa on ye.activity_id = sa.id 
+  	from activity_score ye 
+  	join shanduo_activity sa on ye.activity_id = sa.id 
 	where (sa.user_id = #{0} 
-  	or sa.id in (select activity_id from activity_score where user_id = #{0}))
+  	or sa.id in (select activity_id from activity_score where user_id = #{0} and del_flag = '0'))
 	and ye.del_flag = '0' and sa.del_flag = '0' and sa.activity_start_time &lt;= now()
   </select>
   <select id="selectByHistorical" resultMap="ActivityResultMap">
@@ -418,7 +442,7 @@
   	from activity_score ye 
   	join shanduo_activity sa on ye.activity_id = sa.id 
   	where (sa.user_id = #{0}  or sa.id in 
-  	(select activity_id from activity_score where user_id = #{0}))
+  	(select activity_id from activity_score where user_id = #{0} and del_flag = '0'))
 	and ye.del_flag = '0' and sa.del_flag = '0' and sa.activity_start_time &lt;= now()
 	order by sa.update_date DESC
 	limit #{1},#{2}
@@ -441,24 +465,9 @@
     and top_flag = '1' and del_flag = '0') as activity)
     and del_flag = '0'
   </update>
-  <select id="selectByScoreActivity" resultMap="ActivityResultMap">
-	select 
-	su.user_name,su.id,su.birthday,su.gender,su.head_portrait_id,
-	ye.score,ye.evaluation_content from shanduo_user su
-	join activity_score ye on su.id = ye.user_id
-	where su.id in 
-	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
-	GROUP BY su.id
-	limit #{1},#{2}
-  </select>
-  <select id="selectByScoreActivityCount" resultType="java.lang.Integer">
-	select 
-	count(activity_id)
-	from activity_score where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
-  </select>
   <select id="selectById" resultType="java.lang.Integer">
   	select 
   	user_id 
-  	from shanduo_activity where id = #{0}
+  	from shanduo_activity where id = #{0} and del_flag = '0'
   </select>
 </mapper>

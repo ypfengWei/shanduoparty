@@ -379,17 +379,22 @@ public class ActivityController {
 			log.error("此活动报名时间已过");
 			return new ErrorBean("此活动报名时间已过");
 		}
+		//查询参加活动的男女生人数
 		List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
 		if(resultMap != null) {
+			//查询当前用户的性别
 			ShanduoUser shanduoUser = activityService.selectById(userToken.getUserId());
 			for (Map<String, Object> map : resultMap) {
 				if (shanduoUser.getGender().equals(map.get("gender").toString())) {
+					//根据活动id查询活动要求人数
 					ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
 					int count = Integer.parseInt(map.get("count").toString());
+					//如果女生人数大于要求女生人数，参加失败
 					if ("0".equals(shanduoUser.getGender()) && activityRequirement.getWomanNumber() <= count) {
 						log.error("该性别人数已满");
 						return new ErrorBean("该性别人数已满");
 					}
+					//如果男生人数大于要求男生人数，参加失败
 					if ("1".equals(shanduoUser.getGender()) && activityRequirement.getManNumber() <= count) {
 						log.error("该性别人数已满");
 						return new ErrorBean("该性别人数已满");
@@ -416,6 +421,38 @@ public class ActivityController {
 		return new SuccessBean("参加活动成功,活动开始时间" + str + ",活动地址为" + shanduoActivity.getActivityAddress());
 	}
 
+	/**
+	 * 取消活动
+	 * @Title: activityCancellation
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param token
+	 * @param @param activityId
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "activityCancellation", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean activityCancellation(HttpServletRequest request, String token, String activityId) {
+		UserToken userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动id为空");
+			return new ErrorBean("活动id为空");
+		}
+		try {
+			activityService.deleteByUserId(activityId, userToken.getUserId());
+		} catch (Exception e) {
+			log.error("活动取消失败");
+			return new ErrorBean("活动取消失败");
+		}
+		return new SuccessBean("活动取消成功");
+	}
+	
 	/**
 	 * 查询发起者与参与者评分
 	 * @Title: selectByHistorical

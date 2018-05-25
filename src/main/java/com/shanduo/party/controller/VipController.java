@@ -30,7 +30,7 @@ import com.shanduo.party.service.VipService;
 @RequestMapping(value = "vip")
 public class VipController {
 	
-	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
+	private static final Logger log = LoggerFactory.getLogger(VipController.class);
 
 	@Autowired
 	private VipService vipService;

@@ -84,10 +84,15 @@ public class ActivityServiceImpl implements ActivityService {
 		int totalrecord = shanduoActivityMapper.selectByScoreActivityCount(activityId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
-		List<ActivityInfo> resultList = shanduoActivityMapper.selectByScoreActivity(activityId, pageNum,page.getTotalPage());
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByScoreActivity(activityId, pageNum, page.getPageSize());
 		for (ActivityInfo activityInfo : resultList) {
 			if(!activityInfo.getBirthday().isEmpty()) {
 				activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
+			}
+			if(activityInfo.getOthersScore() == null) {
+				activityInfo.setBeEvaluationSign(0);//已评价
+			} else {
+				activityInfo.setBeEvaluationSign(1);//已评价
 			}
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
@@ -305,10 +310,15 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserIdInTime(userId, pageNum, page.getPageSize());
 		for (ActivityInfo activityInfo : resultList) {
-			if(activityInfo.getScore() == null) {
-				activityInfo.setEvaluationSign(0);
+			if(activityInfo.getUserIds() == null) {
+				activityInfo.setTypeId(1);//代表用户为发起者
 			} else {
-				activityInfo.setEvaluationSign(1);
+				if(activityInfo.getScore() == null) {
+					activityInfo.setEvaluationSign(0);
+				} else {
+					activityInfo.setEvaluationSign(1);
+				}
+				activityInfo.setTypeId(0);//代表用户为参与者
 			}
 		}
 		activity(resultList, lon, lat);
@@ -352,6 +362,16 @@ public class ActivityServiceImpl implements ActivityService {
 		return 1;
 	}
 	
+	@Override
+	public int deleteByUserId(String activityId, Integer userId) {
+		int i = activityScoreMapper.deleteByUserId(activityId, userId);
+		if(i < 1) {
+			log.error("取消活动失败");
+			throw new RuntimeException();
+		}
+		return 0;
+	}
+	
 	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat){
 		for (ActivityInfo activityInfo : resultList) {
 			if(activityInfo.getBirthday() == null || activityInfo.getBirthday().isEmpty()) {
@@ -362,35 +382,54 @@ public class ActivityServiceImpl implements ActivityService {
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
         	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
-        	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());
+        	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
     		if(resultMap != null) {
     			for (Map<String, Object> map : resultMap) {
     				int count = Integer.parseInt(map.get("count").toString());
 	    			if(count < 10) {
-	    			    if(map.get("gender").toString().equals("0")) {
+	    			    if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
 	    			    	if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+	    			    		//如果参加的女生人数以及活动要求的女生人数小于10则在前面加0
 	    			    		activityInfo.setWomanNumber("0"+count+"/"+"0"+activityInfo.getWomanNumber());
-	    					}
-	     				}else {
+	    					} else {
+	    						//如果参加的女生人数小于10，活动要求的女生人数大于10则在参加的女生人数前面加0
+	     						activityInfo.setWomanNumber("0"+count+"/"+activityInfo.getWomanNumber());
+	     					}
+	     				}else {//参加活动的男生人数
 	     					if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+	     						//如果参加的男生人数以及活动要求的男生人数小于10则在前面加0
 	     			    		activityInfo.setManNumber("0"+count+"/"+"0"+activityInfo.getManNumber());
+	     					} else {
+	     						//如果参加的男生人数小于10，活动要求的男生人数大于10则在参加的女生人数前面加0
+	     						activityInfo.setManNumber("0"+count+"/"+activityInfo.getManNumber());
 	     					}
 	     				}
-	    			} else {
-		    			if(map.get("gender").toString().equals("1")) {
+	    			} else { //因为参加的人数不能大于活动要求的人数，故不做其他限制
+		    			if(map.get("gender").toString().equals("1")) { //参加活动的男生人数
+		    				//如果参加的男生人数大于10则不做改变
 					    	activityInfo.setManNumber(count+"/"+activityInfo.getManNumber());
 		 				}
-		 				if(map.get("gender").toString().equals("0")) {
+		 				if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
+		 					//如果参加的女生人数大于10则不做改变
 		 					activityInfo.setWomanNumber(count+"/"+activityInfo.getWomanNumber());
 		    			} 
 	    			}
     			}
     		}
+    		//参加人数为0
     		if(activityInfo.getManNumber().matches("^\\d+$")) {
-    			activityInfo.setManNumber("0/"+activityInfo.getManNumber());
+    			if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+    				activityInfo.setManNumber("0/"+"0"+activityInfo.getManNumber());
+    			} else{
+    				activityInfo.setManNumber("0/"+activityInfo.getManNumber());
+    			}
     		}
     		if(activityInfo.getWomanNumber().matches("^\\d+$")) {
-    			activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
+    			if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+    				activityInfo.setWomanNumber("0/"+"0"+activityInfo.getWomanNumber());
+    			} else {
+    				activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
+    			}
     		}
     		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
             String startString = activityInfo.getActivityStartTime();  
@@ -433,4 +472,5 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		return cutoff.getTime();
 	}
+
 }

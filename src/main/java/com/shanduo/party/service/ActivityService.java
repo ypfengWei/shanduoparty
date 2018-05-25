@@ -248,4 +248,6 @@ public interface ActivityService {
      */
     int updateBysetTop(String activityId);
     
+    //取消参加活动
+    int deleteByUserId(String activityId, Integer userId);
 }

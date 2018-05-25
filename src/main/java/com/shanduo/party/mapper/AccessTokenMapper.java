@@ -15,5 +15,5 @@ public interface AccessTokenMapper {
 
     int updateByPrimaryKey(AccessToken record);
     
-    String selectByTime(String time);
+    AccessToken selectByAppId(String appId);
 }

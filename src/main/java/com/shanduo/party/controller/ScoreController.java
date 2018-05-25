@@ -32,7 +32,7 @@ import com.shanduo.party.util.StringUtils;
 @RequestMapping(value = "score")
 public class ScoreController {
 	
-	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
+	private static final Logger log = LoggerFactory.getLogger(ScoreController.class);
 	
 	@Autowired
 	private BaseService baseService;

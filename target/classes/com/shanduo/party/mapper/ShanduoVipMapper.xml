@@ -153,12 +153,13 @@
   <select id="selectUserIdAndType" resultMap="BaseResultMap">
   	select 
   	id, vip_end_time
-  	from shanduo_vip where user_id = #{0} and vip_type = #{1}
+  	from shanduo_vip where user_id = #{0} and vip_type = #{1} and del_flag = '0'
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap">
   	select 
   	vip_type
   	from shanduo_vip where user_id = #{0} and vip_end_time > now()
+  	and del_flag = '0'
   </select>
   <select id="selectByUserIds" resultMap="VipResultMap">
   	select 

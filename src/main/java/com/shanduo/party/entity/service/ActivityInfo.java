@@ -8,7 +8,7 @@ public class ActivityInfo {
 	 
 	private String userName; //用户昵称
 	
-	private String activityName; //标题
+	private String activityName; //活动标题
 	
 	private String mode; //消费方式
 	
@@ -18,7 +18,7 @@ public class ActivityInfo {
 	
 	private String detailedAddress; //详细地址
 	
-	private String remarks; //活动备注
+	private String remarks; //活动内容
 	
 	private String manNumber; //男生人数
 	
@@ -26,9 +26,7 @@ public class ActivityInfo {
 	
 	private Integer score; //评分
 	
-	private String activityType; //活动类型
-	
-	private Integer userId;  //用户id
+	private Integer userId;  //发起者id
 	
 	private String activityCutoffTime; //活动截止时间
     
@@ -50,7 +48,15 @@ public class ActivityInfo {
     
     private Integer vipGrade; //会员等级
     
-    private Integer evaluationSign; // 参与者评论标识
+    private Integer evaluationSign; // 参与者评论标识  0:未评价 1:已评价
+    
+    private Integer beEvaluationSign; // 发起者评论标识 0:未评价 1:已评价
+    
+    private Integer othersScore; //发起者对参与者评分
+    
+    private Integer userIds; // 参与者id
+    
+    private Integer typeId; // 调用接口类型 0:调用参与者评价接口  1:调用发起者评价接口
     
 	public ActivityInfo(){
 		
@@ -147,13 +153,6 @@ public class ActivityInfo {
 		this.score = score;
 	}
 
-	public String getActivityType() {
-		return activityType;
-	}
-	public void setActivityType(String activityType) {
-		this.activityType = activityType;
-	}
-
 	public Integer getUserId() {
 		return userId;
 	}
@@ -240,6 +239,38 @@ public class ActivityInfo {
 
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+
+	public Integer getBeEvaluationSign() {
+		return beEvaluationSign;
+	}
+
+	public void setBeEvaluationSign(Integer beEvaluationSign) {
+		this.beEvaluationSign = beEvaluationSign;
+	}
+
+	public Integer getTypeId() {
+		return typeId;
+	}
+
+	public void setTypeId(Integer typeId) {
+		this.typeId = typeId;
+	}
+
+	public Integer getUserIds() {
+		return userIds;
+	}
+
+	public void setUserIds(Integer userIds) {
+		this.userIds = userIds;
+	}
+
+	public Integer getOthersScore() {
+		return othersScore;
+	}
+
+	public void setOthersScore(Integer othersScore) {
+		this.othersScore = othersScore;
 	}
 
 }

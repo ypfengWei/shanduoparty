@@ -107,31 +107,34 @@
   <update id="updateExperienceByUserId">
   	update 
   	vip_experience 
-  	set experience = #{0} where user_id = #{1}
+  	set experience = #{0} where user_id = #{1} and del_flag = '0'
   </update>
   <select id="selectByUserId" resultType="java.lang.Integer">
   	select 
   	experience
-  	from vip_experience where user_id = #{0}
+  	from vip_experience where user_id = #{0} and del_flag = '0'
   </select>
   <update id="updateByUserId">
     update 
     vip_experience 
     set experience = experience+15 
-	where user_id in (select user_id from shanduo_vip where vip_type = '1' and vip_end_time > NOW());
+	where user_id in (select user_id from shanduo_vip where vip_type = '1' and vip_end_time > NOW() and del_flag = '0')
+	and del_flag = '0'
   </update>
   <update id="updateByUserIdTwo">
     update 
-    vip_experience set experience = experience + 10 
-    where user_id in (select user_id from shanduo_vip where vip_type = '0' and
-	user_id not in (select user_id from shanduo_vip where vip_type = '1' and vip_end_time > NOW()) 
-	and vip_end_time > now())
+    vip_experience 
+    set experience = experience + 10 
+    where user_id in (select user_id from shanduo_vip where vip_type = '0' and del_flag = '0' and
+	user_id not in (select user_id from shanduo_vip where vip_type = '1' and vip_end_time > NOW() and del_flag = '0') 
+	and vip_end_time > now()) and del_flag = '0'
   </update>
   <update id="updateByUserIdThree">
     update 
     vip_experience 
     set experience = if(experience>=10,experience - 10,0) 
     where user_id not in
-	(select user_id from shanduo_vip where vip_end_time > now())
+	(select user_id from shanduo_vip where vip_end_time > now() and del_flag = '0')
+	and del_flag = '0'
   </update>
 </mapper>
