@@ -19,7 +19,7 @@ import com.shanduo.party.mapper.UserMoneyRecordMapper;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.VipService;
-import com.shanduo.party.util.GradeUtils;
+import com.shanduo.party.util.LevelUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
 /**
@@ -167,10 +167,10 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Override
 	public int addExperience(Integer userId, String moneyType) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		int gradeA = GradeUtils.getGrade(userMoney.getExperience());
+		int gradeA = LevelUtils.getLevel(userMoney.getExperience());
 		int addExperience = getVipExperience(userId,moneyType);
 		Integer experience = userMoney.getExperience() + addExperience;
-		int gradeB = GradeUtils.getGrade(experience);
+		int gradeB = LevelUtils.getLevel(experience);
 		userMoney.setExperience(experience);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -252,10 +252,10 @@ public class ExperienceServiceImpl implements ExperienceService {
 	
 	public int saveSignin(Integer userId,String signinType) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		int gradeA = GradeUtils.getGrade(userMoney.getExperience());
+		int gradeA = LevelUtils.getLevel(userMoney.getExperience());
 		int addExperience = getVipExperience(userId,signinType);
 		Integer experience = userMoney.getExperience() + addExperience;
-		int gradeB = GradeUtils.getGrade(experience);
+		int gradeB = LevelUtils.getLevel(experience);
 		userMoney.setExperience(experience);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -285,6 +285,12 @@ public class ExperienceServiceImpl implements ExperienceService {
 			return i;
 		}
 		return 0;
+	}
+
+	@Override
+	public int selectLevel(Integer userId) {
+		UserMoney userMoney = moneyMapper.selectByUserId(userId);
+		return LevelUtils.getLevel(userMoney.getExperience());
 	}
 
 }

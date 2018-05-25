@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.UserOrder;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -65,13 +64,12 @@ public class MoneyControllrt {
 	@RequestMapping(value = "getmoney",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean getMoney(HttpServletRequest request,String token) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
-		UserMoney money = moneyService.selectByUserId(userId);
+		UserMoney money = moneyService.selectByUserId(isUserId);
 		if(money == null) {
 			log.error("查询钱包出错");
 			return new ErrorBean("查询钱包出错");
@@ -94,12 +92,11 @@ public class MoneyControllrt {
 	@RequestMapping(value = "moneyList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean moneyList(HttpServletRequest request,String token,String page,String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
 			return new ErrorBean("页码错误");
@@ -110,7 +107,7 @@ public class MoneyControllrt {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = moneyService.moneyList(userId, pages, pageSizes);
+		Map<String, Object> resultMap = moneyService.moneyList(isUserId, pages, pageSizes);
 		return new SuccessBean(resultMap);
 	}
 	
@@ -129,12 +126,11 @@ public class MoneyControllrt {
 	@RequestMapping(value = "expenditure",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean expenditure(HttpServletRequest request, String token,String orderId,String password) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(orderId)) {
 			log.error("订单号为空");
 			return new ErrorBean("订单号为空");
@@ -148,11 +144,11 @@ public class MoneyControllrt {
 			log.error("密码格式错误");
 			return new ErrorBean("密码格式错误");
 		}
-		if(!moneyService.checkPassword(userId, password)) {
+		if(!moneyService.checkPassword(isUserId, password)) {
 			log.error("支付密码错误");
 			return new ErrorBean("密码错误");
 		}
-		if(moneyService.checkMoney(userId,order.getMoney())) {
+		if(moneyService.checkMoney(isUserId,order.getMoney())) {
 			log.error("余额不足");
 			return new ErrorBean("余额不足");
 		}
@@ -182,13 +178,11 @@ public class MoneyControllrt {
 	@RequestMapping(value = "updatepassword",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean updatepassword(HttpServletRequest request,String token,String typeId,String code,String password,String newPassword) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
-		
 		if(StringUtils.isNull(typeId) || typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
@@ -198,7 +192,7 @@ public class MoneyControllrt {
 			return new ErrorBean("新密码格式错误");
 		}
 		if("1".equals(typeId)) {
-			String phone = userService.selectByPhone(userId);
+			String phone = userService.selectByPhone(isUserId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean("验证码错误");
@@ -212,13 +206,13 @@ public class MoneyControllrt {
 				log.error("原始密码格式错误");
 				return new ErrorBean("原始密码格式错误");
 			}
-			if(!moneyService.checkPassword(userId, password)) {
+			if(!moneyService.checkPassword(isUserId, password)) {
 				log.error("原始密码错误");
 				return new ErrorBean("原始密码错误");
 			}
 		}
 		try {
-			moneyService.updatePassWord(userId, newPassword);
+			moneyService.updatePassWord(isUserId, newPassword);
 		} catch (Exception e) {
 			log.error("支付密码修改失败");
 			return new ErrorBean("修改失败");

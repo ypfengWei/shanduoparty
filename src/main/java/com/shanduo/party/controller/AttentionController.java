@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.AttentionService;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.UserService;
+import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -45,7 +45,7 @@ public class AttentionController {
 	private UserService userService;
 	
 	/**
-	 * 搜索好友
+	 * 搜索用户
 	 * @Title: seekUser
 	 * @Description: TODO
 	 * @param @param request
@@ -58,13 +58,44 @@ public class AttentionController {
 	@RequestMapping(value = "seekuser",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean seekUser(HttpServletRequest request,String token,String query) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		List<Map<String, Object>> resultList = userService.seekUser(query);
+		List<Map<String, Object>> resultList = userService.seekUser(isUserId,query);
 		return new SuccessBean(resultList);
+	}
+	
+	/**
+	 * 查询用户信息
+	 * @Title: userDetails
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param userId
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "userdetails",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean userDetails(HttpServletRequest request,String token,String userId) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
+			log.error("账号格式错误");
+			return new ErrorBean("账号格式错误");
+		}
+		Map<String, Object> resultMap = userService.selectById(isUserId, Integer.parseInt(userId));
+		if(resultMap == null) {
+			log.error("找不到该用户");
+			return new ErrorBean("找不到该用户");
+		}
+		return new SuccessBean(resultMap);
 	}
 	
 	/**
@@ -81,8 +112,8 @@ public class AttentionController {
 	@RequestMapping(value = "saveapply",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean saveApply(HttpServletRequest request,String token,String attention) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -90,22 +121,21 @@ public class AttentionController {
 			log.error("被添加人格式错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER);
 		}
-		Integer userId = userToken.getUserId();
 		Integer attentions = Integer.valueOf(attention);
-		if(attentionService.checkAttention(userId, attentions, "2")) {
+		if(attentionService.checkAttention(isUserId, attentions, "2")) {
 			log.error("已被对方拉入黑名单");
 			return new ErrorBean("对方拒绝添加好友");
 		}
-		if(attentionService.checkAttention(userId, attentions, "1")) {
+		if(attentionService.checkAttention(isUserId, attentions, "1")) {
 			log.error("已经是好友");
 			return new ErrorBean("已经是好友");
 		}
-		if(attentionService.checkAttentionApply(userId, attentions)) {
+		if(attentionService.checkAttentionApply(isUserId, attentions)) {
 			log.error("已经申请");
 			return new ErrorBean("已经申请");
 		}
 		try {
-			attentionService.saveAttentionApply(userId, attentions);
+			attentionService.saveAttentionApply(isUserId, attentions);
 		} catch (Exception e) {
 			log.error("申请失败");
 			return new ErrorBean("申请失败");
@@ -128,8 +158,8 @@ public class AttentionController {
 	@RequestMapping(value = "applyList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean applyList(HttpServletRequest request,String token,String page,String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -141,10 +171,9 @@ public class AttentionController {
 			log.error("记录错误");
 			return new ErrorBean("记录错误");
 		}
-		Integer userId = userToken.getUserId();
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = attentionService.attentionApplyList(userId, pages, pageSizes);
+		Map<String, Object> resultMap = attentionService.attentionApplyList(isUserId, pages, pageSizes);
 		return new SuccessBean(resultMap);
 	}
 	
@@ -163,8 +192,8 @@ public class AttentionController {
 	@RequestMapping(value = "isapply",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean isapply(HttpServletRequest request,String token,String applyId,String typeId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -176,9 +205,8 @@ public class AttentionController {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
-		Integer userId = userToken.getUserId();
 		try {
-			attentionService.isAttentionApply(applyId, userId, typeId);
+			attentionService.isAttentionApply(applyId, isUserId, typeId);
 		} catch (Exception e) {
 			log.error("操作失败");
 			return new ErrorBean("操作失败");
@@ -200,8 +228,8 @@ public class AttentionController {
 	@RequestMapping(value = "hideapply",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean hideApply(HttpServletRequest request,String token,String applyIds) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -209,9 +237,8 @@ public class AttentionController {
 			log.error("申请ID为空");
 			return new ErrorBean("申请ID为空");
 		}
-		Integer userId = userToken.getUserId();
 		try {
-			attentionService.hideAttentionApply(applyIds, userId);
+			attentionService.hideAttentionApply(applyIds, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
 			return new ErrorBean("删除失败");
@@ -233,17 +260,16 @@ public class AttentionController {
 	@RequestMapping(value = "attentionList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean attentionList(HttpServletRequest request,String token,String typeId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
-		List<Map<String, Object>> resultList = attentionService.attentionList(userId, typeId);
+		List<Map<String, Object>> resultList = attentionService.attentionList(isUserId, typeId);
 		return new SuccessBean(resultList);
 	}
 	
@@ -263,8 +289,8 @@ public class AttentionController {
 	@RequestMapping(value = "delattention",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean delAttention(HttpServletRequest request,String token,String attention,String typeId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -276,10 +302,9 @@ public class AttentionController {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
 		}
-		Integer userId = userToken.getUserId();
 		Integer attentions = Integer.valueOf(attention);
 		try {
-			attentionService.delAttention(userId, attentions, typeId);
+			attentionService.delAttention(isUserId, attentions, typeId);
 		} catch (Exception e) {
 			log.error("操作失败");
 			return new ErrorBean("操作失败");
@@ -301,8 +326,8 @@ public class AttentionController {
 	@RequestMapping(value = "blacklistattention",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean blacklistAttention(HttpServletRequest request,String token,String attention) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -310,10 +335,9 @@ public class AttentionController {
 			log.error("被拉黑人格式错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER);
 		}
-		Integer userId = userToken.getUserId();
 		Integer attentions = Integer.valueOf(attention);
 		try {
-			attentionService.blacklistAttention(userId, attentions);
+			attentionService.blacklistAttention(isUserId, attentions);
 		} catch (Exception e) {
 			log.error("拉黑失败");
 			return new ErrorBean("拉黑失败");

@@ -146,11 +146,22 @@ public interface UserService {
 	 * 搜索用户
 	 * @Title: seekUser
 	 * @Description: TODO
-	 * @param @param query
+	 * @param @param query 搜索内容
 	 * @param @return
 	 * @return List<Map<String,Object>>
 	 * @throws
 	 */
-	List<Map<String, Object>> seekUser(String query);
+	List<Map<String, Object>> seekUser(Integer userId,String query);
 	
+	/**
+	 * 查询用户的个人信息
+	 * @Title: selectById
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param Attention
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> selectById(Integer userId,Integer Attention);
 }

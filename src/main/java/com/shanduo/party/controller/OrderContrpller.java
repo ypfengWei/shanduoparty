@@ -75,13 +75,12 @@ public class OrderContrpller {
 	@ResponseBody
 	public ResultBean saveOrder(HttpServletRequest request,String token,String typeId,String money,
 			String month,String activityId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
-		return saveOrder(userId, typeId, money, month, activityId);
+		return saveOrder(isUserId, typeId, money, month, activityId);
 	}
 	
 	/**
@@ -102,13 +101,12 @@ public class OrderContrpller {
 	@ResponseBody
 	public ResultBean aliPayorder(HttpServletRequest request,String token,String typeId,String money,
 			String month,String activityId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
-		ResultBean rssultBean = saveOrder(userId, typeId, money, month, activityId);
+		ResultBean rssultBean = saveOrder(isUserId, typeId, money, month, activityId);
 		if(!rssultBean.isSuccess()) {
 			return rssultBean;
 		}
@@ -176,13 +174,12 @@ public class OrderContrpller {
 	@ResponseBody
 	public ResultBean wxPayOrder(HttpServletRequest request,String token,String typeId,String money,
 			String month,String activityId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
-		ResultBean rssultBean = saveOrder(userId, typeId, money, month, activityId);
+		ResultBean rssultBean = saveOrder(isUserId, typeId, money, month, activityId);
 		if(!rssultBean.isSuccess()) {
 			return rssultBean;
 		}
@@ -266,7 +263,6 @@ public class OrderContrpller {
 //		if(moneyService.) {
 //			
 //		}
-		
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[1-5]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");

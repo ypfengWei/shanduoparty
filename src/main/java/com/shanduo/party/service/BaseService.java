@@ -1,6 +1,5 @@
 package com.shanduo.party.service;
 
-import com.shanduo.party.entity.UserToken;
 
 /**
  * 检查登录状态和权限业务层
@@ -18,13 +17,13 @@ public interface BaseService {
 	 * @Description: TODO
 	 * @param @param token
 	 * @param @return
-	 * @return UserToken
+	 * @return Integer
 	 * @throws
 	 */
-	UserToken checkUserToken(String token);
+	Integer checkUserToken(String token);
 	
 	/**
-	 * 检查权限
+	 * 检查权限(管理员,商家)
 	 * @Title: checkUserRole
 	 * @Description: TODO
 	 * @param @param userId 用户ID
@@ -40,10 +39,10 @@ public interface BaseService {
 	 * @Title: checkUserVip
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param vip VIP等级
+	 * @param @param vip 权限VIP等级
 	 * @param @return
 	 * @return boolean
 	 * @throws
 	 */
-	boolean checkUserVip(Integer userId,String vip);
+	boolean checkUserVip(Integer userId,Integer vip);
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -54,22 +53,21 @@ public class CollectController {
 	@RequestMapping(value = "savecollect",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean saveCollect(HttpServletRequest request,String token,String fileUrl) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(fileUrl)) {
 			log.error("收藏文件为空");
 			return new ErrorBean("收藏文件为空");
 		}
-		if(collectServic.checkCollect(userId, fileUrl)) {
+		if(collectServic.checkCollect(isUserId, fileUrl)) {
 			log.error("已收藏");
 			return new ErrorBean("已收藏");
 		}
 		try {
-			collectServic.saveCollect(userId, fileUrl);
+			collectServic.saveCollect(isUserId, fileUrl);
 		} catch (Exception e) {
 			log.error("收藏失败");
 			return new ErrorBean("收藏失败");
@@ -91,8 +89,8 @@ public class CollectController {
 	@RequestMapping(value = "delcollects",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean delCollects(HttpServletRequest request,String token,String collectIds) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -101,7 +99,7 @@ public class CollectController {
 			return new ErrorBean("收藏ID为空");
 		}
 		try {
-			collectServic.deleteCollect(userToken.getUserId(), collectIds);
+			collectServic.deleteCollect(isUserId, collectIds);
 		} catch (Exception e) {
 			log.error("取消失败");
 			return new ErrorBean("取消失败");
@@ -124,12 +122,11 @@ public class CollectController {
 	@RequestMapping(value = "collectList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean collectList(HttpServletRequest request,String token,String page,String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
 			return new ErrorBean("页码错误");
@@ -141,7 +138,7 @@ public class CollectController {
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = 
-				collectServic.selectByUserList(userId, pages, pageSizes);
+				collectServic.selectByUserList(isUserId, pages, pageSizes);
 		return new SuccessBean(resultMap);
 	}
 }

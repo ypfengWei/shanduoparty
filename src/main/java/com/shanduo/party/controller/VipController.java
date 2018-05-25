@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -41,12 +40,12 @@ public class VipController {
 	@RequestMapping(value = "showVip", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean queryHotActivity(HttpServletRequest request,String token) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		VipInfo vipInfo = vipService.selectByUserIds(userToken.getUserId());
+		VipInfo vipInfo = vipService.selectByUserIds(isUserId);
 		if(vipInfo == null) {
 			log.error("您不是会员");
 			return new ErrorBean("您不是会员");

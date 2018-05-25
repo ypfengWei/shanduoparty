@@ -2,6 +2,7 @@ package com.shanduo.party.service.impl;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +16,16 @@ import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.service.TokenInfo;
+import com.shanduo.party.mapper.ShanduoActivityMapper;
+import com.shanduo.party.mapper.ShanduoDynamicMapper;
 import com.shanduo.party.mapper.ShanduoLabelMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
+import com.shanduo.party.mapper.UserAttentionMapper;
 import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserTokenMapper;
+import com.shanduo.party.service.AttentionService;
+import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.UserService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.AgeUtils;
@@ -55,7 +61,16 @@ public class UserServiceImpl implements UserService {
 	private ShanduoReputationMapper shanduoReputationMapper;
 	@Autowired
 	private VipService vipService;
-	
+	@Autowired
+	private AttentionService attentionService;
+	@Autowired
+	private ExperienceService experienceService;
+	@Autowired
+	private ShanduoDynamicMapper dynamicMapper;
+	@Autowired
+	private ShanduoActivityMapper activityMapper;
+	@Autowired
+	private UserAttentionMapper attentionMapper;
 	
 	@Override
 	public int saveUser(String phone,String password) {
@@ -229,14 +244,37 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Map<String, Object>> seekUser(String query) {
+	public List<Map<String, Object>> seekUser(Integer userId,String query) {
 		List<Map<String, Object>> resultList = userMapper.seekUser(query);
 		for (Map<String, Object> map : resultList) {
-			map.put("portraitId", PictureUtils.getPictureUrl(map.get("portraitId").toString()));
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
-			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("id").toString())));
+			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
+			map.put("isAttention", attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString()), "1"));
 		}
 		return resultList;
+	}
+
+	@Override
+	public Map<String, Object> selectById(Integer userId,Integer Attention) {
+		ShanduoUser user = userMapper.selectByPrimaryKey(Attention);
+		if(user == null) {
+			return null;
+		}
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("userId", user.getId());
+		resultMap.put("name", user.getUserName());
+		resultMap.put("gender", user.getGender());
+		resultMap.put("age", AgeUtils.getAgeFromBirthTime(user.getBirthday()));
+		resultMap.put("vip", vipService.selectVipExperience(userId));
+		resultMap.put("level", experienceService.selectLevel(userId));
+		resultMap.put("picture", PictureUtils.getPictureUrl(user.getHeadPortraitId()));
+		resultMap.put("isAttention", attentionService.checkAttention(userId, Attention, "1"));
+		//好友人数，动态数量,活动次数
+		resultMap.put("attention",attentionMapper.selectAttentionCount(Attention, "1"));
+		resultMap.put("dynamic",dynamicMapper.selectMyCount(Attention));
+		resultMap.put("activity",activityMapper.selectByUserIdCount(Attention));
+		return resultMap;
 	}
 
 }
