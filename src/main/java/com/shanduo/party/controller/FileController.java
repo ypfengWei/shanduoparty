@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -61,8 +60,8 @@ public class FileController {
     @RequestMapping(value="upload",method=RequestMethod.POST)
     @ResponseBody
     public ResultBean upload(HttpServletRequest request,@RequestParam("file") MultipartFile[] file,String token) throws IOException{
-    	UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+    	Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -90,7 +89,7 @@ public class FileController {
     	}
     	String pictureList = "";
     	try {
-    		pictureList = pictureService.savePicture(userToken.getUserId(), urlList);
+    		pictureList = pictureService.savePicture(isUserId, urlList);
 		} catch (Exception e) {
 			log.error("图片记录插入失败");
 			return new ErrorBean("上传失败");

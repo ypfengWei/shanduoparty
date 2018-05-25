@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -163,8 +162,8 @@ public class UserController {
 	@RequestMapping(value = "updatephone",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean updatePhone(HttpServletRequest request,String token,String phone,String code) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -185,7 +184,7 @@ public class UserController {
 			return new ErrorBean("验证码超时或错误");
 		}
 		try {
-			userService.updatePhone(userToken.getUserId(), phone);
+			userService.updatePhone(isUserId, phone);
 		} catch (Exception e) {
 			log.error("修改手机号失败");
 			return new ErrorBean("修改失败");
@@ -211,12 +210,11 @@ public class UserController {
 	@ResponseBody
 	public ResultBean updatePassword(HttpServletRequest request,String token,String typeId,String code,
 			String password,String newPassword) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean("类型错误");
@@ -226,7 +224,7 @@ public class UserController {
 			return new ErrorBean("新密码格式错误");
 		}
 		if("1".equals(typeId)) {
-			String phone = userService.selectByPhone(userId);
+			String phone = userService.selectByPhone(isUserId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean("验证码错误");
@@ -236,7 +234,7 @@ public class UserController {
 				return new ErrorBean("验证码超时或错误");
 			}
 			try {
-				userService.updatePasswordByPhone(userToken.getUserId(), newPassword);
+				userService.updatePasswordByPhone(isUserId, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
 				return new ErrorBean("修改失败");
@@ -247,7 +245,7 @@ public class UserController {
 				return new ErrorBean("密码格式错误");
 			}
 			try {
-				userService.updatePassword(userId, password, newPassword);
+				userService.updatePassword(isUserId, password, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
 				return new ErrorBean("原始密码错误");
@@ -280,8 +278,8 @@ public class UserController {
 	@ResponseBody
 	public ResultBean updateUser(HttpServletRequest request,String token,String name,String headPortraitId,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -297,14 +295,15 @@ public class UserController {
 			log.error("情感状态错误");
 			return new ErrorBean("情感状态错误");
 		}
+		TokenInfo tokenInfo = null;
 		try {
-			userService.updateUser(userToken.getUserId(), name, headPortraitId, birthday, 
+			tokenInfo = userService.updateUser(token,isUserId, name, headPortraitId, birthday, 
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");
 			return new ErrorBean("修改失败");
 		}
-		return new SuccessBean("修改成功");
+		return new SuccessBean(tokenInfo);
 	}
 	
 	/**
@@ -320,8 +319,8 @@ public class UserController {
 	@RequestMapping(value = "labelList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean labelList(HttpServletRequest request,String token) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -346,8 +345,8 @@ public class UserController {
 	@RequestMapping(value = "checktoken",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean checkToken(HttpServletRequest request,String token) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}

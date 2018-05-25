@@ -79,4 +79,15 @@ public interface ExperienceService {
      * @throws
      */
 	int selectBySignInCount(Integer userId);
+	
+	/**
+	 * 查询经验等级
+	 * @Title: selectLevel
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int selectLevel(Integer userId);
 }

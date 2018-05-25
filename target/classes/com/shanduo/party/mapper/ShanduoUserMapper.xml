@@ -300,7 +300,7 @@
   </select>
   <select id="seekUser" parameterType="java.lang.String" resultType="map">
   	select
-  	id, user_name as name, head_portrait_id as portraitId, birthday as age, gender,
+  	id as userId, user_name as name, head_portrait_id as picture, birthday as age, gender,
     signature, hometown
   	from shanduo_user
   	where id like "%"#{query}"%"

@@ -18,7 +18,7 @@ import com.shanduo.party.util.StringUtils;
 
 @Controller
 @RequestMapping(value = "wechat")
-public class UserWechatController {
+public class WechatController {
 
 	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
 
@@ -27,29 +27,21 @@ public class UserWechatController {
 	
 	@RequestMapping(value = "saveWechat", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveWechat(HttpServletRequest request, String appid, String secret, String code) {
-		if(StringUtils.isNull(appid)) {
-			log.error("appid不能为空");
-			return new ErrorBean("appid不能为空");
-		}
-		if(StringUtils.isNull(secret)) {
-			log.error("secret不能为空");
-			return new ErrorBean("secret不能为空");
-		}
+	public ResultBean saveWechat(HttpServletRequest request,String code) {
 		if(StringUtils.isNull(code)) {
 			log.error("code不能为空");
 			return new ErrorBean("code不能为空");
 		}
-		if(wechatService.selectByPrimaryKey(appid, secret, code)) {
+		if(wechatService.selectByPrimaryKey(null, null, code)) {
 			try {
-				wechatService.insertSelective(appid, secret, code);
+				wechatService.insertSelective(null, null, code);
 			} catch (Exception e) {
 				log.error("绑定失败");
 				return new ErrorBean("绑定失败");
 			}
 		} else {
 			try {
-				wechatService.selectByUserId(appid, secret, code);
+				wechatService.selectByUserId(null, null, code);
 			} catch (Exception e) {
 				log.error("登录失败");
 				return new ErrorBean("登录失败");

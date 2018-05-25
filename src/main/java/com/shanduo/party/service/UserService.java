@@ -91,6 +91,7 @@ public interface UserService {
 	 * 修改个人信息
 	 * @Title: updateUser
 	 * @Description: TODO
+	 * @param @param token 用户ID
 	 * @param @param userId 用户ID
 	 * @param @param name 昵称
 	 * @param @param headPortraitId 头像
@@ -103,10 +104,10 @@ public interface UserService {
 	 * @param @param occupation 职业
 	 * @param @param school 学校
 	 * @param @return
-	 * @return int
+	 * @return TokenInfo
 	 * @throws
 	 */
-	int updateUser(Integer userId,String name,String headPortraitId,String birthday,String gender,
+	TokenInfo updateUser(String token,Integer userId,String name,String headPortraitId,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school);
 	
 	/**
@@ -145,11 +146,22 @@ public interface UserService {
 	 * 搜索用户
 	 * @Title: seekUser
 	 * @Description: TODO
-	 * @param @param query
+	 * @param @param query 搜索内容
 	 * @param @return
 	 * @return List<Map<String,Object>>
 	 * @throws
 	 */
-	List<Map<String, Object>> seekUser(String query);
+	List<Map<String, Object>> seekUser(Integer userId,String query);
 	
+	/**
+	 * 查询用户的个人信息
+	 * @Title: selectById
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param Attention
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> selectById(Integer userId,Integer Attention);
 }

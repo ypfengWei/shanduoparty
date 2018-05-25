@@ -13,7 +13,6 @@ import com.shanduo.party.entity.ShanduoCarousel;
 import com.shanduo.party.mapper.ShanduoCarouselMapper;
 import com.shanduo.party.service.CarouselService;
 import com.shanduo.party.util.PictureUtils;
-import com.shanduo.party.util.UUIDGenerator;
 
 /**
  * 

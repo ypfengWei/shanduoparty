@@ -374,11 +374,7 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat){
 		for (ActivityInfo activityInfo : resultList) {
-			if(activityInfo.getBirthday() == null || activityInfo.getBirthday().isEmpty()) {
-				activityInfo.setAge(0);
-			} else {
-				activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-			}
+			activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
         	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));

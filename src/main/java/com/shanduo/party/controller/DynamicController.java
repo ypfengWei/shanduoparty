@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -66,8 +65,8 @@ public class DynamicController {
 	@RequestMapping(value = "savedynamic",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean saveDynamic(HttpServletRequest request,String token,String content,String picture,String lat, String lon,String location) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -83,17 +82,16 @@ public class DynamicController {
 			log.error("经度错误");
 			return new ErrorBean("经度错误");
 		}
-		Integer userId = userToken.getUserId();
 		try {
-			dynamicService.saveDynamic(userId, content, picture, lat, lon, location);
+			dynamicService.saveDynamic(isUserId, content, picture, lat, lon, location);
 		} catch (Exception e) {
 			log.error("发表动态失败");
 			return new ErrorBean("发表动态失败");
 		}
 		//添加每日发表动态经验值，日限制2次/5点经验
-		if(!experienceService.checkCount(userId, "4")) {
+		if(!experienceService.checkCount(isUserId, "4")) {
 			try {
-				experienceService.addExperience(userId, "4");
+				experienceService.addExperience(isUserId, "4");
 			} catch (Exception e) {
 				log.error("发表动态获得经验失败");
 			}
@@ -120,11 +118,7 @@ public class DynamicController {
 	@ResponseBody
 	public ResultBean homeList(HttpServletRequest request,String token,String typeId,String lat,String lon,
 			String page,String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean("类型错误");
-		}
+		Integer isUserId = baseService.checkUserToken(token);
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
 			return new ErrorBean("页码错误");
@@ -145,18 +139,13 @@ public class DynamicController {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>();
 		if("1".equals(typeId)) {
-			Integer userId = null;
-			if(userToken != null) {
-				userId = userToken.getUserId();
-			}
-			resultMap = dynamicService.nearbyList(userId, lat, lon, pages, pageSizes);
+			resultMap = dynamicService.nearbyList(isUserId, lat, lon, pages, pageSizes);
 		}else {
-			if(userToken == null) {
+			if(isUserId == null) {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
-			Integer userId = userToken.getUserId();
-			resultMap = dynamicService.attentionList(userId, lat, lon, pages, pageSizes);
+			resultMap = dynamicService.attentionList(isUserId, lat, lon, pages, pageSizes);
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -181,8 +170,8 @@ public class DynamicController {
 	@ResponseBody
 	public ResultBean dynamicList(HttpServletRequest request,String token,String typeId,String userId,
 			String lat,String lon,String page,String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -210,13 +199,13 @@ public class DynamicController {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>();
 		if("1".equals(typeId)) {
-			resultMap = dynamicService.dynamicList(userToken.getUserId(),userToken.getUserId(),lat, lon, pages, pageSizes);
+			resultMap = dynamicService.dynamicList(isUserId,isUserId,lat, lon, pages, pageSizes);
 		}else {
 			if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
 				log.error("闪多号格式错误");
 				return new ErrorBean("闪多号格式错误");
 			}
-			resultMap = dynamicService.dynamicList(Integer.valueOf(userId),userToken.getUserId(),lat, lon, pages, pageSizes);
+			resultMap = dynamicService.dynamicList(Integer.valueOf(userId),isUserId,lat, lon, pages, pageSizes);
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -235,19 +224,18 @@ public class DynamicController {
 	@RequestMapping(value = "ispraise",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean isPraise(HttpServletRequest request,String token,String dynamicId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
 			return new ErrorBean("动态ID为空");
 		}
-		if(praiseService.checkPraise(userId, dynamicId)) {
+		if(praiseService.checkPraise(isUserId, dynamicId)) {
 			try {
-				praiseService.deletePraise(userToken.getUserId(), dynamicId);
+				praiseService.deletePraise(isUserId, dynamicId);
 			} catch (Exception e) {
 				log.error("取消失败");
 				return new ErrorBean("取消失败");
@@ -255,15 +243,15 @@ public class DynamicController {
 			return new SuccessBean("取消成功");
 		}
 		try {
-			praiseService.savePraise(userId, dynamicId);
+			praiseService.savePraise(isUserId, dynamicId);
 		} catch (Exception e) {
 			log.error("点赞失败");
 			return new ErrorBean("点赞失败");
 		}
 		//添加每日点赞经验值，日限制10次/1点经验
-		if(!experienceService.checkCount(userId, "6")) {
+		if(!experienceService.checkCount(isUserId, "6")) {
 			try {
-				experienceService.addExperience(userId, "6");
+				experienceService.addExperience(isUserId, "6");
 			} catch (Exception e) {
 				log.error("点赞获得经验失败");
 			}
@@ -287,12 +275,11 @@ public class DynamicController {
 	@RequestMapping(value = "bydynamic",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean byDynamic(HttpServletRequest request,String token,String dynamicId,String lat,String lon) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Integer userId = userToken.getUserId();
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
 			return new ErrorBean("动态ID为空");
@@ -305,7 +292,7 @@ public class DynamicController {
 			log.error("经度错误");
 			return new ErrorBean("经度错误");
 		}
-		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, userId, lat, lon);
+		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, isUserId, lat, lon);
 		if(resultMap == null) {
 			log.error("动态不存在");
 			return new ErrorBean("动态不存在");
@@ -327,8 +314,8 @@ public class DynamicController {
 	@RequestMapping(value = "bycomment",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean byComment(HttpServletRequest request,String token,String commentId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -362,8 +349,8 @@ public class DynamicController {
 	@ResponseBody
 	public ResultBean commentList(HttpServletRequest requrst,String token,String dynamicId,
 			String commentId,String page,String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -411,8 +398,8 @@ public class DynamicController {
 	@ResponseBody
 	public ResultBean saveComment(HttpServletRequest request,String token,String dynamicId,
 			String comment,String typeId,String commentId,String respondent,String picture) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -438,17 +425,16 @@ public class DynamicController {
 				return new ErrorBean("被回复用户ID错误");
 			}
 		}
-		Integer userId = userToken.getUserId();
 		try {
-			dynamicService.saveDynamicComment(userId, dynamicId, comment, typeId, commentId, respondent, picture);
+			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, respondent, picture);
 		} catch (Exception e) {
 			log.error("评论失败");
 			return new ErrorBean("评论失败");
 		}
 		//添加每日评论动态经验值，日限制5次/2点经验
-		if(!experienceService.checkCount(userId, "7")) {
+		if(!experienceService.checkCount(isUserId, "7")) {
 			try {
-				experienceService.addExperience(userId, "7");
+				experienceService.addExperience(isUserId, "7");
 			} catch (Exception e) {
 				log.error("评论获得经验失败");
 			}
@@ -470,8 +456,8 @@ public class DynamicController {
 	@RequestMapping(value = "hidedynamics",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean hideDynamics(HttpServletRequest request,String token,String dynamicIds) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -480,7 +466,7 @@ public class DynamicController {
 			return new ErrorBean("动态ID为空");
 		}
 		try {
-			dynamicService.hideDynamic(dynamicIds, userToken.getUserId());
+			dynamicService.hideDynamic(dynamicIds, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
 			return new ErrorBean("删除失败");
@@ -502,8 +488,8 @@ public class DynamicController {
 	@RequestMapping(value = "hidecomment",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean hideComment(HttpServletRequest request,String token,String commentId) {
-		UserToken userToken = baseService.checkUserToken(token);
-		if(userToken == null) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
@@ -512,7 +498,7 @@ public class DynamicController {
 			return new ErrorBean("评论ID为空");
 		}
 		try {
-			dynamicService.hideComment(commentId, userToken.getUserId());
+			dynamicService.hideComment(commentId, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
 			return new ErrorBean("删除失败");

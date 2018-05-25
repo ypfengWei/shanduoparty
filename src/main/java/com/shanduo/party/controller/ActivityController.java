@@ -19,7 +19,6 @@ import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ShanduoActivity;
 import com.shanduo.party.entity.ShanduoUser;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -76,7 +75,7 @@ public class ActivityController {
 	public ResultBean saveActivity(HttpServletRequest request, String token, String activityName,
 			String activityStartTime, String activityAddress, String mode, String manNumber, String womanNumber,
 			String remarks, String activityCutoffTime, String lon, String lat, String detailedAddress) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -139,21 +138,21 @@ public class ActivityController {
 			log.error("活动报名截止时间不能大于活动开始时间");
 			return new ErrorBean("活动报名截止时间不能大于活动开始时间");
 		}
-		if(activityService.selectByTwoAll(userToken.getUserId(), activityStartTime)) {
+		if(activityService.selectByTwoAll(userToken, activityStartTime)) {
 			log.error("只能举办上一活动之后的活动");
 			return new ErrorBean("只能举办上一活动之后的活动");
 		}
 		try {
-			activityService.saveActivity(userToken.getUserId(), activityName, activityStartTime,
+			activityService.saveActivity(userToken, activityName, activityStartTime,
 					activityAddress, mode, manNumber, womanNumber, remarks, activityCutoffTime, lon, lat, detailedAddress);
 		} catch (Exception e) {
 			log.error("活动添加失败");
 			return new ErrorBean("添加失败");
 		}
 //		添加每日发起活动经验值，日限制2次/20点经验
-		if(!experienceService.checkCount(userToken.getUserId(), "5")) {
+		if(!experienceService.checkCount(userToken, "5")) {
 			try {
-				experienceService.addExperience(userToken.getUserId(), "5");
+				experienceService.addExperience(userToken, "5");
 			} catch (Exception e) {
 				log.error("发起活动获得经验失败");
 			}
@@ -175,7 +174,7 @@ public class ActivityController {
 	@RequestMapping(value = "deleteActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean deleteActivity(HttpServletRequest request, String avtivityId, String token) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -241,12 +240,12 @@ public class ActivityController {
 		}else if("2".equals(type)) {
 			resultMap = activityService.selectByNearbyUserId(lon, lat, pages, pageSizes);
 		}else {
-			UserToken userToken = baseService.checkUserToken(token);
+			Integer userToken = baseService.checkUserToken(token);
 			if (userToken == null) {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
-			resultMap = activityService.selectByFriendsUserId(userToken.getUserId(), pages, pageSizes, lon, lat);
+			resultMap = activityService.selectByFriendsUserId(userToken, pages, pageSizes, lon, lat);
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -270,7 +269,7 @@ public class ActivityController {
 	@RequestMapping(value = "showOneActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean showOneActivity(HttpServletRequest request, String token, String page, String pageSize, String lon, String lat, String type) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -299,11 +298,11 @@ public class ActivityController {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>();
 		if("1".equals(type)) {
-			resultMap = activityService.selectByUserIdInTime(userToken.getUserId(),pages,pageSizes,lon,lat);
+			resultMap = activityService.selectByUserIdInTime(userToken,pages,pageSizes,lon,lat);
 		} else if("2".equals(type)){
-			resultMap = activityService.selectByUserIdTime(userToken.getUserId(),pages,pageSizes,lon,lat);
+			resultMap = activityService.selectByUserIdTime(userToken,pages,pageSizes,lon,lat);
 		} else{
-			resultMap = activityService.selectByUserId(userToken.getUserId(),pages,pageSizes,lon,lat);
+			resultMap = activityService.selectByUserId(userToken,pages,pageSizes,lon,lat);
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -324,7 +323,7 @@ public class ActivityController {
 	@RequestMapping(value = "participant", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean selectByUserId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -361,7 +360,7 @@ public class ActivityController {
 	@RequestMapping(value = "participateActivities", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean participateActivities(HttpServletRequest request, String token, String activityId){
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -370,7 +369,7 @@ public class ActivityController {
 			log.error("活动ID为空");
 			return new ErrorBean("活动ID为空");
 		}
-		if(activityService.selectByAll(userToken.getUserId(), activityId)) {
+		if(activityService.selectByAll(userToken, activityId)) {
 			log.error("您在本时间段有其他的活动");
 			return new ErrorBean("您在本时间段有其他的活动");
 		}
@@ -383,7 +382,7 @@ public class ActivityController {
 		List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
 		if(resultMap != null) {
 			//查询当前用户的性别
-			ShanduoUser shanduoUser = activityService.selectById(userToken.getUserId());
+			ShanduoUser shanduoUser = activityService.selectById(userToken);
 			for (Map<String, Object> map : resultMap) {
 				if (shanduoUser.getGender().equals(map.get("gender").toString())) {
 					//根据活动id查询活动要求人数
@@ -403,15 +402,15 @@ public class ActivityController {
 			}
 		} 
 		try {
-			activityService.insertSelective(userToken.getUserId(), activityId);
+			activityService.insertSelective(userToken, activityId);
 		} catch (Exception e) {
 			log.error("参加活动失败");
 			return new ErrorBean("参加活动失败");
 		}
 //		添加每日参加活动经验值，日限制2次/10点经验
-		if(!experienceService.checkCount(userToken.getUserId(), "8")) {
+		if(!experienceService.checkCount(userToken, "8")) {
 			try {
-				experienceService.addExperience(userToken.getUserId(), "8");
+				experienceService.addExperience(userToken, "8");
 			} catch (Exception e) {
 				log.error("参加活动获得经验失败");
 			}
@@ -435,7 +434,7 @@ public class ActivityController {
 	@RequestMapping(value = "activityCancellation", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean activityCancellation(HttpServletRequest request, String token, String activityId) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -445,7 +444,7 @@ public class ActivityController {
 			return new ErrorBean("活动id为空");
 		}
 		try {
-			activityService.deleteByUserId(activityId, userToken.getUserId());
+			activityService.deleteByUserId(activityId, userToken);
 		} catch (Exception e) {
 			log.error("活动取消失败");
 			return new ErrorBean("活动取消失败");
@@ -468,7 +467,7 @@ public class ActivityController {
 	@RequestMapping(value = "selectByHistorical", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean selectByHistorical(HttpServletRequest request, String token, String page, String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -483,7 +482,7 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = activityService.selectByHistorical(userToken.getUserId(), pages, pageSizes);
+		Map<String, Object> resultMap = activityService.selectByHistorical(userToken, pages, pageSizes);
 		return new SuccessBean(resultMap);
 	}
 	
@@ -501,7 +500,7 @@ public class ActivityController {
 	@RequestMapping(value = "activityRefresh", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean activityRefresh(HttpServletRequest request, String token, String activityId){
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -533,7 +532,7 @@ public class ActivityController {
 	@RequestMapping(value = "updateBysetTop", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean updateBysetTop(HttpServletRequest request, String token, String activityId) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);

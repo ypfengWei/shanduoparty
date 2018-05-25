@@ -8,18 +8,18 @@ package com.shanduo.party.util;
  * @date 2018年5月5日 下午3:52:07
  *
  */
-public class GradeUtils {
+public class LevelUtils {
 
 	/**
 	 * 计算经验等级
-	 * @Title: getGrade
+	 * @Title: getLevel
 	 * @Description: TODO
 	 * @param @param experience
 	 * @param @return
 	 * @return Integer
 	 * @throws
 	 */
-	public static Integer getGrade(Integer experience) {
+	public static Integer getLevel(Integer experience) {
 		if(experience <= 100) {
 			return 1;
 		}

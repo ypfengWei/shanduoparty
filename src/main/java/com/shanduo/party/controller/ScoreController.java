@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -58,7 +57,7 @@ public class ScoreController {
 	@ResponseBody
 	public ResultBean updateScore(HttpServletRequest request, String token, String activityId, String score,
 			String evaluationcontent, String evaluationSign) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -73,7 +72,7 @@ public class ScoreController {
 				return new ErrorBean("评分错误");
 			}
 			try {
-				scoreService.updateActivityScore(userToken.getUserId(), activityId, Integer.parseInt(score), evaluationcontent);
+				scoreService.updateActivityScore(userToken, activityId, Integer.parseInt(score), evaluationcontent);
 			} catch (Exception e) {
 				return new ErrorBean("添加失败");
 			}
@@ -101,7 +100,7 @@ public class ScoreController {
 	@ResponseBody
 	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId, String othersScore,
 			String beEvaluated, String beEvaluationSign) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -116,7 +115,7 @@ public class ScoreController {
 				return new ErrorBean("评分为空");
 			}
 			try {
-				scoreService.updateByUserId(userToken.getUserId(), activityId, Integer.parseInt(othersScore), beEvaluated);
+				scoreService.updateByUserId(userToken, activityId, Integer.parseInt(othersScore), beEvaluated);
 			} catch (Exception e) {
 				return new ErrorBean("评价失败");
 			}
@@ -139,7 +138,7 @@ public class ScoreController {
 	@RequestMapping(value = "selHistoryScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean selActivityScore(HttpServletRequest request, String token, String page, String pageSize) {
-		UserToken userToken = baseService.checkUserToken(token);
+		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -154,7 +153,7 @@ public class ScoreController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> activityScores = scoreService.selectByIdScore(userToken.getUserId(), pages, pageSizes);
+		Map<String, Object> activityScores = scoreService.selectByIdScore(userToken, pages, pageSizes);
 		return new SuccessBean(activityScores);
 	}
 	

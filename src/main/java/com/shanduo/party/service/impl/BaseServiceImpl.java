@@ -11,6 +11,7 @@ import com.shanduo.party.entity.UserToken;
 import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.mapper.UserTokenMapper;
 import com.shanduo.party.service.BaseService;
+import com.shanduo.party.service.VipService;
 
 /**
  * 
@@ -30,15 +31,17 @@ public class BaseServiceImpl implements BaseService {
 	private UserTokenMapper userTokenMapper;
 	@Autowired
 	private ShanduoUserMapper userMapper;
+	@Autowired
+	private VipService vipService;
 	
 	@Override
-	public UserToken checkUserToken(String token) {
+	public Integer checkUserToken(String token) {
 		UserToken userToken = userTokenMapper.selectByToken(token);
 		if(userToken == null) {
 			log.error("token已失效");
 			return null;
 		}
-		return userToken;
+		return userToken.getUserId();
 	}
 
 	@Override
@@ -57,8 +60,11 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	@Override
-	public boolean checkUserVip(Integer userId, String vip) {
-		// TODO Auto-generated method stub
+	public boolean checkUserVip(Integer userId, Integer vip) {
+		int lvVip = vipService.selectVipExperience(userId);
+		if(lvVip < vip) {
+			return true;
+		}
 		return false;
 	}
 
