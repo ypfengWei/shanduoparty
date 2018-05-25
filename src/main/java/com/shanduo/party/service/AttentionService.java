@@ -14,17 +14,16 @@ import java.util.Map;
 public interface AttentionService {
 
 	/**
-	 * 检查是否已经添加好友或者拉黑
+	 * 检查是否已经添加好友
 	 * @Title: checkAttention
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param attention 被添加人ID
-	 * @param @param typeId 类型:1,好友;2,拉黑
 	 * @param @return
 	 * @return boolean
 	 * @throws
 	 */
-	boolean checkAttention(Integer userId,Integer attention,String typeId);
+	boolean checkAttention(Integer userId,Integer attention);
 	
 	/**
 	 * 检查是否已经申请添加好友

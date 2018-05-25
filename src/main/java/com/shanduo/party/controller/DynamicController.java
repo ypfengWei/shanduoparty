@@ -398,7 +398,7 @@ public class DynamicController {
 	}
 	
 	/**
-	 * 删除动态
+	 * 批量删除动态
 	 * @Title: hideDynamic
 	 * @Description: TODO
 	 * @param @param request

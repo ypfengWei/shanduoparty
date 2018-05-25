@@ -44,9 +44,9 @@ public class AttentionServiceImpl implements AttentionService {
 	private VipService vipService;
 	
 	@Override
-	public boolean checkAttention(Integer userId, Integer attention,String typeId) {
-		UserAttention attentions = attentionMapper.checkAttention(userId, attention, typeId);
-		if(attentions != null) {
+	public boolean checkAttention(Integer userId, Integer attention) {
+		UserAttention attentions = attentionMapper.checkAttention(userId, attention);
+		if(attentions != null && attentions.getAttentionType().equals("1")) {
 			return true;
 		}
 		return false;
@@ -62,7 +62,7 @@ public class AttentionServiceImpl implements AttentionService {
 	}
 	
 	@Override
-	public int saveAttentionApply(Integer userId, Integer attention) {
+	public int saveAttentionApply(Integer userId,Integer attention) {
 		UserAttentionApply attentionApply = new UserAttentionApply();
 		attentionApply.setId(UUIDGenerator.getUUID());
 		attentionApply.setUserId(userId);
@@ -146,7 +146,7 @@ public class AttentionServiceImpl implements AttentionService {
 			int n = attentionApplyMapper.updateAttentionApply(applyId[i], attention);
 			if(n < 1) {
 				log.error("软删除申请好友记录失败");
-				throw new RuntimeException();
+//				throw new RuntimeException();
 			}
 		}
 		return 1;
@@ -174,7 +174,7 @@ public class AttentionServiceImpl implements AttentionService {
 
 	@Override
 	public int blacklistAttention(Integer userId, Integer attention) {
-		if(checkAttention(userId, attention, "1")) {
+		if(checkAttention(userId, attention)) {
 			try {
 				delAttention(userId, attention,"1");
 			} catch (Exception e) {

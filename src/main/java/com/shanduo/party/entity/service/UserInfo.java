@@ -4,8 +4,8 @@ public class UserInfo {
 	private Integer userId;//闪多号
 	private String name;//昵称
 	private String picture;//头像
-	private String gender;//性别
-	private Integer age;//性别 ,0女,1男
+	private String gender;//性别,0女,1男
+	private Integer age;//年龄
 	private Integer vip;//VIP等级:vip(0-8),svip(11-18)
 	private String signature;//个性签名
 	public Integer getUserId() {

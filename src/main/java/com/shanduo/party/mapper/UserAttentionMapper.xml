@@ -132,10 +132,9 @@
     from user_attention
     where user_id = #{0}
     and attention = #{1}
-    and attention_type = #{2}
     and del_flag = '0'
   </select>
-  <select id="selectAttentionCount" resultType="java.lang.Integer">
+  <select id="attentionCount" resultType="java.lang.Integer">
   	select
   	count(id)
   	from user_attention
@@ -150,7 +149,7 @@
 	su.head_portrait_id as picture,su.gender
   	from user_attention ua
 	join shanduo_user su
-	on su.id = ua.attention 
+	on su.id = ua.attention
   	where ua.user_id = #{0}
   	and ua.attention_type = #{1}
   	and ua.del_flag = '0'

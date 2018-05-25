@@ -263,7 +263,7 @@ public class DynamicServiceImpl implements DynamicService {
 			int n = dynamicMapper.updateByDelFlag(dynamicIds[i], userId);
 			if(n < 1) {
 				log.error("删除动态失败");
-				throw new RuntimeException();
+//				throw new RuntimeException();
 			}
 		}
 		return 1;

@@ -38,7 +38,7 @@ public interface VipService {
 	int updateByUserId(Integer userId, Integer month, String vipType);
 
 	/**
-	 * 查会员成长值
+	 * 查会员等级
 	 * @Title: selectVipExperience
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param userId

@@ -45,7 +45,7 @@ public class SmsController {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param phone 手机号码
-	 * @param @param typeId 短信类型ID 1.注册,2.换手机号,3.修改密码,4.修改支付密码
+	 * @param @param typeId 短信类型ID 1.注册;2.换手机号;3.修改密码;4.修改支付密码
 	 * @param @return
 	 * @return ResultBean
 	 * @throws

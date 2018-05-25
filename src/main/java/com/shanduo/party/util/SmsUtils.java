@@ -37,7 +37,7 @@ public class SmsUtils {
      * @Title: sendSms
      * @Description: TODO
      * @param @param tel 手机号
-     * @param @param type 短信类型
+     * @param @param type 短信类型 1.注册,2.换手机号,3.修改密码,4.修改支付密码
      * @param @param code 验证码
      * @param @return
      * @param @throws ClientException

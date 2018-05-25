@@ -250,7 +250,7 @@ public class UserServiceImpl implements UserService {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
-			map.put("isAttention", attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString()), "1"));
+			map.put("isAttention", attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString())));
 		}
 		return resultList;
 	}
@@ -269,9 +269,9 @@ public class UserServiceImpl implements UserService {
 		resultMap.put("vip", vipService.selectVipExperience(userId));
 		resultMap.put("level", experienceService.selectLevel(userId));
 		resultMap.put("picture", PictureUtils.getPictureUrl(user.getHeadPortraitId()));
-		resultMap.put("isAttention", attentionService.checkAttention(userId, Attention, "1"));
+		resultMap.put("isAttention", attentionService.checkAttention(userId, Attention));
 		//好友人数，动态数量,活动次数
-		resultMap.put("attention",attentionMapper.selectAttentionCount(Attention, "1"));
+		resultMap.put("attention",attentionMapper.attentionCount(Attention, "1"));
 		resultMap.put("dynamic",dynamicMapper.selectMyCount(Attention));
 		resultMap.put("activity",activityMapper.selectByUserIdCount(Attention));
 		return resultMap;

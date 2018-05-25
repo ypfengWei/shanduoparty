@@ -26,11 +26,10 @@ public class LevelUtils {
 		Integer grade = 1;
 		experience = experience -100;
 		for(;;grade++) {
-			Integer cha = experience-(300*grade); 
-			if(cha <= 0) {
+			experience = experience-(300*grade);
+			if(experience <= 0) {
 				break;
 			}
-			experience = experience-(300*grade);
 		}
 		return grade+1;
 	}

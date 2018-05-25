@@ -122,11 +122,7 @@ public class AttentionController {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER);
 		}
 		Integer attentions = Integer.valueOf(attention);
-		if(attentionService.checkAttention(isUserId, attentions, "2")) {
-			log.error("已被对方拉入黑名单");
-			return new ErrorBean("对方拒绝添加好友");
-		}
-		if(attentionService.checkAttention(isUserId, attentions, "1")) {
+		if(attentionService.checkAttention(isUserId, attentions)) {
 			log.error("已经是好友");
 			return new ErrorBean("已经是好友");
 		}

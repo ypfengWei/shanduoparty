@@ -12,7 +12,7 @@ import com.shanduo.party.mapper.VipExperienceMapper;
  * vip成长值定时器
  * @ClassName: VipTiming
  * @Description: TODO(这里用一句话描述这个类的作用)
- * @author A18ccms a18ccms_gmail_com
+ * @author lishan
  * @date 2018年5月14日 下午4:16:28
  *
  */
