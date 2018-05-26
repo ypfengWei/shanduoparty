@@ -13,7 +13,7 @@ import java.util.Date;
 public interface VipService {
 	
 	/**
-	 * 开通/续费会员
+	 * 开通会员
 	 * @Title: saveVip
 	 * @Description: TODO
 	 * @param @param userId
@@ -28,7 +28,7 @@ public interface VipService {
 	
 	/**
 	 * 开通/续费会员
-	 * @Title: updateByUserId
+	 * @Title: updateVip
 	 * @Description: TODO
 	 * @param @param userId
 	 * @param @param month
@@ -37,7 +37,7 @@ public interface VipService {
 	 * @return int
 	 * @throws
 	 */
-	int updateByUserId(Integer userId, Integer month, String vipType);
+	int updateVip(Integer userId, Integer month, String vipType);
 
 	/**
 	 * 查会员等级

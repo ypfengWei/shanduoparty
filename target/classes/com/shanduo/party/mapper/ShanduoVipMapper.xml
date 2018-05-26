@@ -142,7 +142,7 @@
   
   <select id="selectByVipType" resultMap="BaseResultMap">
   	select
-  	id, vip_start_time, vip_end_time
+  	 id, user_id, vip_type, vip_start_time, vip_end_time
   	from shanduo_vip
   	where del_flag = '0'
   	and user_id = #{0}
@@ -150,7 +150,7 @@
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap">
   	select
-  	vip_type
+  	 id, user_id, vip_type, vip_start_time, vip_end_time
   	from shanduo_vip 
   	where del_flag = '0'
   	and user_id = #{0}

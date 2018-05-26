@@ -20,7 +20,7 @@ public interface ShanduoVipMapper {
     /**
      * 根据用户Id查询vip信息
      * @Title: selectByVipType
-     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @Description: TODO
      * @param @return 设定文件
      * @return ShanduoVip 返回类型
      * @throws

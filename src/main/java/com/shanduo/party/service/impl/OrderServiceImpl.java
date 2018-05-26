@@ -169,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 			case "2":
 				try {
 					moneyService.consumeMoney(userId, money, "开通VIP");
-					vipService.updateByUserId(userId, month, "0");
+					vipService.updateVip(userId, month, "0");
 				} catch (Exception e) {
 					throw new RuntimeException();
 				}
@@ -177,7 +177,7 @@ public class OrderServiceImpl implements OrderService {
 			case "3":
 				try {
 					moneyService.consumeMoney(userId, money, "开通SVIP");
-					vipService.updateByUserId(userId, month, "1");
+					vipService.updateVip(userId, month, "1");
 				} catch (Exception e) {
 					throw new RuntimeException();
 				}
