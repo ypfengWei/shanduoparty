@@ -61,7 +61,7 @@ public class BaseServiceImpl implements BaseService {
 
 	@Override
 	public boolean checkUserVip(Integer userId, Integer vip) {
-		int lvVip = vipService.selectVipExperience(userId);
+		int lvVip = vipService.selectVipLevel(userId);
 		if(lvVip < vip) {
 			return true;
 		}

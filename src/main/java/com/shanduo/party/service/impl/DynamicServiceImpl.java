@@ -113,7 +113,7 @@ public class DynamicServiceImpl implements DynamicService {
 			//当前用户是否点赞
 			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 			//vip等级
-			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
+			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
 			//距离
 			if(lon != null && lat != null) {
 				double distance = 

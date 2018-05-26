@@ -158,7 +158,7 @@ public class AttentionServiceImpl implements AttentionService {
 		for(Map<String, Object> map : resultList) {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
-			map.put("vip", vipService.selectVipExperience(Integer.parseInt(map.get("userId").toString())));
+			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
 		}
 		return resultList;
 	}

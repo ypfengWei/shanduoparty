@@ -12,11 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.VipExperience;
-import com.shanduo.party.entity.service.VipInfo;
 import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.VipService;
-import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
 /**
@@ -34,31 +32,42 @@ public class VipServiceImpl implements VipService {
 	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
 
 	@Autowired
-	private ShanduoVipMapper shanduoVipMapper;
+	private ShanduoVipMapper vipMapper;
 
 	@Autowired
-	private VipExperienceMapper vipExperienceMapper;
+	private VipExperienceMapper experienceMapper;
 
 	@Override
-	public int insertSelective(Integer userId, String vipType, Integer month) {
-		ShanduoVip shanduoVip = new ShanduoVip();
-		shanduoVip.setId(UUIDGenerator.getUUID());
-		shanduoVip.setUserId(userId);
-		shanduoVip.setVipType(vipType);
-		shanduoVip.setVipStartTime(new Date());
-		long time = System.currentTimeMillis();
-		shanduoVip.setVipEndTime(new Date(time + 1000L * 60L * 60L * 24L * 31L * month));
-		int i = shanduoVipMapper.insertSelective(shanduoVip);
-		if (i <= 0) {
-			log.error("会员添加失败");
-			throw new RuntimeException();
+	public int saveVip(Integer userId, Date date,Integer month,String vipType) {
+		ShanduoVip userVip = vipMapper.selectByVipType(userId,vipType);
+		if(userVip == null) {
+			userVip = new ShanduoVip();
+			userVip.setId(UUIDGenerator.getUUID());
+			userVip.setUserId(userId);
+			userVip.setVipType(vipType);
+			userVip.setVipStartTime(date);
+			userVip.setVipEndTime(new Date(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month));
+			int i = vipMapper.insertSelective(userVip);
+			if (i < 1) {
+				log.error("会员添加失败");
+				throw new RuntimeException();
+			}
+		}else {
+			userVip.setVipStartTime(date);
+			userVip.setVipEndTime(new Date(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month));
+			int i = vipMapper.updateByPrimaryKeySelective(userVip);
+			if (i < 1) {
+				log.error("重新开通会员失败");
+				throw new RuntimeException();
+			}
 		}
-		VipExperience vip = vipExperienceMapper.selectByPrimaryKey(userId);
+		//添加成长值
+		VipExperience vip = experienceMapper.selectByPrimaryKey(userId);
 		if(vip == null) {
 			vip = new VipExperience();
 			vip.setUserId(userId);
-			int count = vipExperienceMapper.insertSelective(vip);
-			if (count <= 0) {
+			int count = experienceMapper.insertSelective(vip);
+			if (count < 1) {
 				log.error("成长值添加失败");
 				throw new RuntimeException();
 			}
@@ -66,111 +75,80 @@ public class VipServiceImpl implements VipService {
 		return 1;
 	}
 	
+	/**
+	 * 续费vip
+	 * @Title: renewVip
+	 * @Description: TODO
+	 * @param @param vipId
+	 * @param @param date 续费的开始时间
+	 * @param @param month 续费月份
+	 * @return void
+	 * @throws
+	 */
+	public void renewVip(String vipId, Date date, Integer month) {
+		ShanduoVip userVip = new ShanduoVip();
+		userVip.setId(vipId);
+		userVip.setVipEndTime(new Date(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month));
+		int i = vipMapper.updateByPrimaryKeySelective(userVip);
+		if (i < 1) {
+			log.error("续费会员失败");
+			throw new RuntimeException();
+		}
+	}
+	
 	@Override
-	public int updateByUserId(Integer userId, Integer month, String vipType) {
-		long longtime = System.currentTimeMillis();
-		ShanduoVip vip = shanduoVipMapper.selectUserIdAndType(userId,"0");
-		ShanduoVip svip = shanduoVipMapper.selectUserIdAndType(userId,"1");
-		if(("0").equals(vipType)) {
-			if(vip != null) {
-				if(svip != null) {
-					if(svip.getVipEndTime().getTime() < longtime && vip.getVipEndTime().getTime() < longtime) {
-						//两个vip都过期
-						updateVip(vip, month, longtime,"1");
-					} else if(vip.getVipEndTime().getTime() > longtime) {
-						//svip过期
-						updateVip(vip, month, vip.getVipEndTime().getTime(),"0");
-					} else {
-						//vip过期
-						updateVip(vip, month, vip.getVipEndTime().getTime(),"0");
-					}
-				} else {
-					if(vip.getVipEndTime().getTime() < longtime) {
-						updateVip(vip, month, longtime,"1");
-					} else {
-						updateVip(vip, month, vip.getVipEndTime().getTime(),"0");
-					}
+	public int updateVip(Integer userId, Integer month, String vipType) {
+		Date date = new Date();
+		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
+		if(resultList == null || resultList.isEmpty()) {
+			//开通
+			saveVip(userId, date, month, vipType);
+		}else if(resultList.size() == 2) {
+			ShanduoVip vip1 = resultList.get(0);
+			ShanduoVip vip2 = resultList.get(1);
+			if("0".equals(vipType)) {
+				//续费vip
+				if("0".equals(vip1.getVipType())) {
+					renewVip(vip1.getId(), vip1.getVipEndTime(), month);
+				}else {
+					renewVip(vip2.getId(), vip2.getVipEndTime(), month);
 				}
-			} else {
-				int i = insertSelective(userId, vipType, month);
-				if(i < 1) {
-					log.error("添加会员失败");
-					throw new RuntimeException();
-				}
+			}else {
+				//续费svip和vip延长
+				renewVip(vip1.getId(), vip1.getVipEndTime(), month);
+				renewVip(vip2.getId(), vip2.getVipEndTime(), month);
 			}
-		} else {
-			if(svip != null) {
-				if(vip != null) {
-					if(svip.getVipEndTime().getTime() < longtime && vip.getVipEndTime().getTime() < longtime) {
-						//两个vip都过期
-						updateVip(svip, month, longtime,"1");
-					} else if(svip.getVipEndTime().getTime() > longtime) {
-						//svip过期
-						updateVip(svip, month, svip.getVipEndTime().getTime(),"0");
-						updateVip(vip, month, vip.getVipEndTime().getTime(),"0");
-					}
-				} else {
-					if(svip.getVipEndTime().getTime() < longtime) {
-						updateVip(svip, month, longtime,"1");
-					} else {
-						updateVip(svip, month, svip.getVipEndTime().getTime(),"0");
-					}
-				}
-			} else {
-				int i = insertSelective(userId, vipType, month);
-				if(i < 1) {
-					log.error("添加会员失败");
-					throw new RuntimeException();
-				}
-				if(vip != null) {
-					updateVip(vip, month, vip.getVipEndTime().getTime(),"0");
+		}else {
+			ShanduoVip vip = resultList.get(0);
+			if(vipType.equals(vip.getVipType())) {
+				//续费
+				renewVip(vip.getId(), vip.getVipEndTime(), month);
+			}else {
+				if("0".equals(vipType)) {
+					//开通vip
+					saveVip(userId, vip.getVipEndTime(), month, vipType);
+				}else {
+					//开通svip
+					saveVip(userId, date, month, vipType);
+					//vip延长
+					renewVip(vip.getId(), vip.getVipEndTime(), month);
 				}
 			}
 		}
 		return 1;
 	}
 	
-	public void updateVip(ShanduoVip vip,Integer month,long time,String type) {
-		Date date = new Date(time);
-		if("1".equals(type)) {
-			vip.setVipStartTime(date);
-		}
-		vip.setVipEndTime(new Date(time + 1000L * 60L * 60L * 24L * 31L * month));
-		int i = shanduoVipMapper.updateByPrimaryKeySelective(vip);
-		if (i <= 0) {
-			log.error("会员开通失败");
-			throw new RuntimeException();
-		}
-	}
-
-	@Override
-	public int selectVipExperience(Integer userId) {
-		List<ShanduoVip> resultList = shanduoVipMapper.selectByUserId(userId);
-		if(resultList == null || resultList.isEmpty()) {
-			return 0;
-		}
-		if(resultList.size() == 2) {
-			return 10+getVipGrade(userId);
-		}
-		if("0".equals(resultList.get(0).getVipType())) {
-			return getVipGrade(userId);
-		}
-		return 10+getVipGrade(userId);
-	}
-	
-	@Override
-	public VipInfo selectByUserIds(Integer userId) {
-		VipInfo vipInfo = shanduoVipMapper.selectByUserIds(userId);
-		if(vipInfo == null) {
-			return null;
-		}
-		vipInfo.setVipGrade(selectVipExperience(userId));
-		vipInfo.setAge(AgeUtils.getAgeFromBirthTime(vipInfo.getBirthday()));
-		return vipInfo;
-	}
-	
+	/**
+	 * 计算vip等级
+	 * @Title: getVipGrade
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
 	public int getVipGrade(Integer userId) {
-		int experience = vipExperienceMapper.selectByUserId(userId);
+		int experience = experienceMapper.selectByUserId(userId);
 		if(experience < 300) {
 			return 1;
 		}else if(experience < 900) {
@@ -188,5 +166,20 @@ public class VipServiceImpl implements VipService {
 		}
 		return 8;
 	}
-
+	
+	@Override
+	public int selectVipLevel(Integer userId) {
+		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
+		if(resultList == null) {
+			return 0;
+		}
+		if(resultList.size() == 2) {
+			return 10+getVipGrade(userId);
+		}
+		if("0".equals(resultList.get(0).getVipType())) {
+			return getVipGrade(userId);
+		}
+		return 10+getVipGrade(userId);
+	}
+		
 }
