@@ -235,7 +235,7 @@ public interface ActivityService {
      * @return List<Map<String,Object>>    返回类型
      * @throws
      */
-    List<Map<String, Object>> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId);
+    Map<String, Object> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId);
 
     /**
      * 活动刷新

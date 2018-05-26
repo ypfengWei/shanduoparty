@@ -41,6 +41,8 @@ public class GetAccessTokenUtils {
 					accessToken.setId(UUIDGenerator.getUUID());
 				} else {
 					log.error("login weixin getOpenId error" + resultMap.toString());
+					httpClient.close();
+					response.close();
 					return null;
 				}
 			}
@@ -67,6 +69,8 @@ public class GetAccessTokenUtils {
 					userWechat.setOpenId(resultMaps.get("openid").toString());
 				} else {
 					log.error("login weixin getOpenId error" + resultMaps.toString());
+					httpClient.close();
+					responses.close();
 					return null;
 				}
 			}
@@ -87,6 +91,8 @@ public class GetAccessTokenUtils {
 					userWechat.setUnionId(resultMap.get("unionid").toString());
 				} else {
 					log.error("login weixin getOpenId error" + resultMap.toString());
+					httpClient.close();
+					response.close();
 					return null;
 				}
 			}

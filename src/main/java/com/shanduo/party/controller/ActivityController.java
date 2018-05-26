@@ -305,7 +305,7 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		List<Map<String, Object>> resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken);
+		Map<String, Object> resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken);
 		return new SuccessBean(resultMap);
 	}
 	
@@ -349,8 +349,9 @@ public class ActivityController {
 	}
 	
 	/**
-	 * 参加活动
-	 * @Title: participateActivities
+	 * type = 1 参加活动
+	 * type = 2 取消活动
+	 * @Title: joinActivities
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
@@ -359,9 +360,9 @@ public class ActivityController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "participateActivities", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "joinActivities", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean participateActivities(HttpServletRequest request, String token, String activityId){
+	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type){
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -371,89 +372,69 @@ public class ActivityController {
 			log.error("活动ID为空");
 			return new ErrorBean("活动ID为空");
 		}
-		if(activityService.selectByAll(userToken, activityId)) {
-			log.error("您在本时间段有其他的活动");
-			return new ErrorBean("您在本时间段有其他的活动");
+		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean("类型错误");
 		}
-		ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
-		if(shanduoActivity.getActivityCutoffTime().getTime() < System.currentTimeMillis()) {
-			log.error("此活动报名时间已过");
-			return new ErrorBean("此活动报名时间已过");
-		}
-		//查询参加活动的男女生人数
-		List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
-		if(resultMap != null) {
-			//查询当前用户的性别
-			ShanduoUser shanduoUser = activityService.selectById(userToken);
-			for (Map<String, Object> map : resultMap) {
-				if (shanduoUser.getGender().equals(map.get("gender").toString())) {
-					//根据活动id查询活动要求人数
-					ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
-					int count = Integer.parseInt(map.get("count").toString());
-					//如果女生人数大于要求女生人数，参加失败
-					if ("0".equals(shanduoUser.getGender()) && activityRequirement.getWomanNumber() <= count) {
-						log.error("该性别人数已满");
-						return new ErrorBean("该性别人数已满");
-					}
-					//如果男生人数大于要求男生人数，参加失败
-					if ("1".equals(shanduoUser.getGender()) && activityRequirement.getManNumber() <= count) {
-						log.error("该性别人数已满");
-						return new ErrorBean("该性别人数已满");
+		if("1".equals(type)) {
+			if(activityService.selectByAll(userToken, activityId)) {
+				log.error("您在本时间段有其他的活动");
+				return new ErrorBean("您在本时间段有其他的活动");
+			}
+			ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
+			if(shanduoActivity.getActivityCutoffTime().getTime() < System.currentTimeMillis()) {
+				log.error("此活动报名时间已过");
+				return new ErrorBean("此活动报名时间已过");
+			}
+			//查询参加活动的男女生人数
+			List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
+			if(resultMap != null) {
+				//查询当前用户的性别
+				ShanduoUser shanduoUser = activityService.selectById(userToken);
+				for (Map<String, Object> map : resultMap) {
+					if (shanduoUser.getGender().equals(map.get("gender").toString())) {
+						//根据活动id查询活动要求人数
+						ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
+						int count = Integer.parseInt(map.get("count").toString());
+						//如果女生人数大于要求女生人数，参加失败
+						if ("0".equals(shanduoUser.getGender()) && activityRequirement.getWomanNumber() <= count) {
+							log.error("该性别人数已满");
+							return new ErrorBean("该性别人数已满");
+						}
+						//如果男生人数大于要求男生人数，参加失败
+						if ("1".equals(shanduoUser.getGender()) && activityRequirement.getManNumber() <= count) {
+							log.error("该性别人数已满");
+							return new ErrorBean("该性别人数已满");
+						}
 					}
 				}
-			}
-		} 
-		try {
-			activityService.insertSelective(userToken, activityId);
-		} catch (Exception e) {
-			log.error("参加活动失败");
-			return new ErrorBean("参加活动失败");
-		}
-//		添加每日参加活动经验值，日限制2次/10点经验
-		if(!experienceService.checkCount(userToken, "8")) {
+			} 
 			try {
-				experienceService.addExperience(userToken, "8");
+				activityService.insertSelective(userToken, activityId);
 			} catch (Exception e) {
-				log.error("参加活动获得经验失败");
+				log.error("参加活动失败");
+				return new ErrorBean("参加活动失败");
+			}
+//		添加每日参加活动经验值，日限制2次/10点经验
+			if(!experienceService.checkCount(userToken, "8")) {
+				try {
+					experienceService.addExperience(userToken, "8");
+				} catch (Exception e) {
+					log.error("参加活动获得经验失败");
+				}
+			}
+			return new SuccessBean("报名成功");
+		} else {
+			try {
+				activityService.deleteByUserId(activityId, userToken);
+			} catch (Exception e) {
+				log.error("活动取消失败");
+				return new ErrorBean("活动取消失败");
 			}
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
-        String str = sdf.format(shanduoActivity.getActivityStartTime());
-		return new SuccessBean("参加活动成功,活动开始时间" + str + ",活动地址为" + shanduoActivity.getActivityAddress());
+		return new SuccessBean("取消成功");
 	}
 
-	/**
-	 * 取消活动
-	 * @Title: activityCancellation
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param token
-	 * @param @param activityId
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "activityCancellation", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean activityCancellation(HttpServletRequest request, String token, String activityId) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(activityId)) {
-			log.error("活动id为空");
-			return new ErrorBean("活动id为空");
-		}
-		try {
-			activityService.deleteByUserId(activityId, userToken);
-		} catch (Exception e) {
-			log.error("活动取消失败");
-			return new ErrorBean("活动取消失败");
-		}
-		return new SuccessBean("活动取消成功");
-	}
-	
 	/**
 	 * 查询发起者与参与者评分
 	 * @Title: selectByHistorical

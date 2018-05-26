@@ -39,7 +39,18 @@ public class WechatController {
 				log.error("绑定失败");
 				return new ErrorBean("绑定失败");
 			}
-		} else {
+		} 
+		return new SuccessBean("绑定成功");
+	}
+	
+	@RequestMapping(value = "loginWechat", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean loginWechat(HttpServletRequest request,String code) {
+		if(StringUtils.isNull(code)) {
+			log.error("code不能为空");
+			return new ErrorBean("code不能为空");
+		}
+		if(wechatService.selectByPrimaryKey(code) != null) {
 			try {
 				wechatService.selectByUserId(code);
 			} catch (Exception e) {
@@ -47,6 +58,6 @@ public class WechatController {
 				return new ErrorBean("登录失败");
 			}
 		}
-		return new SuccessBean("操作成功");
+		return new SuccessBean("登录成功");
 	}
 }
