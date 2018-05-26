@@ -407,8 +407,10 @@ public class ActivityServiceImpl implements ActivityService {
 	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat){
 		for (ActivityInfo activityInfo : resultList) {
 			activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
-        	activityInfo.setLocation(location);
+			if(!StringUtils.isNull(lon)&&!StringUtils.isNull(lat)) {
+				double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
+				activityInfo.setLocation(location);
+			}
         	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
         	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
     		if(resultMap != null) {
@@ -489,10 +491,11 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public Map<String, Object> selectByActivityIds(String activityId, Integer userId) {
-		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
-		if(activityInfo == null) {
+		List<ActivityInfo> activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
+		if(activityInfo == null || activityInfo.isEmpty()) {
 			return null;
 		}
+		activity(activityInfo, null, null);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
 		int joinActivity = 0;
 		for (Map<String, Object> map : resultList) {

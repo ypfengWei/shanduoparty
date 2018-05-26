@@ -326,7 +326,7 @@ public interface ShanduoActivityMapper {
      * @return ActivityInfo    返回类型
      * @throws
      */
-    ActivityInfo selectByActivityIds(String activityId);
+    List<ActivityInfo> selectByActivityIds(String activityId);
     
     /**
      * 根据活动id查询参与人
