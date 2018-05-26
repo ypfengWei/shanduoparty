@@ -271,6 +271,45 @@ public class ActivityController {
 	}
 	
 	/**
+	 * 查看未过期的活动信息
+	 * @Title: selectByActivityId
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param token
+	 * @param @param activityId
+	 * @param @param page
+	 * @param @param pageSize
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "participant", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean selectByActivityId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
+		Integer userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动ID为空");
+			return new ErrorBean("活动ID为空");
+		}
+		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+			log.error("页码错误");
+			return new ErrorBean("页码错误");
+		}
+		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+			log.error("记录错误");
+			return new ErrorBean("记录错误");
+		}
+		Integer pages = Integer.valueOf(page);
+		Integer pageSizes = Integer.valueOf(pageSize);
+		List<Map<String, Object>> resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken);
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
 	 * 根据活动ID查询该活动的参与人
 	 * @Title: selectByUserId
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
@@ -283,7 +322,7 @@ public class ActivityController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "participant", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "selectByActivityId", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean selectByUserId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
 		Integer userToken = baseService.checkUserToken(token);
@@ -378,7 +417,7 @@ public class ActivityController {
 				log.error("参加活动获得经验失败");
 			}
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm" ); 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
         String str = sdf.format(shanduoActivity.getActivityStartTime());
 		return new SuccessBean("参加活动成功,活动开始时间" + str + ",活动地址为" + shanduoActivity.getActivityAddress());
 	}

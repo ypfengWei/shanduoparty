@@ -1,7 +1,7 @@
 package com.shanduo.party.mapper;
 
 import java.util.List;
-
+import java.util.Map;
 
 import com.shanduo.party.entity.ActivityScore;
 
@@ -94,4 +94,6 @@ public interface ActivityScoreMapper {
     int updateByUserIdTwo(Integer userId, String activityId, Integer score, String evaluated);
     
     int deleteByUserId(String activityId, Integer userId);
+    
+    List<Map<String, Object>> selectByGender(String activityId);
 }

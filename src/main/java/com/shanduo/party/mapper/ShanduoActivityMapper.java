@@ -2,6 +2,7 @@
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.shanduo.party.entity.ShanduoActivity;
 import com.shanduo.party.entity.service.ActivityInfo;
@@ -258,6 +259,17 @@ public interface ShanduoActivityMapper {
      * @throws
      */
     List<ActivityInfo> selectByScoreActivity(String activityId, Integer page, Integer pageSize);
+    
+    /**
+     * 查询活动下的参加用户
+     * @Title: selectByActivityId
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @return    设定文件
+     * @return List<Map<String,Object>>    返回类型
+     * @throws
+     */
+    List<Map<String, Object>> selectByActivityId(String activityId, Integer page, Integer pageSize);
     
     /**
      * 活动刷新

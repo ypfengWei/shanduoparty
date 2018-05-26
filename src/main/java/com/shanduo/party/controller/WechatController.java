@@ -32,7 +32,7 @@ public class WechatController {
 			log.error("code不能为空");
 			return new ErrorBean("code不能为空");
 		}
-		if(wechatService.selectByPrimaryKey(code)) {
+		if(wechatService.selectByPrimaryKey(code) != null) {
 			try {
 				wechatService.insertSelective(code);
 			} catch (Exception e) {

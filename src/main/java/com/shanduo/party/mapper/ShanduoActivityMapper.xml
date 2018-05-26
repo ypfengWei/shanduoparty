@@ -49,6 +49,7 @@
     <result column="others_score" jdbcType="INTEGER" property="othersScore"/>
     <result column="userIds" jdbcType="INTEGER" property="userIds"/>
     <result column="typeId" jdbcType="INTEGER" property="typeId"/>
+    <result column="joinActivity" jdbcType="INTEGER" property="joinActivity"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
@@ -405,8 +406,9 @@
 	left join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id 
 	join shanduo_user su on sa.user_id = su.id 
-	where sa.user_id = #{0} or ye.user_id = #{0} and sa.del_flag = '0' and ye.del_flag = '0'
- 	and sa.activity_start_time &lt; now() and ar.del_flag = '0' and su.del_flag = '0'
+	where sa.activity_start_time &lt; now() and sa.user_id = #{0} or ye.user_id = #{0} 
+	and sa.del_flag = '0' and ye.del_flag = '0'
+ 	and ar.del_flag = '0' and su.del_flag = '0'
  	order by sa.update_date desc
  	limit #{1},#{2}
   </select>
@@ -426,6 +428,18 @@
 	select 
 	count(activity_id)
 	from activity_score where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
+  </select>
+  <select id="selectByActivityId" resultType="map">
+  	select 
+	su.user_name,su.id,su.head_portrait_id
+	from shanduo_user su
+	join activity_score ye on su.id = ye.user_id
+	where su.id in 
+	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
+	and su.del_flag = '0'
+	group by su.id
+	order by ye.create_date desc
+	limit #{1},#{2}
   </select>
   <select id="selectByHistoricalCount" resultType="java.lang.Integer">
  	select 

@@ -1,5 +1,7 @@
 package com.shanduo.party.service;
 
+import com.shanduo.party.entity.UserWechat;
+
 /**
  * 小程序业务层
  * @ClassName: WechatService
@@ -20,8 +22,8 @@ public interface WechatService {
 	 */
 	int insertSelective(String code);
 	
-	Integer selectByUserId(String code); 
+	Integer selectByUserId(String code);
 	
-	boolean selectByPrimaryKey(String code);
+	UserWechat selectByPrimaryKey(String code);
 	
 }

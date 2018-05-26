@@ -30,8 +30,6 @@ public interface ShanduoUserMapper {
     
     int updateByPhone(Integer userId,String password);
     
-    List<Map<String, Object>> selectByGender(String activityId);
-    
     List<Map<String, Object>> seekUser(String query);
     
 }
