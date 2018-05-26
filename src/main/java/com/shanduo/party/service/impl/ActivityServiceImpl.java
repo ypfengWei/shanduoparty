@@ -409,13 +409,8 @@ public class ActivityServiceImpl implements ActivityService {
 			activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
-<<<<<<< HEAD
         	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
-        	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
-=======
-        	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
         	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
->>>>>>> 6e9234bfea4141267b2c41cf0381a90b28d5fa65
     		if(resultMap != null) {
     			for (Map<String, Object> map : resultMap) {
     				int count = Integer.parseInt(map.get("count").toString());
@@ -490,6 +485,27 @@ public class ActivityServiceImpl implements ActivityService {
             }  
 		}
 		return resultList;
+	}
+	
+	@Override
+	public Map<String, Object> selectByActivityIds(String activityId, Integer userId) {
+		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
+		if(activityInfo == null) {
+			return null;
+		}
+		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
+		int joinActivity = 0;
+		for (Map<String, Object> map : resultList) {
+			if(map.get("id").equals(userId)) {
+				joinActivity = 1;
+				break;
+			} 
+		}
+		Map<String, Object> reultMap = new HashMap<>(3);
+		reultMap.put("activityInfo", activityInfo);
+		reultMap.put("joinActivity", joinActivity);
+		reultMap.put("resultList", resultList);
+		return reultMap;
 	}
 	
 	public Long get(String time, String timeType, Integer type) {

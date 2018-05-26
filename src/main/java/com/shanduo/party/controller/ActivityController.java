@@ -533,6 +533,43 @@ public class ActivityController {
 		return new SuccessBean("活动置顶成功");
 	}
 	
+	/**
+	 * 查看单个活动详情及参与人
+	 * @Title: oneActivity
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param token
+	 * @param @param activityId
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "oneActivity", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean oneActivity(HttpServletRequest request, String token, String activityId) {
+		Integer userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动ID为空");
+			return new ErrorBean("活动ID为空");
+		}
+		Map<String, Object> resultMap = new HashMap<>(3);
+		try {
+			resultMap = activityService.selectByActivityIds(activityId, userToken);
+		} catch (Exception e) {
+			log.error("未知错误");
+			return new ErrorBean("未知错误");
+		}
+		if(resultMap == null) {
+			log.error("活动已被取消");
+			return new ErrorBean("活动已被取消");
+		}
+		return new SuccessBean(resultMap);
+	}
+	
 	public static Long convertTimeToLong(String time) {
 		Date date = new Date();
 		try {
