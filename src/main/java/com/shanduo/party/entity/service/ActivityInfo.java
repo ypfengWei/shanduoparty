@@ -58,6 +58,8 @@ public class ActivityInfo {
     
     private Integer typeId; // 调用接口类型 0:调用参与者评价接口  1:调用发起者评价接口
     
+    private Integer joinActivity; //参加活动标识
+    
 	public ActivityInfo(){
 		
 	}
@@ -271,6 +273,14 @@ public class ActivityInfo {
 
 	public void setOthersScore(Integer othersScore) {
 		this.othersScore = othersScore;
+	}
+
+	public Integer getJoinActivity() {
+		return joinActivity;
+	}
+
+	public void setJoinActivity(Integer joinActivity) {
+		this.joinActivity = joinActivity;
 	}
 
 }

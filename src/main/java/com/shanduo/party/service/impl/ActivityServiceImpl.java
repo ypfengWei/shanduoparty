@@ -90,7 +90,7 @@ public class ActivityServiceImpl implements ActivityService {
 				activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
 			}
 			if(activityInfo.getOthersScore() == null) {
-				activityInfo.setBeEvaluationSign(0);//已评价
+				activityInfo.setBeEvaluationSign(0);//未评价
 			} else {
 				activityInfo.setBeEvaluationSign(1);//已评价
 			}
@@ -99,6 +99,22 @@ public class ActivityServiceImpl implements ActivityService {
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
+		return resultMap;
+	}
+	
+	@Override
+	public List<Map<String, Object>> selectByActivityId(String activityId, Integer pageNum, Integer pageSize, Integer userId) {
+		int totalrecord = shanduoActivityMapper.selectByScoreActivityCount(activityId);
+		Page page = new Page(totalrecord, pageSize, pageNum);
+		pageNum = (page.getPageNum() - 1) * page.getPageSize();
+		List<Map<String, Object>> resultMap = shanduoActivityMapper.selectByActivityId(activityId, pageNum, page.getPageSize());
+		for (Map<String, Object> map : resultMap) {
+			if(map.get("id").equals(userId)) {
+				map.put("joinActivity", 1);//已报名
+			} else {
+				map.put("joinActivity", 0);//未报名
+			}
+		}
 		return resultMap;
 	}
 	
@@ -131,8 +147,8 @@ public class ActivityServiceImpl implements ActivityService {
             activity.setActivityCutoffTime(datetime);
         } catch (ParseException e) {  
             e.printStackTrace();  
-        }  
-		activity.setActivityAddress(activityAddress.substring(0,activityAddress.indexOf(",")));
+        }
+		activity.setActivityAddress(activityAddress.split(",")[0]);
 		int i = shanduoActivityMapper.insertSelective(activity);
 		if (i < 1) {
 			log.error("活动添加失败");
@@ -234,7 +250,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public List<Map<String, Object>> selectByGender(String activityId) {
-		List<Map<String, Object>> labelList= shanduoUserMapper.selectByGender(activityId);
+		List<Map<String, Object>> labelList= activityScoreMapper.selectByGender(activityId);
 		if(labelList == null || labelList.isEmpty()) {
 			return null;
 		}
@@ -257,6 +273,8 @@ public class ActivityServiceImpl implements ActivityService {
 		activityScore.setId(UUIDGenerator.getUUID());
 		activityScore.setUserId(userId);
 		activityScore.setActivityId(activityId);
+		ShanduoUser shanduoUser = shanduoUserMapper.selectByPrimaryKey(userId);
+		activityScore.setRemarks(shanduoUser.getGender());
 		int i = activityScoreMapper.insertSelective(activityScore);
 		if(i < 1) {
 			log.error("参加活动失败");
@@ -374,7 +392,7 @@ public class ActivityServiceImpl implements ActivityService {
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
         	activityInfo.setLocation(location);
         	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
-        	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
+        	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
     		if(resultMap != null) {
     			for (Map<String, Object> map : resultMap) {
     				int count = Integer.parseInt(map.get("count").toString());

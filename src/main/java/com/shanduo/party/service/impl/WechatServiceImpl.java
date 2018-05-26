@@ -30,23 +30,24 @@ public class WechatServiceImpl implements WechatService{
 	private AccessTokenMapper accessTokenMapper;
 
 	@Override
-	public boolean selectByPrimaryKey(String code) {
-		if(GetAccessTokenUtils.getUserWechat(code).getUserId() != null) {
-			UserWechat userWechat = userWechatMapper.selectByPrimaryKey(GetAccessTokenUtils.getUserWechat(code).getUserId());
-			if(userWechat != null) {
-				return false;
-			}
+	public UserWechat selectByPrimaryKey(String code) {
+		UserWechat userWechat = new UserWechat();
+		if(GetAccessTokenUtils.getUserWechat(code).getUserId() == null) {
+			return null;
 		} else {
-			return false;
+			userWechat = userWechatMapper.selectByPrimaryKey(GetAccessTokenUtils.getUserWechat(code).getUserId());
+			if(userWechat == null) {
+				return null;
+			}
 		}
-		return true;
+		return userWechat;
 	}
 	
 	@Override
 	public int insertSelective(String code) {
 		if(GetAccessTokenUtils.getUserWechat(code).getUserId() != null) {
 			a(code);
-			if(selectByPrimaryKey(code)) {
+			if(selectByPrimaryKey(code) != null) {
 				UserWechat userWechat = GetAccessTokenUtils.getUserWechat(code);
 	        	int i = userWechatMapper.insertSelective(userWechat);
 	        	if(i < 1) {
