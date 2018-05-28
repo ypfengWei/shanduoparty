@@ -22,10 +22,10 @@ public interface OrderService {
 	 * @param @param month 开通月份
 	 * @param @param activityId 活动ID
 	 * @param @return
-	 * @return String
+	 * @return UserOrder
 	 * @throws
 	 */
-	String saveOrder(Integer userId,String orderType,String money,String month,String activityId);
+	UserOrder saveOrder(Integer userId,String orderType,String money,String month,String activityId);
 	
 	/**
 	 * 返回订单信息

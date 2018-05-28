@@ -24,5 +24,5 @@ public interface PictureService {
 	 */
 	String savePicture(Integer userId,List<String> urlList);
 	
-	
+	String selectByPictureId(String pictureId);
 }

@@ -167,4 +167,14 @@ public interface DynamicService {
 	 */
 	int hideComment(String commentId,Integer userId);
 	
+	/**
+	 * 查询用户的动态数量
+	 * @Title: dynamicCount
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int dynamicCount(Integer userId);
 }

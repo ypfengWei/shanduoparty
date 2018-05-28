@@ -145,11 +145,4 @@
     from user_money
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
-  <select id="checkPassword" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from user_money
-    where user_id = #{0}
-    and password = #{1}
-  </select>
 </mapper>

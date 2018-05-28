@@ -279,4 +279,9 @@ public class DynamicServiceImpl implements DynamicService {
 		return 1;
 	}
 
+	@Override
+	public int dynamicCount(Integer userId) {
+		return dynamicMapper.selectMyCount(userId);
+	}
+
 }

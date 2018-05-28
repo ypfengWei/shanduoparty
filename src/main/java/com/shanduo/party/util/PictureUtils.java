@@ -8,8 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shanduo.party.entity.ShanduoPicture;
-import com.shanduo.party.mapper.ShanduoPictureMapper;
+import com.shanduo.party.service.PictureService;
 
 /**
  * 通过图片ID提取图片URL工具类
@@ -23,13 +22,13 @@ import com.shanduo.party.mapper.ShanduoPictureMapper;
 public class PictureUtils {
 
 	@Autowired
-	private ShanduoPictureMapper shanduoPictureMapper;
+	private PictureService pictureServices;
 	
-	public static ShanduoPictureMapper pictureMapper;
+	public static PictureService pictureService;
 	
 	@PostConstruct
 	public void init() {
-		PictureUtils.pictureMapper = shanduoPictureMapper;
+		PictureUtils.pictureService = pictureServices;
 	} 
 	
 	
@@ -46,11 +45,7 @@ public class PictureUtils {
 		if(id == null || "".equals(id)) {
 			return null;
 		}
-		ShanduoPicture shanduoPicture = pictureMapper.selectByPrimaryKey(id);
-		if(shanduoPicture != null) {
-			return shanduoPicture.getPictureName();
-		}
-		return null;
+		return pictureService.selectByPictureId(id);
 	}
 	
 	/**

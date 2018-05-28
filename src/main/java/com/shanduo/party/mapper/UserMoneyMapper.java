@@ -17,5 +17,4 @@ public interface UserMoneyMapper {
     
     UserMoney selectByUserId(Integer userId);
     
-    UserMoney checkPassword(Integer userId,String password);
 }

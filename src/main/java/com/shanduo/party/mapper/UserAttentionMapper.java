@@ -31,7 +31,7 @@ public interface UserAttentionMapper {
     UserAttention checkAttention(Integer userId, Integer attention);
     
     /**
-     * 好友或黑名单数量
+     * 好友数量
      * @Title: attentionCount
      * @Description: TODO
      * @param @param userId
@@ -40,7 +40,7 @@ public interface UserAttentionMapper {
      * @return int
      * @throws
      */
-    int attentionCount(Integer userId,String typeId);
+    int attentionCount(Integer userId);
     
     /**
      * 好友或黑名单所有记录

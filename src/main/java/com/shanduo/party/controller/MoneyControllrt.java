@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.UserMoney;
-import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.CodeService;
 import com.shanduo.party.service.MoneyService;
-import com.shanduo.party.service.OrderService;
 import com.shanduo.party.service.UserService;
 import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
@@ -44,8 +42,6 @@ public class MoneyControllrt {
 	private BaseService baseService;
 	@Autowired
 	private MoneyService moneyService;
-	@Autowired
-	private OrderService orderService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -112,56 +108,6 @@ public class MoneyControllrt {
 	}
 	
 	/**
-	 * 余额支付订单
-	 * @Title: expenditure
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @param orderId 订单ID
-	 * @param @param password 支付密码
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "expenditure",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean expenditure(HttpServletRequest request, String token,String orderId,String password) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(orderId)) {
-			log.error("订单号为空");
-			return new ErrorBean("订单号为空");
-		}
-		UserOrder order = orderService.selectByOrderId(orderId);
-		if(order == null) {
-			log.error("订单不存在或已支付");
-			return new ErrorBean("订单不存在或已支付");
-		}
-		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
-			log.error("密码格式错误");
-			return new ErrorBean("密码格式错误");
-		}
-		if(!moneyService.checkPassword(isUserId, password)) {
-			log.error("支付密码错误");
-			return new ErrorBean("密码错误");
-		}
-		if(moneyService.checkMoney(isUserId,order.getMoney())) {
-			log.error("余额不足");
-			return new ErrorBean("余额不足");
-		}
-		try {
-			orderService.updateOrder(orderId);
-		} catch (Exception e) {
-			log.error("支付失败");
-			return new ErrorBean("支付失败");
-		}
-		return new SuccessBean("支付成功");
-	}
-	
-	/**
 	 * 修改支付密码
 	 * @Title: updatepassword
 	 * @Description: TODO
@@ -206,7 +152,8 @@ public class MoneyControllrt {
 				log.error("原始密码格式错误");
 				return new ErrorBean("原始密码格式错误");
 			}
-			if(!moneyService.checkPassword(isUserId, password)) {
+			int check = moneyService.checkPassword(isUserId, password);
+			if(check != 2) {
 				log.error("原始密码错误");
 				return new ErrorBean("原始密码错误");
 			}

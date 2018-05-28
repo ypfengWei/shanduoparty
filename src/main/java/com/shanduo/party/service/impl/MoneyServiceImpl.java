@@ -132,12 +132,16 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 
 	@Override
-	public boolean checkPassword(Integer userId, String password) {
-		UserMoney money = moneyMapper.checkPassword(userId, MD5Utils.getInstance().getMD5(password));
-		if(money != null) {
-			return true;
+	public int checkPassword(Integer userId, String password) {
+		UserMoney money = moneyMapper.selectByPrimaryKey(userId);
+		password = MD5Utils.getInstance().getMD5(password);
+		if(money.getPassword() == null || "".equals(money.getPassword())) {
+			return 0;
 		}
-		return false;
+		if(!password.equals(money.getPassword())) {
+			return 1;
+		}
+		return 2;
 	}
 
 	@Override

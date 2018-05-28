@@ -17,13 +17,12 @@ import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.service.TokenInfo;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
-import com.shanduo.party.mapper.ShanduoDynamicMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
-import com.shanduo.party.mapper.UserAttentionMapper;
 import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserTokenMapper;
 import com.shanduo.party.service.AttentionService;
+import com.shanduo.party.service.DynamicService;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.UserService;
 import com.shanduo.party.service.VipService;
@@ -63,11 +62,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private ExperienceService experienceService;
 	@Autowired
-	private ShanduoDynamicMapper dynamicMapper;
+	private DynamicService dynamicService;
 	@Autowired
 	private ShanduoActivityMapper activityMapper;
-	@Autowired
-	private UserAttentionMapper attentionMapper;
 	
 	@Override
 	public int saveUser(String phone,String password) {
@@ -244,8 +241,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> selectById(Integer userId,Integer Attention) {
-		ShanduoUser user = userMapper.selectByPrimaryKey(Attention);
+	public Map<String, Object> selectById(Integer userId,Integer attention) {
+		ShanduoUser user = userMapper.selectByPrimaryKey(attention);
 		if(user == null) {
 			return null;
 		}
@@ -257,11 +254,11 @@ public class UserServiceImpl implements UserService {
 		resultMap.put("vip", vipService.selectVipLevel(userId));
 		resultMap.put("level", experienceService.selectLevel(userId));
 		resultMap.put("picture", PictureUtils.getPictureUrl(user.getHeadPortraitId()));
-		resultMap.put("isAttention", attentionService.checkAttention(userId, Attention));
+		resultMap.put("isAttention", attentionService.checkAttention(userId, attention));
 		//好友人数，动态数量,活动次数
-		resultMap.put("attention",attentionMapper.attentionCount(Attention, "1"));
-		resultMap.put("dynamic",dynamicMapper.selectMyCount(Attention));
-		resultMap.put("activity",activityMapper.selectByUserIdCount(Attention));
+		resultMap.put("attention",attentionService.attentionCount(attention));
+		resultMap.put("dynamic",dynamicService.dynamicCount(attention));
+		resultMap.put("activity",activityMapper.selectByUserIdCount(attention));
 		return resultMap;
 	}
 

@@ -91,7 +91,7 @@ public interface MoneyService {
 	int payBeans(Integer userId,Integer beans,String typeId);
 	
 	/**
-	 * 检查支付密码是否正确
+	 * 检查支付密码
 	 * @Title: checkPassword
 	 * @Description: TODO
 	 * @param @param userId
@@ -100,7 +100,7 @@ public interface MoneyService {
 	 * @return boolean
 	 * @throws
 	 */
-	boolean checkPassword(Integer userId,String password);
+	int checkPassword(Integer userId,String password);
 	
 	/**
 	 * 修改支付密码

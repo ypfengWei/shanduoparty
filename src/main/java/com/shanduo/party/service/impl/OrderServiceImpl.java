@@ -41,10 +41,9 @@ public class OrderServiceImpl implements OrderService {
 	private ActivityService activityService;
 	
 	@Override
-	public String saveOrder(Integer userId, String orderType, String money, String month, String activityId) {
-		String id = UUIDGenerator.getUUID();
+	public UserOrder saveOrder(Integer userId, String orderType, String money, String month, String activityId) {
 		UserOrder order = new UserOrder();
-		order.setId(id);
+		order.setId(UUIDGenerator.getUUID());
 		order.setUserId(userId);
 		order.setOrderType(orderType);
 		BigDecimal moneys = new BigDecimal("0");
@@ -84,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 			log.error("生成订单失败");
 			throw new RuntimeException();
 		}
-		return id;
+		return order;
 	}
 
 	@Override
@@ -99,6 +98,9 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public int updateOrder(String orderId) {
 		UserOrder order = selectByOrderId(orderId);
+		if(order == null) {
+			throw new RuntimeException();
+		}
 		Integer userId = order.getUserId();
 		BigDecimal money = order.getMoney();
 		Integer month = order.getMonth();
@@ -130,6 +132,9 @@ public class OrderServiceImpl implements OrderService {
 	 */
 	public void pay(String orderId,String type) {
 		UserOrder order = selectByOrderId(orderId);
+		if(order == null) {
+			throw new RuntimeException();
+		}
 		Integer userId = order.getUserId();
 		BigDecimal money = order.getMoney();
 		Integer month = order.getMonth();

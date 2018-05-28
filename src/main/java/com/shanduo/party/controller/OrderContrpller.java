@@ -31,6 +31,7 @@ import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.IpUtils;
+import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 import com.shanduo.party.util.WxPayUtils;
@@ -83,11 +84,66 @@ public class OrderContrpller {
 	}
 	
 	/**
-	 * 支付宝支付生成订单
-	 * @Title: aliOrder
+	 * 支付订单
+	 * @Title: payorder
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
+	 * @param @param payId 支付类型:1.余额;2.支付宝;3.微信;4.微信小程序
+	 * @param @param password 余额支付时传的支付密码
+	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
+	 * @param @param money 金额,充值才传
+	 * @param @param month 月份,开通vip才传
+	 * @param @param activityId 活动ID,刷新置顶才传
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "payorder",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean payorder(HttpServletRequest request, String token, String payId, String password,
+			String typeId, String money, String month,String activityId) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(payId) || !payId.matches("^[1234]$")) {
+			log.error("支付类型错误");
+			return new ErrorBean("支付类型错误");
+		}
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[1-5]$")) {
+			log.error("消费类型错误");
+			return new ErrorBean("消费类型错误");
+		}
+		if("1".equals(payId) && "1".equals(payId)) {
+			log.error("充值方式错误");
+			return new ErrorBean("充值方式错误");
+		}
+		ResultBean resultBean = saveOrder(isUserId, typeId, money, month, activityId);
+		if(!resultBean.isSuccess()) {
+			return resultBean;
+		}
+		UserOrder order = (UserOrder) resultBean.getResult();
+		if("1".equals(payId)) {
+			//余额
+			return payment(isUserId, order, password);
+		}else if("2".equals(payId)) {
+			//支付宝
+			return aliPayOrder(order);
+		}else if("3".equals(payId)) {
+			//微信
+			return wxPayOrder(order,request);
+		}else {
+			//微信小程序
+			return wxPayOrder(isUserId, order, request);
+		}
+	}
+	
+	/**
+	 * 生成订单
+	 * @Title: saveOrder
+	 * @Description: TODO
 	 * @param @param typeId
 	 * @param @param money
 	 * @param @param month
@@ -96,21 +152,81 @@ public class OrderContrpller {
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "alipayorder",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean aliPayorder(HttpServletRequest request,String token,String typeId,String money,
-			String month,String activityId) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+	public ResultBean saveOrder(Integer userId,String typeId,String money,String month,String activityId) {
+		if("1".equals(typeId)) {
+			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})$")) {
+				log.error("充值金额错误");
+				return new ErrorBean("充值金额错误");
+			}
+		}else if("2".equals(typeId) || "3".equals(typeId)) {
+			if(StringUtils.isNull(month) || !month.matches("^[1-9]\\d*$")) {
+				log.error("开通vip月份错误");
+				return new ErrorBean("开通vip月份错误");
+			}
+		}else {
+			if(StringUtils.isNull(activityId)) {
+				log.error("活动ID为空");
+				return new ErrorBean("活动ID为空");
+			}
 		}
-		ResultBean rssultBean = saveOrder(isUserId, typeId, money, month, activityId);
-		if(!rssultBean.isSuccess()) {
-			return rssultBean;
+		UserOrder order = new UserOrder();
+		try {
+			order = orderService.saveOrder(userId, typeId, money, month, activityId);
+		} catch (Exception e) {
+			log.error("生成订单出错");
+			return new ErrorBean("生成订单出错");
 		}
-		String orderId = rssultBean.getResult().toString();
-		UserOrder order = orderService.selectByOrderId(orderId);
+		return new SuccessBean(order);
+	}
+	
+	/**
+	 * 余额支付
+	 * @Title: payment
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param order
+	 * @param @param password
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	public ResultBean payment(Integer userId,UserOrder order,String password) {
+		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
+			log.error("密码格式错误");
+			return new ErrorBean("密码格式错误");
+		}
+		int check = moneyService.checkPassword(userId, password);
+		if(check == 0) {
+			log.error("未设置支付密码");
+			return new ErrorBean("未设置支付密码");
+		}
+		if(check == 1) {
+			log.error("支付密码错误");
+			return new ErrorBean("支付密码错误");
+		}
+		if(moneyService.checkMoney(userId,order.getMoney())) {
+			log.error("余额不足");
+			return new ErrorBean("余额不足");
+		}
+		try {
+			orderService.updateOrder(order.getId());
+		} catch (Exception e) {
+			log.error("支付失败");
+			return new ErrorBean("支付失败");
+		}
+		return new SuccessBean("支付成功");
+	}
+	
+	/**
+	 * 支付宝支付
+	 * @Title: aliPayOrder
+	 * @Description: TODO
+	 * @param @param order
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	public ResultBean aliPayOrder(UserOrder order) {
 		String body = "";
 		String subject = "";
 		if("1".equals(order.getOrderType())) {
@@ -136,7 +252,7 @@ public class OrderContrpller {
 		//交易标题
 		model.setSubject(subject);
 		//订单号
-		model.setOutTradeNo(orderId);
+		model.setOutTradeNo(order.getId());
 		model.setTimeoutExpress("30m");
 		//订单金额
 		model.setTotalAmount(order.getMoney().toString());
@@ -156,34 +272,16 @@ public class OrderContrpller {
 	}
 	
 	/**
-	 * 微信支付生成订单
+	 * 微信支付
 	 * @Title: wxPayOrder
 	 * @Description: TODO
+	 * @param @param order
 	 * @param @param request
-	 * @param @param token
-	 * @param @param typeId
-	 * @param @param money
-	 * @param @param month
-	 * @param @param activityId
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "wxpayorder",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean wxPayOrder(HttpServletRequest request,String token,String typeId,String money,
-			String month,String activityId) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		ResultBean rssultBean = saveOrder(isUserId, typeId, money, month, activityId);
-		if(!rssultBean.isSuccess()) {
-			return rssultBean;
-		}
-		String orderId = rssultBean.getResult().toString();
-		UserOrder order = orderService.selectByOrderId(orderId);
+	public ResultBean wxPayOrder(UserOrder order,HttpServletRequest request) {
 		String body = "";
 		if("1".equals(order.getOrderType())) {
 			body = "充值闪多余额";
@@ -207,7 +305,7 @@ public class OrderContrpller {
 		paramsMap.put("mch_id", WxPayConfig.MCH_ID);
 		paramsMap.put("nonce_str", UUIDGenerator.getUUID());
 		paramsMap.put("body", body);
-		paramsMap.put("out_trade_no", orderId);
+		paramsMap.put("out_trade_no", order.getId());
 		paramsMap.put("total_fee", moneys.toString());
 		paramsMap.put("spbill_create_ip", IpUtils.getIpAddress(request));
 		paramsMap.put("notify_url", WxPayConfig.NOTIFY_URL_APP);
@@ -237,61 +335,46 @@ public class OrderContrpller {
 		responseMap.put("partnerid", WxPayConfig.MCH_ID);
 		responseMap.put("prepayid", prepayId);
 		responseMap.put("package", "Sign=WXPay");
-		responseMap.put("nonceStr", UUIDGenerator.getUUID());
+		responseMap.put("noncestr", UUIDGenerator.getUUID());
 		Long timeStamp = System.currentTimeMillis() / 1000;
-		responseMap.put("timeStamp", timeStamp + "");
+		responseMap.put("timestamp", timeStamp + "");
 		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
 		String responseString = WxPayUtils.createLinkString(responseMap);
 		//MD5运算生成签名
 		String responseSign = WxPayUtils.sign(responseString, WxPayConfig.KEY, "utf-8").toUpperCase();
 		responseMap.put("sign", responseSign);
-		String responseXml = WxPayUtils.map2Xmlstring(paramsMap);
-		return new SuccessBean(responseXml);
+		return new SuccessBean(responseMap);
 	}
 	
 	/**
-	 * 生成订单
-	 * @Title: saveOrder
+	 * 小程序支付
+	 * @Title: wxPayOrder
 	 * @Description: TODO
-	 * @param @param typeId
-	 * @param @param money
-	 * @param @param month
-	 * @param @param activityId
+	 * @param @param userId
+	 * @param @param order
+	 * @param @param request
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
-	public ResultBean saveOrder(Integer userId,String typeId,String money,String month,String activityId) {
-//		if(moneyService.) {
-//			
-//		}
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[1-5]$")) {
-			log.error("类型错误");
-			return new ErrorBean("类型错误");
-		}
-		if("1".equals(typeId) || "2".equals(typeId)) {
-			if(StringUtils.isNull(month) || !month.matches("^[1-9]\\d*$")) {
-				log.error("开通vip月份错误");
-				return new ErrorBean("开通vip月份错误");
-			}
-		}else if("3".equals(typeId)) {
-			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})$")) {
-				log.error("充值金额错误");
-				return new ErrorBean("充值金额错误");
-			}
+	public ResultBean wxPayOrder(Integer userId,UserOrder order,HttpServletRequest request) {
+		String body = "";
+		if("1".equals(order.getOrderType())) {
+			body = "充值闪多余额";
+		}else if("2".equals(order.getOrderType())){
+			body = "开通闪多VIP"+order.getMonth()+"个月";
+		}else if("3".equals(order.getOrderType())){
+			body = "开通闪多SVIP"+order.getMonth()+"个月";
+		}else if("4".equals(order.getOrderType())){
+			body = "刷新闪多活动"+order.getActivityId();
 		}else {
-			if(StringUtils.isNull(activityId)) {
-				log.error("活动ID为空");
-				return new ErrorBean("活动ID为空");
-			}
+			body = "置顶闪多活动"+order.getActivityId();
 		}
-		String orderId = "";
-		try {
-			orderId = orderService.saveOrder(userId, typeId, money, month, activityId);
-		} catch (Exception e) {
-			log.error("生成订单出错");
-			return new ErrorBean("生成订单出错");
-		}
-		return new SuccessBean(orderId);
+		body = body + order.getMoney();
+		//价格，单位为分
+		BigDecimal amount = order.getMoney();
+		amount = amount.multiply(new BigDecimal("100"));
+		//订单总金额
+		return new SuccessBean(amount);
 	}
 }

@@ -122,4 +122,15 @@ public interface AttentionService {
 	 * @throws
 	 */
 	int blacklistAttention(Integer userId,Integer attention);
+	
+	/**
+	 * 查询好友数量
+	 * @Title: attentionCount
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int attentionCount(Integer userId);
 }

@@ -122,7 +122,7 @@ public interface UserService {
 	String savaToken(Integer userId);
 	
 	/**
-	 * 查出手机号
+	 * 查找手机号
 	 * @Title: selectByPhone
 	 * @Description: TODO
 	 * @param @param userId
@@ -148,10 +148,10 @@ public interface UserService {
 	 * @Title: selectById
 	 * @Description: TODO
 	 * @param @param userId
-	 * @param @param Attention
+	 * @param @param attention
 	 * @param @return
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> selectById(Integer userId,Integer Attention);
+	Map<String, Object> selectById(Integer userId,Integer attention);
 }

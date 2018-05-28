@@ -194,5 +194,10 @@ public class AttentionServiceImpl implements AttentionService {
 		}
 		return 0;
 	}
+
+	@Override
+	public int attentionCount(Integer userId) {
+		return attentionMapper.attentionCount(userId);
+	}
 	
 }

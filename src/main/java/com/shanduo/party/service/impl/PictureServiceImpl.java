@@ -28,7 +28,7 @@ public class PictureServiceImpl implements PictureService {
 	private static final Logger log = LoggerFactory.getLogger(PictureServiceImpl.class);
 	
 	@Autowired
-	private ShanduoPictureMapper shanduoPictureMapper;
+	private ShanduoPictureMapper pictureMapper;
 	
 	@Override
 	public String savePicture(Integer userId,List<String> urlList) {
@@ -39,7 +39,7 @@ public class PictureServiceImpl implements PictureService {
 			picture.setId(uuid);
 			picture.setUserId(userId);
 			picture.setPictureName(urlList.get(i));
-			int n = shanduoPictureMapper.insertSelective(picture);
+			int n = pictureMapper.insertSelective(picture);
 			if(n <= 0) {
 				log.error("图片记录插入失败");
 				throw new RuntimeException();
@@ -47,6 +47,15 @@ public class PictureServiceImpl implements PictureService {
 			pictureList += uuid+",";
 		}
 		return pictureList.substring(0, pictureList.length()-1);
+	}
+
+	@Override
+	public String selectByPictureId(String pictureId) {
+		ShanduoPicture shanduoPicture = pictureMapper.selectByPrimaryKey(pictureId);
+		if(shanduoPicture != null) {
+			return shanduoPicture.getPictureName();
+		}
+		return null;
 	}
 
 }

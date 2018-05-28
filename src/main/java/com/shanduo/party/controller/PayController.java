@@ -116,10 +116,14 @@ public class PayController {
 	}
 	
 	/**
-	 * @Description: 微信支付回调
-	 * @param request
-	 * @throws IOException 
-	 * @throws Exception 
+	 * 微信支付回调
+	 * @Title: appWxPay
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @return
+	 * @param @throws IOException
+	 * @return String
+	 * @throws
 	 */
 	@RequestMapping(value = "appwxpay")
 	@ResponseBody
