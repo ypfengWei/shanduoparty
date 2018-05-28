@@ -60,7 +60,7 @@
     select 
     <include refid="Base_Column_List" />
     from shanduo_activity
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR} and del_flag = '0'
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from shanduo_activity
@@ -418,10 +418,8 @@
 	ye.score,ye.evaluation_content,ye.others_score
 	from shanduo_user su
 	join activity_score ye on su.id = ye.user_id
-	where su.id in 
-	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
+	where ye.activity_id = #{0} and ye.del_flag = '0'
 	and su.del_flag = '0'
-	group by su.id
 	limit #{1},#{2}
   </select>
   <select id="selectByScoreActivityCount" resultType="java.lang.Integer">
@@ -434,12 +432,17 @@
 	su.user_name,su.id,su.head_portrait_id
 	from shanduo_user su
 	join activity_score ye on su.id = ye.user_id
-	where su.id in 
-	(select user_id from activity_score where activity_id = #{0} and del_flag = '0')
+	where ye.activity_id = #{0} and ye.del_flag = '0'
 	and su.del_flag = '0'
-	group by su.id
-	order by ye.create_date desc
 	limit #{1},#{2}
+  </select>
+  <select id="selectActivityIds" resultType="map">
+  	select 
+	su.user_name,su.id,su.head_portrait_id
+	from shanduo_user su
+	join activity_score ye on su.id = ye.user_id
+	where ye.activity_id = #{0} and ye.del_flag = '0'
+	and su.del_flag = '0'
   </select>
   <select id="selectByHistoricalCount" resultType="java.lang.Integer">
  	select 
@@ -483,5 +486,17 @@
   	select 
   	user_id 
   	from shanduo_activity where id = #{0} and del_flag = '0'
+  </select>
+  <select id="selectByActivityIds" resultMap="ActivityResultMap">
+  	select 
+ 	sa.activity_name,sa.activity_start_time,sa.activity_address,
+    sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
+    su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
+    sa.lon,sa.lat,sa.detailed_address
+    from shanduo_activity sa 
+    join activity_requirement ar on sa.id = ar.activity_id 
+    join shanduo_user su on sa.user_id = su.id 
+ 	where sa.del_flag = '0' and ar.del_flag = '0' 
+	and su.del_flag = '0' and sa.id = #{0}
   </select>
 </mapper>

@@ -38,7 +38,7 @@ public class PictureServiceImpl implements PictureService {
 			ShanduoPicture picture = new ShanduoPicture();
 			picture.setId(uuid);
 			picture.setUserId(userId);
-			picture.setShanduoUrl(urlList.get(i));
+			picture.setPictureName(urlList.get(i));
 			int n = shanduoPictureMapper.insertSelective(picture);
 			if(n <= 0) {
 				log.error("图片记录插入失败");

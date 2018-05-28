@@ -95,5 +95,7 @@ public interface ActivityScoreMapper {
     
     int deleteByUserId(String activityId, Integer userId);
     
+    int deleteByActivityId(String activityId);
+    
     List<Map<String, Object>> selectByGender(String activityId);
 }

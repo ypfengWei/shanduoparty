@@ -235,7 +235,7 @@ public interface ActivityService {
      * @return List<Map<String,Object>>    返回类型
      * @throws
      */
-    List<Map<String, Object>> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId);
+    Map<String, Object> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId);
 
     /**
      * 活动刷新
@@ -259,6 +259,27 @@ public interface ActivityService {
      */
     int updateBysetTop(String activityId);
     
-    //取消参加活动
+    /**
+     * 取消参加活动
+     * @Title: deleteByUserId
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @param userId
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
     int deleteByUserId(String activityId, Integer userId);
+    
+    /**
+     * 查看单个活动详情
+     * @Title: selectByActivityIds
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @return    设定文件
+     * @return ActivityInfo    返回类型
+     * @throws
+     */
+    Map<String, Object> selectByActivityIds(String activityId, Integer userId);
+    
 }

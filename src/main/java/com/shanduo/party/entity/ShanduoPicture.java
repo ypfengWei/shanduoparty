@@ -7,7 +7,7 @@ public class ShanduoPicture {
 
     private Integer userId;
 
-    private String shanduoUrl;
+    private String pictureName;
 
     private String remarks;
 
@@ -33,12 +33,12 @@ public class ShanduoPicture {
         this.userId = userId;
     }
 
-    public String getShanduoUrl() {
-        return shanduoUrl;
+    public String getPictureName() {
+        return pictureName;
     }
 
-    public void setShanduoUrl(String shanduoUrl) {
-        this.shanduoUrl = shanduoUrl == null ? null : shanduoUrl.trim();
+    public void setPictureName(String pictureName) {
+        this.pictureName = pictureName == null ? null : pictureName.trim();
     }
 
     public String getRemarks() {

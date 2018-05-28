@@ -317,4 +317,25 @@ public interface ShanduoActivityMapper {
      */
     int selectById(String ativityId);
     
+    /**
+     * 查看单个活动详情
+     * @Title: selectByActivityIds
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @return    设定文件
+     * @return ActivityInfo    返回类型
+     * @throws
+     */
+    List<ActivityInfo> selectByActivityIds(String activityId);
+    
+    /**
+     * 根据活动id查询参与人
+     * @Title: selectActivityIds
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @return    设定文件
+     * @return List<Map<String,Object>>    返回类型
+     * @throws
+     */
+    List<Map<String, Object>> selectActivityIds(String activityId);
 }

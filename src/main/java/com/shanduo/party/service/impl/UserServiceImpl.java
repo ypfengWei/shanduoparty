@@ -18,7 +18,6 @@ import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.service.TokenInfo;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoDynamicMapper;
-import com.shanduo.party.mapper.ShanduoLabelMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.mapper.UserAttentionMapper;
@@ -55,8 +54,6 @@ public class UserServiceImpl implements UserService {
 	private UserTokenMapper tokenMapper;
 	@Autowired
 	private UserMoneyMapper moneyMapper;
-	@Autowired
-	private ShanduoLabelMapper labelMapper;
 	@Autowired
 	private ShanduoReputationMapper shanduoReputationMapper;
 	@Autowired
@@ -194,7 +191,7 @@ public class UserServiceImpl implements UserService {
 			user.setSignature(signature);
 		}
 		if(!StringUtils.isNull(background)) {
-			user.setBackgroundPicture(background);
+			user.setBackground(background);
 		}
 		if(!StringUtils.isNull(hometown)) {
 			user.setHometown(hometown);
@@ -223,15 +220,6 @@ public class UserServiceImpl implements UserService {
 			return "";
 		}
 		return token;
-	}
-
-	@Override
-	public List<Map<String, Object>> labelList() {
-		List<Map<String, Object>> labelList= labelMapper.selectList();
-		if(labelList == null || labelList.isEmpty()) {
-			return null;
-		}
-		return labelList;
 	}
 
 	@Override

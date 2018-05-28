@@ -4,14 +4,14 @@
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ShanduoPicture">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="shanduo_url" jdbcType="VARCHAR" property="shanduoUrl" />
+    <result column="picture_name" jdbcType="VARCHAR" property="pictureName" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, shanduo_url, remarks, create_date, update_date, del_flag
+    id, user_id, picture_name, remarks, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -24,10 +24,10 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoPicture">
-    insert into shanduo_picture (id, user_id, shanduo_url, 
+    insert into shanduo_picture (id, user_id, picture_name, 
       remarks, create_date, update_date, 
       del_flag)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{shanduoUrl,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{pictureName,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=CHAR})
   </insert>
@@ -40,8 +40,8 @@
       <if test="userId != null">
         user_id,
       </if>
-      <if test="shanduoUrl != null">
-        shanduo_url,
+      <if test="pictureName != null">
+        picture_name,
       </if>
       <if test="remarks != null">
         remarks,
@@ -63,8 +63,8 @@
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>
-      <if test="shanduoUrl != null">
-        #{shanduoUrl,jdbcType=VARCHAR},
+      <if test="pictureName != null">
+        #{pictureName,jdbcType=VARCHAR},
       </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
@@ -86,8 +86,8 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
-      <if test="shanduoUrl != null">
-        shanduo_url = #{shanduoUrl,jdbcType=VARCHAR},
+      <if test="pictureName != null">
+        picture_name = #{pictureName,jdbcType=VARCHAR},
       </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
@@ -107,7 +107,7 @@
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ShanduoPicture">
     update shanduo_picture
     set user_id = #{userId,jdbcType=INTEGER},
-      shanduo_url = #{shanduoUrl,jdbcType=VARCHAR},
+      picture_name = #{pictureName,jdbcType=VARCHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

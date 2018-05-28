@@ -122,16 +122,6 @@ public interface UserService {
 	String savaToken(Integer userId);
 	
 	/**
-	 * 查出所有个性标签
-	 * @Title: labelList
-	 * @Description: TODO
-	 * @param @return
-	 * @return List<Map<String,Object>>
-	 * @throws
-	 */
-	List<Map<String, Object>> labelList();
-	
-	/**
 	 * 查出手机号
 	 * @Title: selectByPhone
 	 * @Description: TODO

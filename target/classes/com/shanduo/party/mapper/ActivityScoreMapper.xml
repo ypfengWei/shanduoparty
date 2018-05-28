@@ -230,4 +230,10 @@
  	where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
 	group by remarks
   </select>
+  <update id="deleteByActivityId">
+    update 
+    activity_score 
+    set del_flag = '1' 
+    where activity_id = #{0}
+  </update>
 </mapper>

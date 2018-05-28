@@ -21,7 +21,7 @@ public class ShanduoUser {
 
     private String signature;
 
-    private String backgroundPicture;
+    private String background;
 
     private String hometown;
 
@@ -29,9 +29,9 @@ public class ShanduoUser {
 
     private String school;
 
-    private Integer shanduoJurisdictionId;
+    private Integer jurisdiction;
 
-    private String labelId;
+    private String addition;
 
     private String remarks;
 
@@ -113,12 +113,12 @@ public class ShanduoUser {
         this.signature = signature == null ? null : signature.trim();
     }
 
-    public String getBackgroundPicture() {
-        return backgroundPicture;
+    public String getBackground() {
+        return background;
     }
 
-    public void setBackgroundPicture(String backgroundPicture) {
-        this.backgroundPicture = backgroundPicture == null ? null : backgroundPicture.trim();
+    public void setBackground(String background) {
+        this.background = background == null ? null : background.trim();
     }
 
     public String getHometown() {
@@ -145,20 +145,20 @@ public class ShanduoUser {
         this.school = school == null ? null : school.trim();
     }
 
-    public Integer getShanduoJurisdictionId() {
-        return shanduoJurisdictionId;
+    public Integer getJurisdiction() {
+        return jurisdiction;
     }
 
-    public void setShanduoJurisdictionId(Integer shanduoJurisdictionId) {
-        this.shanduoJurisdictionId = shanduoJurisdictionId;
+    public void setJurisdiction(Integer jurisdiction) {
+        this.jurisdiction = jurisdiction;
     }
 
-    public String getLabelId() {
-        return labelId;
+    public String getAddition() {
+        return addition;
     }
 
-    public void setLabelId(String labelId) {
-        this.labelId = labelId == null ? null : labelId.trim();
+    public void setAddition(String addition) {
+        this.addition = addition == null ? null : addition.trim();
     }
 
     public String getRemarks() {

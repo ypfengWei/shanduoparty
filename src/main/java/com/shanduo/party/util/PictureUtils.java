@@ -48,7 +48,7 @@ public class PictureUtils {
 		}
 		ShanduoPicture shanduoPicture = pictureMapper.selectByPrimaryKey(id);
 		if(shanduoPicture != null) {
-			return shanduoPicture.getShanduoUrl();
+			return shanduoPicture.getPictureName();
 		}
 		return null;
 	}

@@ -51,11 +51,11 @@ public class TokenInfo {
     	this.gender = shanduoUser.getGender();
     	this.emotion = shanduoUser.getEmotion();
     	this.signature = shanduoUser.getSignature();
-    	this.background = PictureUtils.getPictureUrl(shanduoUser.getBackgroundPicture());
+    	this.background = PictureUtils.getPictureUrl(shanduoUser.getBackground());
     	this.hometown = shanduoUser.getHometown();
     	this.occupation = shanduoUser.getOccupation();
     	this.school = shanduoUser.getSchool();
-    	this.jurisdiction = shanduoUser.getShanduoJurisdictionId()+"";
+    	this.jurisdiction = shanduoUser.getJurisdiction()+"";
     	this.vip = vip;
     	this.remarks = shanduoUser.getRemarks();
     	try {

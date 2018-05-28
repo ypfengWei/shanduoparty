@@ -103,18 +103,25 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> selectByActivityId(String activityId, Integer pageNum, Integer pageSize, Integer userId) {
+	public Map<String, Object> selectByActivityId(String activityId, Integer pageNum, Integer pageSize, Integer userId) {
 		int totalrecord = shanduoActivityMapper.selectByScoreActivityCount(activityId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
-		List<Map<String, Object>> resultMap = shanduoActivityMapper.selectByActivityId(activityId, pageNum, page.getPageSize());
-		for (Map<String, Object> map : resultMap) {
+		List<Map<String, Object>> resultList = shanduoActivityMapper.selectByActivityId(activityId, pageNum, page.getPageSize());
+		int joinActivity = 0;
+		for (Map<String, Object> map : resultList) {
 			if(map.get("id").equals(userId)) {
-				map.put("joinActivity", 1);//已报名
-			} else {
-				map.put("joinActivity", 0);//未报名
-			}
+				joinActivity = 1;
+				break;
+			} 
 		}
+		for (Map<String, Object> map : resultList) {
+			map.put("joinActivity", joinActivity);
+		}
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalPage", page.getTotalPage());
+		resultMap.put("list", resultList);
 		return resultMap;
 	}
 	
@@ -184,6 +191,11 @@ public class ActivityServiceImpl implements ActivityService {
 			log.error("删除需求失败");
 			throw new RuntimeException();
 		}
+		int score = activityScoreMapper.deleteByActivityId(activityId);
+		if(score < 1) {
+			log.error("删除参加用户信息失败");
+			throw new RuntimeException();
+		}
 		return 1;
 	}
 	
@@ -219,7 +231,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public Map<String, Object> selectByNearbyUserId(String lon,String lat, Integer pageNum, Integer pageSize) {
 		long longtime = System.currentTimeMillis();
 		Date time = new Date(longtime - 1000*60*60*12);
-		shanduoActivityMapper.updateById(time); // 取消活动置顶
+		shanduoActivityMapper.updateById(time); // 置顶超过12小时的活动取消置顶
 		Double[] doubles = LocationUtils.getDoubles(lon, lat);
 		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(doubles[0], doubles[1], doubles[2], doubles[3]);
 		Page page = new Page(totalrecord, pageSize, pageNum);
@@ -378,26 +390,29 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public int deleteByUserId(String activityId, Integer userId) {
-		int i = activityScoreMapper.deleteByUserId(activityId, userId);
-		if(i < 1) {
-			log.error("取消活动失败");
+		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
+		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
+			log.error("该活动已过期");
 			throw new RuntimeException();
+		} else {
+			int i = activityScoreMapper.deleteByUserId(activityId, userId);
+			if(i < 1) {
+				log.error("取消活动失败");
+				throw new RuntimeException();
+			}
 		}
-		return 0;
+		return 1;
 	}
 	
 	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat){
 		for (ActivityInfo activityInfo : resultList) {
 			activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
-        	activityInfo.setLocation(location);
-<<<<<<< HEAD
+			if(!StringUtils.isNull(lon)&&!StringUtils.isNull(lat)) {
+				double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
+				activityInfo.setLocation(location);
+			}
         	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
-        	List<Map<String, Object>> resultMap = shanduoUserMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
-=======
-        	activityInfo.setVipGrade(vipService.selectVipExperience(activityInfo.getUserId()));
         	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
->>>>>>> 6e9234bfea4141267b2c41cf0381a90b28d5fa65
     		if(resultMap != null) {
     			for (Map<String, Object> map : resultMap) {
     				int count = Integer.parseInt(map.get("count").toString());
@@ -446,9 +461,12 @@ public class ActivityServiceImpl implements ActivityService {
     				activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
     			}
     		}
+    		
     		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
             String startString = activityInfo.getActivityStartTime();  
             String cutoffString = activityInfo.getActivityCutoffTime(); 
+            Long newstartTime = get(startString, null, 2);
+            activityInfo.setNewStartTime(newstartTime);
             String startTime = startString.substring(0,16).replace("-", "/").replace(" ", "/");
             String cutoffTime = cutoffString.substring(0,16).replace("-", "/").replace(" ", "/");
             Long time = get(null, "yyyy-MM-dd 00:00", 1);
@@ -469,6 +487,28 @@ public class ActivityServiceImpl implements ActivityService {
             }  
 		}
 		return resultList;
+	}
+	
+	@Override
+	public Map<String, Object> selectByActivityIds(String activityId, Integer userId) {
+		List<ActivityInfo> activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
+		if(activityInfo == null || activityInfo.isEmpty()) {
+			return null;
+		}
+		activity(activityInfo, null, null);
+		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
+		int joinActivity = 0;
+		for (Map<String, Object> map : resultList) {
+			if(map.get("id").equals(userId)) {
+				joinActivity = 1;
+				break;
+			} 
+		}
+		Map<String, Object> reultMap = new HashMap<>(3);
+		reultMap.put("activityInfo", activityInfo);
+		reultMap.put("joinActivity", joinActivity);
+		reultMap.put("resultList", resultList);
+		return reultMap;
 	}
 	
 	public Long get(String time, String timeType, Integer type) {

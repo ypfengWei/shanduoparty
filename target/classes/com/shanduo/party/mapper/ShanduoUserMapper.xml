@@ -11,12 +11,12 @@
     <result column="gender" jdbcType="CHAR" property="gender" />
     <result column="emotion" jdbcType="CHAR" property="emotion" />
     <result column="signature" jdbcType="VARCHAR" property="signature" />
-    <result column="background_picture" jdbcType="VARCHAR" property="backgroundPicture" />
+    <result column="background" jdbcType="VARCHAR" property="background" />
     <result column="hometown" jdbcType="VARCHAR" property="hometown" />
     <result column="occupation" jdbcType="VARCHAR" property="occupation" />
     <result column="school" jdbcType="VARCHAR" property="school" />
-    <result column="shanduo_jurisdiction_id" jdbcType="INTEGER" property="shanduoJurisdictionId" />
-    <result column="label_id" jdbcType="VARCHAR" property="labelId" />
+    <result column="jurisdiction" jdbcType="INTEGER" property="jurisdiction" />
+    <result column="addition" jdbcType="CHAR" property="addition" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -24,8 +24,8 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, user_name, pass_word, head_portrait_id, phone_number, birthday, gender, emotion, 
-    signature, background_picture, hometown, occupation, school, shanduo_jurisdiction_id, 
-    label_id, remarks, create_date, update_date, del_flag
+    signature, background, hometown, occupation, school, jurisdiction, addition, remarks, 
+    create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -41,15 +41,15 @@
     insert into shanduo_user (id, user_name, pass_word, 
       head_portrait_id, phone_number, birthday, 
       gender, emotion, signature, 
-      background_picture, hometown, occupation, 
-      school, shanduo_jurisdiction_id, label_id, 
+      background, hometown, occupation, 
+      school, jurisdiction, addition, 
       remarks, create_date, update_date, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
       #{headPortraitId,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, 
       #{gender,jdbcType=CHAR}, #{emotion,jdbcType=CHAR}, #{signature,jdbcType=VARCHAR}, 
-      #{backgroundPicture,jdbcType=VARCHAR}, #{hometown,jdbcType=VARCHAR}, #{occupation,jdbcType=VARCHAR}, 
-      #{school,jdbcType=VARCHAR}, #{shanduoJurisdictionId,jdbcType=INTEGER}, #{labelId,jdbcType=VARCHAR}, 
+      #{background,jdbcType=VARCHAR}, #{hometown,jdbcType=VARCHAR}, #{occupation,jdbcType=VARCHAR}, 
+      #{school,jdbcType=VARCHAR}, #{jurisdiction,jdbcType=INTEGER}, #{addition,jdbcType=CHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=CHAR})
   </insert>
@@ -83,8 +83,8 @@
       <if test="signature != null">
         signature,
       </if>
-      <if test="backgroundPicture != null">
-        background_picture,
+      <if test="background != null">
+        background,
       </if>
       <if test="hometown != null">
         hometown,
@@ -95,11 +95,11 @@
       <if test="school != null">
         school,
       </if>
-      <if test="shanduoJurisdictionId != null">
-        shanduo_jurisdiction_id,
+      <if test="jurisdiction != null">
+        jurisdiction,
       </if>
-      <if test="labelId != null">
-        label_id,
+      <if test="addition != null">
+        addition,
       </if>
       <if test="remarks != null">
         remarks,
@@ -142,8 +142,8 @@
       <if test="signature != null">
         #{signature,jdbcType=VARCHAR},
       </if>
-      <if test="backgroundPicture != null">
-        #{backgroundPicture,jdbcType=VARCHAR},
+      <if test="background != null">
+        #{background,jdbcType=VARCHAR},
       </if>
       <if test="hometown != null">
         #{hometown,jdbcType=VARCHAR},
@@ -154,11 +154,11 @@
       <if test="school != null">
         #{school,jdbcType=VARCHAR},
       </if>
-      <if test="shanduoJurisdictionId != null">
-        #{shanduoJurisdictionId,jdbcType=INTEGER},
+      <if test="jurisdiction != null">
+        #{jurisdiction,jdbcType=INTEGER},
       </if>
-      <if test="labelId != null">
-        #{labelId,jdbcType=VARCHAR},
+      <if test="addition != null">
+        #{addition,jdbcType=CHAR},
       </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
@@ -201,8 +201,8 @@
       <if test="signature != null">
         signature = #{signature,jdbcType=VARCHAR},
       </if>
-      <if test="backgroundPicture != null">
-        background_picture = #{backgroundPicture,jdbcType=VARCHAR},
+      <if test="background != null">
+        background = #{background,jdbcType=VARCHAR},
       </if>
       <if test="hometown != null">
         hometown = #{hometown,jdbcType=VARCHAR},
@@ -213,11 +213,11 @@
       <if test="school != null">
         school = #{school,jdbcType=VARCHAR},
       </if>
-      <if test="shanduoJurisdictionId != null">
-        shanduo_jurisdiction_id = #{shanduoJurisdictionId,jdbcType=INTEGER},
+      <if test="jurisdiction != null">
+        jurisdiction = #{jurisdiction,jdbcType=INTEGER},
       </if>
-      <if test="labelId != null">
-        label_id = #{labelId,jdbcType=VARCHAR},
+      <if test="addition != null">
+        addition = #{addition,jdbcType=CHAR},
       </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
@@ -244,12 +244,12 @@
       gender = #{gender,jdbcType=CHAR},
       emotion = #{emotion,jdbcType=CHAR},
       signature = #{signature,jdbcType=VARCHAR},
-      background_picture = #{backgroundPicture,jdbcType=VARCHAR},
+      background = #{background,jdbcType=VARCHAR},
       hometown = #{hometown,jdbcType=VARCHAR},
       occupation = #{occupation,jdbcType=VARCHAR},
       school = #{school,jdbcType=VARCHAR},
-      shanduo_jurisdiction_id = #{shanduoJurisdictionId,jdbcType=INTEGER},
-      label_id = #{labelId,jdbcType=VARCHAR},
+      jurisdiction = #{jurisdiction,jdbcType=INTEGER},
+      addition = #{addition,jdbcType=CHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

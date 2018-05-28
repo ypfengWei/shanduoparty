@@ -307,32 +307,6 @@ public class UserController {
 	}
 	
 	/**
-	 * 查询所有个性标签
-	 * @Title: labelList
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "labelList",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean labelList(HttpServletRequest request,String token) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		List<Map<String,Object>> labelList = userService.labelList();
-		if(labelList == null) {
-			log.error("个性标签查不到");
-			return new ErrorBean("个性标签null");
-		}
-		return new SuccessBean(labelList);
-	}
-	
-	/**
 	 * 检查token是否有效
 	 * @Title: checkToken
 	 * @Description: TODO

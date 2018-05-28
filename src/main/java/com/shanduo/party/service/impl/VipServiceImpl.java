@@ -170,7 +170,7 @@ public class VipServiceImpl implements VipService {
 	@Override
 	public int selectVipLevel(Integer userId) {
 		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
-		if(resultList == null) {
+		if(resultList == null || resultList.isEmpty()) {
 			return 0;
 		}
 		if(resultList.size() == 2) {

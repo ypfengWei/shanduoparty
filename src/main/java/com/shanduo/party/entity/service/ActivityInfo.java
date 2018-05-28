@@ -58,7 +58,7 @@ public class ActivityInfo {
     
     private Integer typeId; // 调用接口类型 0:调用参与者评价接口  1:调用发起者评价接口
     
-    private Integer joinActivity; //参加活动标识
+    private Long newStartTime; //活动开始时间戳
     
 	public ActivityInfo(){
 		
@@ -275,12 +275,12 @@ public class ActivityInfo {
 		this.othersScore = othersScore;
 	}
 
-	public Integer getJoinActivity() {
-		return joinActivity;
+	public Long getNewStartTime() {
+		return newStartTime;
 	}
 
-	public void setJoinActivity(Integer joinActivity) {
-		this.joinActivity = joinActivity;
+	public void setNewStartTime(Long newStartTime) {
+		this.newStartTime = newStartTime;
 	}
 
 }
