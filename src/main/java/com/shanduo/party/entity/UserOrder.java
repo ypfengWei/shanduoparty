@@ -20,6 +20,8 @@ public class UserOrder {
 
     private String paymentType;
 
+    private String location;
+
     private String remarks;
 
     private Date createDate;
@@ -90,6 +92,14 @@ public class UserOrder {
 
     public void setPaymentType(String paymentType) {
         this.paymentType = paymentType == null ? null : paymentType.trim();
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location == null ? null : location.trim();
     }
 
     public String getRemarks() {

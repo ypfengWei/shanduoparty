@@ -10,14 +10,15 @@
     <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
     <result column="status" jdbcType="CHAR" property="status" />
     <result column="payment_type" jdbcType="CHAR" property="paymentType" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, order_type, money, month, activity_id, status, payment_type, remarks, 
-    create_date, update_date, del_flag
+    id, user_id, order_type, money, month, activity_id, status, payment_type, location, 
+    remarks, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -32,14 +33,14 @@
   <insert id="insert" parameterType="com.shanduo.party.entity.UserOrder">
     insert into user_order (id, user_id, order_type, 
       money, month, activity_id, 
-      status, payment_type, remarks, 
-      create_date, update_date, del_flag
-      )
+      status, payment_type, location, 
+      remarks, create_date, update_date, 
+      del_flag)
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{orderType,jdbcType=CHAR}, 
       #{money,jdbcType=DECIMAL}, #{month,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
-      #{status,jdbcType=CHAR}, #{paymentType,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
-      )
+      #{status,jdbcType=CHAR}, #{paymentType,jdbcType=CHAR}, #{location,jdbcType=VARCHAR}, 
+      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserOrder">
     insert into user_order
@@ -67,6 +68,9 @@
       </if>
       <if test="paymentType != null">
         payment_type,
+      </if>
+      <if test="location != null">
+        location,
       </if>
       <if test="remarks != null">
         remarks,
@@ -106,6 +110,9 @@
       <if test="paymentType != null">
         #{paymentType,jdbcType=CHAR},
       </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
       </if>
@@ -144,6 +151,9 @@
       <if test="paymentType != null">
         payment_type = #{paymentType,jdbcType=CHAR},
       </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
@@ -168,6 +178,7 @@
       activity_id = #{activityId,jdbcType=VARCHAR},
       status = #{status,jdbcType=CHAR},
       payment_type = #{paymentType,jdbcType=CHAR},
+      location = #{location,jdbcType=VARCHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

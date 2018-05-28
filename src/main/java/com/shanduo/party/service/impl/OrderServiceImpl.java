@@ -41,11 +41,12 @@ public class OrderServiceImpl implements OrderService {
 	private ActivityService activityService;
 	
 	@Override
-	public UserOrder saveOrder(Integer userId, String orderType, String money, String month, String activityId) {
+	public UserOrder saveOrder(Integer userId, String orderType, String money, String month, String activityId,String location) {
 		UserOrder order = new UserOrder();
 		order.setId(UUIDGenerator.getUUID());
 		order.setUserId(userId);
 		order.setOrderType(orderType);
+		order.setLocation(location);
 		BigDecimal moneys = new BigDecimal("0");
 		if("1".equals(orderType)) {
 			order.setMoney(new BigDecimal(money));

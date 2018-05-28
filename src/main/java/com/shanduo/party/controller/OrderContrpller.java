@@ -58,32 +58,6 @@ public class OrderContrpller {
 	private MoneyService moneyService;
 
 	/**
-	 * 生成订单
-	 * @Title: saveorder
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
-	 * @param @param money 金额,充值才传
-	 * @param @param month 月份,开通vip才传
-	 * @param @param activityId 活动ID,刷新置顶才传
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "saveorder",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean saveOrder(HttpServletRequest request,String token,String typeId,String money,
-			String month,String activityId) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		return saveOrder(isUserId, typeId, money, month, activityId);
-	}
-	
-	/**
 	 * 支付订单
 	 * @Title: payorder
 	 * @Description: TODO
@@ -95,6 +69,7 @@ public class OrderContrpller {
 	 * @param @param money 金额,充值才传
 	 * @param @param month 月份,开通vip才传
 	 * @param @param activityId 活动ID,刷新置顶才传
+	 * @param @param location 位置
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
@@ -102,7 +77,7 @@ public class OrderContrpller {
 	@RequestMapping(value = "payorder",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean payorder(HttpServletRequest request, String token, String payId, String password,
-			String typeId, String money, String month,String activityId) {
+			String typeId, String money, String month,String activityId, String location) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -120,7 +95,7 @@ public class OrderContrpller {
 			log.error("充值方式错误");
 			return new ErrorBean("充值方式错误");
 		}
-		ResultBean resultBean = saveOrder(isUserId, typeId, money, month, activityId);
+		ResultBean resultBean = saveOrder(isUserId, typeId, money, month, activityId,location);
 		if(!resultBean.isSuccess()) {
 			return resultBean;
 		}
@@ -144,15 +119,21 @@ public class OrderContrpller {
 	 * 生成订单
 	 * @Title: saveOrder
 	 * @Description: TODO
-	 * @param @param typeId
-	 * @param @param money
-	 * @param @param month
-	 * @param @param activityId
+	 * @param @param userId
+	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
+	 * @param @param money 金额,充值才传
+	 * @param @param month 月份,开通vip才传
+	 * @param @param activityId 活动ID,刷新置顶才传
+	 * @param @param location 位置
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
-	public ResultBean saveOrder(Integer userId,String typeId,String money,String month,String activityId) {
+	public ResultBean saveOrder(Integer userId,String typeId,String money,String month,String activityId,String location) {
+		if(StringUtils.isNull(location)) {
+			log.error("位置为空");
+			return new ErrorBean("位置为空");
+		}
 		if("1".equals(typeId)) {
 			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})$")) {
 				log.error("充值金额错误");
@@ -171,7 +152,7 @@ public class OrderContrpller {
 		}
 		UserOrder order = new UserOrder();
 		try {
-			order = orderService.saveOrder(userId, typeId, money, month, activityId);
+			order = orderService.saveOrder(userId, typeId, money, month, activityId,location);
 		} catch (Exception e) {
 			log.error("生成订单出错");
 			return new ErrorBean("生成订单出错");
