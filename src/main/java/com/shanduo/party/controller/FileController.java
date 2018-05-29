@@ -63,7 +63,7 @@ public class FileController {
     	Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 //		for(MultipartFile files : file) {
 //			String fileName = files.getOriginalFilename();
@@ -92,7 +92,7 @@ public class FileController {
     		pictureList = pictureService.savePicture(isUserId, urlList);
 		} catch (Exception e) {
 			log.error("图片记录插入失败");
-			return new ErrorBean("上传失败");
+			return new ErrorBean(10002,"上传失败");
 		}
         return new SuccessBean(pictureList);
     }   

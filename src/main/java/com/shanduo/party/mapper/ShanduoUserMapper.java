@@ -32,4 +32,5 @@ public interface ShanduoUserMapper {
     
     List<Map<String, Object>> seekUser(String query);
     
+    Map<String, Object> selectById(Integer userId);
 }

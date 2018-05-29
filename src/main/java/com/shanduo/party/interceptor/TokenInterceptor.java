@@ -38,7 +38,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		String token = request.getParameter("token");
 		if ("".equals(token) || token == null) {
 			log.error(ErrorCodeConstants.TOKEN_TEXT_ISNULL);
-			errorBean = new ErrorBean(ErrorCodeConstants.TOKEN_TEXT_ISNULL);
+			errorBean = new ErrorBean(10001,ErrorCodeConstants.TOKEN_TEXT_ISNULL);
 			check = true;
 		}
 		//如果为空就直接出去了

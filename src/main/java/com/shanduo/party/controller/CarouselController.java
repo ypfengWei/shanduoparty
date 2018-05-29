@@ -52,7 +52,7 @@ public class CarouselController {
 		List<Map<String, Object>> resultList = carouselService.carouselList();
 		if(resultList == null) {
 			log.error("没有轮播图");
-			return new ErrorBean("没有轮播图");
+			return new ErrorBean(10002,"没有轮播图");
 		}
 		return new SuccessBean(resultList);
 	}

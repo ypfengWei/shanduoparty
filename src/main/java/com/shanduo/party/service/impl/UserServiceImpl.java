@@ -242,18 +242,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Map<String, Object> selectById(Integer userId,Integer attention) {
-		ShanduoUser user = userMapper.selectByPrimaryKey(attention);
-		if(user == null) {
+		Map<String, Object> resultMap = userMapper.selectById(attention);
+		if(resultMap == null || resultMap.isEmpty()) {
 			return null;
 		}
-		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("userId", user.getId());
-		resultMap.put("name", user.getUserName());
-		resultMap.put("gender", user.getGender());
-		resultMap.put("age", AgeUtils.getAgeFromBirthTime(user.getBirthday()));
-		resultMap.put("vip", vipService.selectVipLevel(userId));
-		resultMap.put("level", experienceService.selectLevel(userId));
-		resultMap.put("picture", PictureUtils.getPictureUrl(user.getHeadPortraitId()));
+		resultMap.put("age", AgeUtils.getAgeFromBirthTime(resultMap.get("age").toString()));
+		resultMap.put("vip", vipService.selectVipLevel(attention));
+		resultMap.put("level", experienceService.selectLevel(attention));
+		resultMap.put("picture", PictureUtils.getPictureUrl(resultMap.get("picture").toString()));
 		resultMap.put("isAttention", attentionService.checkAttention(userId, attention));
 		//好友人数，动态数量,活动次数
 		resultMap.put("attention",attentionService.attentionCount(attention));

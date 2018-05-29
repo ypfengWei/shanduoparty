@@ -63,12 +63,12 @@ public class MoneyControllrt {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		UserMoney money = moneyService.selectByUserId(isUserId);
 		if(money == null) {
 			log.error("查询钱包出错");
-			return new ErrorBean("查询钱包出错");
+			return new ErrorBean(10002,"查询钱包出错");
 		}
 		return new SuccessBean(money);
 	}
@@ -91,15 +91,15 @@ public class MoneyControllrt {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -127,42 +127,42 @@ public class MoneyControllrt {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		if(StringUtils.isNull(newPassword) || PatternUtils.patternCode(newPassword)) {
 			log.error("新密码格式错误");
-			return new ErrorBean("新密码格式错误");
+			return new ErrorBean(10002,"新密码格式错误");
 		}
 		if("1".equals(typeId)) {
 			String phone = userService.selectByPhone(isUserId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
-				return new ErrorBean("验证码错误");
+				return new ErrorBean(10002,"验证码错误");
 			}
 			if(codeService.selectByQuery(phone, code, "4")) {
 				log.error("验证码超时或错误");
-				return new ErrorBean("验证码超时或错误");
+				return new ErrorBean(10002,"验证码超时或错误");
 			}
 		}else {
 			if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
 				log.error("原始密码格式错误");
-				return new ErrorBean("原始密码格式错误");
+				return new ErrorBean(10002,"原始密码格式错误");
 			}
 			int check = moneyService.checkPassword(isUserId, password);
 			if(check != 2) {
 				log.error("原始密码错误");
-				return new ErrorBean("原始密码错误");
+				return new ErrorBean(10002,"原始密码错误");
 			}
 		}
 		try {
 			moneyService.updatePassWord(isUserId, newPassword);
 		} catch (Exception e) {
 			log.error("支付密码修改失败");
-			return new ErrorBean("修改失败");
+			return new ErrorBean(10002,"修改失败");
 		}
 		return new SuccessBean("修改成功");
 	}

@@ -56,21 +56,21 @@ public class CollectController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(fileUrl)) {
 			log.error("收藏文件为空");
-			return new ErrorBean("收藏文件为空");
+			return new ErrorBean(10002,"收藏文件为空");
 		}
 		if(collectServic.checkCollect(isUserId, fileUrl)) {
 			log.error("已收藏");
-			return new ErrorBean("已收藏");
+			return new ErrorBean(10002,"已收藏");
 		}
 		try {
 			collectServic.saveCollect(isUserId, fileUrl);
 		} catch (Exception e) {
 			log.error("收藏失败");
-			return new ErrorBean("收藏失败");
+			return new ErrorBean(10002,"收藏失败");
 		}
 		return new SuccessBean("收藏成功");
 	}
@@ -92,17 +92,17 @@ public class CollectController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(collectIds)) {
 			log.error("收藏ID为空");
-			return new ErrorBean("收藏ID为空");
+			return new ErrorBean(10002,"收藏ID为空");
 		}
 		try {
 			collectServic.deleteCollect(isUserId, collectIds);
 		} catch (Exception e) {
 			log.error("取消失败");
-			return new ErrorBean("取消失败");
+			return new ErrorBean(10002,"取消失败");
 		}
 		return new SuccessBean("取消成功");
 	}
@@ -125,15 +125,15 @@ public class CollectController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);

@@ -68,25 +68,25 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(content) && StringUtils.isNull(picture)) {
 			log.error("内容为空");
-			return new ErrorBean("内容为空");
+			return new ErrorBean(10002,"内容为空");
 		}
 		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
 			log.error("纬度错误");
-			return new ErrorBean("纬度错误");
+			return new ErrorBean(10002,"纬度错误");
 		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度错误");
-			return new ErrorBean("经度错误");
+			return new ErrorBean(10002,"经度错误");
 		}
 		try {
 			dynamicService.saveDynamic(isUserId, content, picture, lat, lon, location);
 		} catch (Exception e) {
 			log.error("发表动态失败");
-			return new ErrorBean("发表动态失败");
+			return new ErrorBean(10002,"发表动态失败");
 		}
 		//添加每日发表动态经验值，日限制2次/5点经验
 		if(!experienceService.checkCount(isUserId, "4")) {
@@ -122,23 +122,23 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(StringUtils.isNull(typeId) || !page.matches("^[1234]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
 			log.error("纬度错误");
-			return new ErrorBean("纬度错误");
+			return new ErrorBean(10002,"纬度错误");
 		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度错误");
-			return new ErrorBean("经度错误");
+			return new ErrorBean(10002,"经度错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -149,7 +149,7 @@ public class DynamicController {
 		}
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if("2".equals(typeId)) {
 			resultMap = dynamicService.attentionList(isUserId, lat, lon, pages, pageSizes);
@@ -158,7 +158,7 @@ public class DynamicController {
 		}else {
 			if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
 				log.error("闪多号格式错误");
-				return new ErrorBean("闪多号格式错误");
+				return new ErrorBean(10002,"闪多号格式错误");
 			}
 			resultMap = dynamicService.dynamicList(Integer.valueOf(userId),isUserId,lat, lon, pages, pageSizes);
 		}
@@ -182,18 +182,18 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
-			return new ErrorBean("动态ID为空");
+			return new ErrorBean(10002,"动态ID为空");
 		}
 		if(praiseService.checkPraise(isUserId, dynamicId)) {
 			try {
 				praiseService.deletePraise(isUserId, dynamicId);
 			} catch (Exception e) {
 				log.error("取消失败");
-				return new ErrorBean("取消失败");
+				return new ErrorBean(10002,"取消失败");
 			}
 			return new SuccessBean("取消成功");
 		}
@@ -201,7 +201,7 @@ public class DynamicController {
 			praiseService.savePraise(isUserId, dynamicId);
 		} catch (Exception e) {
 			log.error("点赞失败");
-			return new ErrorBean("点赞失败");
+			return new ErrorBean(10002,"点赞失败");
 		}
 		//添加每日点赞经验值，日限制10次/1点经验
 		if(!experienceService.checkCount(isUserId, "6")) {
@@ -233,24 +233,24 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 //		if(isUserId == null) {
 //			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-//			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 //		}
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
-			return new ErrorBean("动态ID为空");
+			return new ErrorBean(10002,"动态ID为空");
 		}
 		if(!StringUtils.isNull(lat) && !PatternUtils.patternLatitude(lat)) {
 			log.error("纬度错误");
-			return new ErrorBean("纬度错误");
+			return new ErrorBean(10002,"纬度错误");
 		}
 		if(!StringUtils.isNull(lon) && !PatternUtils.patternLatitude(lon)) {
 			log.error("经度错误");
-			return new ErrorBean("经度错误");
+			return new ErrorBean(10002,"经度错误");
 		}
 		Map<String, Object> resultMap = dynamicService.selectById(dynamicId, isUserId, lat, lon);
 		if(resultMap == null) {
 			log.error("动态不存在");
-			return new ErrorBean("动态不存在");
+			return new ErrorBean(10002,"动态不存在");
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -272,16 +272,16 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(commentId)) {
 			log.error("评论ID为空");
-			return new ErrorBean("评论ID为空");
+			return new ErrorBean(10002,"评论ID为空");
 		}
 		Map<String, Object> resultMap = dynamicService.selectByCommentId(commentId);
 		if(resultMap == null) {
 			log.error("评论不存在");
-			return new ErrorBean("评论不存在");
+			return new ErrorBean(10002,"评论不存在");
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -307,22 +307,22 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		if(StringUtils.isNull(dynamicId) && StringUtils.isNull(commentId)) {
 			log.error(ErrorCodeConstants.PARAMETER);
-			return new ErrorBean(ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
 		if(!StringUtils.isNull(dynamicId)) {
 			resultMap = dynamicService.commentList(dynamicId, pages, pageSizes);
@@ -356,35 +356,35 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
-			return new ErrorBean("动态ID为空");
+			return new ErrorBean(10002,"动态ID为空");
 		}
 		if(StringUtils.isNull(comment) && StringUtils.isNull(picture)) {
 				log.error("评论内容为空");
-				return new ErrorBean("评论内容为空");
+				return new ErrorBean(10002,"评论内容为空");
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("评论类型错误");
-			return new ErrorBean("评论类型错误");
+			return new ErrorBean(10002,"评论类型错误");
 		}
 		if("2".equals(typeId)) {
 			if(StringUtils.isNull(commentId)) {
 				log.error("评论ID为空");
-				return new ErrorBean("评论ID为空");
+				return new ErrorBean(10002,"评论ID为空");
 			}
 			if(StringUtils.isNull(respondent) || PatternUtils.patternUser(respondent)) {
 				log.error("被回复用户ID错误");
-				return new ErrorBean("被回复用户ID错误");
+				return new ErrorBean(10002,"被回复用户ID错误");
 			}
 		}
 		try {
 			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, respondent, picture);
 		} catch (Exception e) {
 			log.error("评论失败");
-			return new ErrorBean("评论失败");
+			return new ErrorBean(10002,"评论失败");
 		}
 		//添加每日评论动态经验值，日限制5次/2点经验
 		if(!experienceService.checkCount(isUserId, "7")) {
@@ -414,17 +414,17 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(dynamicIds)) {
 			log.error("动态ID为空");
-			return new ErrorBean("动态ID为空");
+			return new ErrorBean(10002,"动态ID为空");
 		}
 		try {
 			dynamicService.hideDynamic(dynamicIds, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
-			return new ErrorBean("删除失败");
+			return new ErrorBean(10002,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}
@@ -446,17 +446,17 @@ public class DynamicController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(commentId)) {
 			log.error("评论ID为空");
-			return new ErrorBean("评论ID为空");
+			return new ErrorBean(10002,"评论ID为空");
 		}
 		try {
 			dynamicService.hideComment(commentId, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
-			return new ErrorBean("删除失败");
+			return new ErrorBean(10002,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}

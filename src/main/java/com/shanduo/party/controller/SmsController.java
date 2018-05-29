@@ -55,15 +55,15 @@ public class SmsController {
 	public ResultBean envoyer(HttpServletRequest request,String phone,String typeId) {
 		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 			log.error("手机号格式错误");
-			return new ErrorBean("手机号格式错误");
+			return new ErrorBean(10002,"手机号格式错误");
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[1234]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		if(codeService.selectByPhone(phone)) {
 			log.error("60S内只能发送一次");
-			return new ErrorBean("60S内只能发送一次");
+			return new ErrorBean(10002,"60S内只能发送一次");
 		}
 		int code = new Random().nextInt(900000)+100000;
 		SendSmsResponse sendSmsResponse = null;
@@ -71,17 +71,17 @@ public class SmsController {
 			sendSmsResponse = SmsUtils.sendSms(phone,code+"",typeId);
 		} catch (ClientException e) {
 			log.error("发送短信验证码错误");
-			return new ErrorBean("发送失败");
+			return new ErrorBean(10002,"发送失败");
 		}
 		if(sendSmsResponse.getCode() == null || !"OK".equals(sendSmsResponse.getCode())) {
 			log.error(sendSmsResponse.getMessage());
-			return new ErrorBean("发送失败");
+			return new ErrorBean(10002,"发送失败");
 		}
 		try {
 			codeService.savePhoneVerifyCode(phone, code+"", typeId);
 		} catch (Exception e) {
 			log.error("发送失败");
-			return new ErrorBean("发送失败");
+			return new ErrorBean(10002,"发送失败");
 		}
 		return new SuccessBean("发送成功");
 	}

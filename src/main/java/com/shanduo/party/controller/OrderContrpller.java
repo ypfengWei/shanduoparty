@@ -81,19 +81,19 @@ public class OrderContrpller {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(payId) || !payId.matches("^[1234]$")) {
 			log.error("支付类型错误");
-			return new ErrorBean("支付类型错误");
+			return new ErrorBean(10002,"支付类型错误");
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[1-5]$")) {
 			log.error("消费类型错误");
-			return new ErrorBean("消费类型错误");
+			return new ErrorBean(10002,"消费类型错误");
 		}
 		if("1".equals(payId) && "1".equals(payId)) {
 			log.error("充值方式错误");
-			return new ErrorBean("充值方式错误");
+			return new ErrorBean(10002,"充值方式错误");
 		}
 		ResultBean resultBean = saveOrder(isUserId, typeId, money, month, activityId,location);
 		if(!resultBean.isSuccess()) {
@@ -132,22 +132,22 @@ public class OrderContrpller {
 	public ResultBean saveOrder(Integer userId,String typeId,String money,String month,String activityId,String location) {
 		if(StringUtils.isNull(location)) {
 			log.error("位置为空");
-			return new ErrorBean("位置为空");
+			return new ErrorBean(10002,"位置为空");
 		}
 		if("1".equals(typeId)) {
 			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})$")) {
 				log.error("充值金额错误");
-				return new ErrorBean("充值金额错误");
+				return new ErrorBean(10002,"充值金额错误");
 			}
 		}else if("2".equals(typeId) || "3".equals(typeId)) {
 			if(StringUtils.isNull(month) || !month.matches("^[1-9]\\d*$")) {
 				log.error("开通vip月份错误");
-				return new ErrorBean("开通vip月份错误");
+				return new ErrorBean(10002,"开通vip月份错误");
 			}
 		}else {
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动ID为空");
-				return new ErrorBean("活动ID为空");
+				return new ErrorBean(10002,"活动ID为空");
 			}
 		}
 		UserOrder order = new UserOrder();
@@ -155,7 +155,7 @@ public class OrderContrpller {
 			order = orderService.saveOrder(userId, typeId, money, month, activityId,location);
 		} catch (Exception e) {
 			log.error("生成订单出错");
-			return new ErrorBean("生成订单出错");
+			return new ErrorBean(10002,"生成订单出错");
 		}
 		return new SuccessBean(order);
 	}
@@ -174,26 +174,26 @@ public class OrderContrpller {
 	public ResultBean payment(Integer userId,UserOrder order,String password) {
 		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
 			log.error("密码格式错误");
-			return new ErrorBean("密码格式错误");
+			return new ErrorBean(10002,"密码格式错误");
 		}
 		int check = moneyService.checkPassword(userId, password);
 		if(check == 0) {
 			log.error("未设置支付密码");
-			return new ErrorBean("未设置支付密码");
+			return new ErrorBean(10002,"未设置支付密码");
 		}
 		if(check == 1) {
 			log.error("支付密码错误");
-			return new ErrorBean("支付密码错误");
+			return new ErrorBean(10002,"支付密码错误");
 		}
 		if(moneyService.checkMoney(userId,order.getMoney())) {
 			log.error("余额不足");
-			return new ErrorBean("余额不足");
+			return new ErrorBean(10002,"余额不足");
 		}
 		try {
 			orderService.updateOrder(order.getId());
 		} catch (Exception e) {
 			log.error("支付失败");
-			return new ErrorBean("支付失败");
+			return new ErrorBean(10002,"支付失败");
 		}
 		return new SuccessBean("支付成功");
 	}
@@ -247,7 +247,7 @@ public class OrderContrpller {
 //	        System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
 		} catch (AlipayApiException e) {
 		       log.error("生成支付宝订单信息错误");
-		       return new ErrorBean("订单错误");
+		       return new ErrorBean(10002,"订单错误");
 		}
 		return new SuccessBean(response.getBody());
 	}
@@ -303,12 +303,12 @@ public class OrderContrpller {
 		String returnCode = resultMap.get("return_code").toString();
 		if(!returnCode.equals("SUCCESS")) {
 			log.error(resultMap.get("return_msg").toString());
-			return new ErrorBean("连接超时");
+			return new ErrorBean(10002,"连接超时");
 		}
 		String resultCode = resultMap.get("result_code").toString();
 		if(!resultCode.equals("SUCCESS")) {
 			log.error(resultMap.get("err_code_des").toString());
-			return new ErrorBean("连接超时");
+			return new ErrorBean(10002,"连接超时");
 		}
 		String prepayId = resultMap.get("prepay_id").toString();
 		Map<String, String> responseMap = new HashMap<String, String>(7);

@@ -1,35 +1,55 @@
 package com.shanduo.party.entity.common;
 
 /**
- * @Description : 错误结果bean
- * @Author : 
- * @Creation Date : 2018-4-13 上午9:00:51
+ * 错误结果bean
+ * @ClassName: ErrorBean
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年5月29日 上午9:52:41
+ *
  */
 public class ErrorBean extends ResultBean {
 
-    private String errorCode;
+	/**
+	 * 错误码
+	 */
+    private Integer errorCode;
+    /**
+     * 错误原因
+     */
+    private String errCodeDes;
 
     public ErrorBean() {
-        this.setSuccess(false);
+    	this.setSuccess(false);
     }
-
-    public ErrorBean(String errorCode) {
-        this.setSuccess(false);
-        this.setErrorCode(errorCode);
-    }
-
+    
     /**
-     * @return the errorCode
+     * 报错返回
+     * <p>Title: </p>
+     * <p>Description: </p>
+     * @param errorCode 错误码
+     * @param errCodeDes 错误原因
      */
-    public String getErrorCode() {
-        return errorCode;
+    public ErrorBean(Integer errorCode,String errCodeDes) {
+    	this.setSuccess(false);
+    	this.setErrorCode(errorCode);
+    	this.setErrCodeDes(errCodeDes);
     }
 
-    /**
-     * @param errorCode the errorCode to set
-     */
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-
+	public Integer getErrorCode() {
+		return errorCode;
+	}
+	
+	public void setErrorCode(Integer errorCode) {
+		this.errorCode = errorCode;
+	}
+	
+	public String getErrCodeDes() {
+		return errCodeDes;
+	}
+	
+	public void setErrCodeDes(String errCodeDes) {
+		this.errCodeDes = errCodeDes;
+	}
+    
 }

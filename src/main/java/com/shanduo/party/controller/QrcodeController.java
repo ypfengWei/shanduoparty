@@ -42,7 +42,7 @@ public class QrcodeController {
 	public ResultBean scan(HttpServletRequest request,String token,String str) {
 		str = "userId=11111Z&typeId=1";
 		log.info("扫码结束");
-		return new ErrorBean("aaa");
+		return new ErrorBean(10002,"aaa");
 	}
 
 }

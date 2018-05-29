@@ -52,17 +52,17 @@ public class ExperienceController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(experienceService.checkCount(isUserId, "3")) {
 			log.error("已签到");
-			return new ErrorBean("已签到");
+			return new ErrorBean(10002,"已签到");
 		}
 		try {
 			experienceService.signin(isUserId);
 		} catch (Exception e) {
 			log.error("签到失败");
-			return new ErrorBean("签到失败");
+			return new ErrorBean(10002,"签到失败");
 		}
 		return new SuccessBean("签到成功");
 	}

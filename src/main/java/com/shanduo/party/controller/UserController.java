@@ -59,29 +59,29 @@ public class UserController {
 	public ResultBean saveUser(HttpServletRequest request,String phone,String code,String password) {
 		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 			log.error("手机号格式错误");
-			return new ErrorBean("手机号格式错误");
+			return new ErrorBean(10002,"手机号格式错误");
 		}
 		if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 			log.error("验证码错误");
-			return new ErrorBean("验证码错误");
+			return new ErrorBean(10002,"验证码错误");
 		}
 		if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 			log.error("密码格式错误");
-			return new ErrorBean("密码格式错误");
+			return new ErrorBean(10002,"密码格式错误");
 		}
 		if(codeService.selectByQuery(phone, code, "1")) {
 			log.error("验证码超时或错误");
-			return new ErrorBean("验证码超时或错误");
+			return new ErrorBean(10002,"验证码超时或错误");
 		}
 		if(userService.checkPhone(phone)) {
 			log.error("手机号已被注册");
-			return new ErrorBean("手机号已被注册");
+			return new ErrorBean(10002,"手机号已被注册");
 		}
 		try {
 			userService.saveUser(phone,password);
 		} catch (Exception e) {
 			log.error("注册失败");
-			return new ErrorBean("注册失败");
+			return new ErrorBean(10002,"注册失败");
 		}
 		TokenInfo token = userService.loginUser(phone, password);
 		if(token != null) {
@@ -106,16 +106,16 @@ public class UserController {
 	public ResultBean loginUser(HttpServletRequest request,String username,String password) {
 		if(StringUtils.isNull(username) || PatternUtils.patternUser(username)) {
 			log.error("账号格式错误");
-			return new ErrorBean("账号格式错误");
+			return new ErrorBean(10002,"账号格式错误");
 		}
 		if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 			log.error("密码格式错误");
-			return new ErrorBean("密码格式错误");
+			return new ErrorBean(10002,"密码格式错误");
 		}
 		TokenInfo token = userService.loginUser(username, password);
 		if(token == null) {
 			log.error("账号或密码错误");
-			return new ErrorBean("账号或密码错误");
+			return new ErrorBean(10002,"账号或密码错误");
 		}
 		return new SuccessBean(token);
 	}
@@ -135,11 +135,11 @@ public class UserController {
 	public ResultBean checkPhone(HttpServletRequest request,String phone) {
 		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 			log.error("手机号格式错误");
-			return new ErrorBean("手机号格式错误");
+			return new ErrorBean(10002,"手机号格式错误");
 		}
 		if(userService.checkPhone(phone)) {
 			log.error("手机号已被注册");
-			return new ErrorBean("手机号已被注册");
+			return new ErrorBean(10002,"手机号已被注册");
 		}
 		return new SuccessBean("可以使用");
 	}
@@ -162,29 +162,29 @@ public class UserController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 			log.error("手机号格式错误");
-			return new ErrorBean("手机号格式错误");
+			return new ErrorBean(10002,"手机号格式错误");
 		}
 		if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 			log.error("验证码错误");
-			return new ErrorBean("验证码错误");
+			return new ErrorBean(10002,"验证码错误");
 		}
 		if(userService.checkPhone(phone)) {
 			log.error("手机号已被注册");
-			return new ErrorBean("手机号已被注册");
+			return new ErrorBean(10002,"手机号已被注册");
 		}
 		if(codeService.selectByQuery(phone, code, "2")) {
 			log.error("验证码超时或错误");
-			return new ErrorBean("验证码超时或错误");
+			return new ErrorBean(10002,"验证码超时或错误");
 		}
 		try {
 			userService.updatePhone(isUserId, phone);
 		} catch (Exception e) {
 			log.error("修改手机号失败");
-			return new ErrorBean("修改失败");
+			return new ErrorBean(10002,"修改失败");
 		}
 		return new SuccessBean("修改成功");
 	}
@@ -210,42 +210,42 @@ public class UserController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		if(StringUtils.isNull(newPassword) || PatternUtils.patternPassword(newPassword)) {
 			log.error("新密码格式错误");
-			return new ErrorBean("新密码格式错误");
+			return new ErrorBean(10002,"新密码格式错误");
 		}
 		if("1".equals(typeId)) {
 			String phone = userService.selectByPhone(isUserId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
-				return new ErrorBean("验证码错误");
+				return new ErrorBean(10002,"验证码错误");
 			}
 			if(codeService.selectByQuery(phone, code, "3")) {
 				log.error("验证码超时或错误");
-				return new ErrorBean("验证码超时或错误");
+				return new ErrorBean(10002,"验证码超时或错误");
 			}
 			try {
 				userService.updatePasswordByPhone(isUserId, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
-				return new ErrorBean("修改失败");
+				return new ErrorBean(10002,"修改失败");
 			}
 		}else {
 			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 				log.error("密码格式错误");
-				return new ErrorBean("密码格式错误");
+				return new ErrorBean(10002,"密码格式错误");
 			}
 			try {
 				userService.updatePassword(isUserId, password, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
-				return new ErrorBean("原始密码错误");
+				return new ErrorBean(10002,"原始密码错误");
 			}
 		}
 		return new SuccessBean("修改成功");
@@ -278,19 +278,19 @@ public class UserController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(!StringUtils.isNull(birthday) && PatternUtils.patternBirthday(birthday)) {
 			log.error("生日错误");
-			return new ErrorBean("生日错误");
+			return new ErrorBean(10002,"生日错误");
 		}
 		if(!StringUtils.isNull(gender) && !gender.matches("^[01]$")) {
 			log.error("性别错误");
-			return new ErrorBean("性别错误");
+			return new ErrorBean(10002,"性别错误");
 		}
 		if(!StringUtils.isNull(emotion) && !emotion.matches("^[012]$")) {
 			log.error("情感状态错误");
-			return new ErrorBean("情感状态错误");
+			return new ErrorBean(10002,"情感状态错误");
 		}
 		TokenInfo tokenInfo = null;
 		try {
@@ -298,7 +298,7 @@ public class UserController {
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");
-			return new ErrorBean("修改失败");
+			return new ErrorBean(10002,"修改失败");
 		}
 		return new SuccessBean(tokenInfo);
 	}
@@ -319,7 +319,7 @@ public class UserController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		return new SuccessBean();
 	}

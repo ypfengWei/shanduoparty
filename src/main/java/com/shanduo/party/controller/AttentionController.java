@@ -61,7 +61,7 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		List<Map<String, Object>> resultList = userService.seekUser(isUserId,query);
 		return new SuccessBean(resultList);
@@ -84,16 +84,16 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
 			log.error("账号格式错误");
-			return new ErrorBean("账号格式错误");
+			return new ErrorBean(10002,"账号格式错误");
 		}
 		Map<String, Object> resultMap = userService.selectById(isUserId, Integer.parseInt(userId));
 		if(resultMap == null) {
 			log.error("找不到该用户");
-			return new ErrorBean("找不到该用户");
+			return new ErrorBean(10002,"找不到该用户");
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -115,26 +115,27 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(attention) || attention.matches("^[1-9]\\d{4,}$")) {
 			log.error("被添加人格式错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
 		Integer attentions = Integer.valueOf(attention);
+		
 		if(attentionService.checkAttention(isUserId, attentions)) {
 			log.error("已经是好友");
-			return new ErrorBean("已经是好友");
+			return new ErrorBean(10002,"已经是好友");
 		}
 		if(attentionService.checkAttentionApply(isUserId, attentions)) {
 			log.error("已经申请");
-			return new ErrorBean("已经申请");
+			return new ErrorBean(10002,"已经申请");
 		}
 		try {
 			attentionService.saveAttentionApply(isUserId, attentions);
 		} catch (Exception e) {
 			log.error("申请失败");
-			return new ErrorBean("申请失败");
+			return new ErrorBean(10002,"申请失败");
 		}
 		return new SuccessBean("申请成功");
 	}
@@ -157,15 +158,15 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -191,21 +192,21 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(applyId)) {
 			log.error("申请ID为空");
-			return new ErrorBean("申请ID为空");
+			return new ErrorBean(10002,"申请ID为空");
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		try {
 			attentionService.isAttentionApply(applyId, isUserId, typeId);
 		} catch (Exception e) {
 			log.error("操作失败");
-			return new ErrorBean("操作失败");
+			return new ErrorBean(10002,"操作失败");
 		}
 		return new SuccessBean("操作成功");
 	}
@@ -227,17 +228,17 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(applyIds)) {
 			log.error("申请ID为空");
-			return new ErrorBean("申请ID为空");
+			return new ErrorBean(10002,"申请ID为空");
 		}
 		try {
 			attentionService.hideAttentionApply(applyIds, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
-			return new ErrorBean("删除失败");
+			return new ErrorBean(10002,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}
@@ -259,11 +260,11 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		List<Map<String, Object>> resultList = attentionService.attentionList(isUserId, typeId);
 		return new SuccessBean(resultList);
@@ -288,22 +289,22 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(attention) || attention.matches("^[1-9]\\d{4,}$")) {
 			log.error("被删除人格式错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		Integer attentions = Integer.valueOf(attention);
 		try {
 			attentionService.delAttention(isUserId, attentions, typeId);
 		} catch (Exception e) {
 			log.error("操作失败");
-			return new ErrorBean("操作失败");
+			return new ErrorBean(10002,"操作失败");
 		}
 		return new SuccessBean("操作成功");
 	}
@@ -325,18 +326,18 @@ public class AttentionController {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(attention) || attention.matches("^[1-9]\\d{4,}$")) {
 			log.error("被拉黑人格式错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
 		Integer attentions = Integer.valueOf(attention);
 		try {
 			attentionService.blacklistAttention(isUserId, attentions);
 		} catch (Exception e) {
 			log.error("拉黑失败");
-			return new ErrorBean("拉黑失败");
+			return new ErrorBean(10002,"拉黑失败");
 		}
 		return new SuccessBean("拉黑成功");
 	}

@@ -4,12 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Description : 成功结果Bean
- * @Author : 
- * @Creation Date : 2018-4-13 上午9:09:55
+ * 成功结果Bean
+ * @ClassName: SuccessBean
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年5月29日 上午9:49:47
+ *
  */
 public class SuccessBean extends ResultBean {
-    public SuccessBean() {
+	
+	public SuccessBean() {
         this.setSuccess(true);
     }
 
@@ -20,14 +24,16 @@ public class SuccessBean extends ResultBean {
 
     /**
      * 单一结果返回的快速方法
-     * 
-     * @param k
-     * @param v
+     * <p>Title: </p>
+     * <p>Description: </p>
+     * @param key
+     * @param value
      */
-    public SuccessBean(String k, Object v) {
-        this.setSuccess(true);
-        Map<String, Object> m = new HashMap<String, Object>();
-        m.put(k, v);
-        this.setResult(m);
+    public SuccessBean(String key, Object value) {
+    	this.setSuccess(true);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put(key, value);
+        this.setResult(resultMap);
     }
+
 }
