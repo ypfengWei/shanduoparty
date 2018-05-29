@@ -51,6 +51,9 @@ public class TokenInfo {
     	this.gender = shanduoUser.getGender();
     	this.emotion = shanduoUser.getEmotion();
     	this.signature = shanduoUser.getSignature();
+    	if(this.signature == null) {
+    		this.signature = "因为个性所有没有签名";
+    	}
     	this.background = PictureUtils.getPictureUrl(shanduoUser.getBackground());
     	this.hometown = shanduoUser.getHometown();
     	this.occupation = shanduoUser.getOccupation();

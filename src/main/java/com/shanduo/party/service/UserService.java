@@ -52,6 +52,17 @@ public interface UserService {
 	TokenInfo loginUser(String username,String password);
 	
 	/**
+	 * 用户登录
+	 * @Title: loginUser
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return TokenInfo
+	 * @throws
+	 */
+	TokenInfo loginUser(Integer userId);
+	
+	/**
 	 * 修改绑定手机号
 	 * @Title: updatePhone
 	 * @Description: TODO

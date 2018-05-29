@@ -128,6 +128,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public TokenInfo loginUser(Integer userId) {
+		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
+		if(user == null) {
+			return null;
+		}
+		String token = savaToken(user.getId());
+		if(StringUtils.isNull(token)) {
+			return null;
+		}
+		return new TokenInfo(user,token,vipService.selectVipLevel(user.getId()));
+	}
+	
+	@Override
 	public int updatePhone(Integer userId, String phone) {
 		ShanduoUser user = new ShanduoUser();
 		user.setId(userId);
@@ -230,7 +243,9 @@ public class UserServiceImpl implements UserService {
 			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
-			map.put("isAttention", attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString())));
+			int i = attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString()));
+			boolean flag = i==1?true:false;
+			map.put("isAttention", flag);
 		}
 		return resultList;
 	}
@@ -245,7 +260,9 @@ public class UserServiceImpl implements UserService {
 		resultMap.put("vip", vipService.selectVipLevel(attention));
 		resultMap.put("level", experienceService.selectLevel(attention));
 		resultMap.put("picture", PictureUtils.getPictureUrl(resultMap.get("picture").toString()));
-		resultMap.put("isAttention", attentionService.checkAttention(userId, attention));
+		int i = attentionService.checkAttention(userId, attention);
+		boolean flag = i==1?true:false;
+		resultMap.put("isAttention", flag);
 		//好友人数，动态数量,活动次数
 		resultMap.put("attention",attentionService.attentionCount(attention));
 		resultMap.put("dynamic",dynamicService.dynamicCount(attention));
