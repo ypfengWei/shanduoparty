@@ -118,7 +118,7 @@ public class AttentionController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(attention) || attention.matches("^[1-9]\\d{4,}$")) {
+		if(StringUtils.isNull(attention) || !attention.matches("^[1-9]\\d{4,}$")) {
 			log.error("被添加人格式错误");
 			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
