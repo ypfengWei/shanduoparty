@@ -48,8 +48,10 @@
 	 		<mvc:mapping path="/activity/deleteActivity"/>
 	 		<mvc:mapping path="/activity/showOneActivity"/>
 	 		<mvc:mapping path="/activity/participant"/>
-	 		<mvc:mapping path="/activity/participateActivities"/>
+	 		<mvc:mapping path="/activity/selectByActivityId"/>
+	 		<mvc:mapping path="/activity/joinActivities"/>
 	 		<mvc:mapping path="/activity/selectByHistorical"/>
+	 		<mvc:mapping path="/activity/oneActivity"/>
 	 		<!-- 评论操作接口拦截 -->
 	 		<mvc:mapping path="/score/**"/>
 	 		<!-- 上传图片接口拦截 -->
@@ -75,6 +77,8 @@
 	 		<mvc:mapping path="/experience/**"/>
 	 		<!-- 钱包接口拦截 -->
 	 		<mvc:mapping path="/jmoney/**"/>
+	 		<!-- 订单接口拦截 -->
+	 		<mvc:mapping path="/jorder/**"/>
 	 		
 	 		<bean class="com.shanduo.party.interceptor.TokenInterceptor"/>
 		</mvc:interceptor>

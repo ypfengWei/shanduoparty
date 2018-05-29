@@ -50,7 +50,7 @@ public class ActivityInfo {
     
     private Integer othersScore; //发起者对参与者评分
     
-    private Integer typeId; // 0:参与者未评价 1:参与者已评价 2:发起者未评价 3:发起者已评价 4:活动报名截止 5:报名截止活动未开始 6:活动结束
+    private Integer typeId; // 0:参与者未评价 1:参与者已评价 2:发起者未评价 3:发起者已评价 4:活动报名截止 5:报名截止活动未开始 
     
 	public ActivityInfo(){
 		

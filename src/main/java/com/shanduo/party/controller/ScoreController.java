@@ -58,30 +58,26 @@ public class ScoreController {
 	@RequestMapping(value = "updateScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean updateScore(HttpServletRequest request, String token, String activityId, String score,
-			String evaluationcontent, String evaluationSign) {
+			String evaluationcontent) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(("0").equals(evaluationSign)) {
-			if(StringUtils.isNull(activityId)) {
-				log.error("活动ID为空");
-				return new ErrorBean(10002,"活动ID为空");
-			}
-			if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
-				log.error("评分错误");
-				return new ErrorBean(10002,"评分错误");
-			}
-			try {
-				scoreService.updateActivityScore(userToken, activityId, Integer.parseInt(score), evaluationcontent);
-			} catch (Exception e) {
-				return new ErrorBean(10003,"添加失败");
-			}
-			return new SuccessBean("添加成功");
-		} else {
-			return new ErrorBean(10002,"已评价");
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
+		if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
+			log.error("评分错误");
+			return new ErrorBean(10002,"评分错误");
+		}
+		try {
+			scoreService.updateActivityScore(userToken, activityId, Integer.parseInt(score), evaluationcontent);
+		} catch (Exception e) {
+			return new ErrorBean(10003,"添加失败");
+		}
+		return new SuccessBean("添加成功");
 	}
 	
 	/**
@@ -100,8 +96,7 @@ public class ScoreController {
 	 */
 	@RequestMapping(value = "updateOthersScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId,
-		String data,String beEvaluationSign) {
+	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId,String data) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
