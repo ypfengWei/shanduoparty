@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.AccessTokenMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.AccessToken">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="access_token" jdbcType="VARCHAR" property="accessToken" />
+    <result column="expires_in" jdbcType="INTEGER" property="expiresIn" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="uodate_date" jdbcType="TIMESTAMP" property="uodateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, access_token, expires_in, app_id, remarks, create_date, uodate_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from access_token
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from access_token
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.AccessToken">
+    insert into access_token (id, access_token, expires_in, 
+      app_id, remarks, create_date, 
+      uodate_date, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}, #{expiresIn,jdbcType=INTEGER}, 
+      #{appId,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{uodateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.AccessToken">
+    insert into access_token
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="accessToken != null">
+        access_token,
+      </if>
+      <if test="expiresIn != null">
+        expires_in,
+      </if>
+      <if test="appId != null">
+        app_id,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="uodateDate != null">
+        uodate_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="accessToken != null">
+        #{accessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="expiresIn != null">
+        #{expiresIn,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uodateDate != null">
+        #{uodateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.AccessToken">
+    update access_token
+    <set>
+      <if test="accessToken != null">
+        access_token = #{accessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="expiresIn != null">
+        expires_in = #{expiresIn,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null">
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uodateDate != null">
+        uodate_date = #{uodateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.AccessToken">
+    update access_token
+    set access_token = #{accessToken,jdbcType=VARCHAR},
+      expires_in = #{expiresIn,jdbcType=INTEGER},
+      app_id = #{appId,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      uodate_date = #{uodateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByAppId" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+	from access_token where app_id = #{0} and del_flag = '0'
+  </select>
+</mapper>

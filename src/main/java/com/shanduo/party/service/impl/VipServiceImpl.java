@@ -140,14 +140,14 @@ public class VipServiceImpl implements VipService {
 	
 	/**
 	 * 计算vip等级
-	 * @Title: getVipGrade
+	 * @Title: getVipLevel
 	 * @Description: TODO
 	 * @param @param userId
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	public int getVipGrade(Integer userId) {
+	public int getVipLevel(Integer userId) {
 		int experience = experienceMapper.selectByUserId(userId);
 		if(experience < 300) {
 			return 1;
@@ -174,12 +174,12 @@ public class VipServiceImpl implements VipService {
 			return 0;
 		}
 		if(resultList.size() == 2) {
-			return 10+getVipGrade(userId);
+			return 10+getVipLevel(userId);
 		}
 		if("0".equals(resultList.get(0).getVipType())) {
-			return getVipGrade(userId);
+			return getVipLevel(userId);
 		}
-		return 10+getVipGrade(userId);
+		return 10+getVipLevel(userId);
 	}
 		
 }
