@@ -48,28 +48,12 @@ public class ActivityInfo {
     
     private Integer vipGrade; //会员等级
     
-    private Integer evaluationSign; // 参与者评论标识  0:未评价 1:已评价
-    
-    private Integer beEvaluationSign; // 发起者评论标识 0:未评价 1:已评价
-    
     private Integer othersScore; //发起者对参与者评分
     
-    private Integer userIds; // 参与者id
-    
-    private Integer typeId; // 调用接口类型 0:调用参与者评价接口  1:调用发起者评价接口
-    
-    private Long newStartTime; //活动开始时间戳
+    private Integer typeId; // 0:参与者未评价 1:参与者已评价 2:发起者未评价 3:发起者已评价 4:活动报名截止 5:报名截止活动未开始 6:活动结束
     
 	public ActivityInfo(){
 		
-	}
-
-	public Integer getEvaluationSign() {
-		return evaluationSign;
-	}
-
-	public void setEvaluationSign(Integer evaluationSign) {
-		this.evaluationSign = evaluationSign;
 	}
 
 	public Integer getVipGrade() {
@@ -243,14 +227,6 @@ public class ActivityInfo {
 		this.gender = gender;
 	}
 
-	public Integer getBeEvaluationSign() {
-		return beEvaluationSign;
-	}
-
-	public void setBeEvaluationSign(Integer beEvaluationSign) {
-		this.beEvaluationSign = beEvaluationSign;
-	}
-
 	public Integer getTypeId() {
 		return typeId;
 	}
@@ -259,28 +235,12 @@ public class ActivityInfo {
 		this.typeId = typeId;
 	}
 
-	public Integer getUserIds() {
-		return userIds;
-	}
-
-	public void setUserIds(Integer userIds) {
-		this.userIds = userIds;
-	}
-
 	public Integer getOthersScore() {
 		return othersScore;
 	}
 
 	public void setOthersScore(Integer othersScore) {
 		this.othersScore = othersScore;
-	}
-
-	public Long getNewStartTime() {
-		return newStartTime;
-	}
-
-	public void setNewStartTime(Long newStartTime) {
-		this.newStartTime = newStartTime;
 	}
 
 }

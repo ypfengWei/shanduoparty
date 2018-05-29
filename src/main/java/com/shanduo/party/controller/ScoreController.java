@@ -1,5 +1,6 @@
 package com.shanduo.party.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ScoreService;
+import com.shanduo.party.util.JsonStringUtils;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -98,32 +100,60 @@ public class ScoreController {
 	 */
 	@RequestMapping(value = "updateOthersScore", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId, String othersScore,
-			String beEvaluated, String beEvaluationSign) {
+	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId,
+		String data,String beEvaluationSign) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(("0").equals(beEvaluationSign)) {
-			if(StringUtils.isNull(activityId)) {
-				log.error("活动ID为空");
-				return new ErrorBean(10002,"活动ID为空");
+		if(StringUtils.isNull(activityId)){
+			log.error("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
+		}
+		if(StringUtils.isNull(data)) {
+			log.error("json为空");
+			return new ErrorBean(10002,"json为空");
+		}
+		List<Object> list = JsonStringUtils.getList(data);
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map = (Map<String, Object>) list.get(i);
+			int score = Integer.parseInt(map.get("score").toString());
+			if (StringUtils.isNull(score+"") || !(score+"").matches("^[1-5]$")) {
+				log.error("评分错误");
+				return new ErrorBean(10002,"评分错误");
 			}
-			if (StringUtils.isNull(othersScore) || !othersScore.matches("^[1-5]$")) {
-				log.error("评分为空");
-				return new ErrorBean(10002,"评分为空");
-			}
+			int userId = Integer.parseInt(map.get("userId").toString());
+			String evaluated = map.get("evaluated").toString();
 			try {
-				scoreService.updateByUserId(userToken, activityId, Integer.parseInt(othersScore), beEvaluated);
+				scoreService.updateByUserId(userId, activityId, score, evaluated);
 			} catch (Exception e) {
 				return new ErrorBean(10003,"评价失败");
 			}
-			return new SuccessBean("评价成功");
-		} else {
-			return new ErrorBean(10002,"已评价");
 		}
+		return new SuccessBean("评价成功");
 	}
+//		Integer userToken = baseService.checkUserToken(token);
+//		if(("0").equals(beEvaluationSign)) {
+//			if(StringUtils.isNull(activityId)) {
+//				log.error("活动ID为空");
+//				return new ErrorBean("活动ID为空");
+//			}
+//			if (StringUtils.isNull(othersScore) || !othersScore.matches("^[1-5]$")) {
+//				log.error("评分为空");
+//				return new ErrorBean("评分为空");
+//			}
+//			try {
+//				scoreService.updateByUserId(userToken, activityId, Integer.parseInt(othersScore), beEvaluated);
+//			} catch (Exception e) {
+//				return new ErrorBean("评价失败");
+//			}
+//			return new SuccessBean("评价成功");
+//		} else {
+//			return new ErrorBean("已评价");
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * 查询历史评价

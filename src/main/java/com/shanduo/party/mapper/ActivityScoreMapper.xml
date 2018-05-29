@@ -236,4 +236,16 @@
     set del_flag = '1' 
     where activity_id = #{0}
   </update>
+  <select id="selectByUserId" resultType="java.lang.String">
+  	select 
+  	gender 
+  	from shanduo_user 
+  	where id = #{0}
+  </select>
+  <select id="selectByGenders" resultType="java.lang.Integer">
+  	select 
+  	count(id) 
+  	from activity_score 
+  	where remarks = #{1} and activity_id = #{0}
+  </select>
 </mapper>

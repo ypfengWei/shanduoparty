@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.VipExperience;
 import com.shanduo.party.mapper.ShanduoVipMapper;
@@ -29,7 +28,7 @@ import com.shanduo.party.util.UUIDGenerator;
 @Transactional(rollbackFor = Exception.class)
 public class VipServiceImpl implements VipService {
 
-	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
+	private static final Logger log = LoggerFactory.getLogger(VipServiceImpl.class);
 
 	@Autowired
 	private ShanduoVipMapper vipMapper;

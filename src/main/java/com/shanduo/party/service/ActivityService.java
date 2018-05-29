@@ -235,7 +235,7 @@ public interface ActivityService {
      * @return List<Map<String,Object>>    返回类型
      * @throws
      */
-    Map<String, Object> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId);
+    Map<String, Object> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId, String lon, String lat);
 
     /**
      * 活动刷新
@@ -280,6 +280,6 @@ public interface ActivityService {
      * @return ActivityInfo    返回类型
      * @throws
      */
-    Map<String, Object> selectByActivityIds(String activityId, Integer userId);
+    Map<String, Object> selectByActivityIds(String activityId, Integer userId, String lon, String lat);
     
 }

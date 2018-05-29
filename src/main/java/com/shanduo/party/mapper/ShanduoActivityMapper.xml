@@ -35,21 +35,12 @@
     <result column="score" jdbcType="INTEGER" property="score" />
     <result column="head_portrait_id" jdbcType="VARCHAR" property="headPortraitId"/>
     <result column="birthday" jdbcType="VARCHAR" property="birthday" />
-    <result column="age" jdbcType="INTEGER" property="age"/>
     <result column="location" jdbcType="DOUBLE" property="location"/>
     <result column="lat" jdbcType="DECIMAL" property="lat" />
     <result column="lon" jdbcType="DECIMAL" property="lon" />
     <result column="top_flag" jdbcType="CHAR" property="topFlag" />
     <result column="gender" jdbcType="CHAR" property="gender" />
-    <result column="mansum" jdbcType="VARCHAR" property="mansum" />
-    <result column="womenSum" jdbcType="VARCHAR" property="womenSum" />
-    <result column="vipGrade" jdbcType="INTEGER" property="vipGrade"/>
-    <result column="evaluationSign" jdbcType="INTEGER" property="evaluationSign"/>
-    <result column="beEvaluationSign" jdbcType="INTEGER" property="beEvaluationSign"/>
     <result column="others_score" jdbcType="INTEGER" property="othersScore"/>
-    <result column="userIds" jdbcType="INTEGER" property="userIds"/>
-    <result column="typeId" jdbcType="INTEGER" property="typeId"/>
-    <result column="joinActivity" jdbcType="INTEGER" property="joinActivity"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
@@ -348,6 +339,14 @@
     order by sa.update_date desc
     limit #{1},#{2}
   </select>
+  <select id="count" resultType="map">
+  	select 
+  	count(ye.user_id) as number,count(others_score) as score
+  	from shanduo_activity sa 
+	join activity_score ye on sa.id = ye.activity_id
+	where sa.id = #{1}
+	and sa.del_flag = '0' and ye.del_flag = '0'
+  </select>
   <select id="selectByActivityUserId" resultType="java.lang.Integer">
  	select 
  	count(id)
@@ -401,12 +400,12 @@
 	sa.activity_name,sa.activity_start_time,sa.activity_address,
 	sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
 	su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-	sa.lon,sa.lat,sa.detailed_address,ye.score,ye.user_id as userids
+	sa.lon,sa.lat,sa.detailed_address,ye.score
 	from shanduo_activity sa 
-	left join activity_score ye on sa.id = ye.activity_id 
+	join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id 
 	join shanduo_user su on sa.user_id = su.id 
-	where sa.activity_start_time &lt; now() and sa.user_id = #{0} or ye.user_id = #{0} 
+	where sa.activity_start_time &lt; now() and ye.user_id = #{0} 
 	and sa.del_flag = '0' and ye.del_flag = '0'
  	and ar.del_flag = '0' and su.del_flag = '0'
  	order by sa.update_date desc

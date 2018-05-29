@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ActivityScore;
 import com.shanduo.party.entity.ShanduoReputationRecord;
 import com.shanduo.party.mapper.ActivityScoreMapper;
@@ -35,7 +34,7 @@ import com.shanduo.party.util.UUIDGenerator;
 @Transactional(rollbackFor = Exception.class)
 public class ScoreServiceImpl implements ScoreService {
 
-	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
+	private static final Logger log = LoggerFactory.getLogger(ScoreServiceImpl.class);
 
 	@Autowired
 	private ActivityScoreMapper activityScoreMapper;

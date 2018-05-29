@@ -338,4 +338,6 @@ public interface ShanduoActivityMapper {
      * @throws
      */
     List<Map<String, Object>> selectActivityIds(String activityId);
+    
+    Map<String, Object> count(String activityId);
 }

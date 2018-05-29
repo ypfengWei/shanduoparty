@@ -3,7 +3,6 @@ package com.shanduo.party.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +17,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ShanduoActivity;
-import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
+import com.shanduo.party.mapper.ActivityScoreMapper;
 import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ExperienceService;
@@ -49,6 +48,9 @@ public class ActivityController {
 
 	@Autowired
 	private ExperienceService experienceService;
+	
+	@Autowired
+	private ActivityScoreMapper scoreMapper;
 	
 	/**
 	 * 发布活动
@@ -78,23 +80,23 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if (StringUtils.isNull(activityName)) {
 			log.error("标题不能为空");
-			return new ErrorBean("标题不能为空");
+			return new ErrorBean(10002,"标题不能为空");
 		}
 		if (StringUtils.isNull(activityStartTime)) {
 			log.error("活动开始时间不能为空");
-			return new ErrorBean("活动开始时间不能为空");
+			return new ErrorBean(10002,"活动开始时间不能为空");
 		}
 		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
 			log.error("人数不能为空");
-			return new ErrorBean("人数不能为空");
+			return new ErrorBean(10002,"人数不能为空");
 		}
 		if ("0".equals(manNumber) && "0".equals(womanNumber)) {
 			log.error("人数不能为空");
-			return new ErrorBean("人数不能为空");
+			return new ErrorBean(10002,"人数不能为空");
 		}
 		if(StringUtils.isNull(manNumber)) {
 			womanNumber = "0";
@@ -104,50 +106,50 @@ public class ActivityController {
 		}
 		if(!manNumber.matches("^\\d+$") || !womanNumber.matches("^\\d+$")) {
 			log.error("人数必须为正整数");
-			return new ErrorBean("人数必须为正整数");
+			return new ErrorBean(10002,"人数必须为正整数");
 		}
 		if (StringUtils.isNull(activityAddress)) {
 			log.error("活动地址不能为空");
-			return new ErrorBean("活动地址不能为空");
+			return new ErrorBean(10002,"活动地址不能为空");
 		}
 		if (StringUtils.isNull(mode)) {
 			log.error("方式不能为空");
-			return new ErrorBean("方式不能为空");
+			return new ErrorBean(10002,"方式不能为空");
 		}
 		if (StringUtils.isNull(activityCutoffTime)) {
 			log.error("活动截止时间不能为空");
-			return new ErrorBean("活动截止时间不能为空");
+			return new ErrorBean(10002,"活动截止时间不能为空");
 		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
-			return new ErrorBean("经度格式错误");
+			return new ErrorBean(10002,"经度格式错误");
 		}
 		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
 			log.error("纬度格式错误");
-			return new ErrorBean("纬度格式错误");
+			return new ErrorBean(10002,"纬度格式错误");
 		}
 		if(System.currentTimeMillis() > convertTimeToLong(activityStartTime)) {
 			log.error("活动开始时间不能小于系统当前时间");
-			return new ErrorBean("活动开始时间不能小于系统当前时间");
+			return new ErrorBean(10002,"活动开始时间不能小于系统当前时间");
 		}
 		if (System.currentTimeMillis() > convertTimeToLong(activityCutoffTime)) {
 			log.error("活动报名截止时间不能小于系统当前时间");
-			return new ErrorBean("活动报名截止时间不能小于系统当前时间");
+			return new ErrorBean(10002,"活动报名截止时间不能小于系统当前时间");
 		}
 		if (convertTimeToLong(activityStartTime) < convertTimeToLong(activityCutoffTime)) {
 			log.error("活动报名截止时间不能大于活动开始时间");
-			return new ErrorBean("活动报名截止时间不能大于活动开始时间");
+			return new ErrorBean(10002,"活动报名截止时间不能大于活动开始时间");
 		}
 		if(activityService.selectByTwoAll(userToken, activityStartTime)) {
 			log.error("只能举办上一活动之后的活动");
-			return new ErrorBean("只能举办上一活动之后的活动");
+			return new ErrorBean(10002,"只能举办上一活动之后的活动");
 		}
 		try {
 			activityService.saveActivity(userToken, activityName, activityStartTime,
 					activityAddress, mode, manNumber, womanNumber, remarks, activityCutoffTime, lon, lat, detailedAddress);
 		} catch (Exception e) {
 			log.error("活动添加失败");
-			return new ErrorBean("添加失败");
+			return new ErrorBean(10003,"添加失败");
 		}
 //		添加每日发起活动经验值，日限制2次/20点经验
 		if(!experienceService.checkCount(userToken, "5")) {
@@ -177,17 +179,17 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(avtivityId)) {
 			log.error("活动Id为空");
-			return new ErrorBean("活动Id为空");
+			return new ErrorBean(10002,"活动Id为空");
 		}
 		try {
 			activityService.deleteActivity(avtivityId);
 		} catch (Exception e) {
 			log.error("活动删除失败");
-			return new ErrorBean("删除失败");
+			return new ErrorBean(10003,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}
@@ -219,23 +221,23 @@ public class ActivityController {
 	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, String token, String userId) {
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
-			return new ErrorBean("经度格式错误");
+			return new ErrorBean(10002,"经度格式错误");
 		}
 		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
 			log.error("纬度格式错误");
-			return new ErrorBean("纬度格式错误");
+			return new ErrorBean(10002,"纬度格式错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[1234567]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -250,7 +252,7 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if("3".equals(type)) {
 			resultMap = activityService.selectByFriendsUserId(userToken, pages, pageSizes, lon, lat);
@@ -263,7 +265,7 @@ public class ActivityController {
 		} else {
 			if(StringUtils.isNull(userId)) {
 				log.error("userId为空");
-				return new ErrorBean("userId为空");
+				return new ErrorBean(10002,"userId为空");
 			}
 			resultMap = activityService.selectByUserId(Integer.parseInt(userId),pages,pageSizes,lon,lat);
 		}
@@ -271,8 +273,8 @@ public class ActivityController {
 	}
 	
 	/**
-	 * 查看未过期的活动信息
-	 * @Title: selectByActivityId
+	 * 查看单个活动详情及参与人及参加活动状态(app)
+	 * @Title: participant
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
@@ -285,33 +287,33 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "participant", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean selectByActivityId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
+	public ResultBean participant(HttpServletRequest request, String token, String activityId, String page, String pageSize, String lon, String lat) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken);
+		Map<String, Object> resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken,lon,lat);
 		return new SuccessBean(resultMap);
 	}
 	
 	/**
 	 * 根据活动ID查询该活动的参与人
-	 * @Title: selectByUserId
+	 * @Title: selectByActivityId
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
@@ -324,23 +326,23 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "selectByActivityId", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean selectByUserId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
+	public ResultBean selectByActivityId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -366,54 +368,54 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		if("1".equals(type)) {
 			if(activityService.selectByAll(userToken, activityId)) {
 				log.error("您在本时间段有其他的活动");
-				return new ErrorBean("您在本时间段有其他的活动");
+				return new ErrorBean(10002,"您在本时间段有其他的活动");
 			}
 			ShanduoActivity shanduoActivity = activityService.selectByPrimaryKey(activityId);
 			if(shanduoActivity.getActivityCutoffTime().getTime() < System.currentTimeMillis()) {
 				log.error("此活动报名时间已过");
-				return new ErrorBean("此活动报名时间已过");
+				return new ErrorBean(10002,"此活动报名时间已过");
 			}
-			//查询参加活动的男女生人数
-			List<Map<String, Object>> resultMap = activityService.selectByGender(activityId);
-			if(resultMap != null) {
-				//查询当前用户的性别
-				ShanduoUser shanduoUser = activityService.selectById(userToken);
-				for (Map<String, Object> map : resultMap) {
-					if (shanduoUser.getGender().equals(map.get("gender").toString())) {
-						//根据活动id查询活动要求人数
-						ActivityRequirement activityRequirement = activityService.selectByNumber(activityId);
-						int count = Integer.parseInt(map.get("count").toString());
-						//如果女生人数大于要求女生人数，参加失败
-						if ("0".equals(shanduoUser.getGender()) && activityRequirement.getWomanNumber() <= count) {
-							log.error("该性别人数已满");
-							return new ErrorBean("该性别人数已满");
-						}
-						//如果男生人数大于要求男生人数，参加失败
-						if ("1".equals(shanduoUser.getGender()) && activityRequirement.getManNumber() <= count) {
-							log.error("该性别人数已满");
-							return new ErrorBean("该性别人数已满");
-						}
-					}
+			String gender = scoreMapper.selectByUserId(userToken); //查询当前用户的性别
+			ActivityRequirement activityRequirement = activityService.selectByNumber(activityId); //查询活动要求的男女生人数
+			if(gender.equals("1")) { //当前用户为男
+				if(activityRequirement.getManNumber() < 1) {
+					log.error("不需要男生");
+					return new ErrorBean(10002,"不需要男生");
+				} 
+				int count = scoreMapper.selectByGenders(activityId, gender); //根据活动id和用户性别查询参加总人数
+				if(count >= activityRequirement.getManNumber()) {
+					log.error("男生人数已满");
+					return new ErrorBean(10002,"男生人数已满");
 				}
-			} 
+			} else { //当前用户为女
+				if(activityRequirement.getWomanNumber() < 1) {
+					log.error("不需要女生");
+					return new ErrorBean(10002,"不需要女生");
+				}
+				int count = scoreMapper.selectByGenders(activityId, gender); //根据活动id和用户性别查询参加总人数
+				if(count >= activityRequirement.getWomanNumber()) {
+					log.error("女生人数已满");
+					return new ErrorBean(10002,"女生人数已满");
+				}
+			}
 			try {
 				activityService.insertSelective(userToken, activityId);
 			} catch (Exception e) {
 				log.error("参加活动失败");
-				return new ErrorBean("参加活动失败");
+				return new ErrorBean(10003,"参加活动失败");
 			}
 //		添加每日参加活动经验值，日限制2次/10点经验
 			if(!experienceService.checkCount(userToken, "8")) {
@@ -429,7 +431,7 @@ public class ActivityController {
 				activityService.deleteByUserId(activityId, userToken);
 			} catch (Exception e) {
 				log.error("活动取消失败");
-				return new ErrorBean("活动取消失败");
+				return new ErrorBean(10003,"活动取消失败");
 			}
 		}
 		return new SuccessBean("取消成功");
@@ -453,15 +455,15 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -486,17 +488,17 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
 		try {
 			activityService.activityRefresh(activityId);
 		} catch (Exception e) {
 			log.error("刷新失败");
-			return new ErrorBean("刷新失败");
+			return new ErrorBean(10002,"刷新失败");
 		}
 		return new SuccessBean("刷新成功");
 	}
@@ -518,23 +520,23 @@ public class ActivityController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
 		try {
 			activityService.updateBysetTop(activityId);
 		} catch (Exception e) {
 			log.error("活动置顶失败");
-			return new ErrorBean("活动置顶失败");
+			return new ErrorBean(10003,"活动置顶失败");
 		}
 		return new SuccessBean("活动置顶成功");
 	}
 	
 	/**
-	 * 查看单个活动详情及参与人
+	 * 查看单个活动详情及参与人及参加活动状态(小程序)
 	 * @Title: oneActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
@@ -546,26 +548,26 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "oneActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean oneActivity(HttpServletRequest request, String token, String activityId) {
+	public ResultBean oneActivity(HttpServletRequest request, String token, String activityId, String lon, String lat) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean("活动ID为空");
+			return new ErrorBean(10002,"活动ID为空");
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		try {
-			resultMap = activityService.selectByActivityIds(activityId, userToken);
+			resultMap = activityService.selectByActivityIds(activityId, userToken, lon, lat);
 		} catch (Exception e) {
 			log.error("未知错误");
-			return new ErrorBean("未知错误");
+			return new ErrorBean(10003,"未知错误");
 		}
 		if(resultMap == null) {
 			log.error("活动已被取消");
-			return new ErrorBean("活动已被取消");
+			return new ErrorBean(10002,"活动已被取消");
 		}
 		return new SuccessBean(resultMap);
 	}
