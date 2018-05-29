@@ -14,16 +14,28 @@ import java.util.Map;
 public interface AttentionService {
 
 	/**
-	 * 检查是否已经添加好友
+	 * 检查是否已经添加好友或拉黑
 	 * @Title: checkAttention
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param attention 被添加人ID
 	 * @param @return
-	 * @return boolean
+	 * @return int
 	 * @throws
 	 */
-	boolean checkAttention(Integer userId,Integer attention);
+	int checkAttention(Integer userId,Integer attention);
+	
+	/**
+	 * 直接添加好友
+	 * @Title: saveAttention
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param attention
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int saveAttention(Integer userId,Integer attention);
 	
 	/**
 	 * 检查是否已经申请添加好友

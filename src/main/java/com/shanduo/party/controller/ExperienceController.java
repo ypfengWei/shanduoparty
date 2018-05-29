@@ -62,7 +62,7 @@ public class ExperienceController {
 			experienceService.signin(isUserId);
 		} catch (Exception e) {
 			log.error("签到失败");
-			return new ErrorBean(10002,"签到失败");
+			return new ErrorBean(10003,"签到失败");
 		}
 		return new SuccessBean("签到成功");
 	}

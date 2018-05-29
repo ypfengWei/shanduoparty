@@ -155,7 +155,7 @@ public class OrderContrpller {
 			order = orderService.saveOrder(userId, typeId, money, month, activityId,location);
 		} catch (Exception e) {
 			log.error("生成订单出错");
-			return new ErrorBean(10002,"生成订单出错");
+			return new ErrorBean(10003,"生成订单出错");
 		}
 		return new SuccessBean(order);
 	}
@@ -193,7 +193,7 @@ public class OrderContrpller {
 			orderService.updateOrder(order.getId());
 		} catch (Exception e) {
 			log.error("支付失败");
-			return new ErrorBean(10002,"支付失败");
+			return new ErrorBean(10003,"支付失败");
 		}
 		return new SuccessBean("支付成功");
 	}
@@ -247,7 +247,7 @@ public class OrderContrpller {
 //	        System.out.println(response.getBody());//就是orderString 可以直接给客户端请求，无需再做处理。
 		} catch (AlipayApiException e) {
 		       log.error("生成支付宝订单信息错误");
-		       return new ErrorBean(10002,"订单错误");
+		       return new ErrorBean(10003,"订单错误");
 		}
 		return new SuccessBean(response.getBody());
 	}

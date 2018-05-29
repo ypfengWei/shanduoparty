@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -29,7 +30,7 @@ import com.shanduo.party.util.StringUtils;
  * @Description: TODO
  * @author fanshixin
  * @date 2018年4月27日 上午9:40:00
- *
+ * 
  */
 @Controller
 @RequestMapping(value = "jattention")
@@ -50,7 +51,7 @@ public class AttentionController {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
-	 * @param @param userId
+	 * @param @param query 手机号或昵称或闪多号
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
@@ -122,22 +123,37 @@ public class AttentionController {
 			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
 		Integer attentions = Integer.valueOf(attention);
-		
-		if(attentionService.checkAttention(isUserId, attentions)) {
+		int i = attentionService.checkAttention(isUserId, attentions);
+		if(i == 1) {
 			log.error("已经是好友");
 			return new ErrorBean(10002,"已经是好友");
 		}
-		if(attentionService.checkAttentionApply(isUserId, attentions)) {
-			log.error("已经申请");
-			return new ErrorBean(10002,"已经申请");
+		if(i == 2) {
+			log.error("你已被对方拉黑");
+			return new ErrorBean(10002,"你已被对方拉黑");
 		}
-		try {
-			attentionService.saveAttentionApply(isUserId, attentions);
-		} catch (Exception e) {
-			log.error("申请失败");
-			return new ErrorBean(10002,"申请失败");
+		ShanduoUser user = userService.selectByUserId(attentions);
+		String addition = user.getAddition();
+		if(user.getAddition().equals("0")) {
+			try {
+				attentionService.saveAttention(isUserId, attentions);
+			} catch (Exception e) {
+				log.error("添加好友失败");
+				return new ErrorBean(10003,"添加好友失败");
+			}
+		}else if(addition.equals("1")){
+			if(attentionService.checkAttentionApply(isUserId, attentions)) {
+				log.error("已经申请");
+				return new ErrorBean(10002,"已经申请");
+			}
+			try {
+				attentionService.saveAttentionApply(isUserId, attentions);
+			} catch (Exception e) {
+				log.error("申请失败");
+				return new ErrorBean(10003,"申请失败");
+			}
 		}
-		return new SuccessBean("申请成功");
+		return new SuccessBean(addition);
 	}
 	
 	/**
@@ -206,7 +222,7 @@ public class AttentionController {
 			attentionService.isAttentionApply(applyId, isUserId, typeId);
 		} catch (Exception e) {
 			log.error("操作失败");
-			return new ErrorBean(10002,"操作失败");
+			return new ErrorBean(10003,"操作失败");
 		}
 		return new SuccessBean("操作成功");
 	}
@@ -238,7 +254,7 @@ public class AttentionController {
 			attentionService.hideAttentionApply(applyIds, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
-			return new ErrorBean(10002,"删除失败");
+			return new ErrorBean(10003,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}
@@ -278,7 +294,7 @@ public class AttentionController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param attention 好友ID或拉黑ID
-	 * @param @param typeId 类型:1,删除好友;2,拉黑
+	 * @param @param typeId 类型:1,删除好友;2,删除拉黑
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
@@ -304,7 +320,7 @@ public class AttentionController {
 			attentionService.delAttention(isUserId, attentions, typeId);
 		} catch (Exception e) {
 			log.error("操作失败");
-			return new ErrorBean(10002,"操作失败");
+			return new ErrorBean(10003,"操作失败");
 		}
 		return new SuccessBean("操作成功");
 	}
@@ -337,7 +353,7 @@ public class AttentionController {
 			attentionService.blacklistAttention(isUserId, attentions);
 		} catch (Exception e) {
 			log.error("拉黑失败");
-			return new ErrorBean(10002,"拉黑失败");
+			return new ErrorBean(10003,"拉黑失败");
 		}
 		return new SuccessBean("拉黑成功");
 	}

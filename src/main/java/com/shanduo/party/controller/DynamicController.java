@@ -86,7 +86,7 @@ public class DynamicController {
 			dynamicService.saveDynamic(isUserId, content, picture, lat, lon, location);
 		} catch (Exception e) {
 			log.error("发表动态失败");
-			return new ErrorBean(10002,"发表动态失败");
+			return new ErrorBean(10003,"发表动态失败");
 		}
 		//添加每日发表动态经验值，日限制2次/5点经验
 		if(!experienceService.checkCount(isUserId, "4")) {
@@ -100,8 +100,8 @@ public class DynamicController {
 	}
 	
 	/***
-	 * 查看好友或附近的动态
-	 * @Title: attentionList
+	 * 查看动态
+	 * @Title: dynamicList
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
@@ -117,7 +117,7 @@ public class DynamicController {
 	 */
 	@RequestMapping(value = "dynamicList",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean homeList(HttpServletRequest request,String token,String typeId,String userId,String lat,String lon,
+	public ResultBean dynamicList(HttpServletRequest request,String token,String typeId,String userId,String lat,String lon,
 			String page,String pageSize) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(StringUtils.isNull(typeId) || !page.matches("^[1234]$")) {
@@ -193,7 +193,7 @@ public class DynamicController {
 				praiseService.deletePraise(isUserId, dynamicId);
 			} catch (Exception e) {
 				log.error("取消失败");
-				return new ErrorBean(10002,"取消失败");
+				return new ErrorBean(10003,"取消失败");
 			}
 			return new SuccessBean("取消成功");
 		}
@@ -201,7 +201,7 @@ public class DynamicController {
 			praiseService.savePraise(isUserId, dynamicId);
 		} catch (Exception e) {
 			log.error("点赞失败");
-			return new ErrorBean(10002,"点赞失败");
+			return new ErrorBean(10003,"点赞失败");
 		}
 		//添加每日点赞经验值，日限制10次/1点经验
 		if(!experienceService.checkCount(isUserId, "6")) {
@@ -287,7 +287,7 @@ public class DynamicController {
 	}
 	
 	/**
-	 * 查看单个动态的评论或者2级回复
+	 * 查看单个动态的1级评论或者2级回复
 	 * @Title: commentList
 	 * @Description: TODO
 	 * @param @param requrst
@@ -384,7 +384,7 @@ public class DynamicController {
 			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, respondent, picture);
 		} catch (Exception e) {
 			log.error("评论失败");
-			return new ErrorBean(10002,"评论失败");
+			return new ErrorBean(10003,"评论失败");
 		}
 		//添加每日评论动态经验值，日限制5次/2点经验
 		if(!experienceService.checkCount(isUserId, "7")) {
@@ -424,7 +424,7 @@ public class DynamicController {
 			dynamicService.hideDynamic(dynamicIds, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
-			return new ErrorBean(10002,"删除失败");
+			return new ErrorBean(10003,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}
@@ -456,7 +456,7 @@ public class DynamicController {
 			dynamicService.hideComment(commentId, isUserId);
 		} catch (Exception e) {
 			log.error("删除失败");
-			return new ErrorBean(10002,"删除失败");
+			return new ErrorBean(10003,"删除失败");
 		}
 		return new SuccessBean("删除成功");
 	}

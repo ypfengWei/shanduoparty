@@ -70,7 +70,7 @@ public class CollectController {
 			collectServic.saveCollect(isUserId, fileUrl);
 		} catch (Exception e) {
 			log.error("收藏失败");
-			return new ErrorBean(10002,"收藏失败");
+			return new ErrorBean(10003,"收藏失败");
 		}
 		return new SuccessBean("收藏成功");
 	}
@@ -102,7 +102,7 @@ public class CollectController {
 			collectServic.deleteCollect(isUserId, collectIds);
 		} catch (Exception e) {
 			log.error("取消失败");
-			return new ErrorBean(10002,"取消失败");
+			return new ErrorBean(10003,"取消失败");
 		}
 		return new SuccessBean("取消成功");
 	}

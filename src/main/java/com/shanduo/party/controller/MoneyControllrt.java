@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -138,12 +139,12 @@ public class MoneyControllrt {
 			return new ErrorBean(10002,"新密码格式错误");
 		}
 		if("1".equals(typeId)) {
-			String phone = userService.selectByPhone(isUserId);
+			ShanduoUser user = userService.selectByUserId(isUserId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean(10002,"验证码错误");
 			}
-			if(codeService.selectByQuery(phone, code, "4")) {
+			if(codeService.selectByQuery(user.getPhoneNumber(), code, "4")) {
 				log.error("验证码超时或错误");
 				return new ErrorBean(10002,"验证码超时或错误");
 			}
@@ -162,7 +163,7 @@ public class MoneyControllrt {
 			moneyService.updatePassWord(isUserId, newPassword);
 		} catch (Exception e) {
 			log.error("支付密码修改失败");
-			return new ErrorBean(10002,"修改失败");
+			return new ErrorBean(10003,"修改失败");
 		}
 		return new SuccessBean("修改成功");
 	}

@@ -81,7 +81,7 @@ public class SmsController {
 			codeService.savePhoneVerifyCode(phone, code+"", typeId);
 		} catch (Exception e) {
 			log.error("发送失败");
-			return new ErrorBean(10002,"发送失败");
+			return new ErrorBean(10003,"发送失败");
 		}
 		return new SuccessBean("发送成功");
 	}

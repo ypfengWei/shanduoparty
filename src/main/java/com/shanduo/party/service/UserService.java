@@ -3,6 +3,7 @@ package com.shanduo.party.service;
 import java.util.List;
 import java.util.Map;
 
+import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.service.TokenInfo;
 
 /**
@@ -122,15 +123,15 @@ public interface UserService {
 	String savaToken(Integer userId);
 	
 	/**
-	 * 查找手机号
-	 * @Title: selectByPhone
+	 * 查找用户信息
+	 * @Title: selectByUserId
 	 * @Description: TODO
 	 * @param @param userId
 	 * @param @return
-	 * @return String
+	 * @return ShanduoUser
 	 * @throws
 	 */
-	String selectByPhone(Integer userId);
+	ShanduoUser selectByUserId(Integer userId);
 	
 	/**
 	 * 搜索用户

@@ -92,7 +92,7 @@ public class FileController {
     		pictureList = pictureService.savePicture(isUserId, urlList);
 		} catch (Exception e) {
 			log.error("图片记录插入失败");
-			return new ErrorBean(10002,"上传失败");
+			return new ErrorBean(10003,"上传失败");
 		}
         return new SuccessBean(pictureList);
     }   

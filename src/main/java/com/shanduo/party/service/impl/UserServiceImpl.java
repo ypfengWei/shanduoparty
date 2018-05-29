@@ -2,7 +2,6 @@ package com.shanduo.party.service.impl;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -220,12 +219,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String selectByPhone(Integer userId) {
-		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
-		if(user == null) {
-			return "";
-		}
-		return user.getPhoneNumber();
+	public ShanduoUser selectByUserId(Integer userId) {
+		return userMapper.selectByPrimaryKey(userId);
 	}
 
 	@Override

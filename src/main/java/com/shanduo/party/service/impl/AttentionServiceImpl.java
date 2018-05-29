@@ -44,12 +44,38 @@ public class AttentionServiceImpl implements AttentionService {
 	private VipService vipService;
 	
 	@Override
-	public boolean checkAttention(Integer userId, Integer attention) {
-		UserAttention attentions = attentionMapper.checkAttention(userId, attention);
-		if(attentions != null && attentions.getAttentionType().equals("1")) {
-			return true;
+	public int checkAttention(Integer userId, Integer attention) {
+		UserAttention attentions = attentionMapper.checkAttention(attention, userId);
+		if(attentions == null) {
+			return 0;
 		}
-		return false;
+		if(attentions.getAttentionType().equals("1")) {
+			return 1;
+		}
+		return 2;
+	}
+	
+	@Override
+	public int saveAttention(Integer userId, Integer attention) {
+		delAttention(userId, attention, "2");
+		UserAttention attentions = new UserAttention();
+		attentions.setId(UUIDGenerator.getUUID());
+		attentions.setUserId(userId);
+		attentions.setAttention(attention);
+		int i = attentionMapper.insertSelective(attentions);
+		if(i < 1) {
+			log.error("添加好友记录失败");
+			throw new RuntimeException();
+		}
+		attentions.setId(UUIDGenerator.getUUID());
+		attentions.setUserId(attention);
+		attentions.setAttention(userId);
+		i = attentionMapper.insertSelective(attentions);
+		if(i < 1) {
+			log.error("添加好友记录失败");
+			throw new RuntimeException();
+		}
+		return 1;
 	}
 	
 	@Override
@@ -174,7 +200,11 @@ public class AttentionServiceImpl implements AttentionService {
 
 	@Override
 	public int blacklistAttention(Integer userId, Integer attention) {
-		if(checkAttention(userId, attention)) {
+		int i = checkAttention(userId, attention);
+		if(i == 2) {
+			return 1;
+		}
+		if(i == 1) {
 			try {
 				delAttention(userId, attention,"1");
 			} catch (Exception e) {
@@ -187,17 +217,17 @@ public class AttentionServiceImpl implements AttentionService {
 		attentions.setUserId(userId);
 		attentions.setAttention(attention);
 		attentions.setAttentionType("2");
-		int i = attentionMapper.insertSelective(attentions);
+		i = attentionMapper.insertSelective(attentions);
 		if(i < 1) {
 			log.error("拉黑失败");
 			throw new RuntimeException();
 		}
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public int attentionCount(Integer userId) {
 		return attentionMapper.attentionCount(userId);
 	}
-	
+
 }

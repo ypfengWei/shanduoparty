@@ -74,7 +74,7 @@ public class ScoreController {
 			try {
 				scoreService.updateActivityScore(userToken, activityId, Integer.parseInt(score), evaluationcontent);
 			} catch (Exception e) {
-				return new ErrorBean(10002,"添加失败");
+				return new ErrorBean(10003,"添加失败");
 			}
 			return new SuccessBean("添加成功");
 		} else {
@@ -117,7 +117,7 @@ public class ScoreController {
 			try {
 				scoreService.updateByUserId(userToken, activityId, Integer.parseInt(othersScore), beEvaluated);
 			} catch (Exception e) {
-				return new ErrorBean(10002,"评价失败");
+				return new ErrorBean(10003,"评价失败");
 			}
 			return new SuccessBean("评价成功");
 		} else {

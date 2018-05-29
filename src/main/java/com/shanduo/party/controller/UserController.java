@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -81,7 +82,7 @@ public class UserController {
 			userService.saveUser(phone,password);
 		} catch (Exception e) {
 			log.error("注册失败");
-			return new ErrorBean(10002,"注册失败");
+			return new ErrorBean(10003,"注册失败");
 		}
 		TokenInfo token = userService.loginUser(phone, password);
 		if(token != null) {
@@ -184,7 +185,7 @@ public class UserController {
 			userService.updatePhone(isUserId, phone);
 		} catch (Exception e) {
 			log.error("修改手机号失败");
-			return new ErrorBean(10002,"修改失败");
+			return new ErrorBean(10003,"修改失败");
 		}
 		return new SuccessBean("修改成功");
 	}
@@ -221,12 +222,12 @@ public class UserController {
 			return new ErrorBean(10002,"新密码格式错误");
 		}
 		if("1".equals(typeId)) {
-			String phone = userService.selectByPhone(isUserId);
+			ShanduoUser user = userService.selectByUserId(isUserId);
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
 				return new ErrorBean(10002,"验证码错误");
 			}
-			if(codeService.selectByQuery(phone, code, "3")) {
+			if(codeService.selectByQuery(user.getPhoneNumber(), code, "3")) {
 				log.error("验证码超时或错误");
 				return new ErrorBean(10002,"验证码超时或错误");
 			}
@@ -234,7 +235,7 @@ public class UserController {
 				userService.updatePasswordByPhone(isUserId, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
-				return new ErrorBean(10002,"修改失败");
+				return new ErrorBean(10003,"修改失败");
 			}
 		}else {
 			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
@@ -245,7 +246,7 @@ public class UserController {
 				userService.updatePassword(isUserId, password, newPassword);
 			} catch (Exception e) {
 				log.error("修改密码失败");
-				return new ErrorBean(10002,"原始密码错误");
+				return new ErrorBean(10003,"修改密码失败");
 			}
 		}
 		return new SuccessBean("修改成功");
@@ -298,7 +299,7 @@ public class UserController {
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");
-			return new ErrorBean(10002,"修改失败");
+			return new ErrorBean(10003,"修改失败");
 		}
 		return new SuccessBean(tokenInfo);
 	}
