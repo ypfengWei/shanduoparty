@@ -111,14 +111,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public int zfbUpdateOrder(String orderId) {
-		pay(orderId, "2");
-		return 1;
-	}
-	
-	@Override
-	public int wxUpdateOrder(String orderId) {
-		pay(orderId, "3");
+	public int updateOrder(String orderId,String typeId) {
+		pay(orderId, typeId);
 		return 1;
 	}
 	

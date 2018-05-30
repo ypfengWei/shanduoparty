@@ -167,10 +167,10 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Override
 	public int addExperience(Integer userId, String moneyType) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		int gradeA = LevelUtils.getLevel(userMoney.getExperience());
+		int levelA = LevelUtils.getLevel(userMoney.getExperience());
 		int addExperience = getVipExperience(userId,moneyType);
 		Integer experience = userMoney.getExperience() + addExperience;
-		int gradeB = LevelUtils.getLevel(experience);
+		int levelB = LevelUtils.getLevel(experience);
 		userMoney.setExperience(experience);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -194,9 +194,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
-		if(gradeB > gradeA) {
+		if(levelB > levelA) {
 			try {
-				moneyService.payBeans(userId, 10*gradeA,"2");
+				moneyService.payBeans(userId, 10*levelA,"2");
 			} catch (Exception e) {
 				throw new RuntimeException();
 			}
@@ -252,10 +252,10 @@ public class ExperienceServiceImpl implements ExperienceService {
 	
 	public int saveSignin(Integer userId,String signinType) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		int gradeA = LevelUtils.getLevel(userMoney.getExperience());
+		int levelA = LevelUtils.getLevel(userMoney.getExperience());
 		int addExperience = getVipExperience(userId,signinType);
 		Integer experience = userMoney.getExperience() + addExperience;
-		int gradeB = LevelUtils.getLevel(experience);
+		int levelB = LevelUtils.getLevel(experience);
 		userMoney.setExperience(experience);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
@@ -267,9 +267,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
-		if(gradeB > gradeA) {
+		if(levelB > levelA) {
 			try {
-				moneyService.payBeans(userId, 10*gradeA,"2");
+				moneyService.payBeans(userId, 10*levelA,"2");
 			} catch (Exception e) {
 				throw new RuntimeException();
 			}

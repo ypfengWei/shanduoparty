@@ -87,7 +87,7 @@ public class AttentionController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
+		if(StringUtils.isNull(userId) || !PatternUtils.patternUser(userId)) {
 			log.error("账号格式错误");
 			return new ErrorBean(10002,"账号格式错误");
 		}
