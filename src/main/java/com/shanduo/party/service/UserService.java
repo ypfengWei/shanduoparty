@@ -29,6 +29,20 @@ public interface UserService {
 	int saveUser(String phone,String password);
 	
 	/**
+	 * 用户注册
+	 * @Title: saveUser
+	 * @Description: TODO
+	 * @param @param phone
+	 * @param @param password
+	 * @param @param name
+	 * @param @param gender
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int saveUser(String phone,String password,String name,String gender);
+	
+	/**
 	 * 检查手机号是否注册
 	 * @Title: checkPhone
 	 * @Description: TODO

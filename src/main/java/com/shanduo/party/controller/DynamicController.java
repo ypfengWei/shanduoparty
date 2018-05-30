@@ -344,7 +344,6 @@ public class DynamicController {
 	 * @param @param typeId 评论类型:1.1级,2.2级
 	 * @param @param commentId 1级评论ID
 	 * @param @param respondent 1级评论用户ID
-	 * @param @param picture 图片
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
@@ -352,7 +351,7 @@ public class DynamicController {
 	@RequestMapping(value = "savecomment",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean saveComment(HttpServletRequest request,String token,String dynamicId,
-			String comment,String typeId,String commentId,String respondent,String picture) {
+			String comment,String typeId,String commentId,String respondent) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -362,9 +361,9 @@ public class DynamicController {
 			log.error("动态ID为空");
 			return new ErrorBean(10002,"动态ID为空");
 		}
-		if(StringUtils.isNull(comment) && StringUtils.isNull(picture)) {
-				log.error("评论内容为空");
-				return new ErrorBean(10002,"评论内容为空");
+		if(StringUtils.isNull(comment)) {
+			log.error("评论内容为空");
+			return new ErrorBean(10002,"评论内容为空");
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("评论类型错误");
@@ -381,7 +380,7 @@ public class DynamicController {
 			}
 		}
 		try {
-			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, respondent, picture);
+			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, respondent);
 		} catch (Exception e) {
 			log.error("评论失败");
 			return new ErrorBean(10003,"评论失败");

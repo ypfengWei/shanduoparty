@@ -11,8 +11,6 @@ public class DynamicComment {
 
     private String comment;
 
-    private String picture;
-
     private String replyType;
 
     private String commentId;
@@ -57,14 +55,6 @@ public class DynamicComment {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture == null ? null : picture.trim();
     }
 
     public String getReplyType() {

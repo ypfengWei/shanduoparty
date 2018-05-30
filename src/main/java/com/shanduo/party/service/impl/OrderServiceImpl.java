@@ -166,9 +166,11 @@ public class OrderServiceImpl implements OrderService {
 	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String type) {
 		//1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
 		switch (type) {
+			case "1":
+				break;
 			case "2":
 				try {
-					moneyService.consumeMoney(userId, money, "开通VIP");
+					moneyService.consumeMoney(userId, money, "开通"+month+"个月VIP");
 					vipService.updateVip(userId, month, "0");
 				} catch (Exception e) {
 					throw new RuntimeException();
@@ -176,7 +178,7 @@ public class OrderServiceImpl implements OrderService {
 				break;
 			case "3":
 				try {
-					moneyService.consumeMoney(userId, money, "开通SVIP");
+					moneyService.consumeMoney(userId, money, "开通"+month+"个月SVIP");
 					vipService.updateVip(userId, month, "1");
 				} catch (Exception e) {
 					throw new RuntimeException();

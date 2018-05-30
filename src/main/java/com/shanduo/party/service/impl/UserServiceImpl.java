@@ -100,6 +100,40 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public int saveUser(String phone,String password,String name,String gender) {
+		password = MD5Utils.getInstance().getMD5(password);
+		ShanduoUser user = new ShanduoUser();
+		user.setUserName(name);
+		user.setPhoneNumber(phone);
+		user.setPassWord(password);
+		user.setGender(gender);
+		long time = System.currentTimeMillis();
+		Format format = new SimpleDateFormat("yyyy-MM-dd");
+		user.setBirthday(format.format(time));
+		user.setSignature("这个人很懒,什么也不留下");
+		int i = userMapper.insertUser(user);
+		if(i < 1) {
+			log.error("用户记录插入失败");
+			throw new RuntimeException();
+		}
+		UserMoney money = new UserMoney();
+		money.setUserId(user.getId());
+		int n = moneyMapper.insertSelective(money);
+		if(n < 1) {
+			log.error("用户币种插入失败");
+			throw new RuntimeException();
+		}
+		ShanduoReputation shanduoReputation = new ShanduoReputation();
+		shanduoReputation.setUserId(user.getId());
+		int count = shanduoReputationMapper.insertSelective(shanduoReputation);
+		if(count < 1) {
+			log.error("信誉添加失败");
+			throw new RuntimeException();
+		}
+		return user.getId();
+	}
+	
+	@Override
 	public boolean checkPhone(String phone) {
 		ShanduoUser user = userMapper.selectByPhone(phone);
 		if(user != null) {

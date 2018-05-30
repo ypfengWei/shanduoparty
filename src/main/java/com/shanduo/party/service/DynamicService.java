@@ -135,12 +135,11 @@ public interface DynamicService {
 	 * @param @param typeId 评论类型
 	 * @param @param commentId 1级评论ID
 	 * @param @param respondent 1级评论用户ID
-	 * @param @param picture 图片
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int saveDynamicComment(Integer userId,String dynamicId,String comment,String typeId,String commentId,String respondent,String picture);
+	int saveDynamicComment(Integer userId,String dynamicId,String comment,String typeId,String commentId,String respondent);
 	
 	
 	/**

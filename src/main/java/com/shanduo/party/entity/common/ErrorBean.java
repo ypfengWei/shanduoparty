@@ -13,7 +13,7 @@ public class ErrorBean extends ResultBean {
 	/**
 	 * 错误码
 	 */
-    private Integer errorCode;
+    private Integer errCode;
     /**
      * 错误原因
      */
@@ -32,22 +32,22 @@ public class ErrorBean extends ResultBean {
      */
     public ErrorBean(Integer errorCode,String errCodeDes) {
     	this.setSuccess(false);
-    	this.setErrorCode(errorCode);
+    	this.setErrCode(errorCode);
     	this.setErrCodeDes(errCodeDes);
     }
 
-	public Integer getErrorCode() {
-		return errorCode;
+	public Integer getErrCode() {
+		return errCode;
 	}
-	
-	public void setErrorCode(Integer errorCode) {
-		this.errorCode = errorCode;
+
+	public void setErrCode(Integer errCode) {
+		this.errCode = errCode;
 	}
-	
+
 	public String getErrCodeDes() {
 		return errCodeDes;
 	}
-	
+
 	public void setErrCodeDes(String errCodeDes) {
 		this.errCodeDes = errCodeDes;
 	}

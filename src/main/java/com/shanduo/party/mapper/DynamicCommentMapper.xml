@@ -6,7 +6,6 @@
     <result column="dynamic_id" jdbcType="VARCHAR" property="dynamicId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="comment" jdbcType="VARCHAR" property="comment" />
-    <result column="picture" jdbcType="VARCHAR" property="picture" />
     <result column="reply_type" jdbcType="CHAR" property="replyType" />
     <result column="comment_id" jdbcType="VARCHAR" property="commentId" />
     <result column="respondent" jdbcType="INTEGER" property="respondent" />
@@ -16,8 +15,8 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, dynamic_id, user_id, comment, picture, reply_type, comment_id, respondent, remarks, 
-    create_date, update_date, del_flag
+    id, dynamic_id, user_id, comment, reply_type, comment_id, respondent, remarks, create_date, 
+    update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -31,15 +30,13 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.DynamicComment">
     insert into dynamic_comment (id, dynamic_id, user_id, 
-      comment, picture, reply_type, 
-      comment_id, respondent, remarks, 
-      create_date, update_date, del_flag
-      )
+      comment, reply_type, comment_id, 
+      respondent, remarks, create_date, 
+      update_date, del_flag)
     values (#{id,jdbcType=VARCHAR}, #{dynamicId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
-      #{comment,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, #{replyType,jdbcType=CHAR}, 
-      #{commentId,jdbcType=VARCHAR}, #{respondent,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
-      )
+      #{comment,jdbcType=VARCHAR}, #{replyType,jdbcType=CHAR}, #{commentId,jdbcType=VARCHAR}, 
+      #{respondent,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.DynamicComment">
     insert into dynamic_comment
@@ -55,9 +52,6 @@
       </if>
       <if test="comment != null">
         comment,
-      </if>
-      <if test="picture != null">
-        picture,
       </if>
       <if test="replyType != null">
         reply_type,
@@ -94,9 +88,6 @@
       <if test="comment != null">
         #{comment,jdbcType=VARCHAR},
       </if>
-      <if test="picture != null">
-        #{picture,jdbcType=VARCHAR},
-      </if>
       <if test="replyType != null">
         #{replyType,jdbcType=CHAR},
       </if>
@@ -132,9 +123,6 @@
       <if test="comment != null">
         comment = #{comment,jdbcType=VARCHAR},
       </if>
-      <if test="picture != null">
-        picture = #{picture,jdbcType=VARCHAR},
-      </if>
       <if test="replyType != null">
         reply_type = #{replyType,jdbcType=CHAR},
       </if>
@@ -164,7 +152,6 @@
     set dynamic_id = #{dynamicId,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=INTEGER},
       comment = #{comment,jdbcType=VARCHAR},
-      picture = #{picture,jdbcType=VARCHAR},
       reply_type = #{replyType,jdbcType=CHAR},
       comment_id = #{commentId,jdbcType=VARCHAR},
       respondent = #{respondent,jdbcType=INTEGER},
@@ -182,7 +169,7 @@
     where del_flag = '0' and id = #{0} and user_id = #{1}
   </update>
   <select id="dynamicIdCount" parameterType="java.lang.String" resultType="java.lang.Integer">
-    select 
+    select
     count(id)
     from dynamic_comment
     where dynamic_id = #{dynamicId,jdbcType=VARCHAR}
@@ -221,7 +208,7 @@
 		dc.id,dc.dynamic_id as dynamicId,dc.comment_id as commentId,
  		usOne.id as userId,usOne.user_name as userName,usOne.head_portrait_id as portraitId,
  		usTwo.id as replyId,usTwo.user_name as replyName,
- 		dc.`comment`,dc.create_date
+ 		dc.`comment`,dc.create_date as createDate
 	from dynamic_comment dc
 	 	join shanduo_user usOne on usOne.id = dc.user_id
 	 	join shanduo_user usTwo on usTwo.id = dc.respondent
