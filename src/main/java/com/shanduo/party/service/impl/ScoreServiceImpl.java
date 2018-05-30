@@ -55,7 +55,6 @@ public class ScoreServiceImpl implements ScoreService {
 			log.error("评价失败");
 			throw new RuntimeException();
 		}
-		
 		if(!getRecord(userId, activityId, score, evaluationcontent, 1)) {
 			log.error("信誉历史数据添加失败");
 			throw new RuntimeException();
@@ -99,21 +98,19 @@ public class ScoreServiceImpl implements ScoreService {
 	@Override
 	public int updateById(String time) {
 		int i = activityScoreMapper.updateById(time);
-		if (i < 1) {
-			log.error("修改失败");
-			throw new RuntimeException();
+		if (i > 0) {
+			return i;
 		}
-		return 1;
+		return 0;
 	}
 
 	@Override
 	public int updateByIdTime(String time) {
 		int i = activityScoreMapper.updateByIdTime(time);
-		if (i < 1) {
-			log.error("修改失败");
-			throw new RuntimeException();
+		if (i > 0) {
+			return i;
 		}
-		return 1;
+		return 0;
 	}
 	
 	@Override
@@ -131,12 +128,11 @@ public class ScoreServiceImpl implements ScoreService {
 				Integer shanduoReputation = shanduoReputationMapper.selectByUserId(otherUserId);
 				i = shanduoReputationMapper.updateByUserId(otherUserId, shanduoReputation+ScoreUtils.getScore(otherUserId));
 			}
-			if(i < 1) {
-				log.error("信誉修改失败");
-				throw new RuntimeException();
+			if(i > 0) {
+				return i;
 			}
 		}
-		return 1;
+		return 0;
 	}
 	
 	public boolean getRecord(Integer userId, String activityId, Integer score, String evaluation, Integer type) {
@@ -186,7 +182,6 @@ public class ScoreServiceImpl implements ScoreService {
 				break;
 		}
 		}
-		
 		int n =reputationRecordMapper.insertSelective(shanduoReputationRecord);
 		if(n < 1) {
 			log.error("信誉历史记录添加失败");

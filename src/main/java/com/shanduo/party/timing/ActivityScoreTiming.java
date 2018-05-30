@@ -39,9 +39,8 @@ public class ActivityScoreTiming {
 	public void updTiming() {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String createDate = format.format(time - 1000 * 60 * 60 * 12);
+		String createDate = format.format(time - 1000 * 60 * 60 * 24 * 7);
 		int i = scoreService.updateById(createDate);
-//		int count = shanduoReputationMapper.insertSelective(record);
 		logger.info("参与者默认好评:"+i);
 	}
 	
@@ -57,7 +56,7 @@ public class ActivityScoreTiming {
 	public void twoUpdTiming() {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String createDate = format.format(time - 1000 * 60 * 60 * 12);
+		String createDate = format.format(time - 1000 * 60 * 60 * 24 * 7);
 		int i = scoreService.updateByIdTime(createDate);
 		logger.info("发起者默认好评:"+i);
 	}

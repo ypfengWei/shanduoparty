@@ -364,7 +364,7 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "joinActivities", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type){
+	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type, String[] userIds){
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -374,7 +374,7 @@ public class ActivityController {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
 		}
-		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+		if(StringUtils.isNull(type) || !type.matches("^[123]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}
@@ -417,7 +417,7 @@ public class ActivityController {
 				log.error("参加活动失败");
 				return new ErrorBean(10003,"参加活动失败");
 			}
-//		添加每日参加活动经验值，日限制2次/10点经验
+			//添加每日参加活动经验值，日限制2次/10点经验
 			if(!experienceService.checkCount(userToken, "8")) {
 				try {
 					experienceService.addExperience(userToken, "8");
@@ -426,12 +426,23 @@ public class ActivityController {
 				}
 			}
 			return new SuccessBean("报名成功");
-		} else {
+		} else if("2".equals(type)){
 			try {
 				activityService.deleteByUserId(activityId, userToken);
 			} catch (Exception e) {
 				log.error("活动取消失败");
 				return new ErrorBean(10003,"活动取消失败");
+			}
+		} else{
+			if(userIds.length<1) {
+				log.error("想踢的用户不能为空");
+				return new ErrorBean(10002,"想踢的用户不能为空");
+			}
+			try {
+				activityService.deleteByUserIds(activityId, userToken, userIds);
+			} catch (Exception e) {
+				log.error("踢人失败");
+				return new ErrorBean(10003,"踢人失败");
 			}
 		}
 		return new SuccessBean("取消成功");

@@ -269,7 +269,19 @@ public interface ActivityService {
      * @return int    返回类型
      * @throws
      */
-    int deleteByUserId(String activityId, Integer userId);
+    int deleteByUserId(String activityId, Integer token);
+    
+    /**
+     * 踢人
+     * @Title: deleteByUserIds
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @param userId
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
+    int deleteByUserIds(String activityId, Integer token, String[] userId);
     
     /**
      * 查看单个活动详情

@@ -128,27 +128,6 @@ public class ScoreController {
 		}
 		return new SuccessBean("评价成功");
 	}
-//		Integer userToken = baseService.checkUserToken(token);
-//		if(("0").equals(beEvaluationSign)) {
-//			if(StringUtils.isNull(activityId)) {
-//				log.error("活动ID为空");
-//				return new ErrorBean("活动ID为空");
-//			}
-//			if (StringUtils.isNull(othersScore) || !othersScore.matches("^[1-5]$")) {
-//				log.error("评分为空");
-//				return new ErrorBean("评分为空");
-//			}
-//			try {
-//				scoreService.updateByUserId(userToken, activityId, Integer.parseInt(othersScore), beEvaluated);
-//			} catch (Exception e) {
-//				return new ErrorBean("评价失败");
-//			}
-//			return new SuccessBean("评价成功");
-//		} else {
-//			return new ErrorBean("已评价");
-//		}
-//		return null;
-//	}
 	
 	/**
 	 * 查询历史评价

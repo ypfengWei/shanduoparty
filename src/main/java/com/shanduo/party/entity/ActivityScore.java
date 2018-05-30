@@ -9,6 +9,8 @@ public class ActivityScore {
 
     private String activityId;
 
+    private String gender;
+
     private Integer score;
 
     private Integer othersScore;
@@ -47,6 +49,14 @@ public class ActivityScore {
 
     public void setActivityId(String activityId) {
         this.activityId = activityId == null ? null : activityId.trim();
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender == null ? null : gender.trim();
     }
 
     public Integer getScore() {
