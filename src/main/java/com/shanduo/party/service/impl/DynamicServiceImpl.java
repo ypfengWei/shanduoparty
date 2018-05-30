@@ -232,14 +232,13 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public int saveDynamicComment(Integer userId, String dynamicId, String comment, String typeId, String commentId,String respondent,String picture) {
+	public int saveDynamicComment(Integer userId, String dynamicId, String comment, String typeId, String commentId,String respondent) {
 		String id = UUIDGenerator.getUUID();
 		DynamicComment comments = new DynamicComment();
 		comments.setId(id);
 		comments.setUserId(userId);
 		comments.setDynamicId(dynamicId);
 		comments.setComment(SensitiveWord.filterInfo(comment));
-		comments.setPicture(picture);
 		comments.setReplyType(typeId);
 		if("2".equals(typeId)) {
 			comments.setCommentId(commentId);

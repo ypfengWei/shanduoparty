@@ -258,10 +258,47 @@
   </update>
   
   <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.shanduo.party.entity.ShanduoUser">
-    insert into shanduo_user (user_name, pass_word,
-      phone_number, birthday,signature)
-    values (#{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
-     #{phoneNumber,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR})
+     insert into shanduo_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="passWord != null">
+        pass_word,
+      </if>
+      <if test="phoneNumber != null">
+        phone_number,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="signature != null">
+        signature,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null">
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=CHAR},
+      </if>
+      <if test="signature != null">
+        #{signature,jdbcType=VARCHAR},
+      </if>
+    </trim>
   </insert>
   <select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
