@@ -37,7 +37,7 @@ public class ScoreUtils {
 	
 	
 	/**
-	 * 返回单张图片URL
+	 * 两个用户之间一个月的信誉分记录最高加减6分
 	 * @Title: getPictureUrl
 	 * @Description: TODO
 	 * @param @param id
@@ -56,10 +56,18 @@ public class ScoreUtils {
         if(i>=6 || i<=-6){
         	return false;
         }
-        
 		return true;
 	}
 	
+	/**
+	 * 单个用户一天的信誉分最高加减10分
+	 * @Title: getScore
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param otherUserId
+	 * @param @return    设定文件
+	 * @return int    返回类型
+	 * @throws
+	 */
 	public static int getScore(Integer otherUserId) {
         Integer a = reputationRecordsMapper.selectByUserId( otherUserId, DateFormatUtils.format(new Date(), "yyyy-MM-dd 00:00:00"), "1");
         if(a>=10 ){

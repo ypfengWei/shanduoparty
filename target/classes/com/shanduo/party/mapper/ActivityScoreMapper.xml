@@ -5,6 +5,7 @@
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
     <result column="score" jdbcType="INTEGER" property="score" />
     <result column="others_score" jdbcType="INTEGER" property="othersScore" />
     <result column="evaluation_content" jdbcType="VARCHAR" property="evaluationContent" />
@@ -15,7 +16,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, activity_id, score, others_score, evaluation_content, be_evaluated, 
+    id, user_id, activity_id, gender, score, others_score, evaluation_content, be_evaluated, 
     remarks, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -30,13 +31,15 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ActivityScore">
     insert into activity_score (id, user_id, activity_id, 
-      score, others_score, evaluation_content, 
-      be_evaluated, remarks, create_date, 
-      update_date, del_flag)
+      gender, score, others_score, 
+      evaluation_content, be_evaluated, remarks, 
+      create_date, update_date, del_flag
+      )
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
-      #{score,jdbcType=INTEGER}, #{othersScore,jdbcType=INTEGER}, #{evaluationContent,jdbcType=VARCHAR}, 
-      #{beEvaluated,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+      #{gender,jdbcType=CHAR}, #{score,jdbcType=INTEGER}, #{othersScore,jdbcType=INTEGER}, 
+      #{evaluationContent,jdbcType=VARCHAR}, #{beEvaluated,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.ActivityScore">
     insert into activity_score
@@ -49,6 +52,9 @@
       </if>
       <if test="activityId != null">
         activity_id,
+      </if>
+      <if test="gender != null">
+        gender,
       </if>
       <if test="score != null">
         score,
@@ -85,6 +91,9 @@
       <if test="activityId != null">
         #{activityId,jdbcType=VARCHAR},
       </if>
+      <if test="gender != null">
+        #{gender,jdbcType=CHAR},
+      </if>
       <if test="score != null">
         #{score,jdbcType=INTEGER},
       </if>
@@ -120,6 +129,9 @@
       <if test="activityId != null">
         activity_id = #{activityId,jdbcType=VARCHAR},
       </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=CHAR},
+      </if>
       <if test="score != null">
         score = #{score,jdbcType=INTEGER},
       </if>
@@ -151,6 +163,7 @@
     update activity_score
     set user_id = #{userId,jdbcType=INTEGER},
       activity_id = #{activityId,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=CHAR},
       score = #{score,jdbcType=INTEGER},
       others_score = #{othersScore,jdbcType=INTEGER},
       evaluation_content = #{evaluationContent,jdbcType=VARCHAR},
@@ -221,31 +234,40 @@
     update 
     activity_score 
     set del_flag = '1' 
-    where activity_id = #{0} and user_id = #{1}
+    where activity_id = #{0} and user_id = #{1} and del_flag = '0'
+  </update>
+  <update id="deleteByUserIds">
+    update 
+    activity_score 
+    set del_flag = '1' 
+    where activity_id = #{0} and del_flag = '0' and user_id in 
+	<foreach collection="list" index="index" item="userId" open="(" separator="," close=")">  
+         #{userId}  
+    </foreach>
   </update>
   <select id="selectByGender" parameterType="java.lang.String" resultType="map">
     select 
-    remarks as gender,count(remarks) as count 
+    gender,count(gender) as count 
     from activity_score 
  	where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
-	group by remarks
+	group by gender
   </select>
   <update id="deleteByActivityId">
     update 
     activity_score 
     set del_flag = '1' 
-    where activity_id = #{0}
+    where activity_id = #{0} and del_flag = '0'
   </update>
   <select id="selectByUserId" resultType="java.lang.String">
   	select 
   	gender 
   	from shanduo_user 
-  	where id = #{0}
+  	where id = #{0} and del_flag = '0'
   </select>
   <select id="selectByGenders" resultType="java.lang.Integer">
   	select 
   	count(id) 
   	from activity_score 
-  	where remarks = #{1} and activity_id = #{0}
+  	where gender = #{1} and activity_id = #{0} and del_flag = '0'
   </select>
 </mapper>

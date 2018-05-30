@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -257,16 +258,6 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserId(userId, pageNum, page.getPageSize());
 		activity(resultList, lon, lat,1);
-//		for (ActivityInfo activityInfo : resultList) {
-//			Map<String, Object> map = shanduoActivityMapper.count(activityInfo.getId());
-//			Integer i = Integer.parseInt(map.get("user_id").toString()); //参加记录
-//			Integer count = Integer.parseInt(map.get("others_score").toString()); //评分记录
-//			if(i > count) {
-//				activityInfo.setTypeId(2); //发起者未评价
-//			} else {
-//				activityInfo.setTypeId(3); //发起者已评价
-//			}
-//		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
@@ -300,7 +291,7 @@ public class ActivityServiceImpl implements ActivityService {
 		activityScore.setUserId(userId);
 		activityScore.setActivityId(activityId);
 		ShanduoUser shanduoUser = shanduoUserMapper.selectByPrimaryKey(userId);
-		activityScore.setRemarks(shanduoUser.getGender());
+		activityScore.setGender(shanduoUser.getGender());
 		int i = activityScoreMapper.insertSelective(activityScore);
 		if(i < 1) {
 			log.error("参加活动失败");
@@ -398,18 +389,38 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public int deleteByUserId(String activityId, Integer userId) {
+	public int deleteByUserId(String activityId, Integer token) {
 		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
 		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
 			log.error("该活动已过期");
 			throw new RuntimeException();
 		} else {
-			int i = activityScoreMapper.deleteByUserId(activityId, userId);
+			int i = activityScoreMapper.deleteByUserId(activityId, token);
 			if(i < 1) {
 				log.error("取消活动失败");
 				throw new RuntimeException();
 			}
 		}
+		return 1;
+	}
+	
+	@Override
+	public int deleteByUserIds(String activityId, Integer token, String[] userIds) {
+		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
+		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
+			log.error("该活动已过期");
+			throw new RuntimeException();
+		} else if(token.equals(activity.getUserId())){
+			List<Integer> list = new ArrayList<>();
+			for(int i=0;i< userIds.length;i++) {
+				list.add(Integer.parseInt(userIds[i]));
+			}
+			int i = activityScoreMapper.deleteByUserIds(activityId, list);
+			if(i < 1) {
+				log.error("踢人失败");
+				throw new RuntimeException();
+			}
+		} 
 		return 1;
 	}
 	

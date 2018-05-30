@@ -58,16 +58,17 @@ public class ActivityController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityType
-	 * @param @param activityStartTime
-	 * @param @param activityAddress
-	 * @param @param mode
-	 * @param @param manNumber
-	 * @param @param womanNumber
-	 * @param @param remarks
-	 * @param @param activityCutoffTime
-	 * @param @param lon
-	 * @param @param lat
+	 * @param @param activityName 活动标题
+	 * @param @param activityStartTime 活动开始时间
+	 * @param @param activityAddress 活动地址
+	 * @param @param mode 消费方式
+	 * @param @param manNumber 男生人数
+ 	 * @param @param womanNumber 女生人数
+	 * @param @param remarks 活动内容
+	 * @param @param activityCutoffTime 活动报名截止时间
+	 * @param @param lon 经度
+	 * @param @param lat 纬度
+	 * @param @param detailedAddress 活动详细地址
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -167,7 +168,7 @@ public class ActivityController {
 	 * @Title: deleteActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
-	 * @param @param avtivityId
+	 * @param @param avtivityId 活动id
 	 * @param @param token
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
@@ -206,12 +207,12 @@ public class ActivityController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param type
-	 * @param @param page
-	 * @param @param pageSize
-	 * @param @param lon
-	 * @param @param lat
-	 * @param @param token
-	 * @param @param userId
+	 * @param @param page 页码
+	 * @param @param pageSize 记录
+	 * @param @param lon 经度
+	 * @param @param lat 纬度
+	 * @param @param token 
+	 * @param @param userId 用户id看别人活动才传
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -278,9 +279,11 @@ public class ActivityController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityId
-	 * @param @param page
-	 * @param @param pageSize
+	 * @param @param activityId 活动id
+	 * @param @param page 页码
+	 * @param @param pageSize 记录
+	 * @param @param lon 经度
+	 * @param @param lat 纬度
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -317,9 +320,9 @@ public class ActivityController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityId
-	 * @param @param page
-	 * @param @param pageSize
+	 * @param @param activityId 活动id
+	 * @param @param page 页码
+	 * @param @param pageSize 记录
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -353,18 +356,21 @@ public class ActivityController {
 	/**
 	 * type = 1 参加活动
 	 * type = 2 取消活动
+	 * type = 3 踢人
 	 * @Title: joinActivities
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityId
+	 * @param @param activityId 活动id
+	 * @param @param type 
+	 * @param @param userIds 用户Id,我的活动才传
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "joinActivities", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type){
+	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type, String[] userIds){
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -374,7 +380,7 @@ public class ActivityController {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
 		}
-		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+		if(StringUtils.isNull(type) || !type.matches("^[123]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}
@@ -417,7 +423,7 @@ public class ActivityController {
 				log.error("参加活动失败");
 				return new ErrorBean(10003,"参加活动失败");
 			}
-//		添加每日参加活动经验值，日限制2次/10点经验
+			//添加每日参加活动经验值，日限制2次/10点经验
 			if(!experienceService.checkCount(userToken, "8")) {
 				try {
 					experienceService.addExperience(userToken, "8");
@@ -426,12 +432,23 @@ public class ActivityController {
 				}
 			}
 			return new SuccessBean("报名成功");
-		} else {
+		} else if("2".equals(type)){
 			try {
 				activityService.deleteByUserId(activityId, userToken);
 			} catch (Exception e) {
 				log.error("活动取消失败");
 				return new ErrorBean(10003,"活动取消失败");
+			}
+		} else{
+			if(userIds.length<1) {
+				log.error("想踢的用户不能为空");
+				return new ErrorBean(10002,"想踢的用户不能为空");
+			}
+			try {
+				activityService.deleteByUserIds(activityId, userToken, userIds);
+			} catch (Exception e) {
+				log.error("踢人失败");
+				return new ErrorBean(10003,"踢人失败");
 			}
 		}
 		return new SuccessBean("取消成功");

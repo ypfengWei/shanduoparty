@@ -3,6 +3,8 @@ package com.shanduo.party.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.shanduo.party.entity.ActivityScore;
 
 public interface ActivityScoreMapper {
@@ -94,6 +96,8 @@ public interface ActivityScoreMapper {
     int updateByUserIdTwo(Integer userId, String activityId, Integer score, String evaluated);
     
     int deleteByUserId(String activityId, Integer userId);
+    
+    int deleteByUserIds(String activityId, @Param("list") List<Integer> list);
     
     int deleteByActivityId(String activityId);
     

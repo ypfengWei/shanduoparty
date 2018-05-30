@@ -137,13 +137,15 @@
   </select>
   <select id="selectByTime" resultType="map">
   	select 
-  	user_id,sum(deduction_count) as deductioncount
+  	user_id,
+  	coalesce(sum(deduction_count),0) as deductioncount
   	from shanduo_reputation_record 
   	where create_date &gt; #{0} and del_flag = '0' and reputation_type='1' 
   	group by user_id
   </select>
   <select id="selectByMany" resultType="java.lang.Integer">
-	select sum(deduction_count) 
+	select 
+	coalesce(sum(deduction_count),0)
   	from shanduo_reputation_record 
   	where user_id = #{0} and otheruser_id = #{1}
   	and reputation_type = #{2}
