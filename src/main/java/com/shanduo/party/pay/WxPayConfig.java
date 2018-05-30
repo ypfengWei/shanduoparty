@@ -33,8 +33,7 @@ public class WxPayConfig {
     /**
      * 交易类型
      */
-    public static final String TRADETYPE_APP = "APP";
-    public static final String TRADETYPE_JSAPI = "JSAPI";
+    public static final String TRADETYPE = "APP";
     
     /**
      * 微信统一下单接口地址
@@ -44,8 +43,7 @@ public class WxPayConfig {
     /**
      * 支付回调url
      */
-    public static final String NOTIFY_URL_APP = "https://yapinkeji.com/shanduoparty/jpay/appwxpay";
-    public static final String NOTIFY_URL_JSAPI = "https://yapinkeji.com/shanduoparty/jpay/jsapiwxpay";
+    public static final String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/appwxpay";
     
     /**
      * 调用微信接口的返回值的false

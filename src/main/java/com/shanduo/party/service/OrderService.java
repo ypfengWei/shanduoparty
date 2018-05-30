@@ -52,24 +52,15 @@ public interface OrderService {
 	int updateOrder(String orderId);
 	
 	/**
-	 * 支付宝支付订单
-	 * @Title: zfbUpdateOrder
+	 * 第三方支付订单
+	 * @Title: updateOrder
 	 * @Description: TODO
-	 * @param @param orderId
+	 * @param @param orderId 订单ID
+	 * @param @param typeId 类型ID:2.支付宝;3.微信;4.小程序;
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int zfbUpdateOrder(String orderId);
+	int updateOrder(String orderId,String typeId);
 	
-	/**
-	 * 微信支付订单
-	 * @Title: wxUpdateOrder
-	 * @Description: TODO
-	 * @param @param orderId
-	 * @param @return
-	 * @return int
-	 * @throws
-	 */
-	int wxUpdateOrder(String orderId);
 }

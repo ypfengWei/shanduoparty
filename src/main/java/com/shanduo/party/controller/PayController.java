@@ -21,6 +21,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.pay.AliPayConfig;
+import com.shanduo.party.pay.WechatPayConfig;
 import com.shanduo.party.pay.WxPayConfig;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.WxPayUtils;
@@ -106,7 +107,7 @@ public class PayController {
 				return "SUCCESS";
 			}
 			try {
-				orderService.zfbUpdateOrder(orderId);
+				orderService.updateOrder(orderId,"2");
 			} catch (Exception e) {
 				log.error("修改订单错误");
 				return "SUCCESS";
@@ -114,6 +115,17 @@ public class PayController {
 		}
 		return "SUCCESS";
 	}
+	
+	/**
+	 * 微信回调返回XML
+	 * @param returnCode
+	 * @return
+	 */
+	private String returnXML(String returnCode) {
+        return "<xml><return_code><![CDATA["
+                + returnCode
+                + "]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+    }
 	
 	/**
 	 * 微信支付回调
@@ -176,7 +188,7 @@ public class PayController {
     			return returnXML(WxPayConfig.FAIL);
     		}
     		try {
-				orderService.wxUpdateOrder(orderId);
+				orderService.updateOrder(orderId,"3");
 			} catch (Exception e) {
 				log.error("修改订单错误");
 				return returnXML(WxPayConfig.FAIL);
@@ -187,13 +199,74 @@ public class PayController {
 	}
 	
 	/**
-	 * 微信回调返回XML
-	 * @param returnCode
-	 * @return
+	 * 小程序支付回调
+	 * @Title: jsApiWxPay
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @return
+	 * @param @throws IOException
+	 * @return String
+	 * @throws
 	 */
-	private String returnXML(String returnCode) {
-        return "<xml><return_code><![CDATA["
-                + returnCode
-                + "]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
-    }
+	@RequestMapping(value = "jsapiwxpay")
+	@ResponseBody
+	public String jsApiWxPay(HttpServletRequest request) throws IOException {
+		BufferedReader reader = request.getReader();
+        String line = "";
+        StringBuffer inputString = new StringBuffer();
+        while ((line = reader.readLine()) != null) {
+            inputString.append(line);
+        }
+        String xmlString  = inputString.toString();
+        request.getReader().close();
+        log.info("微信支付回调接口返回XML数据:" + xmlString);
+        Map<String, Object> resultMap = WxPayUtils.Str2Map(xmlString);
+        //验证签名是否微信调用
+        boolean flag = WxPayUtils.isWechatSigns(resultMap, WxPayConfig.KEY, "utf-8");
+        if(flag) {
+        	String returnCode = resultMap.get("return_code").toString();
+    		if(!returnCode.equals("SUCCESS")) {
+    			log.error(resultMap.get("return_msg").toString());
+    			return returnXML(WechatPayConfig.FAIL);
+    		}
+    		String resultCode = resultMap.get("result_code").toString();
+    		if(!resultCode.equals("SUCCESS")) {
+    			log.error(resultMap.get("err_code_des").toString());
+    			return returnXML(WechatPayConfig.FAIL);
+    		}
+    		String appid = resultMap.get("appid").toString();
+    		if(!appid.equals(WechatPayConfig.APPID)) {
+    			log.error("小程序ID不匹配");
+    			return returnXML(WxPayConfig.FAIL);
+    		}
+    		String mchId = resultMap.get("mch_id").toString();
+    		if(!mchId.equals(WechatPayConfig.MCH_ID)) {
+    			log.error("商户号不匹配");
+    			return returnXML(WechatPayConfig.FAIL);
+    		}
+    		String orderId = resultMap.get("out_trade_no").toString();
+    		UserOrder order = orderService.selectByOrderId(orderId);
+			if(order == null) {
+				log.error("订单已操作或不存在");
+				return returnXML(WechatPayConfig.FAIL);
+			}
+    		String totalFee = resultMap.get("total_fee").toString();
+    		//价格，单位为分
+    		BigDecimal amount = order.getMoney();
+    		amount = amount.multiply(new BigDecimal("100"));
+    		if(amount.compareTo(new BigDecimal(totalFee)) != 0) {
+    			log.error("订单金额错误:"+totalFee+","+order.getMoney());
+    			return returnXML(WechatPayConfig.FAIL);
+    		}
+    		try {
+				orderService.updateOrder(orderId,"4");
+			} catch (Exception e) {
+				log.error("修改订单错误");
+				return returnXML(WechatPayConfig.FAIL);
+			}
+    		return returnXML(WechatPayConfig.SUCCESS);
+        }
+    	return returnXML(WechatPayConfig.FAIL);
+	}
+	
 }
