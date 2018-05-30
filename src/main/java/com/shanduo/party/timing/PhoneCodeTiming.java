@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.shanduo.party.common.ShanduoConstants;
 import com.shanduo.party.service.CodeService;
 
 /**
@@ -30,7 +31,7 @@ public class PhoneCodeTiming {
 	
 	/**
 	 * 定时每天 0:0:0自动执行
-	 * 删除过期的验证码记录
+	 * 删除七天前过期的验证码记录
 	 * @Title: delTiming
 	 * @Description: TODO
 	 * @param 
@@ -41,7 +42,7 @@ public class PhoneCodeTiming {
 	public void delTiming() {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String createDate = format.format(time - 1000 * 60 * 10);
+		String createDate = format.format(time - ShanduoConstants.WEEK);
 		int i = codeService.deleteTimer(createDate);
 		log.info("删除过期验证码记录"+i+"条");
 	}

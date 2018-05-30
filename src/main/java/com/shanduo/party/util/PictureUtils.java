@@ -31,6 +31,37 @@ public class PictureUtils {
 		PictureUtils.pictureService = pictureServices;
 	} 
 	
+	/**
+	 * 返回单张图片URL
+	 * @Title: getPictureUrl
+	 * @Description: TODO
+	 * @param @param id
+	 * @param @return
+	 * @return String
+	 * @throws
+	 */
+	public static String getPictureUrl(Object id) {
+		if(id == null || "".equals(id)) {
+			return null;
+		}
+		return pictureService.selectByPictureId(id.toString());
+	}
+	
+	/**
+	 * 返回多张图片URL
+	 * @Title: getPictureUrlList
+	 * @Description: TODO
+	 * @param @param id
+	 * @param @return
+	 * @return List<String>
+	 * @throws
+	 */
+	public static List<String> getPictureUrlList(Object id) {
+		if(id == null || "".equals(id)) {
+			return new ArrayList<>();
+		}
+		return getPictureUrlList(id.toString());
+	}
 	
 	/**
 	 * 返回单张图片URL

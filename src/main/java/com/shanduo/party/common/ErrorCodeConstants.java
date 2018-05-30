@@ -19,7 +19,6 @@ public class ErrorCodeConstants {
     public static final String RC_INFO_OPERATEAMOUNT_IS_MINUS = "充值金额必须大于零";
     public static final String RC_INFO_DECLINE = "拒绝操作，您没有权限进行此项操作";
     public static final String RC_UNKNOWN = "充值未知错误";
-
     
     
 }

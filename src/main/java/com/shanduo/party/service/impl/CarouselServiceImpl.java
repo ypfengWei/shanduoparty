@@ -38,8 +38,7 @@ public class CarouselServiceImpl implements CarouselService {
 			return null;
 		}
 		for (Map<String, Object> map : resultList) {
-			String picture = map.get("picture").toString();
-			map.put("picture", PictureUtils.getPictureUrl(picture));
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture")));
 		}
 		return resultList;
 	}

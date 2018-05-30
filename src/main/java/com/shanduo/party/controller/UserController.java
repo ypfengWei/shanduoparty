@@ -293,7 +293,7 @@ public class UserController {
 			log.error("情感状态错误");
 			return new ErrorBean(10002,"情感状态错误");
 		}
-		TokenInfo tokenInfo = null;
+		TokenInfo tokenInfo = new TokenInfo();
 		try {
 			tokenInfo = userService.updateUser(token,isUserId, name, picture, birthday, 
 					gender, emotion, signature, background, hometown, occupation, school);

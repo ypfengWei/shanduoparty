@@ -48,7 +48,7 @@ public class PatternUtils {
 	 * @throws
 	 */
 	public static boolean patternPassword(String password) {
-		String regEx = "^[0-9A-Za-z]{8,16}$";
+		String regEx = "^[0-9A-Za-z!@#$%^&*()-_+=`~:;'|\\\\\\\\/?\\\\.,<>]{8,16}$";
 		return !password.matches(regEx);
 	}
 	

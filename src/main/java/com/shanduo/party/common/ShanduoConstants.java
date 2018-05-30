@@ -31,7 +31,6 @@ public class ShanduoConstants {
 	public static final String CATEGORY_PRAENTS = "2";// 二级分类
 	public static final String CATEGORY_PRAENT = "3";// 三级分类
 
-	public static final String MASTER_KEY = "xx01";// 登陆验证码万能钥匙
 	public static final int SYSTEM = 17;
 	public static final int ROSTER = 18;
 	public static final int OFFLINE = 19;
@@ -42,6 +41,9 @@ public class ShanduoConstants {
 	public static final int UNIT_NO = 102;
 	public static final int CLASS_NO = 103;
 
+	/**
+	 * 秒，分钟，小时，一天，一周
+	 */
 	public static final long SECOND = 1000;
 	public static final long MINUTE = 60 * SECOND;
 	public static final long HOUR = 60 * MINUTE;

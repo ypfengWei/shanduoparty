@@ -274,7 +274,7 @@ public class UserServiceImpl implements UserService {
 	public List<Map<String, Object>> seekUser(Integer userId,String query) {
 		List<Map<String, Object>> resultList = userMapper.seekUser(query);
 		for (Map<String, Object> map : resultList) {
-			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture")));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
 			int i = attentionService.checkAttention(userId, Integer.parseInt(map.get("userId").toString()));
@@ -293,7 +293,7 @@ public class UserServiceImpl implements UserService {
 		resultMap.put("age", AgeUtils.getAgeFromBirthTime(resultMap.get("age").toString()));
 		resultMap.put("vip", vipService.selectVipLevel(attention));
 		resultMap.put("level", experienceService.selectLevel(attention));
-		resultMap.put("picture", PictureUtils.getPictureUrl(resultMap.get("picture").toString()));
+		resultMap.put("picture", PictureUtils.getPictureUrl(resultMap.get("picture")));
 		int i = attentionService.checkAttention(userId, attention);
 		boolean flag = i==1?true:false;
 		resultMap.put("isAttention", flag);

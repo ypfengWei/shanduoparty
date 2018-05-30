@@ -109,7 +109,7 @@ public class AttentionServiceImpl implements AttentionService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = attentionApplyMapper.selectAttentionList(attention, pageNum, pageSize);
 		for(Map<String, Object> map : resultList) {
-			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture")));
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -182,7 +182,7 @@ public class AttentionServiceImpl implements AttentionService {
 	public List<Map<String, Object>> attentionList(Integer userId,String typeId) {
 		List<Map<String, Object>> resultList = attentionMapper.selectAttentionList(userId, typeId);
 		for(Map<String, Object> map : resultList) {
-			map.put("picture", PictureUtils.getPictureUrl(map.get("picture").toString()));
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture")));
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
 		}

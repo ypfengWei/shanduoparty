@@ -103,9 +103,9 @@ public class DynamicServiceImpl implements DynamicService {
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
 			//保存头像图片URL
-			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			map.put("portraitId", PictureUtils.getPictureUrl(map.get("portraitId")));
 			//动态图片
-			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture").toString()));
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture")));
 			//评论数量
 			map.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 			//点赞人数
@@ -127,7 +127,7 @@ public class DynamicServiceImpl implements DynamicService {
 		int totalRecord = dynamicMapper.attentionCount(userId);
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> resultList =  dynamicMapper.attentionList(userId, pageNum, page.getPageSize());
+		List<Map<String, Object>> resultList = dynamicMapper.attentionList(userId, pageNum, page.getPageSize());
 		addList(resultList, userId, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -182,7 +182,7 @@ public class DynamicServiceImpl implements DynamicService {
 			return null;
 		}
 		//保存头像图片URL
-		resultMap.put("portraitId", PictureUtils.getPictureUrl(resultMap.get("portraitId").toString()));
+		resultMap.put("portraitId", PictureUtils.getPictureUrl(resultMap.get("portraitId")));
 		//回复数量
 		resultMap.put("count", commentMapper.commentsCount(resultMap.get("id").toString()));
 		//保存年龄
@@ -198,7 +198,7 @@ public class DynamicServiceImpl implements DynamicService {
 		List<Map<String, Object>> resultList = commentMapper.oneCommentIdList(dynamicId, pageNum, page.getPageSize());
 		for (Map<String, Object> map : resultList) {
 			//保存头像图片URL
-			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			map.put("portraitId", PictureUtils.getPictureUrl(map.get("portraitId")));
 			//回复数量
 			map.put("count", commentMapper.commentsCount(map.get("id").toString()));
 			//保存年龄
@@ -222,7 +222,7 @@ public class DynamicServiceImpl implements DynamicService {
 		List<Map<String, Object>> resultList = commentMapper.twoCommentIdList(commentId, pageNum, page.getPageSize());
 		for (Map<String, Object> map : resultList) {
 			//保存头像图片URL
-			map.put("portraitId", PictureUtils.getPictureUrl( map.get("portraitId").toString()));
+			map.put("portraitId", PictureUtils.getPictureUrl(map.get("portraitId")));
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
