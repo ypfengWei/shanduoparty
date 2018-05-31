@@ -148,9 +148,6 @@ public class WechatController {
 			return new ErrorBean(10003, "失败");
 		}
 		TokenInfo TokenInfo = userService.loginUser(username, password);
-		if(TokenInfo == null) {
-			
-		}
 		return new SuccessBean(TokenInfo);
 	}
 }

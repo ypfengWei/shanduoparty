@@ -80,4 +80,5 @@ public interface ScoreService {
 	 */
 	int updateByReputation();
 	
+	Map<String, Object> selectReputation(Integer userId);
 }

@@ -127,7 +127,7 @@
   </update>
   
   <select id="selectUserId" parameterType="java.lang.String" resultType="java.lang.Integer">
-    select
+    select 
     user_id
     from user_binding
     where union_id = #{0} and type=#{1}

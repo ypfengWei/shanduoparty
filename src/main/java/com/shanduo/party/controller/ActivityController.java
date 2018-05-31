@@ -460,8 +460,8 @@ public class ActivityController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param page
-	 * @param @param pageSize
+	 * @param @param page 页码
+	 * @param @param pageSize 记录
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -494,7 +494,9 @@ public class ActivityController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityId
+	 * @param @param activityId 活动id
+	 * @param @param lon 经度
+	 * @param @param lat 纬度
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
