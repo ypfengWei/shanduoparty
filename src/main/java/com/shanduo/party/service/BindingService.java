@@ -22,8 +22,29 @@ public interface BindingService {
 	 */
 	Integer selectUserId(String union_id,String type);
 	
+	/**
+	 * 
+	 * @Title: insertSelective
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param openId
+	 * @param @param unionId
+	 * @param @param type
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
 	int insertSelective(int userId,String openId,String unionId,String type);
 	
-	
-	
+	/**
+	 * 获取绑定的openId
+	 * @Title: selectOpenId
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param type
+	 * @param @return
+	 * @return String
+	 * @throws
+	 */
+	String selectOpenId(Integer userId,String type);
 }
