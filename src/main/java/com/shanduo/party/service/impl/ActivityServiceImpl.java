@@ -357,7 +357,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Map<String, Object> selectByHistorical(Integer userId, Integer pageNum, Integer pageSize) {
-		int totalrecord =  shanduoActivityMapper.selectByHistoricalCount(userId);
+		int totalrecord = shanduoActivityMapper.selectByHistoricalCount(userId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByHistorical(userId, pageNum, page.getPageSize());
@@ -413,7 +413,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public List<ActivityInfo> activity(List<ActivityInfo> resultLists, String lon, String lat,int type){
 		List<ActivityInfo>  resultList =  new ArrayList<ActivityInfo>();
 		for(int i=0;i<resultLists.size();i++){
-			ActivityInfo activityInfo = resultList.get(i);
+			ActivityInfo activityInfo = resultLists.get(i);
 			resultList.add(showActivity(activityInfo, lon, lat,type));
 		}
 		return resultList;
@@ -421,10 +421,8 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	public ActivityInfo showActivity(ActivityInfo activityInfo, String lon, String lat, int type){
 		activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-		if(!StringUtils.isNull(lon)&&!StringUtils.isNull(lat)) {
-			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
-			activityInfo.setLocation(location);
-		}
+		double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
+		activityInfo.setLocation(location);
     	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
     	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
 		if(resultMap != null) {
@@ -543,6 +541,15 @@ public class ActivityServiceImpl implements ActivityService {
 		return resultMap;
 	}
 	
+	@Override
+	public Map<String, Object> selectQuery(String query, String lon, String lat) {
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectQuery(query);
+		activity(resultList, lon, lat, 0);
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("resultList", resultList);
+		return resultMap;
+	}
+	
 	public Long get(String time, String timeType, Integer type) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
 		Date cutoff = new Date();
@@ -559,5 +566,4 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		return cutoff.getTime();
 	}
-
 }

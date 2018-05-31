@@ -263,7 +263,7 @@
   </select>
   <select id="selectReputation" resultType="map">
   	select 
-  	su.head_portrait_id,sr.reputation 
+  	su.head_portrait_id,sr.reputation,su.id
   	from shanduo_reputation sr
 	join shanduo_user su on sr.user_id = su.id
 	where su.id = #{0}
@@ -278,10 +278,49 @@
 	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
     and sa.user_id = #{0}
     order by sa.update_date desc
+    limit #{1},#{2}
+  </select>
+  <select id="activityCount" resultType="java.lang.Integer">
+ 	select 
+	count(id)
+	from shanduo_activity
+	where del_flag = '0'
+	and user_id = #{0}
+  </select>
+  <select id="selectActivitys" resultType="map">
+ 	select 
+ 	sa.activity_name,ar.`mode`,
+  	su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.id
+ 	from shanduo_activity sa 
+ 	join activity_score ye on sa.id = ye.activity_id 
+ 	join activity_requirement ar on sa.id = ar.activity_id 
+ 	join shanduo_user su on sa.user_id = su.id 
+ 	where sa.activity_start_time &lt; now() and ye.user_id = #{0}
+ 	and sa.del_flag = '0' and ye.del_flag = '0'
+ 	and ar.del_flag = '0' and su.del_flag = '0'
+ 	order by sa.update_date desc
+    limit #{1},#{2}
+  </select>
+  <select id="activityCounts" resultType="java.lang.Integer">
+ 	select 
+	count(sa.id)
+	from shanduo_activity sa
+	join activity_score ye on ye.activity_id = sa.id 
+	where sa.del_flag = '0' and ye.del_flag = '0'
+	and ye.user_id = #{0} and sa.activity_start_time &lt; now()
   </select>
   <select id="selectScore" resultType="map">
   	select 
   	ye.score,ye.evaluation_content,su.user_name,su.head_portrait_id 
+	from activity_score ye 
+	join shanduo_activity sa on ye.activity_id = sa.id 
+	join shanduo_user su on ye.user_id = su.id
+	where ye.activity_id = #{0} and sa.del_flag = '0' and su.del_flag = '0'
+	order by ye.update_date desc
+  </select>
+  <select id="selectScores" resultType="map">
+  	select 
+  	ye.others_score,ye.be_evaluated,su.user_name,su.head_portrait_id 
 	from activity_score ye 
 	join shanduo_activity sa on ye.activity_id = sa.id 
 	join shanduo_user su on ye.user_id = su.id

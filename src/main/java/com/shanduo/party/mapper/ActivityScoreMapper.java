@@ -105,7 +105,15 @@ public interface ActivityScoreMapper {
     
     Map<String, Object> selectReputation(Integer userId);
     
-    List<Map<String, Object>> selectActivity(Integer userId);
+    List<Map<String, Object>> selectActivity(Integer userId, Integer page, Integer pageSize);
     
     List<Map<String, Object>> selectScore(String activityId);
+    
+    int activityCount(Integer userId);
+    
+    List<Map<String, Object>> selectActivitys(Integer userId, Integer page, Integer pageSize);
+    
+    List<Map<String, Object>> selectScores(String activityId);
+    
+    int activityCounts(Integer userId);
 }

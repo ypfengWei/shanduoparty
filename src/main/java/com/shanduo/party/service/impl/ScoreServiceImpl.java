@@ -20,6 +20,7 @@ import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoReputationRecordMapper;
 import com.shanduo.party.service.ScoreService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
@@ -51,7 +52,9 @@ public class ScoreServiceImpl implements ScoreService {
 	@Autowired
 	private ShanduoActivityMapper shanduoActivityMapper;
 	
-
+	@Autowired
+	private VipService vipService;
+	
 	@Override
 	public int updateActivityScore(Integer userId, String activityId, Integer score, String evaluationcontent) {
 		int i = activityScoreMapper.updateByUserIdTwo(userId,activityId,score,evaluationcontent);
@@ -195,15 +198,19 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 
 	@Override
-	public Map<String, Object> selectReputation(Integer userId) {
+	public Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize) {
 		Map<String, Object> maps = activityScoreMapper.selectReputation(userId);
-		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId);
+		int totalrecord = activityScoreMapper.activityCount(userId); //举办活动记录
+		Page page = new Page(totalrecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //举办的活动
 		List<Map<String, Object>> lists = new ArrayList<>();
 		for (Map<String, Object> map : list) {
 			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
 			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			map.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
 			String activityId = map.get("id").toString();
-			lists = activityScoreMapper.selectScore(activityId);
+			lists = activityScoreMapper.selectScore(activityId); //活动下的参与人与平均
 			for (Map<String, Object> smap : lists) {
 				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
 			}
@@ -211,7 +218,59 @@ public class ScoreServiceImpl implements ScoreService {
 		}
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("maps", maps);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", list);
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, Object> selectReleaseActivity(Integer userId, Integer pageNum, Integer pageSize) {
+		int totalrecord = activityScoreMapper.activityCount(userId); //举办活动记录
+		Page page = new Page(totalrecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //举办的活动
+		List<Map<String, Object>> lists = new ArrayList<>();
+		for (Map<String, Object> map : list) {
+			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
+			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			map.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+			String activityId = map.get("id").toString();
+			lists = activityScoreMapper.selectScore(activityId); //活动下的参与人与平均
+			for (Map<String, Object> smap : lists) {
+				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
+			}
+			map.put("lists", lists);
+		}
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("list", list);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalpage", page.getTotalPage());
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize) {
+		int totalrecord = activityScoreMapper.activityCounts(userId);
+		Page page = new Page(totalrecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize());
+		List<Map<String, Object>> lists = new ArrayList<>();
+		for (Map<String, Object> map : list) {
+			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
+			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			map.put("vipGrade",vipService.selectVipLevel(userId));
+			String activityId = map.get("id").toString();
+			lists = activityScoreMapper.selectScores(activityId);
+			for (Map<String, Object> smap : lists) {
+				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
+			}
+			map.put("lists", lists);
+		}
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("list", list);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalpage", page.getTotalPage());
 		return resultMap;
 	}
 
