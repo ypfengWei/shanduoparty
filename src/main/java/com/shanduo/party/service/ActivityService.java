@@ -281,7 +281,7 @@ public interface ActivityService {
      * @return int    返回类型
      * @throws
      */
-    int deleteByUserIds(String activityId, Integer token, String[] userId);
+    int deleteByUserIds(String activityId, Integer token, String userId);
     
     /**
      * 查看单个活动详情

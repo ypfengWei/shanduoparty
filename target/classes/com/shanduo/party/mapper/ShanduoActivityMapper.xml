@@ -498,4 +498,7 @@
  	where sa.del_flag = '0' and ar.del_flag = '0' 
 	and su.del_flag = '0' and sa.id = #{0}
   </select>
+  <!-- <select id="" resultType="map">
+  	select * from shanduo_activity where activity_name like "%"'我'"%"
+  </select> -->
 </mapper>

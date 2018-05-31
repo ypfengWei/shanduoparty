@@ -1,5 +1,6 @@
 package com.shanduo.party.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,15 +41,44 @@ public class ReputationController {
 	@Autowired
 	private ScoreService scoreService;
 	
+	/**
+	 * 信誉轨迹
+	 * @Title: participant
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param token
+	 * @param @param userId 用户Id看别人信用轨迹才传
+	 * @param @param type 1:自己的信誉轨迹 2:别人的信誉轨迹
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
 	@RequestMapping(value = "creditDetails", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean participant(HttpServletRequest request, String token) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+	public ResultBean participant(HttpServletRequest request, String token, String userId, String type) {
+		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
-		Map<String, Object> resultMap = scoreService.selectReputation(userToken);
+		Map<String, Object> resultMap = new HashMap<>(3);
+		if("1".equals(type)) {
+			Integer userToken = baseService.checkUserToken(token);
+			if (userToken == null) {
+				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			}
+			resultMap = scoreService.selectReputation(userToken);
+		} else {
+			if(StringUtils.isNull(userId)) {
+				log.error("用户id为空");
+				return new ErrorBean(10002,"用户为空");
+			}
+			resultMap = scoreService.selectReputation(Integer.parseInt(userId));
+		}
+		if(resultMap == null) {
+			log.error("用户不存在");
+			return new ErrorBean(10002,"用户不存在");
+		}
 		return new SuccessBean(resultMap);
 	}
 }

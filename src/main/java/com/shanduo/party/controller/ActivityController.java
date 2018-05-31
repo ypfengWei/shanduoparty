@@ -370,7 +370,7 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "joinActivities", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type, String[] userIds){
+	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type, String userIds){
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -432,17 +432,27 @@ public class ActivityController {
 				}
 			}
 			return new SuccessBean("报名成功");
-		} else if("2".equals(type)){
+		} 
+		ShanduoActivity activity = activityService.selectByPrimaryKey(activityId);
+		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
+			log.error("该活动已过期");
+			return new ErrorBean(10002,"想踢的用户不能为空");
+		}
+		if("2".equals(type)){
 			try {
 				activityService.deleteByUserId(activityId, userToken);
 			} catch (Exception e) {
 				log.error("活动取消失败");
 				return new ErrorBean(10003,"活动取消失败");
 			}
-		} else{
-			if(userIds.length<1) {
+		} else {
+			if(StringUtils.isNull(userIds)) {
 				log.error("想踢的用户不能为空");
 				return new ErrorBean(10002,"想踢的用户不能为空");
+			}
+			if(!userToken.equals(activity.getUserId())) {
+				log.error("不是活动发起者禁止踢人");
+				return new ErrorBean(10002,"不是活动发起者禁止踢人");
 			}
 			try {
 				activityService.deleteByUserIds(activityId, userToken, userIds);

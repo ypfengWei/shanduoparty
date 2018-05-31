@@ -390,37 +390,23 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public int deleteByUserId(String activityId, Integer token) {
-		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
-		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
-			log.error("该活动已过期");
+		int i = activityScoreMapper.deleteByUserId(activityId, token);
+		if(i < 1) {
+			log.error("取消活动失败");
 			throw new RuntimeException();
-		} else {
-			int i = activityScoreMapper.deleteByUserId(activityId, token);
-			if(i < 1) {
-				log.error("取消活动失败");
-				throw new RuntimeException();
-			}
 		}
 		return 1;
 	}
 	
 	@Override
-	public int deleteByUserIds(String activityId, Integer token, String[] userIds) {
-		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
-		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
-			log.error("该活动已过期");
-			throw new RuntimeException();
-		} else if(token.equals(activity.getUserId())){
-			List<Integer> list = new ArrayList<>();
-			for(int i=0;i< userIds.length;i++) {
-				list.add(Integer.parseInt(userIds[i]));
-			}
-			int i = activityScoreMapper.deleteByUserIds(activityId, list);
-			if(i < 1) {
+	public int deleteByUserIds(String activityId, Integer token, String userIds) {
+		String[] userId = userIds.split(",");
+		for(int i=0;i< userId.length;i++) {
+			int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userId[i]));
+			if(n < 1) {
 				log.error("踢人失败");
-				throw new RuntimeException();
 			}
-		} 
+		}
 		return 1;
 	}
 	

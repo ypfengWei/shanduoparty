@@ -200,12 +200,12 @@ public class ScoreServiceImpl implements ScoreService {
 		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId);
 		List<Map<String, Object>> lists = new ArrayList<>();
 		for (Map<String, Object> map : list) {
-			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
-			map.put("head_portrait_ids", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
+			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
 			String activityId = map.get("id").toString();
 			lists = activityScoreMapper.selectScore(activityId);
 			for (Map<String, Object> smap : lists) {
-				smap.put("head_portrait_ids", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
+				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
 			}
 			map.put("lists", lists);
 		}
