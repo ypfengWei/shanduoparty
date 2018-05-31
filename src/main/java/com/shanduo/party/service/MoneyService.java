@@ -3,8 +3,6 @@ package com.shanduo.party.service;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.shanduo.party.entity.UserMoney;
-
 /**
  * 闪多币业务层
  * @ClassName: MoneyService
@@ -21,10 +19,10 @@ public interface MoneyService {
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @return
-	 * @return UserMoney
+	 * @return Map<String, Object>
 	 * @throws
 	 */
-	UserMoney selectByUserId(Integer userId);
+	Map<String, Object> selectByUserId(Integer userId);
 	
 	/**
 	 * 查询用户钱包的历史记录
@@ -100,7 +98,7 @@ public interface MoneyService {
 	 * @return boolean
 	 * @throws
 	 */
-	int checkPassword(Integer userId,String password);
+	boolean checkPassword(Integer userId,String password);
 	
 	/**
 	 * 修改支付密码

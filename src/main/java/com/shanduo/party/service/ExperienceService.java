@@ -21,7 +21,7 @@ public interface ExperienceService {
 	 * @return int
 	 * @throws
 	 */
-	int saveMoneyRecord(Integer userId,String moneyType,String remarks);
+	int saveMoneyRecord(Integer userId,String moneyType,String amount,String remarks);
 	
 	/**
 	 * 加经验前检查次数是否已受限制

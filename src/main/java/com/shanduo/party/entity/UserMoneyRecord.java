@@ -1,5 +1,6 @@
 package com.shanduo.party.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class UserMoneyRecord {
@@ -8,6 +9,8 @@ public class UserMoneyRecord {
     private Integer userId;
 
     private String moneyType;
+
+    private BigDecimal amount;
 
     private String remarks;
 
@@ -39,6 +42,14 @@ public class UserMoneyRecord {
 
     public void setMoneyType(String moneyType) {
         this.moneyType = moneyType == null ? null : moneyType.trim();
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public String getRemarks() {

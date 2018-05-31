@@ -180,12 +180,7 @@ public class OrderContrpller {
 			log.error("密码格式错误");
 			return new ErrorBean(10002,"密码格式错误");
 		}
-		int check = moneyService.checkPassword(userId, password);
-		if(check == 0) {
-			log.error("未设置支付密码");
-			return new ErrorBean(10002,"未设置支付密码");
-		}
-		if(check == 1) {
+		if(moneyService.checkPassword(userId, password)) {
 			log.error("支付密码错误");
 			return new ErrorBean(10002,"支付密码错误");
 		}
@@ -380,12 +375,11 @@ public class OrderContrpller {
 		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
 		String paramsString = WxPayUtils.createLinkString(paramsMap);
 		//MD5运算生成签名
-		String sign = WxPayUtils.sign(paramsString, WxPayConfig.KEY, "utf-8").toUpperCase();
+		String sign = WxPayUtils.sign(paramsString, WechatPayConfig.KEY, "utf-8").toUpperCase();
 		//签名
 		paramsMap.put("sign", sign);
 		String paramsXml = WxPayUtils.map2Xmlstring(paramsMap);
-		String result = WxPayUtils.httpRequest(WxPayConfig.PAY_URL, "POST", paramsXml);
-		System.out.println(result);
+		String result = WxPayUtils.httpRequest(WechatPayConfig.PAY_URL, "POST", paramsXml);
 		Map<String, Object> resultMap = WxPayUtils.Str2Map(result);
 		String returnCode = resultMap.get("return_code").toString();
 		if(!returnCode.equals("SUCCESS")) {

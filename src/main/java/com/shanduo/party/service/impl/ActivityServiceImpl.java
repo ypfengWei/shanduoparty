@@ -427,7 +427,7 @@ public class ActivityServiceImpl implements ActivityService {
 	public List<ActivityInfo> activity(List<ActivityInfo> resultLists, String lon, String lat,int type){
 		List<ActivityInfo>  resultList =  new ArrayList<ActivityInfo>();
 		for(int i=0;i<resultLists.size();i++){
-			ActivityInfo activityInfo = resultList.get(i);
+			ActivityInfo activityInfo = resultLists.get(i);
 			resultList.add(showActivity(activityInfo, lon, lat,type));
 		}
 		return resultList;

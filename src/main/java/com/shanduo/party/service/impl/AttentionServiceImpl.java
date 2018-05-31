@@ -57,7 +57,7 @@ public class AttentionServiceImpl implements AttentionService {
 	
 	@Override
 	public int saveAttention(Integer userId, Integer attention) {
-		delAttention(userId, attention, "2");
+		attentionMapper.deleteAttention(userId, attention, "2");
 		UserAttention attentions = new UserAttention();
 		attentions.setId(UUIDGenerator.getUUID());
 		attentions.setUserId(userId);
@@ -67,6 +67,7 @@ public class AttentionServiceImpl implements AttentionService {
 			log.error("添加好友记录失败");
 			throw new RuntimeException();
 		}
+		attentions = new UserAttention();
 		attentions.setId(UUIDGenerator.getUUID());
 		attentions.setUserId(attention);
 		attentions.setAttention(userId);

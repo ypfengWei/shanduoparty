@@ -46,11 +46,12 @@ public class ExperienceServiceImpl implements ExperienceService {
 	private VipService vipService;
 	
 	@Override
-	public int saveMoneyRecord(Integer userId, String moneyType, String remarks) {
+	public int saveMoneyRecord(Integer userId, String moneyType,String amount,String remarks) {
 		UserMoneyRecord moneyRecord = new UserMoneyRecord();
 		moneyRecord.setId(UUIDGenerator.getUUID());
 		moneyRecord.setUserId(userId);
 		moneyRecord.setMoneyType(moneyType);
+		moneyRecord.setAmount(new BigDecimal(amount));
 		moneyRecord.setRemarks(remarks);
 		int i = moneyRecordMapper.insertSelective(moneyRecord);
 		if(i < 1) {
@@ -190,7 +191,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 			remarks = "参加活动获得经验值:+"+addExperience;
 		}
 		try {
-			saveMoneyRecord(userId, moneyType,remarks);
+			saveMoneyRecord(userId, moneyType,addExperience+"",remarks);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -263,7 +264,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 			throw new RuntimeException();
 		}
 		try {
-			saveMoneyRecord(userId, "3","签到获得经验值:+"+addExperience);
+			saveMoneyRecord(userId, "3",addExperience+"","签到获得经验值:+"+addExperience);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
