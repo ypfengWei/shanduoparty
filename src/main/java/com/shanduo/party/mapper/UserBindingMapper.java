@@ -16,4 +16,6 @@ public interface UserBindingMapper {
     int updateByPrimaryKey(UserBinding record);
     
     Integer selectUserId(String union_id,String type);
+    
+    String selectOpenId(Integer userId,String type);
 }

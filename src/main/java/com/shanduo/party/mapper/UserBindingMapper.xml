@@ -132,4 +132,10 @@
     from user_binding
     where union_id = #{0} and type=#{1}
   </select>
+  <select id="selectOpenId" resultType="java.lang.String">
+    select
+    open_id
+    from user_binding
+    where user_id = #{0} and type=#{1}
+  </select>
 </mapper>

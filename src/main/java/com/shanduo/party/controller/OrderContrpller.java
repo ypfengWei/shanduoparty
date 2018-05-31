@@ -29,6 +29,7 @@ import com.shanduo.party.pay.AliPayConfig;
 import com.shanduo.party.pay.WechatPayConfig;
 import com.shanduo.party.pay.WxPayConfig;
 import com.shanduo.party.service.BaseService;
+import com.shanduo.party.service.BindingService;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.IpUtils;
@@ -57,6 +58,8 @@ public class OrderContrpller {
 	private OrderService orderService;
 	@Autowired
 	private MoneyService moneyService;
+	@Autowired
+	private BindingService bindingService;
 
 	/**
 	 * 支付订单
@@ -340,6 +343,11 @@ public class OrderContrpller {
 	 * @throws
 	 */
 	public ResultBean wxPayOrder(Integer userId,UserOrder order,HttpServletRequest request) {
+		String openId = bindingService.selectOpenId(userId, "1");
+		if(openId == null) {
+			log.error("openId获取出错");
+			return new ErrorBean(10002,"连接超时");
+		}
 		String body = "";
 		if("1".equals(order.getOrderType())) {
 			body = "充值闪多余额";
@@ -368,7 +376,7 @@ public class OrderContrpller {
 		paramsMap.put("spbill_create_ip", IpUtils.getIpAddress(request));
 		paramsMap.put("notify_url", WechatPayConfig.NOTIFY_URL);
 		paramsMap.put("trade_type", WechatPayConfig.TRADETYPE);
-		paramsMap.put("openid", "openid");
+		paramsMap.put("openid", openId);
 		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
 		String paramsString = WxPayUtils.createLinkString(paramsMap);
 		//MD5运算生成签名
@@ -377,6 +385,7 @@ public class OrderContrpller {
 		paramsMap.put("sign", sign);
 		String paramsXml = WxPayUtils.map2Xmlstring(paramsMap);
 		String result = WxPayUtils.httpRequest(WxPayConfig.PAY_URL, "POST", paramsXml);
+		System.out.println(result);
 		Map<String, Object> resultMap = WxPayUtils.Str2Map(result);
 		String returnCode = resultMap.get("return_code").toString();
 		if(!returnCode.equals("SUCCESS")) {

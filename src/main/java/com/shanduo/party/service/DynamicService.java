@@ -29,6 +29,17 @@ public interface DynamicService {
 	int saveDynamic(Integer userId,String content,String picture,String lat,String lon,String location);
 
 	/**
+	 * 检查动态是否已存在
+	 * @Title: checkDynamic
+	 * @Description: TODO
+	 * @param @param dynamicId
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
+	boolean checkDynamic(String dynamicId);
+	
+	/**
 	 * 查看好友的动态
 	 * @Title: attentionList
 	 * @Description: TODO
@@ -176,4 +187,5 @@ public interface DynamicService {
 	 * @throws
 	 */
 	int dynamicCount(Integer userId);
+	
 }

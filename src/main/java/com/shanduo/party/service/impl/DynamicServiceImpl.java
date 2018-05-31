@@ -70,6 +70,15 @@ public class DynamicServiceImpl implements DynamicService {
 		return 1;
 	}
 
+	@Override
+	public boolean checkDynamic(String dynamicId) {
+		ShanduoDynamic dynamic = dynamicMapper.selectByPrimaryKey(dynamicId);
+		if(dynamic == null || "1".equals(dynamic.getDelFlag())) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * 给返回的list添加其他信息
 	 * @Title: addList
@@ -111,7 +120,7 @@ public class DynamicServiceImpl implements DynamicService {
 			//点赞人数
 			map.put("praise", praiseService.selectByCount(dynamicId));
 			//当前用户是否点赞
-			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
+//			map.put("isPraise",praiseService.checkPraise(userId, dynamicId));
 			//vip等级
 			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
 			//距离

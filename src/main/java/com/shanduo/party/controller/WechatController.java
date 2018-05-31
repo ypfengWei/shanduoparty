@@ -29,7 +29,11 @@ import net.sf.json.JSONObject;
 
 /**
  * 
- * @author silen 获取微信信息工具类
+ * @ClassName: WechatController
+ * @Description: TODO
+ * @author fangwei
+ * @date 2018年5月31日 上午9:51:38
+ *
  */
 @Controller
 @RequestMapping(value = "wechat")
@@ -45,7 +49,7 @@ public class WechatController {
 	@Autowired
 	private CodeService codeService;
 
-	@RequestMapping(value = "loginWechat", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "loginWechat", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public ResultBean loginWechat(String code) {
 		if(StringUtils.isNull(code)) {
@@ -75,7 +79,7 @@ public class WechatController {
 	}
 
 	// 获取信息
-	@RequestMapping(value="getOpenid", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value="getOpenid", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public ResultBean getOpenid(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
@@ -156,6 +160,5 @@ public class WechatController {
 			return new ErrorBean(10002,"登录失败");
 		}
 		return new SuccessBean(tokenInfo);
-
 	}
 }

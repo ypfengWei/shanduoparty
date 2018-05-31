@@ -13,11 +13,6 @@ public class WechatPayConfig {
     public static final String MCH_ID = "1504783251";
     
     /**
-     * 小程序秘钥
-     */
-    public static final String secret = "4cb593859693a7cfd3a04bc6df454d3c";
-    
-    /**
      * 签名方式,固定值
      */
     public static final String SIGNTYPE = "MD5";

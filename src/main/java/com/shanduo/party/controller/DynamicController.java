@@ -188,6 +188,10 @@ public class DynamicController {
 			log.error("动态ID为空");
 			return new ErrorBean(10002,"动态ID为空");
 		}
+		if(dynamicService.checkDynamic(dynamicId)) {
+			log.error("动态不存在");
+			return new ErrorBean(10002,"动态不存在");
+		}
 		if(praiseService.checkPraise(isUserId, dynamicId)) {
 			try {
 				praiseService.deletePraise(isUserId, dynamicId);
@@ -195,7 +199,7 @@ public class DynamicController {
 				log.error("取消失败");
 				return new ErrorBean(10003,"取消失败");
 			}
-			return new SuccessBean("取消成功");
+			return new SuccessBean("-1");
 		}
 		try {
 			praiseService.savePraise(isUserId, dynamicId);
@@ -211,7 +215,7 @@ public class DynamicController {
 				log.error("点赞获得经验失败");
 			}
 		}
-		return new SuccessBean("点赞成功");
+		return new SuccessBean("1");
 	}
 	
 	/**
