@@ -5,13 +5,15 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.entity.SessionKey;
-import com.shanduo.party.entity.UserBinding;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -32,6 +34,8 @@ import net.sf.json.JSONObject;
 @Controller
 @RequestMapping(value = "wechat")
 public class WechatController {
+	private static final Logger log = LoggerFactory.getLogger(WechatController.class);
+	
 	@Autowired
 	private BindingService bindingService;
 	@Autowired
@@ -41,9 +45,13 @@ public class WechatController {
 	@Autowired
 	private CodeService codeService;
 
+	@RequestMapping(value = "loginWechat", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	@RequestMapping(value = "loginWechat")
 	public ResultBean loginWechat(String code) {
+		if(StringUtils.isNull(code)) {
+			log.error("code不能为空");
+			return new ErrorBean(10002,"code不能为空");
+		}
 		List<String> str = new WXBizDataCrypt().loginWechat(code);
 		if (StringUtils.isNull(str.get(2))) {
 			SessionKey key = new SessionKey();
@@ -58,13 +66,17 @@ public class WechatController {
 			String json = "{\"openId\":\"" + str.get(0) + "\",\"unionId\":\"" + str.get(2) + "\"}";
 			return new ErrorBean(10086, json);
 		}
-		TokenInfo TokenInfo = userService.loginUser(userId);
-		return new SuccessBean(TokenInfo);
+		TokenInfo tokenInfo = userService.loginUser(userId);
+		if(tokenInfo == null) {
+			log.error("登录失败");
+			return new ErrorBean(10002,"登录失败");
+		}
+		return new SuccessBean(tokenInfo);
 	}
 
 	// 获取信息
+	@RequestMapping(value="getOpenid", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	@RequestMapping("getOpenid")
 	public ResultBean getOpenid(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
@@ -93,29 +105,35 @@ public class WechatController {
 		return new SuccessBean(TokenInfo);
 	}
 
+	@RequestMapping(value = "bindingUser", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	@RequestMapping(value = "bindingUser")
-	public ResultBean bingding(String openId, String unionId, String nickName, String gender, String phone,
+	public ResultBean bingding(String openId, String unionId, String nickName, String gender, String username,
 			String password, String codes) {
+		//通过unionId去绑定表查记录，如果有，就不能绑定
+		Integer userid = bindingService.selectUserId(unionId, "1");
+		if(userid != null) {
+			return new ErrorBean(10002, "此账号已绑定");
+		}
 		if (StringUtils.isNull(codes)) {
-			TokenInfo TokenInfo = userService.loginUser(phone, password);
-			if (null == TokenInfo) {
+			TokenInfo tokenInfo = userService.loginUser(username, password);
+			if (null == tokenInfo) {
 				return new ErrorBean(10002, "账号或密码错误");
 			}
-			Integer userId = Integer.valueOf(TokenInfo.getUserId());
+			Integer userId = Integer.valueOf(tokenInfo.getUserId());
 			String type = "1";
 			int count = bindingService.insertSelective(userId, openId, unionId, type);
 			if (count < 1) {
 				return new ErrorBean(10003, "失败");
 			}
+			return new SuccessBean(tokenInfo);
 		}
-		if (codeService.selectByQuery(phone, codes, "1")) {
+		if (codeService.selectByQuery(username, codes, "1")) {
 			return new ErrorBean(10002, "验证码错误");
 		}
-		if (userService.checkPhone(phone)) {
+		if (userService.checkPhone(username)) {
 			return new ErrorBean(10002, "该手机号已存在");
 		}
-		int userId = userService.saveUser(phone, password, nickName, gender);
+		int userId = userService.saveUser(username, password, nickName, gender);
 		String type = "1";
 		try {
 			int count = bindingService.insertSelective(userId, openId, unionId, type);
@@ -125,8 +143,7 @@ public class WechatController {
 		} catch (Exception e) {
 			return new ErrorBean(10003, "失败");
 		}
-
-		TokenInfo TokenInfo = userService.loginUser(phone, password);
+		TokenInfo TokenInfo = userService.loginUser(username, password);
 		return new SuccessBean(TokenInfo);
 
 	}

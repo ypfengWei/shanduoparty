@@ -2,6 +2,7 @@ package com.shanduo.party.service.impl;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,9 @@ import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoReputationRecordMapper;
 import com.shanduo.party.service.ScoreService;
+import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.Page;
+import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.ScoreUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
@@ -46,7 +49,8 @@ public class ScoreServiceImpl implements ScoreService {
 	private ShanduoReputationRecordMapper reputationRecordMapper;
 	
 	@Autowired
-	private ShanduoActivityMapper activityMapper;
+	private ShanduoActivityMapper shanduoActivityMapper;
+	
 
 	@Override
 	public int updateActivityScore(Integer userId, String activityId, Integer score, String evaluationcontent) {
@@ -139,11 +143,11 @@ public class ScoreServiceImpl implements ScoreService {
 		ShanduoReputationRecord shanduoReputationRecord = new ShanduoReputationRecord();
 		shanduoReputationRecord.setId(UUIDGenerator.getUUID());
 		if(type == 1) {
-			shanduoReputationRecord.setUserId(activityMapper.selectById(activityId));
+			shanduoReputationRecord.setUserId(shanduoActivityMapper.selectById(activityId));
 			shanduoReputationRecord.setOtheruserId(userId);
 		} else {
 			shanduoReputationRecord.setUserId(userId);
-			shanduoReputationRecord.setOtheruserId(activityMapper.selectById(activityId));
+			shanduoReputationRecord.setOtheruserId(shanduoActivityMapper.selectById(activityId));
 		}
 		if(ScoreUtils.getScore(shanduoReputationRecord.getUserId(), shanduoReputationRecord.getOtheruserId())){
 			switch (score) {//未满6分
@@ -188,6 +192,27 @@ public class ScoreServiceImpl implements ScoreService {
 			throw new RuntimeException();
 		}
 		return true;
+	}
+
+	@Override
+	public Map<String, Object> selectReputation(Integer userId) {
+		Map<String, Object> maps = activityScoreMapper.selectReputation(userId);
+		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId);
+		List<Map<String, Object>> lists = new ArrayList<>();
+		for (Map<String, Object> map : list) {
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
+			map.put("head_portrait_ids", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			String activityId = map.get("id").toString();
+			lists = activityScoreMapper.selectScore(activityId);
+			for (Map<String, Object> smap : lists) {
+				smap.put("head_portrait_ids", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
+			}
+			map.put("lists", lists);
+		}
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("maps", maps);
+		resultMap.put("list", list);
+		return resultMap;
 	}
 
 }

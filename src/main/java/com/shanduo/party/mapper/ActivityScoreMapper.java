@@ -106,4 +106,10 @@ public interface ActivityScoreMapper {
     String selectByUserId(Integer userId);
     
     int selectByGenders(String activityId, String gender);
+    
+    Map<String, Object> selectReputation(Integer userId);
+    
+    List<Map<String, Object>> selectActivity(Integer userId);
+    
+    List<Map<String, Object>> selectScore(String activityId);
 }

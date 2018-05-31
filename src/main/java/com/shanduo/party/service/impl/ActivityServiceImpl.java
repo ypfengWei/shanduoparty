@@ -424,121 +424,124 @@ public class ActivityServiceImpl implements ActivityService {
 		return 1;
 	}
 	
-	public List<ActivityInfo> activity(List<ActivityInfo> resultList, String lon, String lat, int type){
-		for (ActivityInfo activityInfo : resultList) {
-			activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-			if(!StringUtils.isNull(lon)&&!StringUtils.isNull(lat)) {
-				double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
-				activityInfo.setLocation(location);
-			}
-        	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
-        	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
-    		if(resultMap != null) {
-    			for (Map<String, Object> map : resultMap) {
-    				int count = Integer.parseInt(map.get("count").toString());
-	    			if(count < 10) {
-	    			    if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
-	    			    	if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
-	    			    		//如果参加的女生人数以及活动要求的女生人数小于10则在前面加0
-	    			    		activityInfo.setWomanNumber("0"+count+"/"+"0"+activityInfo.getWomanNumber());
-	    					} else {
-	    						//如果参加的女生人数小于10，活动要求的女生人数大于10则在参加的女生人数前面加0
-	     						activityInfo.setWomanNumber("0"+count+"/"+activityInfo.getWomanNumber());
-	     					}
-	     				}else {//参加活动的男生人数
-	     					if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
-	     						//如果参加的男生人数以及活动要求的男生人数小于10则在前面加0
-	     			    		activityInfo.setManNumber("0"+count+"/"+"0"+activityInfo.getManNumber());
-	     					} else {
-	     						//如果参加的男生人数小于10，活动要求的男生人数大于10则在参加的女生人数前面加0
-	     						activityInfo.setManNumber("0"+count+"/"+activityInfo.getManNumber());
-	     					}
-	     				}
-	    			} else { //因为参加的人数不能大于活动要求的人数，故不做其他限制
-		    			if(map.get("gender").toString().equals("1")) { //参加活动的男生人数
-		    				//如果参加的男生人数大于10则不做改变
-					    	activityInfo.setManNumber(count+"/"+activityInfo.getManNumber());
-		 				}
-		 				if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
-		 					//如果参加的女生人数大于10则不做改变
-		 					activityInfo.setWomanNumber(count+"/"+activityInfo.getWomanNumber());
-		    			} 
-	    			}
-    			}
-    		}
-    		//参加人数为0
-    		if(activityInfo.getManNumber().matches("^\\d+$")) {
-    			if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
-    				activityInfo.setManNumber("0/"+"0"+activityInfo.getManNumber());
-    			} else{
-    				activityInfo.setManNumber("0/"+activityInfo.getManNumber());
-    			}
-    		}
-    		if(activityInfo.getWomanNumber().matches("^\\d+$")) {
-    			if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
-    				activityInfo.setWomanNumber("0/"+"0"+activityInfo.getWomanNumber());
-    			} else {
-    				activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
-    			}
-    		}
-    		
-    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
-            String startString = activityInfo.getActivityStartTime();  
-            String cutoffString = activityInfo.getActivityCutoffTime();
-            if(type == 1) {
-            	Long newstartTime = get(startString, null, 2);
-            	Long newcutoffTime = get(cutoffString, null, 2);
-            	Long nowTime = System.currentTimeMillis();
-            	Map<String, Object> map = shanduoActivityMapper.count(activityInfo.getId());
-            	int i = Integer.parseInt(map.get("number").toString()); //参加记录
-            	int count = Integer.parseInt(map.get("score").toString()); //评分记录
-            	if(nowTime < newcutoffTime) {
-            		activityInfo.setTypeId(4);
-            	} else if(newcutoffTime < nowTime && nowTime < newstartTime) {
-            		activityInfo.setTypeId(5);
-            	} else if(i > 0){
-            		if(count > 0) {
-            			if(i > count) {
-            				activityInfo.setTypeId(2);
-            			} else {
-            				activityInfo.setTypeId(3);
-            			} 
-            		} else {
-            			activityInfo.setTypeId(2);
-            		}
-            	} else {
-            		activityInfo.setTypeId(2);
-            	}
-            }
-            String startTime = startString.substring(0,16).replace("-", "/").replace(" ", "/");
-            String cutoffTime = cutoffString.substring(0,16).replace("-", "/").replace(" ", "/");
-            Long time = get(null, "yyyy-MM-dd 00:00", 1);
-            Long endTime = get(null, "yyyy-MM-dd 23:59", 1);
-            Long times = get(cutoffString, null, 2);
-            String nowTime = formatter.format(new Date());
-            if(time <= times &&  times <= endTime) {
-            	cutoffTime = cutoffTime.substring(cutoffTime.length()-5, cutoffTime.length());
-            }else if(nowTime.substring(0, 4).equals(cutoffString.substring(0, 4))) {
-            	cutoffTime = cutoffTime.substring(cutoffTime.length()-11, cutoffTime.length());
-            }
-            try {  
-                Date startDate = formatter.parse(startString);  
-                activityInfo.setActivityStartTime(startTime+WeekUtils.getWeek(startDate));
-                activityInfo.setActivityCutoffTime(cutoffTime);
-            } catch (ParseException e) {  
-                e.printStackTrace();  
-            }  
+	public List<ActivityInfo> activity(List<ActivityInfo> resultLists, String lon, String lat,int type){
+		List<ActivityInfo>  resultList =  new ArrayList<ActivityInfo>();
+		for(int i=0;i<resultLists.size();i++){
+			ActivityInfo activityInfo = resultList.get(i);
+			resultList.add(showActivity(activityInfo, lon, lat,type));
 		}
 		return resultList;
 	}
 	
+	public ActivityInfo showActivity(ActivityInfo activityInfo, String lon, String lat, int type){
+		activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
+		if(!StringUtils.isNull(lon)&&!StringUtils.isNull(lat)) {
+			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
+			activityInfo.setLocation(location);
+		}
+    	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
+    	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
+		if(resultMap != null) {
+			for (Map<String, Object> map : resultMap) {
+				int count = Integer.parseInt(map.get("count").toString());
+    			if(count < 10) {
+    			    if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
+    			    	if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+    			    		//如果参加的女生人数以及活动要求的女生人数小于10则在前面加0
+    			    		activityInfo.setWomanNumber("0"+count+"/"+"0"+activityInfo.getWomanNumber());
+    					} else {
+    						//如果参加的女生人数小于10，活动要求的女生人数大于10则在参加的女生人数前面加0
+     						activityInfo.setWomanNumber("0"+count+"/"+activityInfo.getWomanNumber());
+     					}
+     				}else {//参加活动的男生人数
+     					if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+     						//如果参加的男生人数以及活动要求的男生人数小于10则在前面加0
+     			    		activityInfo.setManNumber("0"+count+"/"+"0"+activityInfo.getManNumber());
+     					} else {
+     						//如果参加的男生人数小于10，活动要求的男生人数大于10则在参加的女生人数前面加0
+     						activityInfo.setManNumber("0"+count+"/"+activityInfo.getManNumber());
+     					}
+     				}
+    			} else { //因为参加的人数不能大于活动要求的人数，故不做其他限制
+	    			if(map.get("gender").toString().equals("1")) { //参加活动的男生人数
+	    				//如果参加的男生人数大于10则不做改变
+				    	activityInfo.setManNumber(count+"/"+activityInfo.getManNumber());
+	 				}
+	 				if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
+	 					//如果参加的女生人数大于10则不做改变
+	 					activityInfo.setWomanNumber(count+"/"+activityInfo.getWomanNumber());
+	    			} 
+    			}
+			}
+		}
+		//参加人数为0
+		if(activityInfo.getManNumber().matches("^\\d+$")) {
+			if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+				activityInfo.setManNumber("0/"+"0"+activityInfo.getManNumber());
+			} else{
+				activityInfo.setManNumber("0/"+activityInfo.getManNumber());
+			}
+		}
+		if(activityInfo.getWomanNumber().matches("^\\d+$")) {
+			if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+				activityInfo.setWomanNumber("0/"+"0"+activityInfo.getWomanNumber());
+			} else {
+				activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
+			}
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
+        String startString = activityInfo.getActivityStartTime();  
+        String cutoffString = activityInfo.getActivityCutoffTime();
+        if(type == 1) {
+        	Long newstartTime = get(startString, null, 2);
+        	Long newcutoffTime = get(cutoffString, null, 2);
+        	Long nowTime = System.currentTimeMillis();
+        	Map<String, Object> map = shanduoActivityMapper.count(activityInfo.getId());
+        	int i = Integer.parseInt(map.get("number").toString()); //参加记录
+        	int count = Integer.parseInt(map.get("score").toString()); //评分记录
+        	if(nowTime < newcutoffTime) {
+        		activityInfo.setTypeId(4);
+        	} else if(newcutoffTime < nowTime && nowTime < newstartTime) {
+        		activityInfo.setTypeId(5);
+        	} else if(i > 0){
+        		if(count > 0) {
+        			if(i > count) {
+        				activityInfo.setTypeId(2);
+        			} else {
+        				activityInfo.setTypeId(3);
+        			} 
+        		} else {
+        			activityInfo.setTypeId(2);
+        		}
+        	} else {
+        		activityInfo.setTypeId(2);
+        	}
+        }
+        String startTime = startString.substring(0,16).replace("-", "/").replace(" ", "/");
+        String cutoffTime = cutoffString.substring(0,16).replace("-", "/").replace(" ", "/");
+        Long time = get(null, "yyyy-MM-dd 00:00", 1);
+        Long endTime = get(null, "yyyy-MM-dd 23:59", 1);
+        Long times = get(cutoffString, null, 2);
+        String nowTime = formatter.format(new Date());
+        if(time <= times &&  times <= endTime) {
+        	cutoffTime = cutoffTime.substring(cutoffTime.length()-5, cutoffTime.length());
+        } else if(nowTime.substring(0, 4).equals(cutoffString.substring(0, 4))) {
+        	cutoffTime = cutoffTime.substring(cutoffTime.length()-11, cutoffTime.length());
+        }
+        try {  
+            Date startDate = formatter.parse(startString);  
+            activityInfo.setActivityStartTime(startTime+WeekUtils.getWeek(startDate));
+            activityInfo.setActivityCutoffTime(cutoffTime);
+        } catch (ParseException e) {  
+            e.printStackTrace();  
+        }  
+		return activityInfo;
+	}
+	
 	@Override
 	public Map<String, Object> selectByActivityIds(String activityId, Integer userId, String lon, String lat) {
-		List<ActivityInfo> activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
-		if(activityInfo == null || activityInfo.isEmpty()) {
-			return null;
-		}
-		activity(activityInfo, lon, lat, 0);
+		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
+		showActivity(activityInfo, lon, lat, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
 		int joinActivity = 0;
 		for (Map<String, Object> map : resultList) {
@@ -547,11 +550,11 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
 		}
-		Map<String, Object> reultMap = new HashMap<>(3);
-		reultMap.put("activityInfo", activityInfo.get(0));
-		reultMap.put("joinActivity", joinActivity);
-		reultMap.put("resultList", resultList);
-		return reultMap;
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("activityInfo", activityInfo);
+		resultMap.put("joinActivity", joinActivity);
+		resultMap.put("resultList", resultList);
+		return resultMap;
 	}
 	
 	public Long get(String time, String timeType, Integer type) {
