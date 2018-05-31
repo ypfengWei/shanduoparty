@@ -5,13 +5,14 @@
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="money_type" jdbcType="CHAR" property="moneyType" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="dal_flag" jdbcType="CHAR" property="dalFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, money_type, remarks, create_date, update_date, dal_flag
+    id, user_id, money_type, amount, remarks, create_date, update_date, dal_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -25,11 +26,11 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.UserMoneyRecord">
     insert into user_money_record (id, user_id, money_type, 
-      remarks, create_date, update_date, 
-      dal_flag)
+      amount, remarks, create_date, 
+      update_date, dal_flag)
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{moneyType,jdbcType=CHAR}, 
-      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{dalFlag,jdbcType=CHAR})
+      #{amount,jdbcType=DECIMAL}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{dalFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserMoneyRecord">
     insert into user_money_record
@@ -42,6 +43,9 @@
       </if>
       <if test="moneyType != null">
         money_type,
+      </if>
+      <if test="amount != null">
+        amount,
       </if>
       <if test="remarks != null">
         remarks,
@@ -66,6 +70,9 @@
       <if test="moneyType != null">
         #{moneyType,jdbcType=CHAR},
       </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
       </if>
@@ -89,6 +96,9 @@
       <if test="moneyType != null">
         money_type = #{moneyType,jdbcType=CHAR},
       </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
@@ -108,6 +118,7 @@
     update user_money_record
     set user_id = #{userId,jdbcType=INTEGER},
       money_type = #{moneyType,jdbcType=CHAR},
+      amount = #{amount,jdbcType=DECIMAL},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -145,11 +156,11 @@
   </select>
   <select id="moneyList" resultType="map">
   	select
-  	 id, money_type as moneyType, remarks, create_date as createDate 
-  	from user_money_record 
+  	 id, money_type as moneyType,amount,remarks, create_date as createDate 
+  	from user_money_record
   	where user_id = #{0}
     and money_type in ('1','2')
-    order create_date desc
+    order by create_date desc
     limit #{1},#{2}
   </select>
   <select id="weekSignInCount" resultType="java.lang.Integer">

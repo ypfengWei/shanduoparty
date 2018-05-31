@@ -1,16 +1,17 @@
 package com.shanduo.party.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
-public class UserMoneyRecord {
+public class UserGroup {
     private String id;
 
     private Integer userId;
 
-    private String moneyType;
+    private String groupId;
 
-    private BigDecimal amount;
+    private Integer count;
+
+    private String groupType;
 
     private String remarks;
 
@@ -18,7 +19,7 @@ public class UserMoneyRecord {
 
     private Date updateDate;
 
-    private String dalFlag;
+    private String delFlag;
 
     public String getId() {
         return id;
@@ -36,20 +37,28 @@ public class UserMoneyRecord {
         this.userId = userId;
     }
 
-    public String getMoneyType() {
-        return moneyType;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setMoneyType(String moneyType) {
-        this.moneyType = moneyType == null ? null : moneyType.trim();
+    public void setGroupId(String groupId) {
+        this.groupId = groupId == null ? null : groupId.trim();
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public Integer getCount() {
+        return count;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public String getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType == null ? null : groupType.trim();
     }
 
     public String getRemarks() {
@@ -76,11 +85,11 @@ public class UserMoneyRecord {
         this.updateDate = updateDate;
     }
 
-    public String getDalFlag() {
-        return dalFlag;
+    public String getDelFlag() {
+        return delFlag;
     }
 
-    public void setDalFlag(String dalFlag) {
-        this.dalFlag = dalFlag == null ? null : dalFlag.trim();
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag == null ? null : delFlag.trim();
     }
 }

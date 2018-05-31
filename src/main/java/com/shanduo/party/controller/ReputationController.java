@@ -57,6 +57,14 @@ public class ReputationController {
 	@RequestMapping(value = "creditDetails", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean creditDetails(HttpServletRequest request, String token, String userId, String page, String pageSize) {
+		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+			log.error("页码错误");
+			return new ErrorBean(10002,"页码错误");
+		}
+		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+			log.error("记录错误");
+			return new ErrorBean(10002,"记录错误");
+		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Integer userToken = baseService.checkUserToken(token);
@@ -97,6 +105,14 @@ public class ReputationController {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}
+		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+			log.error("页码错误");
+			return new ErrorBean(10002,"页码错误");
+		}
+		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+			log.error("记录错误");
+			return new ErrorBean(10002,"记录错误");
+		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>(3);
@@ -111,7 +127,5 @@ public class ReputationController {
 		}
 		return new SuccessBean(resultMap);
 	}
-	
-	
 	
 }

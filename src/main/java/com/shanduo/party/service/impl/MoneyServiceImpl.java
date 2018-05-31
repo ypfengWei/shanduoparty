@@ -41,12 +41,15 @@ public class MoneyServiceImpl implements MoneyService {
 	private ExperienceService experienceService;
 
 	@Override
-	public UserMoney selectByUserId(Integer userId) {
-		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		if(userMoney == null) {
+	public Map<String, Object> selectByUserId(Integer userId) {
+		UserMoney money = moneyMapper.selectByUserId(userId);
+		if(money == null) {
 			return null;
 		}
-		return userMoney;
+		Map<String, Object> resultMap = new HashMap<String, Object>(2);
+		resultMap.put("money", money.getMoney());
+		resultMap.put("beans", money.getBeans());
+		return resultMap;
 	}
 	
 	@Override
@@ -73,7 +76,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "1", remarks+"充值余额:"+"+"+money);
+			experienceService.saveMoneyRecord(userId, "1",money+"", remarks+"充值余额:"+"+"+money);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -100,7 +103,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "2", remarks+":-"+money);
+			experienceService.saveMoneyRecord(userId, "2", money+"",remarks+":-"+money);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -124,7 +127,7 @@ public class MoneyServiceImpl implements MoneyService {
 			remarks = "升级获得闪多豆"+beans+"颗";
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "9", remarks);
+			experienceService.saveMoneyRecord(userId, "9", beans+"",remarks);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -132,16 +135,13 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 
 	@Override
-	public int checkPassword(Integer userId, String password) {
+	public boolean checkPassword(Integer userId, String password) {
 		UserMoney money = moneyMapper.selectByPrimaryKey(userId);
 		password = MD5Utils.getInstance().getMD5(password);
-		if(money.getPassword() == null || "".equals(money.getPassword())) {
-			return 0;
-		}
 		if(!password.equals(money.getPassword())) {
-			return 1;
+			return true;
 		}
-		return 2;
+		return false;
 	}
 
 	@Override

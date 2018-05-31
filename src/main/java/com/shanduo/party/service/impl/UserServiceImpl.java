@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
 		}
 		UserMoney money = new UserMoney();
 		money.setUserId(user.getId());
+		money.setPassword(MD5Utils.getInstance().getMD5("111111"));
 		int n = moneyMapper.insertSelective(money);
 		if(n < 1) {
 			log.error("用户币种插入失败");
@@ -118,6 +119,7 @@ public class UserServiceImpl implements UserService {
 		}
 		UserMoney money = new UserMoney();
 		money.setUserId(user.getId());
+		money.setPassword(MD5Utils.getInstance().getMD5("111111"));
 		int n = moneyMapper.insertSelective(money);
 		if(n < 1) {
 			log.error("用户币种插入失败");

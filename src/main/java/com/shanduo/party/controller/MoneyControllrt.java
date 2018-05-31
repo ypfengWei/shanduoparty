@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.ShanduoUser;
-import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -66,12 +65,12 @@ public class MoneyControllrt {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		UserMoney money = moneyService.selectByUserId(isUserId);
-		if(money == null) {
+		Map<String, Object> resultMap = moneyService.selectByUserId(isUserId);
+		if(resultMap == null) {
 			log.error("查询钱包出错");
 			return new ErrorBean(10002,"查询钱包出错");
 		}
-		return new SuccessBean(money);
+		return new SuccessBean(resultMap);
 	}
 	
 	/**
@@ -153,8 +152,7 @@ public class MoneyControllrt {
 				log.error("原始密码格式错误");
 				return new ErrorBean(10002,"原始密码格式错误");
 			}
-			int check = moneyService.checkPassword(isUserId, password);
-			if(check != 2) {
+			if(moneyService.checkPassword(isUserId, password)) {
 				log.error("原始密码错误");
 				return new ErrorBean(10002,"原始密码错误");
 			}
