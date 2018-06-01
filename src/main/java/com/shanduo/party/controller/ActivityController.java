@@ -199,7 +199,7 @@ public class ActivityController {
 	 * type=1 展示热门活动
 	 * type=2 根据经纬度查询附近活动
 	 * type=3 展示好友活动
-	 * type=4查看用户参加的已经结束的活动
+	 * type=4 查看用户参加的已经结束的活动
 	 * type=5 查看用户报名的活动
 	 * type=6 查看单个用户举办的活动
 	 * type=7 根据userId查询别人举报的活动
@@ -370,7 +370,7 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "joinActivities", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type, String[] userIds){
+	public ResultBean joinActivities(HttpServletRequest request, String token, String activityId, String type, String userIds){
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -432,17 +432,27 @@ public class ActivityController {
 				}
 			}
 			return new SuccessBean("报名成功");
-		} else if("2".equals(type)){
+		} 
+		ShanduoActivity activity = activityService.selectByPrimaryKey(activityId);
+		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
+			log.error("该活动已过期");
+			return new ErrorBean(10002,"想踢的用户不能为空");
+		}
+		if("2".equals(type)){
 			try {
 				activityService.deleteByUserId(activityId, userToken);
 			} catch (Exception e) {
 				log.error("活动取消失败");
 				return new ErrorBean(10003,"活动取消失败");
 			}
-		} else{
-			if(userIds.length<1) {
+		} else {
+			if(StringUtils.isNull(userIds)) {
 				log.error("想踢的用户不能为空");
 				return new ErrorBean(10002,"想踢的用户不能为空");
+			}
+			if(!userToken.equals(activity.getUserId())) {
+				log.error("不是活动发起者禁止踢人");
+				return new ErrorBean(10002,"不是活动发起者禁止踢人");
 			}
 			try {
 				activityService.deleteByUserIds(activityId, userToken, userIds);
@@ -523,6 +533,43 @@ public class ActivityController {
 		if(resultMap == null) {
 			log.error("活动已被取消");
 			return new ErrorBean(10002,"活动已被取消");
+		}
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
+	 * 搜索活动
+	 * @Title: selectQuery
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param query
+	 * @param @param lon
+	 * @param @param lat
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "selectQuery", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean selectQuery(HttpServletRequest request, String query, String lon, String lat) {
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度格式错误");
+			return new ErrorBean(10002,"经度格式错误");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度格式错误");
+			return new ErrorBean(10002,"纬度格式错误");
+		}
+		Map<String, Object> resultMap = new HashMap<>(3);
+		try {
+			resultMap = activityService.selectQuery(query, lon, lat);
+		} catch (Exception e) {
+			log.error("未知错误");
+			return new ErrorBean(10003,"未知错误");
+		}
+		if(resultMap == null) {
+			log.error("暂无活动");
+			return new ErrorBean(10002,"暂无活动");
 		}
 		return new SuccessBean(resultMap);
 	}

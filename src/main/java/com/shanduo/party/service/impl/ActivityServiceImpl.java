@@ -357,7 +357,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Map<String, Object> selectByHistorical(Integer userId, Integer pageNum, Integer pageSize) {
-		int totalrecord =  shanduoActivityMapper.selectByHistoricalCount(userId);
+		int totalrecord = shanduoActivityMapper.selectByHistoricalCount(userId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByHistorical(userId, pageNum, page.getPageSize());
@@ -390,37 +390,23 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public int deleteByUserId(String activityId, Integer token) {
-		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
-		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
-			log.error("该活动已过期");
+		int i = activityScoreMapper.deleteByUserId(activityId, token);
+		if(i < 1) {
+			log.error("取消活动失败");
 			throw new RuntimeException();
-		} else {
-			int i = activityScoreMapper.deleteByUserId(activityId, token);
-			if(i < 1) {
-				log.error("取消活动失败");
-				throw new RuntimeException();
-			}
 		}
 		return 1;
 	}
 	
 	@Override
-	public int deleteByUserIds(String activityId, Integer token, String[] userIds) {
-		ShanduoActivity activity = shanduoActivityMapper.selectByPrimaryKey(activityId);
-		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
-			log.error("该活动已过期");
-			throw new RuntimeException();
-		} else if(token.equals(activity.getUserId())){
-			List<Integer> list = new ArrayList<>();
-			for(int i=0;i< userIds.length;i++) {
-				list.add(Integer.parseInt(userIds[i]));
-			}
-			int i = activityScoreMapper.deleteByUserIds(activityId, list);
-			if(i < 1) {
+	public int deleteByUserIds(String activityId, Integer token, String userIds) {
+		String[] userId = userIds.split(",");
+		for(int i=0;i< userId.length;i++) {
+			int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userId[i]));
+			if(n < 1) {
 				log.error("踢人失败");
-				throw new RuntimeException();
 			}
-		} 
+		}
 		return 1;
 	}
 	
@@ -435,10 +421,8 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	public ActivityInfo showActivity(ActivityInfo activityInfo, String lon, String lat, int type){
 		activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-		if(!StringUtils.isNull(lon)&&!StringUtils.isNull(lat)) {
-			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
-			activityInfo.setLocation(location);
-		}
+		double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
+		activityInfo.setLocation(location);
     	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
     	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
 		if(resultMap != null) {
@@ -557,6 +541,15 @@ public class ActivityServiceImpl implements ActivityService {
 		return resultMap;
 	}
 	
+	@Override
+	public Map<String, Object> selectQuery(String query, String lon, String lat) {
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectQuery(query);
+		activity(resultList, lon, lat, 0);
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("resultList", resultList);
+		return resultMap;
+	}
+	
 	public Long get(String time, String timeType, Integer type) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
 		Date cutoff = new Date();
@@ -573,5 +566,4 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		return cutoff.getTime();
 	}
-
 }

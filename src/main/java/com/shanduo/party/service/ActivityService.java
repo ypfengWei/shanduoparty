@@ -6,7 +6,6 @@ import java.util.Map;
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ShanduoActivity;
 import com.shanduo.party.entity.ShanduoUser;
-
 /**
  * 活动业务层
  * @ClassName: ActivityService
@@ -281,7 +280,7 @@ public interface ActivityService {
      * @return int    返回类型
      * @throws
      */
-    int deleteByUserIds(String activityId, Integer token, String[] userId);
+    int deleteByUserIds(String activityId, Integer token, String userId);
     
     /**
      * 查看单个活动详情
@@ -294,4 +293,14 @@ public interface ActivityService {
      */
     Map<String, Object> selectByActivityIds(String activityId, Integer userId, String lon, String lat);
     
+    /**
+     * 根据活动标题模糊查询
+     * @Title: selectQuery
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param query
+     * @param @return    设定文件
+     * @return List<ActivityInfo>    返回类型
+     * @throws
+     */
+    Map<String, Object> selectQuery(String query, String lon, String lat);
 }

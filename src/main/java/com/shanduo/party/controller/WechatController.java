@@ -105,8 +105,12 @@ public class WechatController {
 		if (null == userId) {
 			return new ErrorBean(10086, unionid);
 		}
-		TokenInfo TokenInfo = userService.loginUser(userId);
-		return new SuccessBean(TokenInfo);
+		TokenInfo tokenInfo = userService.loginUser(userId);
+		if(tokenInfo == null) {
+			log.error("登录失败");
+			return new ErrorBean(10002,"登录失败");
+		}
+		return new SuccessBean(tokenInfo);
 	}
 
 	@RequestMapping(value = "bindingUser", method = { RequestMethod.POST, RequestMethod.GET })
@@ -125,6 +129,9 @@ public class WechatController {
 			}
 			Integer userId = Integer.valueOf(tokenInfo.getUserId());
 			String type = "1";
+			if(StringUtils.isNull(openId) || StringUtils.isNull(unionId)) {
+				return new ErrorBean(10002, "openId或unionId为空");
+			}
 			int count = bindingService.insertSelective(userId, openId, unionId, type);
 			if (count < 1) {
 				return new ErrorBean(10003, "失败");
@@ -147,7 +154,11 @@ public class WechatController {
 		} catch (Exception e) {
 			return new ErrorBean(10003, "失败");
 		}
-		TokenInfo TokenInfo = userService.loginUser(username, password);
-		return new SuccessBean(TokenInfo);
+		TokenInfo tokenInfo = userService.loginUser(username, password);
+		if(tokenInfo == null) {
+			log.error("登录失败");
+			return new ErrorBean(10002,"登录失败");
+		}
+		return new SuccessBean(tokenInfo);
 	}
 }
