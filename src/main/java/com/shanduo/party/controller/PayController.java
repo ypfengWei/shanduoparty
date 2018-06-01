@@ -222,7 +222,7 @@ public class PayController {
         log.info("微信支付回调接口返回XML数据:" + xmlString);
         Map<String, Object> resultMap = WxPayUtils.Str2Map(xmlString);
         //验证签名是否微信调用
-        boolean flag = WxPayUtils.isWechatSigns(resultMap, WxPayConfig.KEY, "utf-8");
+        boolean flag = WxPayUtils.isWechatSigns(resultMap, WechatPayConfig.KEY, "utf-8");
         if(flag) {
         	String returnCode = resultMap.get("return_code").toString();
     		if(!returnCode.equals("SUCCESS")) {

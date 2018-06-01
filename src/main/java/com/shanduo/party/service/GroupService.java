@@ -1,7 +1,9 @@
 package com.shanduo.party.service;
 
+import com.shanduo.party.entity.UserGroup;
+
 /**
- * 群管理业务层
+ * 群组管理业务层
  * @ClassName: GroupService
  * @Description: TODO
  * @author fanshixin
@@ -15,7 +17,7 @@ public interface GroupService {
 	 * @Title: checkGroupType
 	 * @Description: TODO
 	 * @param @param userId
-	 * @param @param groupType
+	 * @param @param groupType 群类型:1.200;2.500;3.1000
 	 * @param @return
 	 * @return int
 	 * @throws
@@ -27,7 +29,7 @@ public interface GroupService {
 	 * @Title: saveGroup
 	 * @Description: TODO
 	 * @param @param userId
-	 * @param @param groupType
+	 * @param @param groupType 群类型:1.200;2.500;3.1000
 	 * @param @return
 	 * @return int
 	 * @throws
@@ -35,10 +37,21 @@ public interface GroupService {
 	int saveGroup(Integer userId,String groupId,String groupType);
 	
 	/**
+	 * 查询单个群组详情
+	 * @Title: selectByGroupId
+	 * @Description: TODO
+	 * @param @param groupId
+	 * @param @return
+	 * @return UserGroup
+	 * @throws
+	 */
+	UserGroup selectByGroupId(String groupId);
+	
+	/**
 	 * 检查群人数是否上限
 	 * @Title: checkGroupCount
 	 * @Description: TODO
-	 * @param @param groupId
+	 * @param @param groupId 群组ID
 	 * @param @return
 	 * @return boolean
 	 * @throws
@@ -46,11 +59,11 @@ public interface GroupService {
 	boolean checkGroupCount(String groupId);
 	
 	/**
-	 * 加入群组修改群人数
+	 * 修改群组人数
 	 * @Title: updateGroup
 	 * @Description: TODO
-	 * @param @param groupId
-	 * @param @param count
+	 * @param @param groupId 群组ID
+	 * @param @param count 人数
 	 * @param @return
 	 * @return int
 	 * @throws
@@ -62,7 +75,7 @@ public interface GroupService {
 	 * @Title: delGroup
 	 * @Description: TODO
 	 * @param @param userId
-	 * @param @param groupId
+	 * @param @param groupId 群组ID
 	 * @param @return
 	 * @return int
 	 * @throws

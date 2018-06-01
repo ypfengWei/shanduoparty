@@ -90,8 +90,16 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public UserGroup selectByGroupId(String groupId) {
+		return groupMapper.selectByGroupId(groupId);
+	}
+	
+	@Override
 	public boolean checkGroupCount(String groupId) {
-		UserGroup group = groupMapper.selectByGroupId(groupId);
+		UserGroup group = selectByGroupId(groupId);
+		if(group == null) {
+			return true;
+		}
 		int count = group.getCount();
 		if(group.getGroupType().equals("1")) {
 			if(count >= 200) {

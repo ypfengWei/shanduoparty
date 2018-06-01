@@ -76,6 +76,8 @@
 	 		<mvc:mapping path="/jmoney/**"/>
 	 		<!-- 订单接口拦截 -->
 	 		<mvc:mapping path="/jorder/**"/>
+	 		<!-- 群聊接口拦截 -->
+	 		<mvc:mapping path="/jgroup/**"/>
 	 		
 	 		<bean class="com.shanduo.party.interceptor.TokenInterceptor"/>
 		</mvc:interceptor>
