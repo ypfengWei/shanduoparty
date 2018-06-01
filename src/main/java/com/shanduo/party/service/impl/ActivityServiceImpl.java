@@ -527,16 +527,18 @@ public class ActivityServiceImpl implements ActivityService {
 		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
 		showActivity(activityInfo, lon, lat, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
-		int joinActivity = 0;
-		for (Map<String, Object> map : resultList) {
-			if(map.get("id").equals(userId)) {
-				joinActivity = 1;
-			}
-			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-		}
 		Map<String, Object> resultMap = new HashMap<>(3);
+		if(null != userId) {
+			int joinActivity = 0;
+			for (Map<String, Object> map : resultList) {
+				if(map.get("id").equals(userId)) {
+					joinActivity = 1;
+				}
+				map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			}
+			resultMap.put("joinActivity", joinActivity);
+		}
 		resultMap.put("activityInfo", activityInfo);
-		resultMap.put("joinActivity", joinActivity);
 		resultMap.put("resultList", resultList);
 		return resultMap;
 	}

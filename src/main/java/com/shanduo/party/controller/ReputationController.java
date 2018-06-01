@@ -49,14 +49,13 @@ public class ReputationController {
 	 * @param @param userId 用户Id，看别人的信誉轨迹才传
 	 * @param @param page 页码
 	 * @param @param pageSize 记录
-	 * @param @param type 1:自己的信誉轨迹 2:别人的信誉轨迹
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "creditDetails", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean creditDetails(HttpServletRequest request, String token, String userId, String page, String pageSize) {
+	public ResultBean creditDetails(HttpServletRequest request, String token, String userId, String page, String pageSize, String type) {
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
 			return new ErrorBean(10002,"页码错误");
@@ -64,6 +63,10 @@ public class ReputationController {
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
 			return new ErrorBean(10002,"记录错误");
+		}
+		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -74,9 +77,17 @@ public class ReputationController {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
-			resultMap = scoreService.selectReputation(null, userToken, pages, pageSizes);
+			if("1".equals(type)) {
+				resultMap = scoreService.selectReputation(null, userToken, pages, pageSizes);
+			} else {
+				resultMap = scoreService.selectJoinActivity(userToken, pages, pageSizes);
+			}
 		} else {
-			resultMap = scoreService.selectReputation(null, Integer.parseInt(userId), pages, pageSizes);
+			if("1".equals(type)) {
+				resultMap = scoreService.selectReputation(null, Integer.parseInt(userId), pages, pageSizes);
+			} else {
+				resultMap = scoreService.selectJoinActivity(Integer.parseInt(userId), pages, pageSizes);
+			}
 		}
 		if(resultMap == null) {
 			log.error("用户不存在");
@@ -98,34 +109,34 @@ public class ReputationController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "activityScore", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean activityScore(HttpServletRequest request, String userId, String page, String pageSize, String type) {
-		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean(10002,"类型错误");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean(10002,"页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean(10002,"记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<>(3);
-		if("1".equals(type)) {
-			resultMap = scoreService.selectReleaseActivity(Integer.parseInt(userId), pages, pageSizes);
-		} else {
-			resultMap = scoreService.selectJoinActivity(Integer.parseInt(userId),pages,pageSizes);
-		}	
-		if(resultMap == null) {
-			log.error("暂无活动记录");
-			return new ErrorBean(10002,"暂无活动记录");
-		}
-		return new SuccessBean(resultMap);
-	}
+//	@RequestMapping(value = "activityScore", method = { RequestMethod.POST, RequestMethod.GET })
+//	@ResponseBody
+//	public ResultBean activityScore(HttpServletRequest request, String userId, String page, String pageSize, String type) {
+//		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+//			log.error("类型错误");
+//			return new ErrorBean(10002,"类型错误");
+//		}
+//		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+//			log.error("页码错误");
+//			return new ErrorBean(10002,"页码错误");
+//		}
+//		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+//			log.error("记录错误");
+//			return new ErrorBean(10002,"记录错误");
+//		}
+//		Integer pages = Integer.valueOf(page);
+//		Integer pageSizes = Integer.valueOf(pageSize);
+//		Map<String, Object> resultMap = new HashMap<>(3);
+//		if("1".equals(type)) {
+//			resultMap = scoreService.selectReleaseActivity(Integer.parseInt(userId), pages, pageSizes);
+//		} else {
+//			resultMap = scoreService.selectJoinActivity(Integer.parseInt(userId),pages,pageSizes);
+//		}	
+//		if(resultMap == null) {
+//			log.error("暂无活动记录");
+//			return new ErrorBean(10002,"暂无活动记录");
+//		}
+//		return new SuccessBean(resultMap);
+//	}
 	
 }

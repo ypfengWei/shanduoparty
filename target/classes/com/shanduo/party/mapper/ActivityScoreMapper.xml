@@ -269,6 +269,21 @@
 	where su.id = #{0}
   </select>
   <select id="selectActivity" resultType="map">
+  	select 
+  	sa.activity_name,ar.`mode`,
+    su.user_name,su.id as uid,su.head_portrait_id,su.gender,su.birthday,sa.id,ye.score,ye.user_id,
+    sa.user_id,ye.evaluation_content
+	from activity_score ye 
+	join shanduo_activity sa on ye.activity_id = sa.id 
+	join shanduo_user su on ye.user_id = su.id or sa.user_id = su.id
+	join activity_requirement ar on sa.id = ar.activity_id
+	where sa.del_flag = '0' and su.del_flag = '0'
+	and ye.score is not null and sa.user_id = #{0}
+	group by su.head_portrait_id
+	order by sa.update_date desc
+	limit #{1},#{2}
+  </select>
+  <!-- <select id="selectActivity" resultType="map">
  	select 
 	sa.activity_name,ar.`mode`,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.id
@@ -279,7 +294,7 @@
     and sa.user_id = #{0}
     order by sa.update_date desc
     limit #{1},#{2}
-  </select>
+  </select> -->
   <select id="activityCount" resultType="java.lang.Integer">
  	select 
 	count(id)

@@ -514,21 +514,30 @@ public class ActivityController {
 	@RequestMapping(value = "oneActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean oneActivity(HttpServletRequest request, String token, String activityId, String lon, String lat) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
-		try {
-			resultMap = activityService.selectByActivityIds(activityId, userToken, lon, lat);
-		} catch (Exception e) {
-			log.error("未知错误");
-			return new ErrorBean(10003,"未知错误");
+		if(StringUtils.isNull(token)) {
+			try {
+				resultMap = activityService.selectByActivityIds(activityId, null, lon, lat);
+			} catch (Exception e) {
+				log.error("未知错误");
+				return new ErrorBean(10003,"未知错误");
+			}
+		} else {
+			Integer userToken = baseService.checkUserToken(token);
+			if (userToken == null) {
+				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			}
+			try {
+				resultMap = activityService.selectByActivityIds(activityId, userToken, lon, lat);
+			} catch (Exception e) {
+				log.error("未知错误");
+				return new ErrorBean(10003,"未知错误");
+			}
 		}
 		if(resultMap == null) {
 			log.error("活动已被取消");

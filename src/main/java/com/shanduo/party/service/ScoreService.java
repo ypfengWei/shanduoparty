@@ -82,7 +82,7 @@ public interface ScoreService {
 	
 	Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize);
 	
-	Map<String, Object> selectReleaseActivity(Integer userId, Integer pageNum, Integer pageSize);
+//	Map<String, Object> selectReleaseActivity(Integer userId, Integer pageNum, Integer pageSize);
 	
 	Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize);
 	

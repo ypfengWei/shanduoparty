@@ -199,74 +199,75 @@ public class ScoreServiceImpl implements ScoreService {
 
 	@Override
 	public Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize) {
-		Map<String, Object> maps = activityScoreMapper.selectReputation(userId);
-		int totalrecord = activityScoreMapper.activityCount(userId); //举办活动记录
+		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
+		int totalrecord = activityScoreMapper.activityCount(userId); //发布活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //举办的活动
-		List<Map<String, Object>> lists = new ArrayList<>();
-		for (Map<String, Object> map : list) {
-			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
-			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-			map.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-			String activityId = map.get("id").toString();
-			lists = activityScoreMapper.selectScore(activityId); //活动下的参与人与平均
-			for (Map<String, Object> smap : lists) {
-				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
+		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //发布的活动与参与人评价
+		List<String> activityIdList = new ArrayList<>();
+		for (Map<String, Object> maps : list) {
+			Map<String, Object> InitiatorMap = new HashMap<>();
+			Map<String, Object> ScoreMap = new HashMap<>();
+			Map<String, Object> ScoreMaps = new HashMap<>();
+			if(!activityIdList.contains(maps.get("id").toString())) {
+				activityIdList.add(maps.get("id").toString());
+				if(maps.get("uid").equals(userId)) {
+					InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
+					InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+					InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+					InitiatorMap.put("user_name",maps.get("user_name"));
+					InitiatorMap.put("uid",maps.get("uid"));
+					InitiatorMap.put("mode",maps.get("mode"));
+					InitiatorMap.put("id",maps.get("id"));
+				} else {
+					ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+					ScoreMap.put("score", maps.get("score"));
+					ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
+				}
 			}
-			map.put("lists", lists);
+			ScoreMaps.put("Initiatormap", InitiatorMap);
+			ScoreMaps.put("ScoreMap", ScoreMap);
 		}
+//		List<Map<String, Object>> scoreList = new ArrayList<>();
+//		for (Map<String, Object> maps : list) {
+//			maps.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
+//			maps.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+//			maps.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+//			String activityId = maps.get("id").toString();
+//			scoreList = activityScoreMapper.selectScore(activityId); ////活动下的参与人与评分 
+//			for (Map<String, Object> scoreMap : scoreList) {
+//				scoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(scoreMap.get("head_portrait_id").toString()));
+//			}
+//			maps.put("scoreList", scoreList);
+//		}
+//		getList(userId, totalrecord, list, 1);
 		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("maps", maps);
+		resultMap.put("map", map);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", list);
-		return resultMap;
-	}
-	
-	@Override
-	public Map<String, Object> selectReleaseActivity(Integer userId, Integer pageNum, Integer pageSize) {
-		int totalrecord = activityScoreMapper.activityCount(userId); //举办活动记录
-		Page page = new Page(totalrecord, pageSize, pageNum);
-		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //举办的活动
-		List<Map<String, Object>> lists = new ArrayList<>();
-		for (Map<String, Object> map : list) {
-			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
-			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-			map.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-			String activityId = map.get("id").toString();
-			lists = activityScoreMapper.selectScore(activityId); //活动下的参与人与平均
-			for (Map<String, Object> smap : lists) {
-				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
-			}
-			map.put("lists", lists);
-		}
-		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("list", list);
-		resultMap.put("page", page.getPageNum());
-		resultMap.put("totalpage", page.getTotalPage());
 		return resultMap;
 	}
 	
 	@Override
 	public Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize) {
-		int totalrecord = activityScoreMapper.activityCounts(userId);
+		int totalrecord = activityScoreMapper.activityCounts(userId); //参加活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize());
-		List<Map<String, Object>> lists = new ArrayList<>();
-		for (Map<String, Object> map : list) {
-			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
-			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-			map.put("vipGrade",vipService.selectVipLevel(userId));
-			String activityId = map.get("id").toString();
-			lists = activityScoreMapper.selectScores(activityId);
-			for (Map<String, Object> smap : lists) {
-				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
-			}
-			map.put("lists", lists);
-		}
+		List<Map<String, Object>> list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize()); //参与的活动
+//		List<Map<String, Object>> scoreList = new ArrayList<>();
+//		for (Map<String, Object> map : list) {
+//			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
+//			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+//			map.put("vipGrade",vipService.selectVipLevel(userId));
+//			String activityId = map.get("id").toString();
+//			scoreList = activityScoreMapper.selectScores(activityId);//活动下的发起人评分
+//			for (Map<String, Object> smap : scoreList) {
+//				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
+//			}
+//			map.put("scoreList", scoreList);
+//		}
+		getList(userId, totalrecord, list, 2);
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("list", list);
 		resultMap.put("page", page.getPageNum());
@@ -274,4 +275,23 @@ public class ScoreServiceImpl implements ScoreService {
 		return resultMap;
 	}
 
+	public List<Map<String,Object>> getList(Integer userId, Integer totalrecord, List<Map<String, Object>> list, Integer type){
+		List<Map<String, Object>> scoreList = new ArrayList<>();
+		for (Map<String, Object> map : list) {
+			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
+			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			map.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+			String activityId = map.get("id").toString();
+			if(type == 1) {
+				scoreList = activityScoreMapper.selectScore(activityId); //活动下的参与人与评分 
+			} else {
+				scoreList = activityScoreMapper.selectScores(activityId); //活动下的发起人评分
+			}
+			for (Map<String, Object> scoreMap : scoreList) {
+				scoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(scoreMap.get("head_portrait_id").toString()));
+			}
+			map.put("scoreList", scoreList);
+		}
+		return list;
+	}
 }
