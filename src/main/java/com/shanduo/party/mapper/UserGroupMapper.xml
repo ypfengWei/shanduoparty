@@ -138,4 +138,29 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <select id="checkGroupType" resultType="java.lang.Integer">
+  	select 
+    count(id)
+    from user_group
+    where user_id = #{0}
+    and group_type = #{1}
+  </select>
+  <select id="selectByGroupId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    id, user_id, group_id, count, group_type
+    from user_group
+    where group_id = #{groupId,jdbcType=VARCHAR}
+  </select>
+  <update id="updateGroupId">
+    update user_group
+    set 
+      count = #{1}
+    where group_id = #{0}
+  </update>
+  <delete id="deleteGroupId">
+  	delete from user_group
+    where user_id = #{0}
+    and group_id = #{1}
+  </delete>
 </mapper>

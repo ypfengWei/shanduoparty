@@ -242,11 +242,15 @@ public class UserController {
 				log.error("密码格式错误");
 				return new ErrorBean(10002,"密码格式错误");
 			}
+			if(userService.checkPassword(isUserId, newPassword)) {
+				log.error("旧密码错误");
+				return new ErrorBean(10002,"旧密码错误");
+			}
 			try {
 				userService.updatePassword(isUserId, password, newPassword);
 			} catch (Exception e) {
-				log.error("修改密码失败");
-				return new ErrorBean(10003,"修改密码失败");
+				log.error("修改失败");
+				return new ErrorBean(10003,"修改失败");
 			}
 		}
 		return new SuccessBean("修改成功");

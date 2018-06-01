@@ -56,7 +56,6 @@ public interface DynamicService {
 	 * 查看附件的人的动态
 	 * @Title: nearbyList
 	 * @Description: TODO
-	 * @param @param userId 用户ID
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @param pageNum 页码
@@ -65,14 +64,13 @@ public interface DynamicService {
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> nearbyList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
+	Map<String, Object> nearbyList(String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
 	 * 个人动态
 	 * @Title: dynamicList
 	 * @Description: TODO
 	 * @param @param userId 被查看用户Id
-	 * @param @param userIds 查看
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @param pageNum 页数
@@ -83,21 +81,20 @@ public interface DynamicService {
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> dynamicList(Integer userId,Integer userIds,String lat,String lon,Integer pageNum,Integer pageSize);
+	Map<String, Object> dynamicList(Integer userId,String lat,String lon,Integer pageNum,Integer pageSize);
 	
 	/**
 	 * 查看单个动态详情
 	 * @Title: selectById
 	 * @Description: TODO
 	 * @param @param dynamicId 动态ID
-	 * @param @param userId 用户ID
 	 * @param @param lat 纬度
 	 * @param @param lon 经度
 	 * @param @return
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	Map<String, Object> selectById(String dynamicId,Integer userId,String lat,String lon);
+	Map<String, Object> selectById(String dynamicId,String lat,String lon);
 	
 	/**
 	 * 查看单个一级评论
