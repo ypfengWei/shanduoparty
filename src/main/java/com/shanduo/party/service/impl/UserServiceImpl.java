@@ -190,6 +190,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public boolean checkPassword(Integer userId, String password) {
+		password = MD5Utils.getInstance().getMD5(password);
+		ShanduoUser user = userMapper.loginById(userId, password);
+		if(user == null) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	public int updatePassword(Integer userId,String password, String newPassword) {
 		password = MD5Utils.getInstance().getMD5(password);
 		newPassword = MD5Utils.getInstance().getMD5(newPassword);

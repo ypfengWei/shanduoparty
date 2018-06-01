@@ -108,6 +108,36 @@ public class MoneyControllrt {
 	}
 	
 	/**
+	 * 检查支付密码
+	 * @Title: checkPassword
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param password
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "checkpassword",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean checkPassword(HttpServletRequest request,String token,String password) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
+			log.error("密码格式错误");
+			return new ErrorBean(10002,"密码格式错误");
+		}
+		if(moneyService.checkPassword(isUserId, password)) {
+			log.error("密码错误");
+			return new ErrorBean(10002,"密码错误");
+		}
+		return new SuccessBean("密码正确");
+	}
+	
+	/**
 	 * 修改支付密码
 	 * @Title: updatepassword
 	 * @Description: TODO
@@ -129,7 +159,7 @@ public class MoneyControllrt {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(typeId) || typeId.matches("^[12]$")) {
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}

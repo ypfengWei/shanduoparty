@@ -89,6 +89,18 @@ public interface UserService {
 	int updatePhone(Integer userId,String phone);
 	
 	/**
+	 * 检查密码是否错误
+	 * @Title: checkPassword
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param password
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
+	boolean checkPassword(Integer userId,String password);
+	
+	/**
 	 * 原始密码修改密码
 	 * @Title: updatePassword
 	 * @Description: TODO

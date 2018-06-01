@@ -14,4 +14,12 @@ public interface UserGroupMapper {
     int updateByPrimaryKeySelective(UserGroup record);
 
     int updateByPrimaryKey(UserGroup record);
+    
+    int checkGroupType(Integer userId,String groupType);
+    
+    UserGroup selectByGroupId(String groupId);
+    
+    int updateGroupId(String groupId, Integer count);
+    
+    int deleteGroupId(Integer userId,String groupId);
 }
