@@ -291,6 +291,7 @@ public class ActivityController {
 	@RequestMapping(value = "participant", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean participant(HttpServletRequest request, String token, String activityId, String page, String pageSize, String lon, String lat) {
+		
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);

@@ -294,8 +294,7 @@
   <select id="selectActivitys" resultType="map">
  	select 
  	sa.activity_name,ar.`mode`,
-    su.user_name,su.id as uid,su.head_portrait_id,su.gender,su.birthday,sa.id,ye.score,ye.user_id,sa.user_id as userId,
-    ye.evaluation_content,ye.be_evaluated,ye.others_score
+    su.user_name,su.id as uid,su.head_portrait_id,su.gender,su.birthday,sa.id,ye.score,ye.user_id,sa.user_id as userId
  	from shanduo_activity sa 
  	join activity_score ye on sa.id = ye.activity_id 
  	join activity_requirement ar on sa.id = ar.activity_id 
