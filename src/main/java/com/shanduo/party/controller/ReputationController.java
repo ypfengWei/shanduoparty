@@ -77,14 +77,10 @@ public class ReputationController {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
-			if("1".equals(type)) {
-				resultMap = scoreService.selectReputation(null, userToken, pages, pageSizes);
-			} else {
-				resultMap = scoreService.selectJoinActivity(userToken, pages, pageSizes);
-			}
+			resultMap = scoreService.selectReputation(null, userToken, pages, pageSizes);
 		} else {
 			if("1".equals(type)) {
-				resultMap = scoreService.selectReputation(null, Integer.parseInt(userId), pages, pageSizes);
+			resultMap = scoreService.selectReputation(null, Integer.parseInt(userId), pages, pageSizes);
 			} else {
 				resultMap = scoreService.selectJoinActivity(Integer.parseInt(userId), pages, pageSizes);
 			}

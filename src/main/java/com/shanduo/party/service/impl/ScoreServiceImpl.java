@@ -4,8 +4,10 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.ScoreUtils;
 import com.shanduo.party.util.UUIDGenerator;
+
 
 /**
  * 评价操作实现类
@@ -201,16 +204,61 @@ public class ScoreServiceImpl implements ScoreService {
 	public Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize) {
 		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
 		int totalrecord = activityScoreMapper.activityCount(userId); //发布活动记录
+//			totalrecord = activityScoreMapper.activityCounts(userId); //参加活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //发布的活动与参与人评价
-		List<String> activityIdList = new ArrayList<>();
+		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //发布的活动与评价
+//			list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize()); //参与的活动与评价
+		List<Map<String, Object>> activityList = new ArrayList<Map<String, Object>>();
+		Set<String> activityIdSet = new HashSet<String>();
+		Map<String, Object> InitiatorMap = new HashMap<String, Object>();
+		List<Map<String, Object>> ScoreMapList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> maps : list) {
-			Map<String, Object> InitiatorMap = new HashMap<>();
 			Map<String, Object> ScoreMap = new HashMap<>();
-			Map<String, Object> ScoreMaps = new HashMap<>();
-			if(!activityIdList.contains(maps.get("id").toString())) {
-				activityIdList.add(maps.get("id").toString());
+			if(activityIdSet.contains(maps.get("id").toString())) {
+				if(maps.get("uid").equals(userId)) {
+					InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
+					InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+					InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+					InitiatorMap.put("user_name",maps.get("user_name"));
+					InitiatorMap.put("uid",maps.get("uid"));
+					InitiatorMap.put("mode",maps.get("mode"));
+					InitiatorMap.put("id",maps.get("id"));	
+				} else {
+					ScoreMap.clear();
+					ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+					ScoreMap.put("score", maps.get("score"));
+					ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
+					ScoreMap.put("others_score", maps.get("others_score"));
+					ScoreMap.put("be_evaluated", maps.get("be_evaluated"));
+					ScoreMapList.add(ScoreMap);
+				}
+			} else {
+				activityIdSet.add(maps.get("id").toString());
+				if(!InitiatorMap.isEmpty()) {
+					List<Map<String, Object>> ScoreMapLists = new ArrayList<Map<String, Object>>();
+					for(Map<String, Object> scoremap : ScoreMapList){
+						Map<String, Object> newscoremap = new HashMap<String, Object>();
+						newscoremap.put("head_portrait_id", scoremap.get("head_portrait_id"));
+						newscoremap.put("score", scoremap.get("score"));
+						newscoremap.put("evaluation_content", scoremap.get("evaluation_content"));
+						newscoremap.put("others_score", scoremap.get("others_score"));
+						newscoremap.put("be_evaluated", scoremap.get("be_evaluated"));
+						ScoreMapLists.add(newscoremap);
+					}
+					Map<String, Object> InitiatorMaps = new HashMap<>();
+					InitiatorMaps.put("id",InitiatorMap.get("id"));
+					InitiatorMaps.put("user_name",InitiatorMap.get("user_name"));
+					InitiatorMaps.put("mode",InitiatorMap.get("mode"));
+					InitiatorMaps.put("birthday",InitiatorMap.get("birthday"));
+					InitiatorMaps.put("vipGrade",InitiatorMap.get("vipGrade"));
+					InitiatorMaps.put("head_portrait_id",InitiatorMap.get("head_portrait_id"));
+					InitiatorMaps.put("uid",InitiatorMap.get("uid"));
+					InitiatorMaps.put("scoreList", ScoreMapLists);
+					activityList.add(InitiatorMaps);
+					ScoreMapList.clear();
+					InitiatorMap.clear();//清除上一个活动的信息
+				}
 				if(maps.get("uid").equals(userId)) {
 					InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
 					InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
@@ -220,32 +268,23 @@ public class ScoreServiceImpl implements ScoreService {
 					InitiatorMap.put("mode",maps.get("mode"));
 					InitiatorMap.put("id",maps.get("id"));
 				} else {
+					ScoreMap.clear();
 					ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
 					ScoreMap.put("score", maps.get("score"));
 					ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
+					ScoreMap.put("others_score", maps.get("others_score"));
+					ScoreMap.put("be_evaluated", maps.get("be_evaluated"));
+					ScoreMapList.add(ScoreMap);
 				}
 			}
-			ScoreMaps.put("Initiatormap", InitiatorMap);
-			ScoreMaps.put("ScoreMap", ScoreMap);
 		}
-//		List<Map<String, Object>> scoreList = new ArrayList<>();
-//		for (Map<String, Object> maps : list) {
-//			maps.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
-//			maps.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-//			maps.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-//			String activityId = maps.get("id").toString();
-//			scoreList = activityScoreMapper.selectScore(activityId); ////活动下的参与人与评分 
-//			for (Map<String, Object> scoreMap : scoreList) {
-//				scoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(scoreMap.get("head_portrait_id").toString()));
-//			}
-//			maps.put("scoreList", scoreList);
-//		}
-//		getList(userId, totalrecord, list, 1);
+		InitiatorMap.put("scoreList", ScoreMapList);
+		activityList.add(InitiatorMap);
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("map", map);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
-		resultMap.put("list", list);
+		resultMap.put("list", activityList);
 		return resultMap;
 	}
 	

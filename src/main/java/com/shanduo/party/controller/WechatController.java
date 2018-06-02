@@ -103,7 +103,9 @@ public class WechatController {
 		String unionid = obj.getString("unionId");
 		Integer userId = bindingService.selectUserId(unionid, "1");
 		if (null == userId) {
-			return new ErrorBean(10086, unionid);
+			
+			String json = "{\"openId\":\"" + openid + "\",\"unionId\":\"" + unionid + "\"}";
+			return new ErrorBean(10086, json);
 		}
 		TokenInfo tokenInfo = userService.loginUser(userId);
 		if(tokenInfo == null) {
