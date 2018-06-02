@@ -7,13 +7,15 @@
     <result column="money" jdbcType="DECIMAL" property="money" />
     <result column="experience" jdbcType="INTEGER" property="experience" />
     <result column="beans" jdbcType="INTEGER" property="beans" />
+    <result column="refresh" jdbcType="INTEGER" property="refresh" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    user_id, password, money, experience, beans, remarks, create_date, update_date, del_flag
+    user_id, password, money, experience, beans, refresh, remarks, create_date, update_date, 
+    del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -27,13 +29,13 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.UserMoney">
     insert into user_money (user_id, password, money, 
-      experience, beans, remarks, 
-      create_date, update_date, del_flag
-      )
+      experience, beans, refresh, 
+      remarks, create_date, update_date, 
+      del_flag)
     values (#{userId,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, 
-      #{experience,jdbcType=INTEGER}, #{beans,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
-      )
+      #{experience,jdbcType=INTEGER}, #{beans,jdbcType=INTEGER}, #{refresh,jdbcType=INTEGER}, 
+      #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserMoney">
     insert into user_money
@@ -52,6 +54,9 @@
       </if>
       <if test="beans != null">
         beans,
+      </if>
+      <if test="refresh != null">
+        refresh,
       </if>
       <if test="remarks != null">
         remarks,
@@ -82,6 +87,9 @@
       <if test="beans != null">
         #{beans,jdbcType=INTEGER},
       </if>
+      <if test="refresh != null">
+        #{refresh,jdbcType=INTEGER},
+      </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
       </if>
@@ -111,6 +119,9 @@
       <if test="beans != null">
         beans = #{beans,jdbcType=INTEGER},
       </if>
+      <if test="refresh != null">
+        refresh = #{refresh,jdbcType=INTEGER},
+      </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
@@ -132,6 +143,7 @@
       money = #{money,jdbcType=DECIMAL},
       experience = #{experience,jdbcType=INTEGER},
       beans = #{beans,jdbcType=INTEGER},
+      refresh = #{refresh,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -141,8 +153,27 @@
   
   <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
-    user_id, money, experience, beans, remarks
+    user_id, money, experience, beans, refresh,remarks
     from user_money
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <update id="updateRefresh">
+    update user_money
+    set 
+	  refresh = 10
+    where user_id not in (select user_id from shanduo_vip where vip_end_time > now())
+  </update>
+  <update id="updateVipRefresh">
+    update user_money
+    set 
+	  refresh = 50
+    where user_id in (select user_id from shanduo_vip where vip_end_time > now() and vip_type = '0' 
+    and user_id not in (select user_id from shanduo_vip where vip_end_time > now() and vip_type = '1'))
+  </update>
+  <update id="updateSVipRefresh">
+    update user_money
+    set 
+	  refresh = 100
+    where user_id in (select user_id from shanduo_vip where vip_end_time > now() and vip_type = '1')
+  </update>
 </mapper>

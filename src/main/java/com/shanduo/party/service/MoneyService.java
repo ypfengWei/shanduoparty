@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 /**
- * 闪多币业务层
+ * 余额-闪多-豆刷新次数业务层
  * @ClassName: MoneyService
  * @Description: TODO
  * @author fanshixin
@@ -112,5 +112,48 @@ public interface MoneyService {
 	 */
 	int updatePassWord(Integer userId,String password);
 	
+	/**
+	 * 每月重置刷新次数
+	 * @Title: updateRefresh
+	 * @Description: TODO
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int updateRefresh();
+	
+	/**
+	 * 修改刷新次数，开通vip，svip使用
+	 * @Title: updateRefresh
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param refresh
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int updateRefresh(Integer userId,Integer refresh);
+	
+	/**
+	 * 检查本月是否还有刷新次数
+	 * @Title: checkRefresh
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
+	boolean checkRefresh(Integer userId);
+	
+	/**
+	 * 减少1次刷新次数
+	 * @Title: reduceRefresh
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int reduceRefresh(Integer userId);
 	
 }
