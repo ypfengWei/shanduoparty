@@ -219,7 +219,8 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "showHotActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, String token, String userId) {
+	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, 
+			String token, String userId) {
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
 			return new ErrorBean(10002,"经度格式错误");
@@ -274,29 +275,21 @@ public class ActivityController {
 	}
 	
 	/**
-	 * 查看单个活动详情及参与人及参加活动状态(app)
+	 * 查看单个活动下的参与人及参加活动状态(app)
 	 * @Title: participant
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityId 活动id
+	 * @param @param activityId 活动Id
 	 * @param @param page 页码
 	 * @param @param pageSize 记录
-	 * @param @param lon 经度
-	 * @param @param lat 纬度
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "participant", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean participant(HttpServletRequest request, String token, String activityId, String page, String pageSize, String lon, String lat) {
-		
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
+	public ResultBean participant(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
@@ -311,7 +304,19 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken,lon,lat);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		int joinActivity = 0;
+		if(StringUtils.isNull(token)) {
+			joinActivity = 2;
+ 			resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,null,joinActivity);
+		} else {
+			Integer userToken = baseService.checkUserToken(token);
+			if (userToken == null) {
+				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			}
+			resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken,joinActivity);
+		}
 		return new SuccessBean(resultMap);
 	}
 	
@@ -355,15 +360,13 @@ public class ActivityController {
 	}
 	
 	/**
-	 * type = 1 参加活动
-	 * type = 2 取消活动
-	 * type = 3 踢人
+	 * 参加或取消活动
 	 * @Title: joinActivities
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
 	 * @param @param activityId 活动id
-	 * @param @param type 
+	 * @param @param type 1：参加活动  2：取消活动 3：踢人
 	 * @param @param userIds 用户Id,我的活动才传
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
@@ -456,13 +459,13 @@ public class ActivityController {
 				return new ErrorBean(10002,"不是活动发起者禁止踢人");
 			}
 			try {
-				activityService.deleteByUserIds(activityId, userToken, userIds);
+				activityService.deleteByUserIds(activityId, userIds);
 			} catch (Exception e) {
 				log.error("踢人失败");
 				return new ErrorBean(10003,"踢人失败");
 			}
 		}
-		return new SuccessBean("取消成功");
+		return new SuccessBean("操作成功");
 	}
 
 	/**
@@ -506,15 +509,13 @@ public class ActivityController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param activityId 活动id
-	 * @param @param lon 经度
-	 * @param @param lat 纬度
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "oneActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean oneActivity(HttpServletRequest request, String token, String activityId, String lon, String lat) {
+	public ResultBean oneActivity(HttpServletRequest request, String token, String activityId) {
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
@@ -522,10 +523,10 @@ public class ActivityController {
 		Map<String, Object> resultMap = new HashMap<>(3);
 		if(StringUtils.isNull(token)) {
 			try {
-				resultMap = activityService.selectByActivityIds(activityId, null, lon, lat);
+				resultMap = activityService.selectByActivityIds(activityId, null);
 			} catch (Exception e) {
-				log.error("未知错误");
-				return new ErrorBean(10003,"未知错误");
+				log.error("网络异常");
+				return new ErrorBean(10003,"网络异常");
 			}
 		} else {
 			Integer userToken = baseService.checkUserToken(token);
@@ -534,10 +535,10 @@ public class ActivityController {
 				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
 			try {
-				resultMap = activityService.selectByActivityIds(activityId, userToken, lon, lat);
+				resultMap = activityService.selectByActivityIds(activityId, userToken);
 			} catch (Exception e) {
-				log.error("未知错误");
-				return new ErrorBean(10003,"未知错误");
+				log.error("网络异常");
+				return new ErrorBean(10003,"网络异常");
 			}
 		}
 		if(resultMap == null) {
@@ -574,12 +575,12 @@ public class ActivityController {
 		try {
 			resultMap = activityService.selectQuery(query, lon, lat);
 		} catch (Exception e) {
-			log.error("未知错误");
-			return new ErrorBean(10003,"未知错误");
+			log.error("网络异常");
+			return new ErrorBean(10003,"网络异常");
 		}
 		if(resultMap == null) {
-			log.error("暂无活动");
-			return new ErrorBean(10002,"暂无活动");
+			log.error("没有找到活动");
+			return new ErrorBean(10002,"没有找到活动活动");
 		}
 		return new SuccessBean(resultMap);
 	}

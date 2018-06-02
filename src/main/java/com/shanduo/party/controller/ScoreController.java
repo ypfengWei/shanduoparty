@@ -106,9 +106,9 @@ public class ScoreController {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
 		}
-		if(StringUtils.isNull(data)) {
-			log.error("json为空");
-			return new ErrorBean(10002,"json为空");
+		if(StringUtils.isNull(data) || data.isEmpty()) {
+			log.error("没有进行评价");
+			return new ErrorBean(10002,"没有进行评价");
 		}
 		List<Object> list = JsonStringUtils.getList(data);
 		for (int i = 0; i < list.size(); i++) {

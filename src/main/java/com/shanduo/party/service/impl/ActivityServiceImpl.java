@@ -105,12 +105,11 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public Map<String, Object> selectByActivityId(String activityId, Integer pageNum, Integer pageSize, Integer userId, String lon, String lat) {
+	public Map<String, Object> selectByActivityId(String activityId, Integer pageNum, Integer pageSize, Integer userId, int joinActivity) {
 		int totalrecord = shanduoActivityMapper.selectByScoreActivityCount(activityId);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectByActivityId(activityId, pageNum, page.getPageSize());
-		int joinActivity = 0;
 		for (Map<String, Object> map : resultList) {
 			if(map.get("id").equals(userId)) {
 				joinActivity = 1;
@@ -120,8 +119,6 @@ public class ActivityServiceImpl implements ActivityService {
 		for (Map<String, Object> map : resultList) {
 			map.put("joinActivity", joinActivity);
 			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-			Double[] doubles = LocationUtils.getDoubles(lon, lat);
-			map.put("location", LocationUtils.getDistance(doubles[0], doubles[1], doubles[2], doubles[3]));
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -399,7 +396,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public int deleteByUserIds(String activityId, Integer token, String userIds) {
+	public int deleteByUserIds(String activityId, String userIds) {
 		String[] userId = userIds.split(",");
 		for(int i=0;i< userId.length;i++) {
 			int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userId[i]));
@@ -421,8 +418,10 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	public ActivityInfo showActivity(ActivityInfo activityInfo, String lon, String lat, int type){
 		activityInfo.setAge(AgeUtils.getAgeFromBirthTime(activityInfo.getBirthday()));
-		double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
-		activityInfo.setLocation(location);
+		if(!StringUtils.isNull(lat)&&!StringUtils.isNull(lon)) {
+			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
+			activityInfo.setLocation(location);
+		}
     	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
     	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
 		if(resultMap != null) {
@@ -523,9 +522,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public Map<String, Object> selectByActivityIds(String activityId, Integer userId, String lon, String lat) {
+	public Map<String, Object> selectByActivityIds(String activityId, Integer userId) {
 		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
-		showActivity(activityInfo, lon, lat, 0);
+		showActivity(activityInfo, null, null, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		if(null != userId) {

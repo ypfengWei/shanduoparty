@@ -234,7 +234,7 @@ public interface ActivityService {
      * @return List<Map<String,Object>>    返回类型
      * @throws
      */
-    Map<String, Object> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId, String lon, String lat);
+    Map<String, Object> selectByActivityId(String activityId, Integer page, Integer pageSize, Integer userId, int joinActivity);
 
     /**
      * 活动刷新
@@ -280,7 +280,7 @@ public interface ActivityService {
      * @return int    返回类型
      * @throws
      */
-    int deleteByUserIds(String activityId, Integer token, String userId);
+    int deleteByUserIds(String activityId, String userId);
     
     /**
      * 查看单个活动详情
@@ -291,7 +291,7 @@ public interface ActivityService {
      * @return ActivityInfo    返回类型
      * @throws
      */
-    Map<String, Object> selectByActivityIds(String activityId, Integer userId, String lon, String lat);
+    Map<String, Object> selectByActivityIds(String activityId, Integer userId);
     
     /**
      * 根据活动标题模糊查询

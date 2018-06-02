@@ -204,34 +204,20 @@ public class ScoreServiceImpl implements ScoreService {
 	public Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize) {
 		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
 		int totalrecord = activityScoreMapper.activityCount(userId); //发布活动记录
-//			totalrecord = activityScoreMapper.activityCounts(userId); //参加活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //发布的活动与评价
-//			list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize()); //参与的活动与评价
 		List<Map<String, Object>> activityList = new ArrayList<Map<String, Object>>();
 		Set<String> activityIdSet = new HashSet<String>();
 		Map<String, Object> InitiatorMap = new HashMap<String, Object>();
 		List<Map<String, Object>> ScoreMapList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> maps : list) {
-			Map<String, Object> ScoreMap = new HashMap<>();
 			if(activityIdSet.contains(maps.get("id").toString())) {
 				if(maps.get("uid").equals(userId)) {
-					InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
-					InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-					InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-					InitiatorMap.put("user_name",maps.get("user_name"));
-					InitiatorMap.put("uid",maps.get("uid"));
-					InitiatorMap.put("mode",maps.get("mode"));
-					InitiatorMap.put("id",maps.get("id"));	
+					getInitiatorMap(InitiatorMap, maps, userId);
 				} else {
-					ScoreMap.clear();
-					ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-					ScoreMap.put("score", maps.get("score"));
-					ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
-					ScoreMap.put("others_score", maps.get("others_score"));
-					ScoreMap.put("be_evaluated", maps.get("be_evaluated"));
-					ScoreMapList.add(ScoreMap);
+					getScoreMap(maps).clear();
+					ScoreMapList.add(getScoreMap(maps));
 				}
 			} else {
 				activityIdSet.add(maps.get("id").toString());
@@ -244,37 +230,21 @@ public class ScoreServiceImpl implements ScoreService {
 						newscoremap.put("evaluation_content", scoremap.get("evaluation_content"));
 						newscoremap.put("others_score", scoremap.get("others_score"));
 						newscoremap.put("be_evaluated", scoremap.get("be_evaluated"));
+						newscoremap.put("user_name", scoremap.get("user_name"));
 						ScoreMapLists.add(newscoremap);
 					}
 					Map<String, Object> InitiatorMaps = new HashMap<>();
-					InitiatorMaps.put("id",InitiatorMap.get("id"));
-					InitiatorMaps.put("user_name",InitiatorMap.get("user_name"));
-					InitiatorMaps.put("mode",InitiatorMap.get("mode"));
-					InitiatorMaps.put("birthday",InitiatorMap.get("birthday"));
-					InitiatorMaps.put("vipGrade",InitiatorMap.get("vipGrade"));
-					InitiatorMaps.put("head_portrait_id",InitiatorMap.get("head_portrait_id"));
-					InitiatorMaps.put("uid",InitiatorMap.get("uid"));
+					InitiatorMaps.putAll(InitiatorMap);
 					InitiatorMaps.put("scoreList", ScoreMapLists);
 					activityList.add(InitiatorMaps);
 					ScoreMapList.clear();
 					InitiatorMap.clear();//清除上一个活动的信息
 				}
 				if(maps.get("uid").equals(userId)) {
-					InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
-					InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-					InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-					InitiatorMap.put("user_name",maps.get("user_name"));
-					InitiatorMap.put("uid",maps.get("uid"));
-					InitiatorMap.put("mode",maps.get("mode"));
-					InitiatorMap.put("id",maps.get("id"));
+					getInitiatorMap(InitiatorMap, maps, userId);
 				} else {
-					ScoreMap.clear();
-					ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-					ScoreMap.put("score", maps.get("score"));
-					ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
-					ScoreMap.put("others_score", maps.get("others_score"));
-					ScoreMap.put("be_evaluated", maps.get("be_evaluated"));
-					ScoreMapList.add(ScoreMap);
+					getScoreMap(maps).clear();
+					ScoreMapList.add(getScoreMap(maps));
 				}
 			}
 		}
@@ -290,47 +260,51 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Override
 	public Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize) {
+		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
 		int totalrecord = activityScoreMapper.activityCounts(userId); //参加活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize()); //参与的活动
-//		List<Map<String, Object>> scoreList = new ArrayList<>();
-//		for (Map<String, Object> map : list) {
-//			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
-//			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-//			map.put("vipGrade",vipService.selectVipLevel(userId));
-//			String activityId = map.get("id").toString();
-//			scoreList = activityScoreMapper.selectScores(activityId);//活动下的发起人评分
-//			for (Map<String, Object> smap : scoreList) {
-//				smap.put("head_portrait_id", PictureUtils.getPictureUrl(smap.get("head_portrait_id").toString()));
-//			}
-//			map.put("scoreList", scoreList);
-//		}
-		getList(userId, totalrecord, list, 2);
+		List<Map<String, Object>> scoreList = new ArrayList<>();
+		for (Map<String, Object> maps : list) {
+			maps.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
+			maps.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+			maps.put("vipGrade",vipService.selectVipLevel(userId));
+			String activityId = maps.get("id").toString();
+			scoreList = activityScoreMapper.selectScore(activityId);//活动下的发起人评分
+			for (Map<String, Object> ScoreMap : scoreList) {
+				ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(ScoreMap.get("head_portrait_id").toString()));
+			}
+			maps.put("scoreList", scoreList);
+		}
 		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("map", map);
 		resultMap.put("list", list);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		return resultMap;
 	}
-
-	public List<Map<String,Object>> getList(Integer userId, Integer totalrecord, List<Map<String, Object>> list, Integer type){
-		List<Map<String, Object>> scoreList = new ArrayList<>();
-		for (Map<String, Object> map : list) {
-			map.put("birthday", AgeUtils.getAgeFromBirthTime(map.get("birthday").toString()));
-			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
-			map.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-			String activityId = map.get("id").toString();
-			if(type == 1) {
-				scoreList = activityScoreMapper.selectScore(activityId); //活动下的参与人与评分 
-			} else {
-				scoreList = activityScoreMapper.selectScores(activityId); //活动下的发起人评分
-			}
-			for (Map<String, Object> scoreMap : scoreList) {
-				scoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(scoreMap.get("head_portrait_id").toString()));
-			}
-			map.put("scoreList", scoreList);
-		}
-		return list;
+	
+	public Map<String, Object> getInitiatorMap(Map<String, Object> InitiatorMap,Map<String, Object> maps, Integer userId){
+		InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
+		InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+		InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+		InitiatorMap.put("user_name",maps.get("user_name"));
+		InitiatorMap.put("uid",maps.get("uid"));
+		InitiatorMap.put("mode",maps.get("mode"));
+		InitiatorMap.put("id",maps.get("id"));	
+		InitiatorMap.put("activity_name",maps.get("activity_name"));
+		return InitiatorMap;
+	}
+	
+	public Map<String, Object> getScoreMap(Map<String, Object> maps){
+		Map<String, Object> ScoreMap = new HashMap<String, Object>();
+		ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
+		ScoreMap.put("score", maps.get("score"));
+		ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
+		ScoreMap.put("others_score", maps.get("others_score"));
+		ScoreMap.put("be_evaluated", maps.get("be_evaluated"));
+		ScoreMap.put("user_name", maps.get("user_name"));
+		return ScoreMap;
 	}
 }
