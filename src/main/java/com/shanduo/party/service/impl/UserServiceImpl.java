@@ -2,6 +2,7 @@ package com.shanduo.party.service.impl;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -313,6 +314,15 @@ public class UserServiceImpl implements UserService {
 		resultMap.put("attention",attentionService.attentionCount(attention));
 		resultMap.put("dynamic",dynamicService.dynamicCount(attention));
 		resultMap.put("activity",activityMapper.selectByUserIdCount(attention));
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> selectById(Integer userId) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("attention",attentionService.attentionCount(userId));
+		resultMap.put("dynamic",dynamicService.dynamicCount(userId));
+		resultMap.put("activity",activityMapper.selectByUserIdCount(userId));
 		return resultMap;
 	}
 

@@ -64,14 +64,17 @@ public class GroupServiceImpl implements GroupService {
 	}
 	
 	@Override
-	public boolean checkGroupType(Integer userId, String groupType) {
+	public int checkGroupType(Integer userId, String groupType) {
 		int count = groupMapper.checkGroupType(userId, groupType);
 		int vip = vipService.selectVipLevel(userId);
 		int counts = getGroupCount(vip, groupType);
-		if(count >= counts) {
-			return true;
+		if(counts == 0) {
+			return 0;
 		}
-		return false;
+		if(count >= counts) {
+			return 1;
+		}
+		return 2;
 	}
 
 	@Override

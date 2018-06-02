@@ -196,4 +196,54 @@ public class MoneyControllrt {
 		return new SuccessBean("修改成功");
 	}
 
+	/**
+	 * 刷新活动
+	 * @Title: refreshActivity
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param typeId 类型:1.刷新次数刷新;2.闪多豆刷新
+	 * @param @param activityId 活动ID
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "refreshactivity",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean refreshActivity(HttpServletRequest request,String token,String typeId,String activityId) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]")) {
+			log.error("类型错误");
+			return new ErrorBean(1002, "类型错误");
+		}
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动ID为空");
+			return new ErrorBean(1002, "活动ID为空");
+		}
+		Map<String, Object> resultMap = moneyService.selectByUserId(isUserId);
+		if("1".equals(typeId)) {
+			int refresh = (int) resultMap.get("refresh");
+			if(refresh < 1) {
+				log.error("刷新次数已使用完毕");
+				return new ErrorBean(10002,"刷新次数已使用完毕");
+			}
+		}else {
+			int beans = (int) resultMap.get("beans");
+			if(beans < 200) {
+				log.error("闪多豆不足");
+				return new ErrorBean(10002,"闪多豆不足");
+			}
+		}
+		try {
+			moneyService.refreshActivity(isUserId, typeId, activityId);
+		} catch (Exception e) {
+			log.error("活动刷新失败");
+			return new ErrorBean(10003,"刷新失败");
+		}
+		return new SuccessBean("刷新成功");
+	}
 }

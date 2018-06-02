@@ -22,7 +22,7 @@ public interface GroupService {
 	 * @return int
 	 * @throws
 	 */
-	boolean checkGroupType(Integer userId,String groupType);
+	int checkGroupType(Integer userId,String groupType);
 	
 	/**
 	 * 创建群组

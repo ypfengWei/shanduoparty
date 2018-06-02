@@ -192,4 +192,15 @@ public interface UserService {
 	 * @throws
 	 */
 	Map<String, Object> selectById(Integer userId,Integer attention);
+	
+	/**
+	 * 查询用户的好友，动态，活动数量
+	 * @Title: selectById
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> selectById(Integer userId);
 }

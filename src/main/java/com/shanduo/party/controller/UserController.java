@@ -1,5 +1,8 @@
 package com.shanduo.party.controller;
 
+
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -119,6 +122,29 @@ public class UserController {
 			return new ErrorBean(10002,"账号或密码错误");
 		}
 		return new SuccessBean(token);
+	}
+	
+	
+	/**
+	 * 查询好友，活动，动态数量
+	 * @Title: userCount
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "usercount",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean userCount(HttpServletRequest request,String token) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		Map<String, Object> resultMap = userService.selectById(isUserId);
+		return new SuccessBean(resultMap);
 	}
 	
 	/**
@@ -265,8 +291,8 @@ public class UserController {
 	 * @param @param name 昵称
 	 * @param @param picture 头像图片ID
 	 * @param @param birthday 生日
-	 * @param @param gender 性别
-	 * @param @param emotion 情感状态
+	 * @param @param gender 性别:0.女;1.男
+	 * @param @param emotion 情感状态:0.保密;1.已婚;2.未婚
 	 * @param @param signature 个性签名
 	 * @param @param background 背景图片
 	 * @param @param hometown 家乡
