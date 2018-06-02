@@ -106,11 +106,15 @@ public class ScoreController {
 			log.error("活动ID为空");
 			return new ErrorBean(10002,"活动ID为空");
 		}
-		if(StringUtils.isNull(data) || data.isEmpty()) {
+		if(StringUtils.isNull(data)) {
 			log.error("没有进行评价");
 			return new ErrorBean(10002,"没有进行评价");
 		}
 		List<Object> list = JsonStringUtils.getList(data);
+		if(list.isEmpty()) {
+			log.error("没有进行评价");
+			return new ErrorBean(10002,"没有进行评价");
+		}
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> map = (Map<String, Object>) list.get(i);
 			int score = Integer.parseInt(map.get("score").toString());
@@ -135,8 +139,10 @@ public class ScoreController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
+	 * @param @param page
+	 * @param @param pageSize
 	 * @param @return    设定文件
-	 * @return List<ActivityScore>    返回类型
+	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "selHistoryScore", method = { RequestMethod.POST, RequestMethod.GET })

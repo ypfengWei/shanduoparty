@@ -271,6 +271,7 @@ public class ActivityController {
 			}
 			resultMap = activityService.selectByUserId(Integer.parseInt(userId),pages,pageSizes,lon,lat);
 		}
+		System.out.println(resultMap);
 		return new SuccessBean(resultMap);
 	}
 	
