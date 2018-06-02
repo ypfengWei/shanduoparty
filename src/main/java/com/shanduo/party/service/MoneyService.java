@@ -81,12 +81,24 @@ public interface MoneyService {
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param beans 闪多豆数量
-	 * @param @param typeId
+	 * @param @param typeId 1.签到;2.升级
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
 	int payBeans(Integer userId,Integer beans,String typeId);
+	
+	/**
+	 * 消费闪多豆
+	 * @Title: consumeBeans
+	 * @Description: TODO
+	 * @param @param userId 用户ID
+	 * @param @param beans 闪多豆数量
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int consumeBeans(Integer userId,Integer beans);
 	
 	/**
 	 * 检查支付密码
@@ -135,17 +147,6 @@ public interface MoneyService {
 	int updateRefresh(Integer userId,Integer refresh);
 	
 	/**
-	 * 检查本月是否还有刷新次数
-	 * @Title: checkRefresh
-	 * @Description: TODO
-	 * @param @param userId
-	 * @param @return
-	 * @return boolean
-	 * @throws
-	 */
-	boolean checkRefresh(Integer userId);
-	
-	/**
 	 * 减少1次刷新次数
 	 * @Title: reduceRefresh
 	 * @Description: TODO
@@ -156,4 +157,16 @@ public interface MoneyService {
 	 */
 	int reduceRefresh(Integer userId);
 	
+	/**
+	 * 刷新活动
+	 * @Title: refreshActivity
+	 * @Description: TODO
+	 * @param @param userId 用户ID
+	 * @param @param typeId 类型:1.刷新次数;2.闪多豆
+	 * @param @param activityId 活动ID
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int refreshActivity(Integer userId,String typeId,String activityId);
 }

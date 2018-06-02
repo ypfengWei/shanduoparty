@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.mapper.UserMoneyMapper;
 import com.shanduo.party.mapper.UserMoneyRecordMapper;
+import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.util.MD5Utils;
@@ -39,6 +40,8 @@ public class MoneyServiceImpl implements MoneyService {
 	private UserMoneyRecordMapper moneyRecordMapper;
 	@Autowired
 	private ExperienceService experienceService;
+	@Autowired
+	private ActivityService activityService;
 
 	@Override
 	public Map<String, Object> selectByUserId(Integer userId) {
@@ -49,6 +52,7 @@ public class MoneyServiceImpl implements MoneyService {
 		Map<String, Object> resultMap = new HashMap<String, Object>(2);
 		resultMap.put("money", money.getMoney());
 		resultMap.put("beans", money.getBeans());
+		resultMap.put("refresh", money.getRefresh());
 		return resultMap;
 	}
 	
@@ -95,8 +99,8 @@ public class MoneyServiceImpl implements MoneyService {
 	@Override
 	public int consumeMoney(Integer userId, BigDecimal money, String remarks) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		money = userMoney.getMoney().subtract(money);
-		userMoney.setMoney(money);
+		BigDecimal moneys = userMoney.getMoney().subtract(money);
+		userMoney.setMoney(moneys);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
 			log.error("消费失败");
@@ -122,9 +126,9 @@ public class MoneyServiceImpl implements MoneyService {
 		}
 		String remarks = "";
 		if("1".equals(typeId)) {
-			remarks = "签到获得闪多豆"+beans+"颗";
+			remarks = "签到赠送闪多豆"+beans+"颗";
 		}else {
-			remarks = "升级获得闪多豆"+beans+"颗";
+			remarks = "升级赠送闪多豆"+beans+"颗";
 		}
 		try {
 			experienceService.saveMoneyRecord(userId, "9", beans+"",remarks);
@@ -134,6 +138,32 @@ public class MoneyServiceImpl implements MoneyService {
 		return 1;
 	}
 
+	@Override
+	public int consumeBeans(Integer userId, Integer beans) {
+		UserMoney money = moneyMapper.selectByUserId(userId);
+		if(money == null) {
+			throw new RuntimeException();
+		}
+		int beansa = money.getBeans();
+		if(beansa < beans) {
+			log.error("闪多豆不足");
+			throw new RuntimeException();
+		}
+		money = new UserMoney();
+		money.setUserId(userId);
+		money.setBeans(beansa - beans);
+		int i = moneyMapper.updateByPrimaryKeySelective(money);
+		if(i < 1) {
+			throw new RuntimeException();
+		}
+		try {
+			experienceService.saveMoneyRecord(userId, "10", beans+"","刷新活动:-"+beans);
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+	
 	@Override
 	public boolean checkPassword(Integer userId, String password) {
 		UserMoney money = moneyMapper.selectByPrimaryKey(userId);
@@ -182,16 +212,6 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 
 	@Override
-	public boolean checkRefresh(Integer userId) {
-		UserMoney money = moneyMapper.selectByUserId(userId);
-		Integer refresh = money.getRefresh();
-		if(refresh < 1) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public int reduceRefresh(Integer userId) {
 		UserMoney money = moneyMapper.selectByUserId(userId);
 		Integer refresh = money.getRefresh()-1;
@@ -204,6 +224,22 @@ public class MoneyServiceImpl implements MoneyService {
 		money.setRefresh(refresh);
 		int i = moneyMapper.updateByPrimaryKeySelective(money);
 		if(i < 1) {
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+
+	@Override
+	public int refreshActivity(Integer userId, String typeId, String activityId) {
+		if("1".equals(typeId)) {
+			reduceRefresh(userId);
+		}else {
+			consumeBeans(userId, 200);
+		}
+		try {
+			activityService.activityRefresh(activityId);
+		} catch (Exception e) {
+			log.error("活动刷新失败");
 			throw new RuntimeException();
 		}
 		return 1;

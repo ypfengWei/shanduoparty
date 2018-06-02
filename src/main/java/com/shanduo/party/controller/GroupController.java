@@ -61,9 +61,22 @@ public class GroupController {
 			log.error("群组类型错误");
 			return new ErrorBean(10002,"群组类型错误");
 		}
-		if(groupService.checkGroupType(isUserId, groupType)) {
-			log.error("创建群组已达上限");
-			return new ErrorBean(10002,"创建群组已达上限");
+		int i = groupService.checkGroupType(isUserId, groupType);
+		int error = 0;
+		if("1".equals(groupType)) {
+			error = 200;
+		}else if("2".equals(groupType)) {
+			error = 500;
+		}else {
+			error = 1000;
+		}
+		if(i==0) {
+			log.error("不可以创建"+error+"群");
+			return new ErrorBean(10002,"不可以创建"+error+"群");
+		}
+		if(i==1) {
+			log.error(error+"群已达创建上限");
+			return new ErrorBean(10002,error+"群已达创建上限");
 		}
 		return new SuccessBean("可以创建");
 	}
@@ -107,7 +120,7 @@ public class GroupController {
 				log.error("群组已存在");
 				return new ErrorBean(10002,"群组已存在");
 			}
-			if(groupService.checkGroupType(isUserId, groupType)) {
+			if(groupService.checkGroupType(isUserId, groupType) != 2) {
 				log.error("创建群组已达上限");
 				return new ErrorBean(10002,"创建群组已达上限");
 			}
