@@ -95,7 +95,7 @@ public class OrderContrpller {
 			log.error("消费类型错误");
 			return new ErrorBean(10002,"消费类型错误");
 		}
-		if("1".equals(payId) && "1".equals(payId)) {
+		if("1".equals(payId) && "1".equals(typeId)) {
 			log.error("充值方式错误");
 			return new ErrorBean(10002,"充值方式错误");
 		}

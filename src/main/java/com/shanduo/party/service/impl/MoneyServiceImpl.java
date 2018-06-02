@@ -156,4 +156,57 @@ public class MoneyServiceImpl implements MoneyService {
 		return 1;
 	}
 
+	@Override
+	public int updateRefresh() {
+		int i = 0;
+		i = moneyMapper.updateRefresh();
+		log.info("重置普通用户刷新次数:"+i+"人");
+		i = moneyMapper.updateVipRefresh();
+		log.info("重置vip用户刷新次数:"+i+"人");
+		i = moneyMapper.updateSVipRefresh();
+		log.info("重置svip用户刷新次数:"+i+"人");
+		return 1;
+	}
+	
+	@Override
+	public int updateRefresh(Integer userId, Integer refresh) {
+		UserMoney money = new UserMoney();
+		money.setUserId(userId);
+		money.setRefresh(refresh);
+		int i = moneyMapper.updateByPrimaryKeySelective(money);
+		if(i < 1) {
+			throw new RuntimeException();
+		}
+		log.info("刷新次数修改成功");
+		return 1;
+	}
+
+	@Override
+	public boolean checkRefresh(Integer userId) {
+		UserMoney money = moneyMapper.selectByUserId(userId);
+		Integer refresh = money.getRefresh();
+		if(refresh < 1) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int reduceRefresh(Integer userId) {
+		UserMoney money = moneyMapper.selectByUserId(userId);
+		Integer refresh = money.getRefresh()-1;
+		if(refresh < 0) {
+			log.error("刷新次数错误");
+			throw new RuntimeException();
+		}
+		money = new UserMoney();
+		money.setUserId(userId);
+		money.setRefresh(refresh);
+		int i = moneyMapper.updateByPrimaryKeySelective(money);
+		if(i < 1) {
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+
 }

@@ -14,6 +14,8 @@ public class UserMoney {
 
     private Integer beans;
 
+    private Integer refresh;
+
     private String remarks;
 
     private Date createDate;
@@ -60,6 +62,14 @@ public class UserMoney {
 
     public void setBeans(Integer beans) {
         this.beans = beans;
+    }
+
+    public Integer getRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(Integer refresh) {
+        this.refresh = refresh;
     }
 
     public String getRemarks() {

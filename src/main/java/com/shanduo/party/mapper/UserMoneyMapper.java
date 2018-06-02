@@ -17,4 +17,9 @@ public interface UserMoneyMapper {
     
     UserMoney selectByUserId(Integer userId);
     
+    int updateRefresh();
+    
+    int updateVipRefresh();
+    
+    int updateSVipRefresh();
 }

@@ -13,6 +13,7 @@ import com.shanduo.party.entity.ShanduoVip;
 import com.shanduo.party.entity.VipExperience;
 import com.shanduo.party.mapper.ShanduoVipMapper;
 import com.shanduo.party.mapper.VipExperienceMapper;
+import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.UUIDGenerator;
 
@@ -32,9 +33,10 @@ public class VipServiceImpl implements VipService {
 
 	@Autowired
 	private ShanduoVipMapper vipMapper;
-
 	@Autowired
 	private VipExperienceMapper experienceMapper;
+	@Autowired
+	private MoneyService moneyService;
 
 	@Override
 	public int saveVip(Integer userId, Date date,Integer month,String vipType) {
@@ -59,6 +61,12 @@ public class VipServiceImpl implements VipService {
 				log.error("重新开通会员失败");
 				throw new RuntimeException();
 			}
+		}
+		//修改刷新次数
+		if("0".equals(vipType)) {
+			moneyService.updateRefresh(userId, 50);
+		}else {
+			moneyService.updateRefresh(userId, 100);
 		}
 		//添加成长值
 		VipExperience vip = experienceMapper.selectByPrimaryKey(userId);
@@ -113,7 +121,7 @@ public class VipServiceImpl implements VipService {
 					renewVip(vip2.getId(), vip2.getVipEndTime(), month);
 				}
 			}else {
-				//续费svip和vip延长
+				//续费svip和vip延后
 				renewVip(vip1.getId(), vip1.getVipEndTime(), month);
 				renewVip(vip2.getId(), vip2.getVipEndTime(), month);
 			}
