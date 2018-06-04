@@ -26,6 +26,19 @@ public interface RegionService {
 	Map<String, Object> loginRegion(String account,String password);
 	
 	/**
+	 * 区域代理账号修改密码
+	 * @Title: updatePassword
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param password
+	 * @param @param newPassword
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int updatePassword(Integer userId,String password,String newPassword);
+	
+	/**
 	 * 当月提成
 	 * @Title: selectCurrentMonth
 	 * @Description: TODO

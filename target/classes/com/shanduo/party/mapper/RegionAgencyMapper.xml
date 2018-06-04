@@ -139,4 +139,10 @@
     from region_agency
     where del_flag = '0'
   </select>
+  <update id="updatePassword">
+    update region_agency
+    set password = #{2}
+    where id = #{0}
+    and password = #{1}
+  </update>
 </mapper>

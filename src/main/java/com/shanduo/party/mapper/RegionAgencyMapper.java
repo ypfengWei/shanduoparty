@@ -20,4 +20,6 @@ public interface RegionAgencyMapper {
     RegionAgency login(String account, String password);
     
     List<RegionAgency> agencyList();
+    
+    int updatePassword(Integer userid,String password,String newPassword);
 }

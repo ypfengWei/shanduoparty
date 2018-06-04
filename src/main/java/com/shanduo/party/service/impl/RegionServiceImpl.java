@@ -58,6 +58,18 @@ public class RegionServiceImpl implements RegionService {
 	}
 
 	@Override
+	public int updatePassword(Integer userId, String password, String newPassword) {
+		password = MD5Utils.getInstance().getMD5(password);
+		newPassword = MD5Utils.getInstance().getMD5(newPassword);
+		int i = agencyMapper.updatePassword(userId, password, newPassword);
+		if(i < 1) {
+			log.error("修改密码失败");
+			throw new RuntimeException();
+		}
+		return 1;
+	}
+	
+	@Override
 	public BigDecimal selectCurrentMonth(Integer userId) {
 		RegionAgency agency =  agencyMapper.selectByPrimaryKey(userId);
 		if(agency == null) {
