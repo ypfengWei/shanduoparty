@@ -56,11 +56,11 @@ public interface OrderService {
 	 * @Title: updateOrder
 	 * @Description: TODO
 	 * @param @param orderId 订单ID
-	 * @param @param typeId 类型ID:2.支付宝;3.微信;4.小程序;
+	 * @param @param payId 类型ID:2.支付宝;3.微信;4.小程序;
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int updateOrder(String orderId,String typeId);
+	int updateOrder(String orderId,String payId);
 	
 }

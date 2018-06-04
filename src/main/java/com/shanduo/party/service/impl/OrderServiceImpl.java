@@ -106,13 +106,13 @@ public class OrderServiceImpl implements OrderService {
 		BigDecimal money = order.getMoney();
 		Integer month = order.getMonth();
 		String activityId = order.getActivityId();
-		payOrder(orderId, userId, money, month, activityId, order.getOrderType());
+		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),"1");
 		return 1;
 	}
 
 	@Override
-	public int updateOrder(String orderId,String typeId) {
-		pay(orderId, typeId);
+	public int updateOrder(String orderId,String payId) {
+		pay(orderId, payId);
 		return 1;
 	}
 	
@@ -121,11 +121,11 @@ public class OrderServiceImpl implements OrderService {
 	 * @Title: pay
 	 * @Description: TODO
 	 * @param @param orderId 订单ID
-	 * @param @param type 1.余额,2.支付宝,3.微信,4.小程序
+	 * @param @param payId 1.余额,2.支付宝,3.微信,4.小程序
 	 * @return void
 	 * @throws
 	 */
-	public void pay(String orderId,String type) {
+	public void pay(String orderId,String payId) {
 		UserOrder order = selectByOrderId(orderId);
 		if(order == null) {
 			throw new RuntimeException();
@@ -135,9 +135,9 @@ public class OrderServiceImpl implements OrderService {
 		Integer month = order.getMonth();
 		String activityId = order.getActivityId();
 		String remarks = "";
-		if("2".equals(type)) {
+		if("2".equals(payId)) {
 			remarks = "支付宝";
-		}else if("3".equals(type)) {
+		}else if("3".equals(payId)) {
 			remarks = "微信";
 		}else {
 			remarks = "小程序";
@@ -147,25 +147,26 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
-		payOrder(orderId, userId, money, month, activityId, order.getOrderType());
+		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),payId);
 	}
 	
 	/**
 	 * 支付订单
 	 * @Title: payOrder
 	 * @Description: TODO
-	 * @param @param orderId
-	 * @param @param userId
-	 * @param @param money
-	 * @param @param month
-	 * @param @param activityId
-	 * @param @param type
+	 * @param @param orderId 订单ID
+	 * @param @param userId 用户ID
+	 * @param @param money 订单金额
+	 * @param @param month 月份
+	 * @param @param activityId 活动ID
+	 * @param @param orderType 订单类型
+	 * @param @param payId 支付类型ID
 	 * @return void
 	 * @throws
 	 */
-	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String type) {
+	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String orderType,String payId) {
 		//1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
-		switch (type) {
+		switch (orderType) {
 			case "1":
 				break;
 			case "2":
@@ -205,7 +206,7 @@ public class OrderServiceImpl implements OrderService {
 		UserOrder order = new UserOrder();
 		order.setId(orderId);
 		order.setStatus("2");
-		order.setPaymentType(type);
+		order.setPaymentType(payId);
 		int i = orderMapper.updateByPrimaryKeySelective(order);
 		if(i < 1) {
 			log.error("修改订单失败");

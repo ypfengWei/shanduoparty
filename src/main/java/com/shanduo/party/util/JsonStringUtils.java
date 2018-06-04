@@ -29,7 +29,7 @@ public class JsonStringUtils {
 	 */
 	public static List<Object> getList(String json){
 		if(json == null || json.equals("")) {
-			return new ArrayList<>();
+			return new ArrayList<>(0);
 		}
 		JSONArray jsonArray = JSONArray.fromObject(json);
 		List<Object> list = (List<Object>) JSONArray.toCollection(jsonArray, Object.class);
@@ -39,7 +39,7 @@ public class JsonStringUtils {
 	/**
 	 * json字符串转换Map<String,Object>
 	 * @Title: getMap
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @Description: TODO
 	 * @param @param json
 	 * @param @return
 	 * @return Map<String,Object>

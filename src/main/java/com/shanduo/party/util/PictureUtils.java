@@ -58,7 +58,7 @@ public class PictureUtils {
 	 */
 	public static List<String> getPictureUrlList(Object id) {
 		if(id == null || "".equals(id)) {
-			return new ArrayList<>();
+			return new ArrayList<>(0);
 		}
 		return getPictureUrlList(id.toString());
 	}

@@ -61,6 +61,7 @@
 	 		<mvc:mapping path="/juser/updatepassword"/>
 	 		<mvc:mapping path="/juser/updateuser"/>
 	 		<mvc:mapping path="/juser/usercount"/>
+	 		<mvc:mapping path="/juser/checktoken"/>
 	 		<!-- 动态接口拦截 -->
 	 		<mvc:mapping path="/jdynamic/savedynamic"/>
 	 		<mvc:mapping path="/jdynamic/ispraise"/>

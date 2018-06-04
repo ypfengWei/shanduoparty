@@ -3,7 +3,7 @@ package com.shanduo.party.util;
 /**
  * 正则验证手机邮箱号工具类
  * @ClassName: PatternUtils
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: TODO
  * @author fanshixin
  * @date 2018年4月14日 上午11:37:59
  *

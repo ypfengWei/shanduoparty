@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.RegionAgencyMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.RegionAgency">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account" jdbcType="INTEGER" property="account" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="proportion" jdbcType="INTEGER" property="proportion" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, account, password, proportion, address, create_date, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from region_agency
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from region_agency
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.RegionAgency">
+    insert into region_agency (id, account, password, 
+      proportion, address, create_date, 
+      update_date, del_flag)
+    values (#{id,jdbcType=INTEGER}, #{account,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, 
+      #{proportion,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.RegionAgency">
+    insert into region_agency
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="proportion != null">
+        proportion,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=INTEGER},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="proportion != null">
+        #{proportion,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.RegionAgency">
+    update region_agency
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=INTEGER},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="proportion != null">
+        proportion = #{proportion,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.RegionAgency">
+    update region_agency
+    set account = #{account,jdbcType=INTEGER},
+      password = #{password,jdbcType=VARCHAR},
+      proportion = #{proportion,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="login" resultMap="BaseResultMap">
+    select
+    id,proportion,address
+    from region_agency
+    where account = #{0}
+    and password = #{1}
+  </select>
+  <select id="agencyList" resultMap="BaseResultMap">
+    select
+    id,proportion,address
+    from region_agency
+    where del_flag = '0'
+  </select>
+</mapper>
