@@ -1,5 +1,6 @@
 package com.shanduo.party.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +38,7 @@ public interface ScoreService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int updateByUserId(Integer userId, String activityId, Integer othersScore, String beEvaluated);
+	int updateByUserId(String activityId, List<Map<String, Object>> list);
 	
 	/**
 	 * 根据用户发起的所有活动查询此用户活动下的评论信息

@@ -294,11 +294,11 @@
   <select id="selectActivitys" resultType="map">
  	select 
  	sa.activity_name,ar.`mode`,
-    su.user_name,su.id as uid,su.head_portrait_id,su.gender,su.birthday,sa.id,ye.score,ye.user_id,sa.user_id as userId
- 	from shanduo_activity sa 
- 	join activity_score ye on sa.id = ye.activity_id 
- 	join activity_requirement ar on sa.id = ar.activity_id 
- 	join shanduo_user su on sa.user_id = su.id 
+    su.user_name,su.id as uid,su.head_portrait_id,su.gender,su.birthday,sa.id
+ 	from shanduo_activity sa
+ 	join activity_score ye on sa.id = ye.activity_id
+ 	join activity_requirement ar on sa.id = ar.activity_id
+ 	join shanduo_user su on sa.user_id = su.id
  	where ye.user_id = #{0}
  	and sa.del_flag = '0' and ye.del_flag = '0'
  	and ar.del_flag = '0' and su.del_flag = '0'
@@ -309,28 +309,19 @@
   </select>
   <select id="activityCounts" resultType="java.lang.Integer">
  	select 
-	count(sa.id)
-	from shanduo_activity sa
-	join activity_score ye on ye.activity_id = sa.id 
-	where sa.del_flag = '0' and ye.del_flag = '0'
-	and ye.user_id = #{0}
+ 	count(id)
+	from activity_score 
+	where user_id = #{0} 
+	and(score is not null or others_score is not null)
+	and del_flag = '0'
   </select>
   <select id="selectScore" resultType="map">
   	select 
-  	ye.score,ye.evaluation_content,su.user_name,su.head_portrait_id 
-	from activity_score ye 
-	join shanduo_activity sa on ye.activity_id = sa.id 
+  	su.head_portrait_id,su.user_name,ye.be_evaluated,ye.others_score,ye.score,ye.evaluation_content 
+  	from activity_score ye
 	join shanduo_user su on ye.user_id = su.id
-	where ye.activity_id = #{0} and sa.del_flag = '0' and su.del_flag = '0'
-	order by ye.update_date desc
-  </select>
-  <select id="selectScores" resultType="map">
-  	select 
-  	ye.others_score,ye.be_evaluated,su.user_name,su.head_portrait_id 
-	from activity_score ye 
-	join shanduo_activity sa on ye.activity_id = sa.id 
-	join shanduo_user su on ye.user_id = su.id
-	where ye.activity_id = #{0} and sa.del_flag = '0' and su.del_flag = '0'
-	order by ye.update_date desc
+	where ye.activity_id = #{0}
+	and (score is not null or others_score is not null)
+	and ye.del_flag = '0' and su.del_flag = '0'
   </select>
 </mapper>
