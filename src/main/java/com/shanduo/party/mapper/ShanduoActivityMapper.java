@@ -341,5 +341,7 @@ public interface ShanduoActivityMapper {
     
     Map<String, Object> count(String activityId);
     
-    List<ActivityInfo> selectQuery(String query);
+    List<ActivityInfo> selectQuery(String query, Integer page, Integer pageSize);
+    
+    int queryCount(String query);
 }

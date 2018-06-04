@@ -511,6 +511,14 @@
   	like "%"#{0}"%" 
   	and sa.del_flag = '0' and ar.del_flag = '0' 
 	and su.del_flag = '0'
-  	limit 10
+  	limit #{1},#{2}
+  </select>
+  <select id="queryCount" resultType="java.lang.Integer">
+  	select 
+	count(id)
+  	from shanduo_activity 
+  	where activity_name 
+  	like "%"#{0}"%" 
+  	and del_flag = '0'
   </select>
 </mapper>

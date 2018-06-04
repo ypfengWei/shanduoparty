@@ -97,4 +97,5 @@ public class ReputationController {
 		return new SuccessBean(resultMap);
 	}
 	
+	
 }

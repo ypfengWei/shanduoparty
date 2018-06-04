@@ -100,7 +100,7 @@ public class ActivityController {
 			return new ErrorBean(10002,"人数不能为空");
 		}
 		if(StringUtils.isNull(manNumber)) {
-			womanNumber = "0";
+			manNumber = "0";
 		}
 		if(StringUtils.isNull(womanNumber)) {
 			womanNumber = "0";
@@ -523,26 +523,16 @@ public class ActivityController {
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		if(StringUtils.isNull(token)) {
-			try {
-				resultMap = activityService.selectByActivityIds(activityId, null);
-			} catch (Exception e) {
-				log.error("网络异常");
-				return new ErrorBean(10003,"网络异常");
-			}
+			resultMap = activityService.selectByActivityIds(activityId, null);
 		} else {
 			Integer userToken = baseService.checkUserToken(token);
 			if (userToken == null) {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
-			try {
-				resultMap = activityService.selectByActivityIds(activityId, userToken);
-			} catch (Exception e) {
-				log.error("网络异常");
-				return new ErrorBean(10003,"网络异常");
-			}
+			resultMap = activityService.selectByActivityIds(activityId, userToken);
 		}
-		if(resultMap == null) {
+		if(resultMap == null || resultMap.isEmpty()) {
 			log.error("活动已被取消");
 			return new ErrorBean(10002,"活动已被取消");
 		}
@@ -554,16 +544,16 @@ public class ActivityController {
 	 * @Title: selectQuery
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
-	 * @param @param query
-	 * @param @param lon
-	 * @param @param lat
+	 * @param @param query 查询条件
+	 * @param @param lon 经度
+	 * @param @param lat 纬度
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "selectQuery", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean selectQuery(HttpServletRequest request, String query, String lon, String lat) {
+	public ResultBean selectQuery(HttpServletRequest request, String query, String lon, String lat, String page, String pageSize) {
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
 			return new ErrorBean(10002,"经度格式错误");
@@ -572,17 +562,17 @@ public class ActivityController {
 			log.error("纬度格式错误");
 			return new ErrorBean(10002,"纬度格式错误");
 		}
-		Map<String, Object> resultMap = new HashMap<>(3);
-		try {
-			resultMap = activityService.selectQuery(query, lon, lat);
-		} catch (Exception e) {
-			log.error("网络异常");
-			return new ErrorBean(10003,"网络异常");
+		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+			log.error("页码错误");
+			return new ErrorBean(10002,"页码错误");
 		}
-		if(resultMap == null) {
-			log.error("没有找到活动");
-			return new ErrorBean(10002,"没有找到活动活动");
+		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+			log.error("记录错误");
+			return new ErrorBean(10002,"记录错误");
 		}
+		Integer pages = Integer.valueOf(page);
+		Integer pageSizes = Integer.valueOf(pageSize);
+		Map<String, Object> resultMap = activityService.selectQuery(query, lon, lat, pages, pageSizes);
 		return new SuccessBean(resultMap);
 	}
 	

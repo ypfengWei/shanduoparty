@@ -527,6 +527,9 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public Map<String, Object> selectByActivityIds(String activityId, Integer userId) {
 		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
+		if(activityInfo == null) {
+			return null;
+		}
 		showActivity(activityInfo, null, null, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
 		Map<String, Object> resultMap = new HashMap<>(3);
@@ -546,11 +549,16 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public Map<String, Object> selectQuery(String query, String lon, String lat) {
-		List<ActivityInfo> resultList = shanduoActivityMapper.selectQuery(query);
-		activity(resultList, lon, lat, 0);
+	public Map<String, Object> selectQuery(String query, String lon, String lat, Integer pageNum, Integer pageSize) {
+		int totalrecord = shanduoActivityMapper.queryCount(query);
+		Page page = new Page(totalrecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<ActivityInfo> list = shanduoActivityMapper.selectQuery(query, pageNum, page.getPageSize());
+		activity(list, lon, lat, 0);
 		Map<String, Object> resultMap = new HashMap<>(3);
-		resultMap.put("resultList", resultList);
+		resultMap.put("list", list);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalpage", page.getTotalPage());
 		return resultMap;
 	}
 	

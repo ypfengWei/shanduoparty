@@ -27,6 +27,7 @@ import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.ScoreUtils;
+import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
 
@@ -65,23 +66,41 @@ public class ScoreServiceImpl implements ScoreService {
 			log.error("评价失败");
 			throw new RuntimeException();
 		}
-		if(!getRecord(userId, activityId, score, evaluationcontent, 1)) {
-			log.error("信誉历史数据添加失败");
-			throw new RuntimeException();
+		if(score != 3) {
+			if(!getRecord(userId, activityId, score, evaluationcontent, 1)) {
+				log.error("信誉历史数据添加失败");
+				throw new RuntimeException();
+			}
 		}
 		return 1;
 	}
 
 	@Override
-	public int updateByUserId(Integer userId, String activityId, Integer othersScore, String beEvaluated) {
-		int i = activityScoreMapper.updateByUserId(userId, activityId, othersScore, beEvaluated);
-		if (i < 1) {
-			log.error("评价失败");
-			throw new RuntimeException();
-		}
-		if(!getRecord(userId, activityId, othersScore, beEvaluated, 2)) {
-			log.error("信誉历史数据添加失败");
-			throw new RuntimeException();
+	public int updateByUserId(String activityId, List<Map<String, Object>> list) {
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map = (Map<String, Object>) list.get(i);
+			int score = Integer.parseInt(map.get("score").toString());
+			if (StringUtils.isNull(score+"") || !(score+"").matches("^[1-5]$")) {
+				log.error("评分错误");
+				throw new RuntimeException();
+			}
+			int userId = Integer.parseInt(map.get("userId").toString());
+			if (StringUtils.isNull(userId+"")) {
+				log.error("评价用户为空");
+				throw new RuntimeException();
+			}
+			String evaluated = map.get("evaluated").toString();
+			int n = activityScoreMapper.updateByUserId(userId, activityId, score, evaluated);
+			if (n < 1) {
+				log.error("评价失败");
+				throw new RuntimeException();
+			}
+			if(score != 3) {
+				if(!getRecord(userId, activityId, score, evaluated, 2)) {
+					log.error("信誉历史数据添加失败");
+					throw new RuntimeException();
+				}
+			}
 		}
 		return 1;
 	}
@@ -89,15 +108,9 @@ public class ScoreServiceImpl implements ScoreService {
 	@Override
 	public Map<String, Object> selectByIdScore(Integer userId, Integer pageNum, Integer pageSize) {
 		int totalrecord = activityScoreMapper.selectByIdScoreCount(userId);
-		if (totalrecord == 0) {
-			return null;
-		}
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
 		List<ActivityScore> activityScores = activityScoreMapper.selectByIdScore(userId, pageNum, page.getPageSize());
-		if (activityScores == null || activityScores.isEmpty()) {
-			return null;
-		}
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
@@ -162,8 +175,6 @@ public class ScoreServiceImpl implements ScoreService {
 				shanduoReputationRecord.setDeductionCount(-1);
 				shanduoReputationRecord.setReputationType("1");
 				break;
-			case 3:
-				break;
 			case 4:
 			case 5:
 				shanduoReputationRecord.setDeductionCount(1);
@@ -179,8 +190,6 @@ public class ScoreServiceImpl implements ScoreService {
 			case 2:
 				shanduoReputationRecord.setDeductionCount(-1);
 				shanduoReputationRecord.setReputationType("2");
-				break;
-			case 3:
 				break;
 			case 4:
 			case 5:
@@ -203,6 +212,7 @@ public class ScoreServiceImpl implements ScoreService {
 	@Override
 	public Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize) {
 		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
+		map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
 		int totalrecord = activityScoreMapper.activityCount(userId); //发布活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
@@ -261,6 +271,7 @@ public class ScoreServiceImpl implements ScoreService {
 	@Override
 	public Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize) {
 		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
+		map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
 		int totalrecord = activityScoreMapper.activityCounts(userId); //参加活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
@@ -286,25 +297,25 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 	
 	public Map<String, Object> getInitiatorMap(Map<String, Object> InitiatorMap,Map<String, Object> maps, Integer userId){
-		InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
+		InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString())); //年龄
 		InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-		InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-		InitiatorMap.put("user_name",maps.get("user_name"));
-		InitiatorMap.put("uid",maps.get("uid"));
-		InitiatorMap.put("mode",maps.get("mode"));
-		InitiatorMap.put("id",maps.get("id"));	
-		InitiatorMap.put("activity_name",maps.get("activity_name"));
+		InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //发起者头像
+		InitiatorMap.put("user_name",maps.get("user_name")); //发起者名称
+		InitiatorMap.put("uid",maps.get("uid")); //发起者id
+		InitiatorMap.put("mode",maps.get("mode")); //活动支付方式
+		InitiatorMap.put("id",maps.get("id"));	//活动Id
+		InitiatorMap.put("activity_name",maps.get("activity_name")); //活动名称
 		return InitiatorMap;
 	}
 	
 	public Map<String, Object> getScoreMap(Map<String, Object> maps){
 		Map<String, Object> ScoreMap = new HashMap<String, Object>();
-		ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
-		ScoreMap.put("score", maps.get("score"));
-		ScoreMap.put("evaluation_content", maps.get("evaluation_content"));
-		ScoreMap.put("others_score", maps.get("others_score"));
-		ScoreMap.put("be_evaluated", maps.get("be_evaluated"));
-		ScoreMap.put("user_name", maps.get("user_name"));
+		ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //参与者头像
+		ScoreMap.put("score", maps.get("score")); //参与者评分
+		ScoreMap.put("evaluation_content", maps.get("evaluation_content")); //参与者评价
+		ScoreMap.put("others_score", maps.get("others_score")); //发起者评分
+		ScoreMap.put("be_evaluated", maps.get("be_evaluated")); //发起者评价
+		ScoreMap.put("user_name", maps.get("user_name")); //参与者名称
 		return ScoreMap;
 	}
 }

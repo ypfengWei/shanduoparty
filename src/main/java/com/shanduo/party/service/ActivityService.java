@@ -298,9 +298,13 @@ public interface ActivityService {
      * @Title: selectQuery
      * @Description: TODO(这里用一句话描述这个方法的作用)
      * @param @param query
+     * @param @param lon
+     * @param @param lat
+     * @param @param page
+     * @param @param pageSize
      * @param @return    设定文件
-     * @return List<ActivityInfo>    返回类型
+     * @return Map<String,Object>    返回类型
      * @throws
      */
-    Map<String, Object> selectQuery(String query, String lon, String lat);
+    Map<String, Object> selectQuery(String query, String lon, String lat, Integer page, Integer pageSize);
 }

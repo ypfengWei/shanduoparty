@@ -43,15 +43,14 @@ public class ScoreController {
 	
 	/**
 	 * 对参加的活动进行评价
-	 * @Title: saveActivity
+	 * @Title: updateScore
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
-	 * @param @param token
-	 * @param @param activityId
-	 * @param @param score
-	 * @param @param evaluationcontent
-	 * @param @param remarks
-	 * @param @return    设定文件
+	 * @param @param token 
+	 * @param @param activityId 活动id
+	 * @param @param score 评分
+	 * @param @param evaluationcontent 评价
+	 * @param @return    设定文件 
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
@@ -86,10 +85,8 @@ public class ScoreController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param token
-	 * @param @param activityId
-	 * @param @param othersscore
-	 * @param @param evaluationcontent
-	 * @param @param remarks
+	 * @param @param activityId 活动Id
+	 * @param @param data （userId，score，evaluated）
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -110,25 +107,16 @@ public class ScoreController {
 			log.error("没有进行评价");
 			return new ErrorBean(10002,"没有进行评价");
 		}
-		List<Object> list = JsonStringUtils.getList(data);
+		List<Map<String, Object>> list = JsonStringUtils.getList(data);
 		if(list.isEmpty()) {
 			log.error("没有进行评价");
 			return new ErrorBean(10002,"没有进行评价");
 		}
-		for (int i = 0; i < list.size(); i++) {
-			Map<String, Object> map = (Map<String, Object>) list.get(i);
-			int score = Integer.parseInt(map.get("score").toString());
-			if (StringUtils.isNull(score+"") || !(score+"").matches("^[1-5]$")) {
-				log.error("评分错误");
-				return new ErrorBean(10002,"评分错误");
-			}
-			int userId = Integer.parseInt(map.get("userId").toString());
-			String evaluated = map.get("evaluated").toString();
-			try {
-				scoreService.updateByUserId(userId, activityId, score, evaluated);
-			} catch (Exception e) {
-				return new ErrorBean(10003,"评价失败");
-			}
+		try {
+			scoreService.updateByUserId(activityId,list);
+		} catch (Exception e) {
+			log.error("评价失败");
+			return new ErrorBean(10003,"评价失败");
 		}
 		return new SuccessBean("评价成功");
 	}
@@ -163,8 +151,8 @@ public class ScoreController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> activityScores = scoreService.selectByIdScore(userToken, pages, pageSizes);
-		return new SuccessBean(activityScores);
+		Map<String, Object> resultMap = scoreService.selectByIdScore(userToken, pages, pageSizes);
+		return new SuccessBean(resultMap);
 	}
 	
 }

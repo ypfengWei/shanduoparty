@@ -27,12 +27,12 @@ public class JsonStringUtils {
 	 * @return List<Object>
 	 * @throws
 	 */
-	public static List<Object> getList(String json){
+	public static List<Map<String, Object>> getList(String json){
 		if(json == null || json.equals("")) {
 			return new ArrayList<>();
 		}
 		JSONArray jsonArray = JSONArray.fromObject(json);
-		List<Object> list = (List<Object>) JSONArray.toCollection(jsonArray, Object.class);
+		List<Map<String, Object>> list = (List<Map<String, Object>>) JSONArray.toCollection(jsonArray, Map.class);
 		return list;
 	}
 	
