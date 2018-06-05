@@ -116,11 +116,31 @@
   </update>
   
   <update id="updateByUserId">
-    update shanduo_reputation set reputation = if(#{1}>=0,#{1},0) where user_id = #{0} and del_flag = '0'
+    update 
+    shanduo_reputation 
+    set reputation = if(#{1}>=0,#{1},0) 
+    where user_id = #{0} and del_flag = '0'
   </update>
   <select id="selectByUserId" resultType="java.lang.Integer">
   	select 
   	reputation 
   	from shanduo_reputation where user_id = #{0} and del_flag = '0'
   </select>
+  <select id="selectDeduction" resultType="java.lang.Integer">
+  	select 
+  	deduction 
+  	from shanduo_reputation where user_id = #{0} and del_flag = '0'
+  </select>
+  <update id="updateDeduction">
+  	update 
+  	shanduo_reputation 
+  	set deduction = #{1}
+  	where user_id = #{0} and del_flag = '0'
+  </update>
+  <update id="updateReputation">
+  	update 
+  	shanduo_reputation 
+  	set reputation = #{1}
+  	where user_id = #{0} and del_flag = '0'
+  </update>
 </mapper>

@@ -137,7 +137,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public int saveActivity(Integer userId, String activityName, String activityStartTime,
+	public String saveActivity(Integer userId, String activityName, String activityStartTime,
 			String activityAddress, String mode, String manNumber,String womanNumber, String remarks,
 			String activityCutoffTime, String lon, String lat, String detailedAddress) {
 		ShanduoActivity activity = new ShanduoActivity();
@@ -178,7 +178,7 @@ public class ActivityServiceImpl implements ActivityService {
 			log.error("需求添加失败");
 			throw new RuntimeException();
 		}
-		return 1;
+		return activity.getId();
 	}
 
 	@Override

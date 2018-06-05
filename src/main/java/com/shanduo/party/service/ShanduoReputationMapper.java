@@ -1,4 +1,4 @@
-package com.shanduo.party.mapper;
+package com.shanduo.party.service;
 
 import com.shanduo.party.entity.ShanduoReputation;
 

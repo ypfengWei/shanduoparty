@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.entity.ActivityScore;
+import com.shanduo.party.entity.Reportrecord;
 import com.shanduo.party.entity.ShanduoReputationRecord;
 import com.shanduo.party.mapper.ActivityScoreMapper;
+import com.shanduo.party.mapper.ReportrecordMapper;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoReputationRecordMapper;
@@ -55,6 +57,9 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Autowired
 	private ShanduoActivityMapper shanduoActivityMapper;
+	
+	@Autowired
+	private ReportrecordMapper reportrecordMapper;
 	
 	@Autowired
 	private VipService vipService;
@@ -317,5 +322,59 @@ public class ScoreServiceImpl implements ScoreService {
 		ScoreMap.put("be_evaluated", maps.get("be_evaluated")); //发起者评价
 		ScoreMap.put("user_name", maps.get("user_name")); //参与者名称
 		return ScoreMap;
+	}
+ 
+	
+	@Override
+	public int updateReputation(String activityId, String type) {
+		List<Map<String, Object>> list = reportrecordMapper.selectReportId(activityId);
+		int deduction = 0;
+		int reputation = 0;
+		int userId = 0;
+		int reportId = 0;
+		if("1".equals(type)) {
+			for (Map<String, Object> map : list) {
+				userId = Integer.parseInt(map.get("user_id").toString());
+				reportId = Integer.parseInt(map.get("report_id").toString());
+				deduction = shanduoReputationMapper.selectDeduction(userId);
+				reputation = shanduoReputationMapper.selectByUserId(reportId);
+				int reputations = shanduoReputationMapper.updateDeduction(reportId, reputation+1);
+				if(reputations < 1) {
+					log.error("信誉等级修改失败");
+					throw new RuntimeException();
+				}
+			}
+			int deductions = shanduoReputationMapper.updateDeduction(userId, deduction+5);
+			if(deductions < 1) {
+				log.error("扣分失败");
+				throw new RuntimeException();
+			}
+		} else {
+			for (Map<String, Object> map : list) {
+				int reportIds = Integer.parseInt(map.get("report_id").toString());
+				reputation = shanduoReputationMapper.selectByUserId(reportIds);
+				int reputations = shanduoReputationMapper.updateDeduction(reportIds, reputation-1);
+				if(reputations < 1) {
+					log.error("信誉等级修改失败");
+					throw new RuntimeException();
+				}
+			}
+		}
+		return 1;
+	}
+
+	@Override
+	public int report(String activityId, Integer report, Integer beReported) {
+		Reportrecord reportrecord = new Reportrecord();
+		reportrecord.setId(UUIDGenerator.getUUID());
+		reportrecord.setActivityId(activityId);
+		reportrecord.setUserId(beReported);
+		reportrecord.setReportId(report);
+		int i = reportrecordMapper.insert(reportrecord);
+		if(i < 1) {
+			log.error("举报记录添加失败");
+			throw new RuntimeException();
+		}
+		return 1;
 	}
 }

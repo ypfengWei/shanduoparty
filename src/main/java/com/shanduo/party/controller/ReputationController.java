@@ -97,5 +97,55 @@ public class ReputationController {
 		return new SuccessBean(resultMap);
 	}
 	
+	/**
+	 * 举报
+	 * @Title: title
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param report 举报者
+	 * @param @param beReported 被举报者
+	 * @param @param activityId 活动Id
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "saveReport", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean saveReport(HttpServletRequest request, String report, String beReported, String activityId) {
+		if(StringUtils.isNull(report)) {
+			log.error("举报者id为空");
+			return new ErrorBean(10002,"举报者id为空");
+		}
+		if(StringUtils.isNull(beReported)) {
+			log.error("被举报者id为空");
+			return new ErrorBean(10002,"被举报者id为空");
+		}
+		try {
+			scoreService.report(activityId, Integer.parseInt(report), Integer.parseInt(beReported));
+		} catch (Exception e) {
+			log.error("举报记录添加失败");
+			return new ErrorBean(10003,"举报失败");
+		}
+		return new SuccessBean();
+	}
 	
+	@RequestMapping(value = "report", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean report(HttpServletRequest request, String activityId, String type) {
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动id为空");
+			return new ErrorBean(10002,"活动为空");
+		}
+		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
+		}
+		try {
+			scoreService.updateReputation(activityId,type);
+		} catch (Exception e) {
+			log.error("举报记录添加失败");
+			return new ErrorBean(10003,"举报失败");
+		}
+		return new SuccessBean();
+	}
 }

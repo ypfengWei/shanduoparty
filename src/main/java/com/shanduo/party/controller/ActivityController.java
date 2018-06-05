@@ -145,8 +145,9 @@ public class ActivityController {
 			log.error("只能举办上一活动之后的活动");
 			return new ErrorBean(10002,"只能举办上一活动之后的活动");
 		}
+		String activityId = "";
 		try {
-			activityService.saveActivity(userToken, activityName, activityStartTime,
+			activityId = activityService.saveActivity(userToken, activityName, activityStartTime,
 					activityAddress, mode, manNumber, womanNumber, remarks, activityCutoffTime, lon, lat, detailedAddress);
 		} catch (Exception e) {
 			log.error("活动添加失败");
@@ -160,7 +161,7 @@ public class ActivityController {
 				log.error("发起活动获得经验失败");
 			}
 		}
-		return new SuccessBean("添加成功");
+		return new SuccessBean(activityId);
 	}
 	
 	/**

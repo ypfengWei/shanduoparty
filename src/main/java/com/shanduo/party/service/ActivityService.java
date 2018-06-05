@@ -56,7 +56,7 @@ public interface ActivityService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int saveActivity(Integer userId, String activityName, String activityStartTime, String activityAddress,String mode, String manNumber,
+	String saveActivity(Integer userId, String activityName, String activityStartTime, String activityAddress,String mode, String manNumber,
 			String womanNumber, String remarks, String activityCutoffTime, String lon, String lat, String detailedAddress);
 	
 	/**

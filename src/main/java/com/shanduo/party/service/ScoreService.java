@@ -81,10 +81,34 @@ public interface ScoreService {
 	 */
 	int updateByReputation();
 	
+	/**
+	 * 查询信誉分和用户发布的活动及评价
+	 * @Title: selectReputation
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userToken
+	 * @param @param userId
+	 * @param @param pageNum
+	 * @param @param pageSize
+	 * @param @return    设定文件
+	 * @return Map<String,Object>    返回类型
+	 * @throws
+	 */
 	Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize);
 	
-//	Map<String, Object> selectReleaseActivity(Integer userId, Integer pageNum, Integer pageSize);
-	
+	/**
+	 * 查询信誉分和用户参与的活动及评价
+	 * @Title: selectJoinActivity
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userId
+	 * @param @param pageNum
+	 * @param @param pageSize
+	 * @param @return    设定文件
+	 * @return Map<String,Object>    返回类型
+	 * @throws
+	 */
 	Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize);
 	
+	int updateReputation(String activityId, String type);
+	
+	int report(String activityId, Integer report, Integer beReported);
 }
