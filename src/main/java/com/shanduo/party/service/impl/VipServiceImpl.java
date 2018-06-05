@@ -18,9 +18,9 @@ import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.UUIDGenerator;
 
 /**
- * vip操作实现类
+ * 
  * @ClassName: VipServiceImpl
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: TODO
  * @author lishan
  * @date 2018年5月18日 下午4:19:30
  *

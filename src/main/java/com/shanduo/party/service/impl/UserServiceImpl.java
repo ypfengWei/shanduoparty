@@ -161,7 +161,8 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isNull(token)) {
 			return null;
 		}
-		return new TokenInfo(user,token,vipService.selectVipLevel(user.getId()));
+		Integer userId = user.getId();
+		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
 	}
 
 	@Override
@@ -174,7 +175,7 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isNull(token)) {
 			return null;
 		}
-		return new TokenInfo(user,token,vipService.selectVipLevel(user.getId()));
+		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
 	}
 	
 	@Override
@@ -264,7 +265,7 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException();
 		}
 		user = userMapper.selectByPrimaryKey(userId);
-		return new TokenInfo(user,token,vipService.selectVipLevel(user.getId()));
+		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
 	}
 
 	@Override

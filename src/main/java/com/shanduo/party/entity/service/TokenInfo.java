@@ -33,6 +33,7 @@ public class TokenInfo {
     private String school;//学校
     private String jurisdiction;//权限 普通用户,商户
     private Integer vip;//vip等级
+    private Integer level;//等级
     private String remarks;//备注
     private String userSig;//IM聊天使用签名
     
@@ -40,7 +41,7 @@ public class TokenInfo {
     	
     }
     
-    public TokenInfo(ShanduoUser shanduoUser,String token,Integer vip){
+    public TokenInfo(ShanduoUser shanduoUser,String token,Integer vip,Integer level){
     	this.token = token;
     	this.userId = shanduoUser.getId()+"";
     	this.name = shanduoUser.getUserName();
@@ -60,6 +61,7 @@ public class TokenInfo {
     	this.school = shanduoUser.getSchool();
     	this.jurisdiction = shanduoUser.getJurisdiction()+"";
     	this.vip = vip;
+    	this.level = level;
     	this.remarks = shanduoUser.getRemarks();
     	try {
 			this.userSig = tls_sigUtils.getSig(userId);
@@ -194,6 +196,14 @@ public class TokenInfo {
 
 	public void setVip(Integer vip) {
 		this.vip = vip;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	public String getRemarks() {

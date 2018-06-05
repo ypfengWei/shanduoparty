@@ -80,7 +80,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "1",money+"", remarks+"充值余额:"+"+"+money);
+			experienceService.saveMoneyRecord(userId, "1",money+"", remarks+"充值余额");
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -107,7 +107,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "2", money+"",remarks+":-"+money);
+			experienceService.saveMoneyRecord(userId, "2", money+"",remarks);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -157,7 +157,7 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		try {
-			experienceService.saveMoneyRecord(userId, "10", beans+"","刷新活动:-"+beans);
+			experienceService.saveMoneyRecord(userId, "10", beans+"","刷新活动");
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -189,8 +189,8 @@ public class MoneyServiceImpl implements MoneyService {
 	@Override
 	public int updateRefresh() {
 		int i = 0;
-		i = moneyMapper.updateRefresh();
-		log.info("重置普通用户刷新次数:"+i+"人");
+//		i = moneyMapper.updateRefresh();
+//		log.info("重置普通用户刷新次数:"+i+"人");
 		i = moneyMapper.updateVipRefresh();
 		log.info("重置vip用户刷新次数:"+i+"人");
 		i = moneyMapper.updateSVipRefresh();

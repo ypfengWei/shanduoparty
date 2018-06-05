@@ -152,14 +152,14 @@
   	count(id)
   	from user_money_record 
   	where user_id = #{userId,jdbcType=INTEGER}
-    and money_type in ('1','2')
+    and money_type in ('1','2','9','10')
   </select>
   <select id="moneyList" resultType="map">
   	select
   	 id, money_type as moneyType,amount,remarks, create_date as createDate 
   	from user_money_record
   	where user_id = #{0}
-    and money_type in ('1','2')
+    and money_type in ('1','2','9','10')
     order by create_date desc
     limit #{1},#{2}
   </select>

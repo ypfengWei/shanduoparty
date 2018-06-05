@@ -16,6 +16,7 @@ import com.shanduo.party.entity.ShanduoDynamic;
 import com.shanduo.party.mapper.DynamicCommentMapper;
 import com.shanduo.party.mapper.ShanduoDynamicMapper;
 import com.shanduo.party.service.DynamicService;
+import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.PraiseService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.SensitiveWord;
@@ -48,6 +49,8 @@ public class DynamicServiceImpl implements DynamicService {
 	private PraiseService praiseService;
 	@Autowired
 	private VipService vipService;
+	@Autowired
+	private ExperienceService experienceService;
 	
 	@Override
 	public int saveDynamic(Integer userId, String content, String picture, String lat, String lon,String location) {
@@ -117,8 +120,11 @@ public class DynamicServiceImpl implements DynamicService {
 			map.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 			//点赞人数
 			map.put("praise", praiseService.selectByCount(dynamicId));
+			Integer userId = Integer.parseInt(map.get("userId").toString());
 			//vip等级
-			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
+			map.put("vip", vipService.selectVipLevel(userId));
+			//等级
+			map.put("level", experienceService.selectLevel(userId));
 			//距离
 			if(lon != null && lat != null) {
 				double distance = 
