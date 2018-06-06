@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shanduo.party.mapper.ReportrecordMapper">
-  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.Reportrecord">
+<mapper namespace="com.shanduo.party.mapper.ReportRecordMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ReportRecord">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
+    <result column="dynamic_id" jdbcType="VARCHAR" property="dynamicId" />
     <result column="report_id" jdbcType="INTEGER" property="reportId" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -12,28 +13,31 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, activity_id, report_id, create_date, update_date, remarks, del_flag
+    id, user_id, activity_id, dynamic_id, report_id, create_date, update_date, remarks, 
+    del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from reportRecord
+    from report_record
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from reportRecord
+    delete from report_record
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.shanduo.party.entity.Reportrecord">
-    insert into reportRecord (id, user_id, activity_id, 
-      report_id, create_date, update_date, 
-      remarks, del_flag)
+  <insert id="insert" parameterType="com.shanduo.party.entity.ReportRecord">
+    insert into report_record (id, user_id, activity_id, 
+      dynamic_id, report_id, create_date, 
+      update_date, remarks, del_flag
+      )
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
-      #{reportId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR})
+      #{dynamicId,jdbcType=VARCHAR}, #{reportId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.shanduo.party.entity.Reportrecord">
-    insert into reportRecord
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ReportRecord">
+    insert into report_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -43,6 +47,9 @@
       </if>
       <if test="activityId != null">
         activity_id,
+      </if>
+      <if test="dynamicId != null">
+        dynamic_id,
       </if>
       <if test="reportId != null">
         report_id,
@@ -70,6 +77,9 @@
       <if test="activityId != null">
         #{activityId,jdbcType=VARCHAR},
       </if>
+      <if test="dynamicId != null">
+        #{dynamicId,jdbcType=VARCHAR},
+      </if>
       <if test="reportId != null">
         #{reportId,jdbcType=INTEGER},
       </if>
@@ -87,14 +97,17 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.Reportrecord">
-    update reportRecord
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ReportRecord">
+    update report_record
     <set>
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
       <if test="activityId != null">
         activity_id = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="dynamicId != null">
+        dynamic_id = #{dynamicId,jdbcType=VARCHAR},
       </if>
       <if test="reportId != null">
         report_id = #{reportId,jdbcType=INTEGER},
@@ -114,10 +127,11 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.Reportrecord">
-    update reportRecord
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ReportRecord">
+    update report_record
     set user_id = #{userId,jdbcType=INTEGER},
       activity_id = #{activityId,jdbcType=VARCHAR},
+      dynamic_id = #{dynamicId,jdbcType=VARCHAR},
       report_id = #{reportId,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -129,9 +143,31 @@
   <select id="selectReportId" resultType="map">
   	select
   	user_id,report_id
-  	from reportRecord
+  	from report_record
   	where activity_id = #{0} and del_flag = '0'
   	group by create_date desc
 	limit 10
+  </select>
+  <select id="selectByDynamicId" resultType="map">
+  	select
+  	user_id,report_id
+  	from report_record
+  	where dynamic_id = #{0} and del_flag = '0'
+  	group by create_date desc
+	limit 10
+  </select>
+  <select id="selectId" resultType="java.lang.String">
+  	select
+  	id
+  	from report_record
+  	where activity_id = #{0}
+	and user_id = #{1} and report_id = #{2} and del_flag = '0'
+  </select>
+  <select id="selectIds" resultType="java.lang.String">
+  	select
+  	id
+  	from report_record
+  	where dynamic_id = #{0}
+	and user_id = #{1} and report_id = #{2} and del_flag = '0'
   </select>
 </mapper>

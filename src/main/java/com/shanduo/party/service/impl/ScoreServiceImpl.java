@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.entity.ActivityScore;
-import com.shanduo.party.entity.Reportrecord;
+import com.shanduo.party.entity.ReportRecord;
 import com.shanduo.party.entity.ShanduoReputationRecord;
 import com.shanduo.party.mapper.ActivityScoreMapper;
-import com.shanduo.party.mapper.ReportrecordMapper;
+import com.shanduo.party.mapper.ReportRecordMapper;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoReputationRecordMapper;
@@ -59,7 +59,7 @@ public class ScoreServiceImpl implements ScoreService {
 	private ShanduoActivityMapper shanduoActivityMapper;
 	
 	@Autowired
-	private ReportrecordMapper reportrecordMapper;
+	private ReportRecordMapper recordMapper;
 	
 	@Autowired
 	private VipService vipService;
@@ -218,6 +218,42 @@ public class ScoreServiceImpl implements ScoreService {
 	public Map<String, Object> selectReputation(Integer userToken,Integer userId, Integer pageNum, Integer pageSize) {
 		Map<String, Object> map = activityScoreMapper.selectReputation(userId);
 		map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+		List<Map<String, Object>> activityIds = shanduoActivityMapper.selectId(userId); //查询该用户下所有扣分标志为0以及开始时间过期的活动
+		if(activityIds != null) {
+			for(Map<String,Object> maps:activityIds){
+				String activityId = maps.get("id").toString();
+				Map<String, Object> ScoreRecords = shanduoActivityMapper.numberScore(activityId);
+				int join = Integer.parseInt(ScoreRecords.get("number").toString()); //参加记录
+				int score = Integer.parseInt(ScoreRecords.get("score").toString()); //评分记录
+				if(join != 0) {
+					if(join == score) { //如果参与的人全部评价完
+						List<Map<String, Object>> scores = shanduoActivityMapper.selectScore(activityId); //查询活动下的评分信息
+						int lowScore = 0;
+						int scoreCount = 0;
+						for (Map<String, Object> scoresMap : scores) {
+							scoreCount = Integer.parseInt(scoresMap.get("score").toString()); //评分
+							if(scoreCount < 3) {  
+								lowScore++;//如果评分小于3的累加
+							}
+						}
+						if(scoreCount/lowScore < 2) { //在一次活动中差评所占百分比大于50%的扣一分信誉分
+							int reputation = shanduoReputationMapper.selectByUserId(userId);
+							int reputations = shanduoReputationMapper.updateByUserId(userId, reputation-1);
+							if(reputations < 1) {
+								log.error("信誉等级修改失败");
+								throw new RuntimeException();
+							}
+							//修改信誉等级后将活动表中的扣分标志改为1，避免重复扣分
+							int i = shanduoActivityMapper.updateDownFlag(activityId);
+							if(i  < 1) {
+								log.error("活动扣边标志修改失败");
+								throw new RuntimeException();
+							}
+						}
+					}
+				}
+			}
+		}
 		int totalrecord = activityScoreMapper.activityCount(userId); //发布活动记录
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
@@ -326,8 +362,13 @@ public class ScoreServiceImpl implements ScoreService {
  
 	
 	@Override
-	public int updateReputation(String activityId, String type) {
-		List<Map<String, Object>> list = reportrecordMapper.selectReportId(activityId);
+	public int updateReputation(String activityId, String type, String dynamicId) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		if(StringUtils.isNull(activityId)) {
+			list = recordMapper.selectByDynamicId(dynamicId);
+		} else {
+			list = recordMapper.selectReportId(activityId);
+		}
 		int deduction = 0;
 		int reputation = 0;
 		int userId = 0;
@@ -338,7 +379,7 @@ public class ScoreServiceImpl implements ScoreService {
 				reportId = Integer.parseInt(map.get("report_id").toString());
 				deduction = shanduoReputationMapper.selectDeduction(userId);
 				reputation = shanduoReputationMapper.selectByUserId(reportId);
-				int reputations = shanduoReputationMapper.updateDeduction(reportId, reputation+1);
+				int reputations = shanduoReputationMapper.updateByUserId(reportId, reputation+1);
 				if(reputations < 1) {
 					log.error("信誉等级修改失败");
 					throw new RuntimeException();
@@ -353,7 +394,7 @@ public class ScoreServiceImpl implements ScoreService {
 			for (Map<String, Object> map : list) {
 				int reportIds = Integer.parseInt(map.get("report_id").toString());
 				reputation = shanduoReputationMapper.selectByUserId(reportIds);
-				int reputations = shanduoReputationMapper.updateDeduction(reportIds, reputation-1);
+				int reputations = shanduoReputationMapper.updateByUserId(reportIds, reputation-1);
 				if(reputations < 1) {
 					log.error("信誉等级修改失败");
 					throw new RuntimeException();
@@ -364,13 +405,17 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 
 	@Override
-	public int report(String activityId, Integer report, Integer beReported) {
-		Reportrecord reportrecord = new Reportrecord();
+	public int report(String activityId, Integer report, Integer beReported, String dynamicId, String type) {
+		ReportRecord reportrecord = new ReportRecord();
 		reportrecord.setId(UUIDGenerator.getUUID());
-		reportrecord.setActivityId(activityId);
 		reportrecord.setUserId(beReported);
 		reportrecord.setReportId(report);
-		int i = reportrecordMapper.insert(reportrecord);
+		if("1".equals(type)) {
+			reportrecord.setActivityId(activityId);
+		} else {
+			reportrecord.setDynamicId(dynamicId);
+		}
+		int i = recordMapper.insertSelective(reportrecord);
 		if(i < 1) {
 			log.error("举报记录添加失败");
 			throw new RuntimeException();

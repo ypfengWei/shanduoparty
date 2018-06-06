@@ -12,6 +12,7 @@
     <result column="lat" jdbcType="DECIMAL" property="lat" />
     <result column="lon" jdbcType="DECIMAL" property="lon" />
     <result column="top_flag" jdbcType="CHAR" property="topFlag" />
+    <result column="down_flag" jdbcType="CHAR" property="downFlag" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -44,14 +45,14 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, activity_name, user_id, activity_type, activity_start_time, activity_address, 
-    detailed_address, lat, lon, top_flag, remarks, create_date, update_date, activity_cutoff_time, 
-    activity_end_time, del_flag
+    detailed_address, lat, lon, top_flag, down_flag, remarks, create_date, update_date, 
+    activity_cutoff_time, activity_end_time, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from shanduo_activity
-    where id = #{id,jdbcType=VARCHAR} and del_flag = '0'
+    where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from shanduo_activity
@@ -61,15 +62,15 @@
     insert into shanduo_activity (id, activity_name, user_id, 
       activity_type, activity_start_time, activity_address, 
       detailed_address, lat, lon, 
-      top_flag, remarks, create_date, 
-      update_date, activity_cutoff_time, activity_end_time, 
-      del_flag)
+      top_flag, down_flag, remarks, 
+      create_date, update_date, activity_cutoff_time, 
+      activity_end_time, del_flag)
     values (#{id,jdbcType=VARCHAR}, #{activityName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
       #{activityType,jdbcType=VARCHAR}, #{activityStartTime,jdbcType=TIMESTAMP}, #{activityAddress,jdbcType=VARCHAR}, 
       #{detailedAddress,jdbcType=VARCHAR}, #{lat,jdbcType=DECIMAL}, #{lon,jdbcType=DECIMAL}, 
-      #{topFlag,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{activityCutoffTime,jdbcType=TIMESTAMP}, #{activityEndTime,jdbcType=TIMESTAMP}, 
-      #{delFlag,jdbcType=CHAR})
+      #{topFlag,jdbcType=CHAR}, #{downFlag,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{activityCutoffTime,jdbcType=TIMESTAMP}, 
+      #{activityEndTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoActivity">
     insert into shanduo_activity
@@ -103,6 +104,9 @@
       </if>
       <if test="topFlag != null">
         top_flag,
+      </if>
+      <if test="downFlag != null">
+        down_flag,
       </if>
       <if test="remarks != null">
         remarks,
@@ -154,6 +158,9 @@
       <if test="topFlag != null">
         #{topFlag,jdbcType=CHAR},
       </if>
+      <if test="downFlag != null">
+        #{downFlag,jdbcType=CHAR},
+      </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
       </if>
@@ -204,6 +211,9 @@
       <if test="topFlag != null">
         top_flag = #{topFlag,jdbcType=CHAR},
       </if>
+      <if test="downFlag != null">
+        down_flag = #{downFlag,jdbcType=CHAR},
+      </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
@@ -236,6 +246,7 @@
       lat = #{lat,jdbcType=DECIMAL},
       lon = #{lon,jdbcType=DECIMAL},
       top_flag = #{topFlag,jdbcType=CHAR},
+      down_flag = #{downFlag,jdbcType=CHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -291,7 +302,7 @@
 	where sa.del_flag = '0' and ar.del_flag = '0' and (user_id in 
 	(select attention from user_attention where del_flag = '0' and user_id = #{0})
 	or user_id = #{0}) and su.del_flag = '0'
-	order by sa.update_date desc
+	order by sa.activity_start_time desc
 	limit #{1},#{2}
   </select>
   <select id="selectByNearbyUserIdCount" resultType="java.lang.Integer">
@@ -316,7 +327,7 @@
  	and lon &gt;= #{0} and lon &lt;= #{1}
  	and lat &gt;= #{2} and lat &lt;= #{3}
  	and su.del_flag = '0'
- 	order by sa.top_flag desc,sa.update_date desc
+ 	order by sa.top_flag desc,sa.create_date desc
     limit #{4},#{5}
   </select>
   <select id="selectByUserIdCount" resultType="java.lang.Integer">
@@ -336,10 +347,10 @@
     join shanduo_user su on sa.user_id = su.id 
 	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
     and user_id = #{0}
-    order by sa.update_date desc
+    order by sa.activity_start_time desc
     limit #{1},#{2}
   </select>
-  <select id="count" resultType="map">
+  <select id="numberAndScore" resultType="map">
   	select 
   	count(ye.user_id) as number,count(others_score) as score
   	from shanduo_activity sa 
@@ -384,7 +395,7 @@
  	where ye.user_id = #{0} and ar.del_flag = '0' and su.del_flag = '0'
  	and sa.activity_start_time &gt; now()  
  	and sa.del_flag = '0' and ye.del_flag = '0'
- 	order by sa.update_date desc
+ 	order by sa.activity_start_time
  	limit #{1},#{2}
   </select>
   <select id="selectByUserIdInTimeCount" resultType="java.lang.Integer">
@@ -408,7 +419,7 @@
 	where sa.activity_start_time &lt; now() and ye.user_id = #{0} 
 	and sa.del_flag = '0' and ye.del_flag = '0'
  	and ar.del_flag = '0' and su.del_flag = '0'
- 	order by sa.update_date desc
+ 	order by sa.activity_start_time desc
  	limit #{1},#{2}
   </select>
   <select id="selectByScoreActivity" resultMap="ActivityResultMap">
@@ -466,20 +477,19 @@
   <update id="activityRefresh">
     update 
     shanduo_activity 
-    set update_date= now() where id = #{0} and del_flag = '0'
+    set create_date = now() where id = #{0} and del_flag = '0'
   </update>
   <update id="updateBysetTop">
-    update 
-    shanduo_activity 
-    set top_flag = '1',update_date= now() where id = #{0} and del_flag = '0'
+    update
+    shanduo_activity
+    set top_flag = '1' and activity_end_time = now() where id = #{0} and del_flag = '0'
   </update>
   <update id="updateById">
     update 
     shanduo_activity 
     set top_flag = '0' 
-    where id in(select id from (select id from shanduo_activity where update_date &lt; #{0} 
-    and top_flag = '1' and del_flag = '0') as activity)
-    and del_flag = '0'
+	where activity_end_time &lt; #{0}
+	and top_flag = '1' and del_flag = '0'
   </update>
   <select id="selectById" resultType="java.lang.Integer">
   	select 
@@ -521,4 +531,33 @@
   	like "%"#{0}"%" 
   	and del_flag = '0'
   </select>
+  <select id="selectId" resultType="map">
+  	select 
+  	id 
+  	from shanduo_activity 
+  	where user_id = #{0} and del_flag = '0'
+  	and activity_start_time &lt; now()
+  	and down_flag = '0'
+  </select>
+  <select id="numberScore" resultType="map">
+  	select 
+  	count(ye.user_id) as number,count(score) as score
+  	from shanduo_activity sa 
+	join activity_score ye on sa.id = ye.activity_id
+	where sa.id = #{0}
+	and sa.del_flag = '0' and ye.del_flag = '0'
+  </select>
+  <select id="selectScore" resultType="map">
+	select 
+	score
+	from activity_score
+	where activity_id = #{0}
+	and del_flag = '0'
+  </select>
+  <update id="updateDownFlag">
+  	update 
+  	shanduo_activity 
+  	set down_flag = '1' 
+  	where id = #{0} and del_flag = '0'
+  </update>
 </mapper>

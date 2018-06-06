@@ -339,9 +339,17 @@ public interface ShanduoActivityMapper {
      */
     List<Map<String, Object>> selectActivityIds(String activityId);
     
-    Map<String, Object> count(String activityId);
+    Map<String, Object> numberAndScore(String activityId);
     
     List<ActivityInfo> selectQuery(String query, Integer page, Integer pageSize);
     
     int queryCount(String query);
+    
+    List<Map<String, Object>> selectId(Integer userId);
+    
+    Map<String, Object> numberScore(String activityId);
+    
+    List<Map<String, Object>> selectScore(String activityId);
+    
+    int updateDownFlag(String activityId);
 }

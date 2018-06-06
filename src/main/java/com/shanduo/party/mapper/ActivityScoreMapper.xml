@@ -277,7 +277,8 @@
 	join shanduo_activity sa on ye.activity_id = sa.id 
 	join shanduo_user su on ye.user_id = su.id or sa.user_id = su.id
 	join activity_requirement ar on sa.id = ar.activity_id
-	where sa.del_flag = '0' and su.del_flag = '0'
+	where sa.del_flag = '0' and su.del_flag = '0' 
+	and ye.del_flag = '0' and ar.del_flag = '0'
 	and (ye.score is not null or ye.others_score is not null) 
 	and sa.user_id = #{0}
 	group by su.id,sa.id
@@ -286,10 +287,12 @@
   </select>
   <select id="activityCount" resultType="java.lang.Integer">
  	select 
-	count(id)
-	from shanduo_activity
-	where del_flag = '0'
-	and user_id = #{0}
+	count(sa.id)
+	from shanduo_activity sa
+	join activity_score ye on ye.activity_id = sa.id 
+	where sa.del_flag = '0' and ye.del_flag = '0'
+	and sa.user_id = #{0}
+	and (ye.score is not null or ye.others_score is not null)
   </select>
   <select id="selectActivitys" resultType="map">
  	select 

@@ -482,7 +482,7 @@ public class ActivityServiceImpl implements ActivityService {
         	Long newstartTime = get(startString, null, 2);
         	Long newcutoffTime = get(cutoffString, null, 2);
         	Long nowTime = System.currentTimeMillis();
-        	Map<String, Object> map = shanduoActivityMapper.count(activityInfo.getId());
+        	Map<String, Object> map = shanduoActivityMapper.numberAndScore(activityInfo.getId());
         	int i = Integer.parseInt(map.get("number").toString()); //参加记录
         	int count = Integer.parseInt(map.get("score").toString()); //评分记录
         	if(nowTime < newcutoffTime) {
@@ -533,16 +533,14 @@ public class ActivityServiceImpl implements ActivityService {
 		showActivity(activityInfo, null, null, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
 		Map<String, Object> resultMap = new HashMap<>(3);
-		if(null != userId) {
-			int joinActivity = 0;
-			for (Map<String, Object> map : resultList) {
-				if(map.get("id").equals(userId)) {
-					joinActivity = 1;
-				}
-				map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+		int joinActivity = 0;
+		for (Map<String, Object> map : resultList) {
+			if(userId != null && map.get("id").equals(userId)) {
+				joinActivity = 1;
 			}
-			resultMap.put("joinActivity", joinActivity);
+			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
 		}
+		resultMap.put("joinActivity", joinActivity);
 		resultMap.put("activityInfo", activityInfo);
 		resultMap.put("resultList", resultList);
 		return resultMap;

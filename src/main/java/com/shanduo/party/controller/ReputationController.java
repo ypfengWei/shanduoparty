@@ -17,6 +17,7 @@ import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
+import com.shanduo.party.mapper.ReportRecordMapper;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ScoreService;
 import com.shanduo.party.util.StringUtils;
@@ -39,6 +40,9 @@ public class ReputationController {
 	
 	@Autowired
 	private ScoreService scoreService;
+	
+	@Autowired
+	private ReportRecordMapper recordMapper;
 	
 	/**
 	 * 信誉轨迹
@@ -99,19 +103,20 @@ public class ReputationController {
 	
 	/**
 	 * 举报
-	 * @Title: title
+	 * @Title: saveReport
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param report 举报者
 	 * @param @param beReported 被举报者
 	 * @param @param activityId 活动Id
+	 * @param @param dynamicId 动态Id
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "saveReport", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveReport(HttpServletRequest request, String report, String beReported, String activityId) {
+	public ResultBean saveReport(HttpServletRequest request, String report, String beReported, String activityId, String dynamicId, String type) {
 		if(StringUtils.isNull(report)) {
 			log.error("举报者id为空");
 			return new ErrorBean(10002,"举报者id为空");
@@ -120,32 +125,70 @@ public class ReputationController {
 			log.error("被举报者id为空");
 			return new ErrorBean(10002,"被举报者id为空");
 		}
+		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
+		}
+		String id = null;
+		if("1".equals(type)) {
+			if(StringUtils.isNull(activityId)) {
+				log.error("活动为空");
+				return new ErrorBean(10002,"活动为空");
+			}
+			id = recordMapper.selectId(activityId, Integer.parseInt(beReported), Integer.parseInt(report));
+			if(!StringUtils.isNull(id)) {
+				log.error("您已举报该活动");
+				return new ErrorBean(10002,"您已举报该活动");
+			}
+		} else {
+			if(StringUtils.isNull(dynamicId)) {
+				log.error("动态为空");
+				return new ErrorBean(10002,"动态为空");
+			}
+			id = recordMapper.selectIds(dynamicId, Integer.parseInt(beReported), Integer.parseInt(report));
+			if(!StringUtils.isNull(id)) {
+				log.error("您已举报该动态");
+				return new ErrorBean(10002,"您已举报该动态");
+			}
+		}
 		try {
-			scoreService.report(activityId, Integer.parseInt(report), Integer.parseInt(beReported));
+			scoreService.report(activityId, Integer.parseInt(report), Integer.parseInt(beReported), dynamicId, type);
 		} catch (Exception e) {
 			log.error("举报记录添加失败");
 			return new ErrorBean(10003,"举报失败");
 		}
-		return new SuccessBean();
+		return new SuccessBean("举报成功");
 	}
 	
-	@RequestMapping(value = "report", method = { RequestMethod.POST, RequestMethod.GET })
+	/**
+	 * 举报处理
+	 * @Title: ReportHandling
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param activityId
+	 * @param @param type
+	 * @param @param dynamicId
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "reportHandling", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean report(HttpServletRequest request, String activityId, String type) {
-		if(StringUtils.isNull(activityId)) {
-			log.error("活动id为空");
-			return new ErrorBean(10002,"活动为空");
+	public ResultBean reportHandling(HttpServletRequest request, String activityId, String type, String dynamicId) {
+		if(StringUtils.isNull(activityId)&&StringUtils.isNull(dynamicId)) {
+			log.error("id为空");
+			return new ErrorBean(10002,"id为空");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}
 		try {
-			scoreService.updateReputation(activityId,type);
+			scoreService.updateReputation(activityId,type,dynamicId);
 		} catch (Exception e) {
-			log.error("举报记录添加失败");
-			return new ErrorBean(10003,"举报失败");
+			log.error("信誉修改失败");
+			return new ErrorBean(10003,"举报处理失败");
 		}
-		return new SuccessBean();
+		return new SuccessBean("举报处理成功");
 	}
 }

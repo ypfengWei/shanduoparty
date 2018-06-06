@@ -5,13 +5,12 @@
     <id column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="reputation" jdbcType="INTEGER" property="reputation" />
     <result column="deduction" jdbcType="INTEGER" property="deduction" />
-    <result column="reporting_time" jdbcType="TIMESTAMP" property="reportingTime" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    user_id, reputation, deduction, reporting_time, create_date, update_date, del_flag
+    user_id, reputation, deduction, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -25,11 +24,11 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ShanduoReputation">
     insert into shanduo_reputation (user_id, reputation, deduction, 
-      reporting_time, create_date, update_date, 
-      del_flag)
+      create_date, update_date, del_flag
+      )
     values (#{userId,jdbcType=INTEGER}, #{reputation,jdbcType=INTEGER}, #{deduction,jdbcType=INTEGER}, 
-      #{reportingTime,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{delFlag,jdbcType=CHAR})
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.ShanduoReputation">
     insert into shanduo_reputation
@@ -42,9 +41,6 @@
       </if>
       <if test="deduction != null">
         deduction,
-      </if>
-      <if test="reportingTime != null">
-        reporting_time,
       </if>
       <if test="createDate != null">
         create_date,
@@ -66,9 +62,6 @@
       <if test="deduction != null">
         #{deduction,jdbcType=INTEGER},
       </if>
-      <if test="reportingTime != null">
-        #{reportingTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
@@ -89,9 +82,6 @@
       <if test="deduction != null">
         deduction = #{deduction,jdbcType=INTEGER},
       </if>
-      <if test="reportingTime != null">
-        reporting_time = #{reportingTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
@@ -108,7 +98,6 @@
     update shanduo_reputation
     set reputation = #{reputation,jdbcType=INTEGER},
       deduction = #{deduction,jdbcType=INTEGER},
-      reporting_time = #{reportingTime,jdbcType=TIMESTAMP},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       del_flag = #{delFlag,jdbcType=CHAR}
@@ -142,5 +131,11 @@
   	shanduo_reputation 
   	set reputation = #{1}
   	where user_id = #{0} and del_flag = '0'
+  </update>
+  <update id="updateReputations">
+  	update 
+  	shanduo_reputation 
+  	set deduction = if(deduction-20>0,deduction-20,0)
+  	where del_flag = '0'
   </update>
 </mapper>

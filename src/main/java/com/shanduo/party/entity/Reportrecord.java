@@ -2,12 +2,14 @@ package com.shanduo.party.entity;
 
 import java.util.Date;
 
-public class Reportrecord {
+public class ReportRecord {
     private String id;
 
     private Integer userId;
 
     private String activityId;
+
+    private String dynamicId;
 
     private Integer reportId;
 
@@ -41,6 +43,14 @@ public class Reportrecord {
 
     public void setActivityId(String activityId) {
         this.activityId = activityId == null ? null : activityId.trim();
+    }
+
+    public String getDynamicId() {
+        return dynamicId;
+    }
+
+    public void setDynamicId(String dynamicId) {
+        this.dynamicId = dynamicId == null ? null : dynamicId.trim();
     }
 
     public Integer getReportId() {

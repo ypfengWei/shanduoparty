@@ -108,7 +108,7 @@ public interface ScoreService {
 	 */
 	Map<String, Object> selectJoinActivity(Integer userId, Integer pageNum, Integer pageSize);
 	
-	int updateReputation(String activityId, String type);
+	int updateReputation(String activityId, String type, String dynamicId);
 	
-	int report(String activityId, Integer report, Integer beReported);
+	int report(String activityId, Integer report, Integer beReported, String dynamicId, String type);
 }

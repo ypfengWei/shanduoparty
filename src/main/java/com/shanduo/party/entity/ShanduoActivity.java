@@ -24,6 +24,8 @@ public class ShanduoActivity {
 
     private String topFlag;
 
+    private String downFlag;
+
     private String remarks;
 
     private Date createDate;
@@ -114,6 +116,14 @@ public class ShanduoActivity {
 
     public void setTopFlag(String topFlag) {
         this.topFlag = topFlag == null ? null : topFlag.trim();
+    }
+
+    public String getDownFlag() {
+        return downFlag;
+    }
+
+    public void setDownFlag(String downFlag) {
+        this.downFlag = downFlag == null ? null : downFlag.trim();
     }
 
     public String getRemarks() {

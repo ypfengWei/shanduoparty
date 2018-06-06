@@ -177,18 +177,18 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "deleteActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean deleteActivity(HttpServletRequest request, String avtivityId, String token) {
+	public ResultBean deleteActivity(HttpServletRequest request, String activityId, String token) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(avtivityId)) {
+		if(StringUtils.isNull(activityId)) {
 			log.error("活动Id为空");
 			return new ErrorBean(10002,"活动Id为空");
 		}
 		try {
-			activityService.deleteActivity(avtivityId);
+			activityService.deleteActivity(activityId);
 		} catch (Exception e) {
 			log.error("活动删除失败");
 			return new ErrorBean(10003,"删除失败");
