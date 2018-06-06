@@ -68,7 +68,7 @@ public interface ActivityService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int deleteActivity(String id);
+	int deleteActivity(String id, Integer userId);
 
 	/**
 	 * 展示热点活动以及活动要求信息

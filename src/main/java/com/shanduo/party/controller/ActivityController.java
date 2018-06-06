@@ -188,7 +188,7 @@ public class ActivityController {
 			return new ErrorBean(10002,"活动Id为空");
 		}
 		try {
-			activityService.deleteActivity(activityId);
+			activityService.deleteActivity(activityId,userToken);
 		} catch (Exception e) {
 			log.error("活动删除失败");
 			return new ErrorBean(10003,"删除失败");

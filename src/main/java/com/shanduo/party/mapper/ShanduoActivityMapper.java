@@ -29,7 +29,7 @@ public interface ShanduoActivityMapper {
      * @return int    返回类型
      * @throws
      */
-    int deleteByActivity(String activityId);
+    int deleteByActivity(String activityId, Integer userId);
     
     /**
      * 热门活动记录数

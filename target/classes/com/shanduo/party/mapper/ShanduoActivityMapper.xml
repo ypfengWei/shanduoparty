@@ -256,11 +256,11 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
-  <update id="deleteByActivity" parameterType="java.lang.String">
+  <update id="deleteByActivity">
     update 
     shanduo_activity
     set del_flag = '1'
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{0} and user_id = #{1}
   </update>
   <select id="selectByScoreCount" resultType="java.lang.Integer">
     select 

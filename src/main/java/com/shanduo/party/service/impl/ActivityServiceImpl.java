@@ -182,8 +182,8 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public int deleteActivity(String activityId) {
-		int i = shanduoActivityMapper.deleteByActivity(activityId);
+	public int deleteActivity(String activityId, Integer userId) {
+		int i = shanduoActivityMapper.deleteByActivity(activityId,userId);
 		if(i < 1) {
 			log.error("删除活动失败");
 			throw new RuntimeException();
@@ -195,8 +195,7 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		int score = activityScoreMapper.deleteByActivityId(activityId);
 		if(score < 1) {
-			log.error("删除参加用户信息失败");
-			throw new RuntimeException();
+			log.error("没有用户参加活动");
 		}
 		return 1;
 	}
