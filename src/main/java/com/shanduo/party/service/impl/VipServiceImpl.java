@@ -1,5 +1,9 @@
 package com.shanduo.party.service.impl;
 
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,21 +46,30 @@ public class VipServiceImpl implements VipService {
 	@Override
 	public int saveVip(Integer userId, Date date,Integer month,String vipType,String isRefresh) {
 		ShanduoVip userVip = vipMapper.selectByVipType(userId,vipType);
+		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * 12);
+		DateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date endDate = null;
+        try {
+			endDate = formats.parse(vipEndDate);
+		} catch (ParseException e) {
+			throw new RuntimeException();
+		}
 		if(userVip == null) {
 			userVip = new ShanduoVip();
 			userVip.setId(UUIDGenerator.getUUID());
 			userVip.setUserId(userId);
 			userVip.setVipType(vipType);
 			userVip.setVipStartTime(date);
-			userVip.setVipEndTime(new Date(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month));
+			userVip.setVipEndTime(endDate);
 			int i = vipMapper.insertSelective(userVip);
 			if (i < 1) {
-				log.error("会员添加失败");
+				log.error("开通会员失败");
 				throw new RuntimeException();
 			}
 		}else {
 			userVip.setVipStartTime(date);
-			userVip.setVipEndTime(new Date(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month));
+			userVip.setVipEndTime(endDate);
 			int i = vipMapper.updateByPrimaryKeySelective(userVip);
 			if (i < 1) {
 				log.error("重新开通会员失败");

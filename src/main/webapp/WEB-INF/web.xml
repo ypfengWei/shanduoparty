@@ -19,8 +19,8 @@
       		<param-name>encoding</param-name>
       		<param-value>UTF-8</param-value>
    	 	</init-param>
-    	<init-param>  
-        	<param-name>forceEncoding</param-name>  
+    	<init-param>
+        	<param-name>forceEncoding</param-name>
         	<param-value>true</param-value>  
     	</init-param> 
   	</filter>
@@ -77,7 +77,7 @@
   	</servlet-mapping>
   	<!-- 配置session超时,单位是分钟 -->
   	<session-config>
-        <session-timeout>30</session-timeout>  
+        <session-timeout>30</session-timeout>
    	</session-config>
  	<!-- 配置默认首页 -->
 	<welcome-file-list>
