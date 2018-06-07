@@ -11,14 +11,25 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-
+/**
+ * 调用IM接口POST请求
+ * @ClassName: TXCloudHelper
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年6月7日 下午2:27:18
+ *
+ */
 public class TXCloudHelper {
 
 	/**
-     * @see 获取url
-     * @param servicename
-     * @return
-     */  
+	 * 获取url
+	 * @Title: getUrl
+	 * @Description: TODO
+	 * @param @param servicename
+	 * @param @return
+	 * @return String
+	 * @throws
+	 */
     public static String getUrl(String servicename) {
         String url = "https://console.tim.qq.com/v4/"+servicename+"?"+"usersig="+tls_sigUtils.getSig(ImConfig.IDENTIFIER)
         			 +"&identifier="+ImConfig.IDENTIFIER+"&sdkappid="+ImConfig.APP_ID+"&random="+randomInt()+"&contenttype=json";
@@ -26,10 +37,14 @@ public class TXCloudHelper {
     }
     
     /**
-     * @see 发送post请求
-     * @param url
-     * @param headers
-     * @return
+     * 发送post请求
+     * @Title: executePost
+     * @Description: TODO
+     * @param @param url
+     * @param @param parameters json数值参数
+     * @param @return
+     * @return String
+     * @throws
      */
     public static String executePost(String url, String parameters) {
         CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
