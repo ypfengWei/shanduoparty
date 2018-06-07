@@ -1,4 +1,4 @@
-package com.shanduo.party.imsig;
+package com.shanduo.party.im;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;

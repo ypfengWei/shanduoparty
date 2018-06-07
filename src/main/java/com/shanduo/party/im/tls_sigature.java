@@ -1,4 +1,4 @@
-package com.shanduo.party.imsig;
+package com.shanduo.party.im;
 
 import java.io.CharArrayReader;
 import java.io.IOException;

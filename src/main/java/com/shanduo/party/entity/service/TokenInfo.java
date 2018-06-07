@@ -1,10 +1,8 @@
 package com.shanduo.party.entity.service;
 
 
-import java.io.IOException;
-
 import com.shanduo.party.entity.ShanduoUser;
-import com.shanduo.party.imsig.tls_sigUtils;
+import com.shanduo.party.im.tls_sigUtils;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.PictureUtils;
 
@@ -63,11 +61,7 @@ public class TokenInfo {
     	this.vip = vip;
     	this.level = level;
     	this.remarks = shanduoUser.getRemarks();
-    	try {
-			this.userSig = tls_sigUtils.getSig(userId);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.userSig = tls_sigUtils.getSig(userId);
     }
 
 	public String getToken() {

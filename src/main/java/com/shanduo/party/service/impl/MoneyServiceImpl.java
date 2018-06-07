@@ -86,8 +86,8 @@ public class MoneyServiceImpl implements MoneyService {
 	@Override
 	public int payMoney(Integer userId, BigDecimal money,String remarks) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		money = userMoney.getMoney().add(money);
-		userMoney.setMoney(money);
+		BigDecimal moneys = userMoney.getMoney().add(money);
+		userMoney.setMoney(moneys);
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
 			log.error("充值失败");
