@@ -154,13 +154,46 @@ public class ReputationController {
 	}
 	
 	/**
+	 * 查看举报的活动或动态记录
+	 * @Title: reportRecord
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param typeId 1:活动记录 2:动态记录
+	 * @param @param page 页码
+	 * @param @param pageSize 记录
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "reportRecord", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean reportRecord(HttpServletRequest request, String typeId, String page, String pageSize) {
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
+		}
+		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+			log.error("页码错误");
+			return new ErrorBean(10002,"页码错误");
+		}
+		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+			log.error("记录错误");
+			return new ErrorBean(10002,"记录错误");
+		}
+		Integer pages = Integer.valueOf(page);
+		Integer pageSizes = Integer.valueOf(pageSize);
+		Map<String, Object> resultMap = scoreService.reportRecord(typeId, pages, pageSizes);
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
 	 * 举报处理
 	 * @Title: ReportHandling
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
-	 * @param @param activityId
-	 * @param @param type
-	 * @param @param dynamicId
+	 * @param @param activityId 活动id
+	 * @param @param type 1:通过  2:未通过
+	 * @param @param dynamicId 动态Id
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws

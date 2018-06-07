@@ -354,4 +354,6 @@ public interface ShanduoActivityMapper {
     int updateDownFlag(String activityId);
     
     int selectUserId(String activityId);
+    
+    ShanduoActivity selectByIds(String activityId);
 }

@@ -363,6 +363,18 @@ public class ScoreServiceImpl implements ScoreService {
 		return ScoreMap;
 	}
  
+	@Override
+	public Map<String, Object> reportRecord(String typeId, Integer pageNum, Integer pageSize) {
+		int totalrecord = recordMapper.selectCount(typeId); //举报活动或者动态记录
+		Page page = new Page(totalrecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> list = recordMapper.selectInfo(typeId, pageNum, page.getPageSize()); //举报的活动或动态
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("list", list);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalpage", page.getTotalPage());
+		return resultMap;
+	}
 	
 	@Override
 	public int updateReputation(String activityId, String type, String dynamicId) {
@@ -373,35 +385,44 @@ public class ScoreServiceImpl implements ScoreService {
 			list = recordMapper.selectReportId(activityId);
 		}
 		int reputation = 0;
-		if("1".equals(type)) {
-			int deduction = 0;
-			int reportId = 0;
-			for (Map<String, Object> map : list) {
-				reportId = Integer.parseInt(map.get("user_id").toString());
-				reputation = shanduoReputationMapper.selectByUserId(reportId);
-				int reputations = shanduoReputationMapper.updateByUserId(reportId, reputation+1);
-				if(reputations < 1) {
-					log.error("信誉等级修改失败");
-					throw new RuntimeException();
-				}
+		int reportId = 0;
+		for (Map<String, Object> map : list) {
+			reportId = Integer.parseInt(map.get("user_id").toString());
+			reputation = shanduoReputationMapper.selectByUserId(reportId);
+			int i = 0;
+			if("1".equals(type)) {
+				i = shanduoReputationMapper.updateByUserId(reportId, reputation+1);
+			} else {
+				i = shanduoReputationMapper.updateByUserId(reportId, reputation-1);
 			}
-			int userIds = shanduoActivityMapper.selectUserId(activityId);
-			deduction = shanduoReputationMapper.selectDeduction(userIds);
-			int deductions = shanduoReputationMapper.updateDeduction(userIds, deduction+5);
-			if(deductions < 1) {
+			if(i < 1) {
+				log.error("信誉等级修改失败");
+				throw new RuntimeException();
+			}
+		}
+		if("1".equals(type)) {
+			int userIds = 0;
+			if(StringUtils.isNull(activityId)) {
+				userIds = recordMapper.selectUserId(dynamicId);
+			} else {
+				userIds = shanduoActivityMapper.selectUserId(activityId);
+			}
+			int deduction = shanduoReputationMapper.selectDeduction(userIds);
+			int i = shanduoReputationMapper.updateDeduction(userIds, deduction+5);
+			if(i < 1) {
 				log.error("扣分失败");
 				throw new RuntimeException();
 			}
+		}
+		int i = 0;
+		if(StringUtils.isNull(activityId)) {
+			i = recordMapper.updateByDynamicId(dynamicId);
 		} else {
-			for (Map<String, Object> map : list) {
-				int reportIds = Integer.parseInt(map.get("report_id").toString());
-				reputation = shanduoReputationMapper.selectByUserId(reportIds);
-				int reputations = shanduoReputationMapper.updateByUserId(reportIds, reputation-1);
-				if(reputations < 1) {
-					log.error("信誉等级修改失败");
-					throw new RuntimeException();
-				}
-			}
+			i = recordMapper.updateByActivityId(activityId);
+		}
+		if(i < 1) {
+			log.error("删除举报记录失败");
+			throw new RuntimeException();
 		}
 		return 1;
 	}
@@ -437,4 +458,5 @@ public class ScoreServiceImpl implements ScoreService {
 		String id = recordMapper.selectId(dynamicId, userId);
 		return id;
 	}
+
 }

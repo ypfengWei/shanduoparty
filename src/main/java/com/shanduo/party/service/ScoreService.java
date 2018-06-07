@@ -115,4 +115,6 @@ public interface ScoreService {
 	String selectId(String activityId, Integer userId);
 	
 	String selectIds(String dynamicId, Integer userId);
+	
+	Map<String, Object> reportRecord(String type, Integer pageNum, Integer pageSize);
 }
