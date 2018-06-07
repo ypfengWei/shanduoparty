@@ -110,5 +110,9 @@ public interface ScoreService {
 	
 	int updateReputation(String activityId, String type, String dynamicId);
 	
-	int report(String activityId, Integer report, Integer beReported, String dynamicId, String type);
+	int report(Integer userId, String activityId, String dynamicId, String typeId, String remarks);
+	
+	String selectId(String activityId, Integer userId);
+	
+	String selectIds(String dynamicId, Integer userId);
 }

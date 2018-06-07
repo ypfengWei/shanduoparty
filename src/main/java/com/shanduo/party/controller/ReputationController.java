@@ -17,7 +17,6 @@ import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.mapper.ReportRecordMapper;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ScoreService;
 import com.shanduo.party.util.StringUtils;
@@ -40,9 +39,6 @@ public class ReputationController {
 	
 	@Autowired
 	private ScoreService scoreService;
-	
-	@Autowired
-	private ReportRecordMapper recordMapper;
 	
 	/**
 	 * 信誉轨迹
@@ -116,26 +112,23 @@ public class ReputationController {
 	 */
 	@RequestMapping(value = "saveReport", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveReport(HttpServletRequest request, String report, String beReported, String activityId, String dynamicId, String type) {
-		if(StringUtils.isNull(report)) {
+	public ResultBean saveReport(HttpServletRequest request, String userId, String activityId, String dynamicId, String typeId, 
+			String remarks) {
+		if(StringUtils.isNull(userId)) {
 			log.error("举报者id为空");
 			return new ErrorBean(10002,"举报者id为空");
 		}
-		if(StringUtils.isNull(beReported)) {
-			log.error("被举报者id为空");
-			return new ErrorBean(10002,"被举报者id为空");
-		}
-		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}
 		String id = null;
-		if("1".equals(type)) {
+		if("1".equals(typeId)) {
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动为空");
 				return new ErrorBean(10002,"活动为空");
 			}
-			id = recordMapper.selectId(activityId, Integer.parseInt(beReported), Integer.parseInt(report));
+			id = scoreService.selectId(activityId, Integer.parseInt(userId));
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该活动");
 				return new ErrorBean(10002,"您已举报该活动");
@@ -145,14 +138,14 @@ public class ReputationController {
 				log.error("动态为空");
 				return new ErrorBean(10002,"动态为空");
 			}
-			id = recordMapper.selectIds(dynamicId, Integer.parseInt(beReported), Integer.parseInt(report));
+			id = scoreService.selectIds(dynamicId, Integer.parseInt(userId));
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该动态");
 				return new ErrorBean(10002,"您已举报该动态");
 			}
 		}
 		try {
-			scoreService.report(activityId, Integer.parseInt(report), Integer.parseInt(beReported), dynamicId, type);
+			scoreService.report(Integer.parseInt(userId), activityId, dynamicId, typeId, remarks);
 		} catch (Exception e) {
 			log.error("举报记录添加失败");
 			return new ErrorBean(10003,"举报失败");

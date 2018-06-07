@@ -22,7 +22,7 @@ public interface ReportRecordMapper {
     
     List<Map<String, Object>> selectByDynamicId(String dynamicId);
     
-    String selectId(String activityId, Integer userId, Integer reportId);
+    String selectId(String activityId, Integer userId);
     
-    String selectIds(String dynamicId, Integer userId, Integer reportId);
+    String selectIds(String dynamicId, Integer userId);
 }

@@ -352,4 +352,6 @@ public interface ShanduoActivityMapper {
     List<Map<String, Object>> selectScore(String activityId);
     
     int updateDownFlag(String activityId);
+    
+    int selectUserId(String activityId);
 }

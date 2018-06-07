@@ -375,12 +375,9 @@ public class ScoreServiceImpl implements ScoreService {
 		int reputation = 0;
 		if("1".equals(type)) {
 			int deduction = 0;
-			int userId = 0;
 			int reportId = 0;
 			for (Map<String, Object> map : list) {
-				userId = Integer.parseInt(map.get("user_id").toString());
-				reportId = Integer.parseInt(map.get("report_id").toString());
-				deduction = shanduoReputationMapper.selectDeduction(userId);
+				reportId = Integer.parseInt(map.get("user_id").toString());
 				reputation = shanduoReputationMapper.selectByUserId(reportId);
 				int reputations = shanduoReputationMapper.updateByUserId(reportId, reputation+1);
 				if(reputations < 1) {
@@ -388,7 +385,9 @@ public class ScoreServiceImpl implements ScoreService {
 					throw new RuntimeException();
 				}
 			}
-			int deductions = shanduoReputationMapper.updateDeduction(userId, deduction+5);
+			int userIds = shanduoActivityMapper.selectUserId(activityId);
+			deduction = shanduoReputationMapper.selectDeduction(userIds);
+			int deductions = shanduoReputationMapper.updateDeduction(userIds, deduction+5);
 			if(deductions < 1) {
 				log.error("扣分失败");
 				throw new RuntimeException();
@@ -408,20 +407,34 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 
 	@Override
-	public int report(String activityId, Integer report, Integer beReported, String dynamicId, String type) {
+	public int report(Integer userId, String activityId, String dynamicId, String typeId, String remarks) {
 		ReportRecord reportrecord = new ReportRecord();
 		reportrecord.setId(UUIDGenerator.getUUID());
-		reportrecord.setUserId(beReported);
-		if("1".equals(type)) {
+		reportrecord.setUserId(userId);
+		if("1".equals(typeId)) {
 			reportrecord.setActivityId(activityId);
 		} else {
 			reportrecord.setDynamicId(dynamicId);
 		}
+		reportrecord.setTypeId(typeId);
+		reportrecord.setRemarks(remarks);
 		int i = recordMapper.insertSelective(reportrecord);
 		if(i < 1) {
 			log.error("举报记录添加失败");
 			throw new RuntimeException();
 		}
 		return 1;
+	}
+
+	@Override
+	public String selectId(String activityId, Integer userId) {
+		String id = recordMapper.selectId(activityId, userId);
+		return id;
+	}
+
+	@Override
+	public String selectIds(String dynamicId, Integer userId) {
+		String id = recordMapper.selectId(dynamicId, userId);
+		return id;
 	}
 }
