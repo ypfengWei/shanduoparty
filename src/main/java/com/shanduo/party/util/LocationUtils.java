@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
  * 根据两个经纬度计算距离
  * @ClassName: LocationUtils
  * @Description: TODO(这里用一句话描述这个类的作用)
- * @author A18ccms a18ccms_gmail_com
+ * @author lishan
  * @date 2018年4月28日 上午11:08:30
  *
  */
@@ -22,7 +22,7 @@ public class LocationUtils {
     public static Double[] getDoubles(String lon,String lat) {
     	double r = 6371;//地球半径千米
         double dis = 10;//10千米距离
-        double dlng =  2*Math.asin(Math.sin(dis/(2*r))/Math.cos(Double.parseDouble(lat)*Math.PI/180));
+        double dlng = 2*Math.asin(Math.sin(dis/(2*r))/Math.cos(Double.parseDouble(lat)*Math.PI/180));
         dlng = dlng*180/Math.PI;//角度转为弧度
         double dlat = dis/r;
         dlat = dlat*180/Math.PI;        
@@ -33,15 +33,19 @@ public class LocationUtils {
         doubles[3] = Double.parseDouble(lat) + dlat;
 		return doubles;
     }
+    
     /** 
      * 根据两点间经纬度坐标（double值），计算两点间距离，单位：千米 
-     * @author lishan 
-     * @param lng1 
-     * @param lat1 
-     * @param lng2 
-     * @param lat2 
-     * @return 
-     */  
+     * @Title: getDistance
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param lng1
+     * @param @param lat1
+     * @param @param lng2
+     * @param @param lat2
+     * @param @return    设定文件
+     * @return double    返回类型
+     * @throws
+     */
     public static double getDistance(double lng1, double lat1, double lng2, double lat2) {  
         double radLat1 = rad(lat1);  
         double radLat2 = rad(lat2);  

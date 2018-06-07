@@ -111,14 +111,14 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectByActivityId(activityId, pageNum, page.getPageSize());
 		for (Map<String, Object> map : resultList) {
+			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
 			if(map.get("id").equals(userId)) {
 				joinActivity = 1;
+				map.put("joinActivity", joinActivity);
 				break;
-			} 
-		}
-		for (Map<String, Object> map : resultList) {
-			map.put("joinActivity", joinActivity);
-			map.put("head_portrait_id", PictureUtils.getPictureUrl(map.get("head_portrait_id").toString()));
+			} else {
+				map.put("joinActivity", joinActivity);
+			}
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -400,7 +400,8 @@ public class ActivityServiceImpl implements ActivityService {
 	@Override
 	public int deleteByUserIds(String activityId, String userIds) {
 		String[] userId = userIds.split(",");
-		for(int i=0;i< userId.length;i++) {
+		int len = userId.length;
+		for(int i=0;i< len;i++) {
 			int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userId[i]));
 			if(n < 1) {
 				log.error("踢人失败");
@@ -411,7 +412,8 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	public List<ActivityInfo> activity(List<ActivityInfo> resultLists, String lon, String lat,int type){
 		List<ActivityInfo>  resultList =  new ArrayList<ActivityInfo>();
-		for(int i=0;i<resultLists.size();i++){
+		int len = resultLists.size();
+		for(int i=0;i<len;i++){
 			ActivityInfo activityInfo = resultLists.get(i);
 			resultList.add(showActivity(activityInfo, lon, lat,type));
 		}
