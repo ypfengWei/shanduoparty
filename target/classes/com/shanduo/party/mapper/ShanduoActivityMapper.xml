@@ -482,7 +482,7 @@
   <update id="updateBysetTop">
     update
     shanduo_activity
-    set top_flag = '1' and activity_end_time = now() where id = #{0} and del_flag = '0'
+    set top_flag = '1',activity_end_time = now() where id = #{0} and del_flag = '0'
   </update>
   <update id="updateById">
     update 

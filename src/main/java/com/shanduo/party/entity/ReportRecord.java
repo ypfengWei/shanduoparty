@@ -11,7 +11,7 @@ public class ReportRecord {
 
     private String dynamicId;
 
-    private Integer reportId;
+    private String typeId;
 
     private Date createDate;
 
@@ -53,12 +53,12 @@ public class ReportRecord {
         this.dynamicId = dynamicId == null ? null : dynamicId.trim();
     }
 
-    public Integer getReportId() {
-        return reportId;
+    public String getTypeId() {
+        return typeId;
     }
 
-    public void setReportId(Integer reportId) {
-        this.reportId = reportId;
+    public void setTypeId(String typeId) {
+        this.typeId = typeId == null ? null : typeId.trim();
     }
 
     public Date getCreateDate() {

@@ -412,7 +412,6 @@ public class ScoreServiceImpl implements ScoreService {
 		ReportRecord reportrecord = new ReportRecord();
 		reportrecord.setId(UUIDGenerator.getUUID());
 		reportrecord.setUserId(beReported);
-		reportrecord.setReportId(report);
 		if("1".equals(type)) {
 			reportrecord.setActivityId(activityId);
 		} else {

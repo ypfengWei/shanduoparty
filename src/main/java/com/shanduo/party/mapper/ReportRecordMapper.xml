@@ -6,14 +6,14 @@
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
     <result column="dynamic_id" jdbcType="VARCHAR" property="dynamicId" />
-    <result column="report_id" jdbcType="INTEGER" property="reportId" />
+    <result column="type_id" jdbcType="CHAR" property="typeId" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, activity_id, dynamic_id, report_id, create_date, update_date, remarks, 
+    id, user_id, activity_id, dynamic_id, type_id, create_date, update_date, remarks, 
     del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -28,11 +28,11 @@
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.ReportRecord">
     insert into report_record (id, user_id, activity_id, 
-      dynamic_id, report_id, create_date, 
+      dynamic_id, type_id, create_date, 
       update_date, remarks, del_flag
       )
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
-      #{dynamicId,jdbcType=VARCHAR}, #{reportId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{dynamicId,jdbcType=VARCHAR}, #{typeId,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}
       )
   </insert>
@@ -51,8 +51,8 @@
       <if test="dynamicId != null">
         dynamic_id,
       </if>
-      <if test="reportId != null">
-        report_id,
+      <if test="typeId != null">
+        type_id,
       </if>
       <if test="createDate != null">
         create_date,
@@ -80,8 +80,8 @@
       <if test="dynamicId != null">
         #{dynamicId,jdbcType=VARCHAR},
       </if>
-      <if test="reportId != null">
-        #{reportId,jdbcType=INTEGER},
+      <if test="typeId != null">
+        #{typeId,jdbcType=CHAR},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
@@ -109,8 +109,8 @@
       <if test="dynamicId != null">
         dynamic_id = #{dynamicId,jdbcType=VARCHAR},
       </if>
-      <if test="reportId != null">
-        report_id = #{reportId,jdbcType=INTEGER},
+      <if test="typeId != null">
+        type_id = #{typeId,jdbcType=CHAR},
       </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -132,7 +132,7 @@
     set user_id = #{userId,jdbcType=INTEGER},
       activity_id = #{activityId,jdbcType=VARCHAR},
       dynamic_id = #{dynamicId,jdbcType=VARCHAR},
-      report_id = #{reportId,jdbcType=INTEGER},
+      type_id = #{typeId,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       remarks = #{remarks,jdbcType=VARCHAR},
