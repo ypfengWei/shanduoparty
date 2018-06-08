@@ -148,12 +148,13 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> nearbyList(String lat, String lon, Integer pageNum, Integer pageSize) {
-		Double[] doubles = LocationUtils.getDoubles(lon, lat);
-		int totalRecord = dynamicMapper.nearbyCount(doubles[0], doubles[1], doubles[2], doubles[3]);
+	public Map<String, Object> nearbyList(String lat,String lon, Integer pageNum, Integer pageSize) {
+		double lons = Double.parseDouble(lon);
+		double lats = Double.parseDouble(lat);
+		int totalRecord = dynamicMapper.nearbyCount(lons, lats);
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<Map<String, Object>> resultList =  dynamicMapper.nearbyList(doubles[0], doubles[1], doubles[2], doubles[3], pageNum, page.getPageSize());
+		List<Map<String, Object>> resultList =  dynamicMapper.nearbyList(lons, lats, pageNum, page.getPageSize());
 		addList(resultList, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());

@@ -203,8 +203,8 @@
     count(id)
     from shanduo_dynamic
 	where del_flag = '0'
-	and lon >= #{0} and lon &lt;= #{1}
- 	and lat >= #{2} and lat &lt;= #{3}
+	and 
+ 	(((#{0}-lon)*100)*((#{0}-lon)*100)+((#{1}-lat)*100)*((#{1}-lat)*100)) &lt; 100
   </select>
   <select id="nearbyList" resultType="map">
     select 
@@ -214,10 +214,10 @@
     from shanduo_dynamic sd 
 	join shanduo_user su on sd.user_id = su.id
 	where sd.del_flag = '0'
-	and lon &gt;= #{0} and lon &lt;= #{1}
- 	and lat &gt;= #{2} and lat &lt;= #{3}
+	and 
+ 	(((#{0}-lon)*100)*((#{0}-lon)*100)+((#{1}-lat)*100)*((#{1}-lat)*100)) &lt; 100
 	order by sd.create_date desc 
-	limit #{4},#{5}
+	limit #{2},#{3}
   </select>
   <select id="selectMyCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select

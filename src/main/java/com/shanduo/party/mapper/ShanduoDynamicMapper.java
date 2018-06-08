@@ -28,9 +28,9 @@ public interface ShanduoDynamicMapper {
     
     List<Map<String, Object>> attentionList(Integer userId,Integer page,Integer pageSize);
     
-    int nearbyCount(double minlon, double maxlon, double minlat, double maxlat);
+    int nearbyCount(double lon, double lat);
     
-    List<Map<String, Object>> nearbyList(double minlon, double maxlon, double minlat, double maxlat, Integer page, Integer pageSize);
+    List<Map<String, Object>> nearbyList(double lon, double lat, Integer page, Integer pageSize);
     
     int selectMyCount(Integer userId);
     
