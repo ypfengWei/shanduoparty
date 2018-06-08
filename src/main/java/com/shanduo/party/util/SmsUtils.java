@@ -60,20 +60,20 @@ public class SmsUtils {
         //必填:待发送手机号
         request.setPhoneNumbers(tel);
         //必填:短信签名-可在短信控制台中找到
-        request.setSignName("闪多外卖");
+        request.setSignName("闪多");
         //必填:短信模板-可在短信控制台中找到
         switch (typeId) {
 		case "1":
-			request.setTemplateCode("SMS_121185041");
+			request.setTemplateCode("SMS_136855850");
 			break;
 		case "2":
-			request.setTemplateCode("SMS_121185039");
+			request.setTemplateCode("SMS_136855851");
 			break;
 		case "3":
-			request.setTemplateCode("SMS_121185040");
+			request.setTemplateCode("SMS_136870630");
 			break;
 		case "4":
-			request.setTemplateCode("SMS_121185040");
+			request.setTemplateCode("SMS_136865652");
 			break;
 		default:
 			break;

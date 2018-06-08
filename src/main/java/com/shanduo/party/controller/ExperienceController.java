@@ -1,5 +1,7 @@
 package com.shanduo.party.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -67,4 +69,15 @@ public class ExperienceController {
 		return new SuccessBean("签到成功");
 	}
 	
+	@RequestMapping(value = "checksignin",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean checkSignIn(HttpServletRequest request,String token) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		Map<String, Object> resultMap = experienceService.checkSignin(isUserId);
+		return new SuccessBean(resultMap);
+	}
 }

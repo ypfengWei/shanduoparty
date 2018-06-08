@@ -1,5 +1,7 @@
 package com.shanduo.party.service;
 
+import java.util.Map;
+
 /**
  * 经验业务层
  * @ClassName: ExperienceService
@@ -90,4 +92,15 @@ public interface ExperienceService {
 	 * @throws
 	 */
 	int selectLevel(Integer userId);
+	
+	/**
+	 * 检查签到天数和当天是否签到
+	 * @Title: checkSignin
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> checkSignin(Integer userId);
 }

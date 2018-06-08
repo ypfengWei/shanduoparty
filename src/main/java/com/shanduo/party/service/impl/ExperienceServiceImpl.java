@@ -5,6 +5,8 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -292,6 +294,14 @@ public class ExperienceServiceImpl implements ExperienceService {
 	public int selectLevel(Integer userId) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
 		return LevelUtils.getLevel(userMoney.getExperience());
+	}
+
+	@Override
+	public Map<String, Object> checkSignin(Integer userId) {
+		Map<String, Object> resultMap = new HashMap<>(2);
+		resultMap.put("count", weekSignInCount(userId)+1);
+		resultMap.put("isSignin", checkCount(userId, "3"));
+		return resultMap;
 	}
 
 }
