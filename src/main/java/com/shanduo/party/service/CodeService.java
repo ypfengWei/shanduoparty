@@ -12,7 +12,7 @@ public interface CodeService {
 
 	/**
 	 * 手机验证码录入
-	 * @Title: insertSelective
+	 * @Title: saveCode
 	 * @Description: TODO
 	 * @param @param phone 手机号
 	 * @param @param code 验证码
@@ -21,11 +21,11 @@ public interface CodeService {
 	 * @return int
 	 * @throws
 	 */
-	int savePhoneVerifyCode(String phone,String code,String typeId);
+	int saveCode(String phone,String code,String typeId);
 	
 	/**
 	 * 检查验证码是否超时或错误
-	 * @Title: selectByQuery
+	 * @Title: checkCode
 	 * @Description: TODO
 	 * @param @param phone 手机号
 	 * @param @param code 验证码
@@ -34,18 +34,18 @@ public interface CodeService {
 	 * @return PhoneVerifyCode
 	 * @throws
 	 */
-	boolean selectByQuery(String phone,String code,String typeId);
+	boolean checkCode(String phone,String code,String typeId);
 	
 	/**
 	 * 检查是否多次请求发送短信
-	 * @Title: selectByPhone
+	 * @Title: checkCodeCount
 	 * @Description: TODO
 	 * @param @param phone 手机号
 	 * @param @return
 	 * @return boolean
 	 * @throws
 	 */
-	boolean selectByPhone(String phone);
+	boolean checkCodeCount(String phone);
 	
 	/**
 	 * 删除过期的验证码记录

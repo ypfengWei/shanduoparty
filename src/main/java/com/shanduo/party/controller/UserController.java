@@ -72,7 +72,7 @@ public class UserController {
 			log.error("密码格式错误");
 			return new ErrorBean(10002,"密码格式错误");
 		}
-		if(codeService.selectByQuery(phone, code, "1")) {
+		if(codeService.checkCode(phone, code, "1")) {
 			log.error("验证码超时或错误");
 			return new ErrorBean(10002,"验证码超时或错误");
 		}
@@ -214,7 +214,7 @@ public class UserController {
 			log.error("手机号已被注册");
 			return new ErrorBean(10002,"手机号已被注册");
 		}
-		if(codeService.selectByQuery(phone, code, "2")) {
+		if(codeService.checkCode(phone, code, "2")) {
 			log.error("验证码超时或错误");
 			return new ErrorBean(10002,"验证码超时或错误");
 		}
@@ -245,11 +245,6 @@ public class UserController {
 	@ResponseBody
 	public ResultBean updatePassword(HttpServletRequest request,String token,String typeId,String phone,
 			String code,String password,String newPassword) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
@@ -267,7 +262,7 @@ public class UserController {
 				log.error("验证码错误");
 				return new ErrorBean(10002,"验证码错误");
 			}
-			if(codeService.selectByQuery(phone, code, "3")) {
+			if(codeService.checkCode(phone, code, "3")) {
 				log.error("验证码超时或错误");
 				return new ErrorBean(10002,"验证码超时或错误");
 			}
@@ -278,6 +273,11 @@ public class UserController {
 				return new ErrorBean(10003,"修改失败");
 			}
 		}else {
+			Integer isUserId = baseService.checkUserToken(token);
+			if(isUserId == null) {
+				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			}
 			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 				log.error("密码格式错误");
 				return new ErrorBean(10002,"密码格式错误");

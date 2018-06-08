@@ -173,7 +173,7 @@ public class MoneyControllrt {
 				log.error("验证码错误");
 				return new ErrorBean(10002,"验证码错误");
 			}
-			if(codeService.selectByQuery(user.getPhoneNumber(), code, "4")) {
+			if(codeService.checkCode(user.getPhoneNumber(), code, "4")) {
 				log.error("验证码超时或错误");
 				return new ErrorBean(10002,"验证码超时或错误");
 			}

@@ -31,7 +31,7 @@ public class CodeServiceImpl implements CodeService {
 	private PhoneVerifyCodeMapper phoneVerifyCodeMapper;
 	
 	@Override
-	public int savePhoneVerifyCode(String phone,String code,String typeId) {
+	public int saveCode(String phone,String code,String typeId) {
 		PhoneVerifyCode phoneVerifyCode = new PhoneVerifyCode();
 		phoneVerifyCode.setPhoneNumber(phone);
 		phoneVerifyCode.setPhoneCode(code);
@@ -45,7 +45,7 @@ public class CodeServiceImpl implements CodeService {
 	}
 	
 	@Override
-	public boolean selectByQuery(String phone, String code, String typeId) {
+	public boolean checkCode(String phone, String code, String typeId) {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String createDate = format.format(time - 1000 * 60 * 10);
@@ -58,7 +58,7 @@ public class CodeServiceImpl implements CodeService {
 	}
 
 	@Override
-	public boolean selectByPhone(String phone) {
+	public boolean checkCodeCount(String phone) {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String createDate = format.format(time - 1000 * 60);

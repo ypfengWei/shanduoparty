@@ -140,7 +140,7 @@ public class WechatController {
 			}
 			return new SuccessBean(tokenInfo);
 		}
-		if (codeService.selectByQuery(username, codes, "1")) {
+		if (codeService.checkCode(username, codes, "1")) {
 			return new ErrorBean(10002, "验证码错误");
 		}
 		if (userService.checkPhone(username)) {

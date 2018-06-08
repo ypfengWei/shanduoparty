@@ -248,7 +248,7 @@ public class MoneyServiceImpl implements MoneyService {
 					}
 				}
 				Long sub = isMonth(vipStartDate, today);
-				if(sub%31 == 0) {
+				if(sub > 30 && sub%31 == 1) {
 					if("0".equals(vips.getVipType())) {
 						updateRefresh(vip.getUserId(), 50);
 						log.info(userId+"vip重置刷新次数50");

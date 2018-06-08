@@ -61,7 +61,7 @@ public class SmsController {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
 		}
-		if(codeService.selectByPhone(phone)) {
+		if(codeService.checkCodeCount(phone)) {
 			log.error("60S内只能发送一次");
 			return new ErrorBean(10002,"60S内只能发送一次");
 		}
@@ -78,12 +78,45 @@ public class SmsController {
 			return new ErrorBean(10002,"发送失败");
 		}
 		try {
-			codeService.savePhoneVerifyCode(phone, code+"", typeId);
+			codeService.saveCode(phone, code+"", typeId);
 		} catch (Exception e) {
 			log.error("发送失败");
 			return new ErrorBean(10003,"发送失败");
 		}
 		return new SuccessBean("发送成功");
 	}
-
+	
+	/**
+	 * 检查验证码
+	 * @Title: checkcode
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param phone 手机号码
+	 * @param @param code 验证码
+	 * @param @param typeId 短信类型ID 1.注册;2.换手机号;3.修改密码;4.修改支付密码
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "checkcode",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean checkCode(HttpServletRequest request,String phone,String code,String typeId) {
+		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
+			log.error("手机号格式错误");
+			return new ErrorBean(10002,"手机号格式错误");
+		}
+		if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
+			log.error("验证码错误");
+			return new ErrorBean(10002,"验证码错误");
+		}
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[1234]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
+		}
+		if(codeService.checkCode(phone, code, typeId)) {
+			log.error("验证码超时或错误");
+			return new ErrorBean(10002,"验证码超时或错误");
+		}
+		return new SuccessBean("验证通过");
+	}
 }
