@@ -307,4 +307,8 @@ public interface ActivityService {
      * @throws
      */
     Map<String, Object> selectQuery(String query, String lon, String lat, Integer page, Integer pageSize);
+    
+    int selectByGenders(String activityId, String gender);
+    
+    String selectByUserId(Integer userId);
 }

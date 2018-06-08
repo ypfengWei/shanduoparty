@@ -25,4 +25,14 @@ public interface ReportRecordMapper {
     String selectId(String activityId, Integer userId);
     
     String selectIds(String dynamicId, Integer userId);
+    
+    int selectUserId(String dynamicId);
+    
+    int updateByActivityId(String activityId);
+    
+    int updateByDynamicId(String dynamicId);
+    
+    int selectCount(String typeId);
+    
+    List<Map<String, Object>> selectInfo(String typeId, Integer page, Integer pageSize);
 }

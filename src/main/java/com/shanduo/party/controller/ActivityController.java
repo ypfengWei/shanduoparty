@@ -20,7 +20,6 @@ import com.shanduo.party.entity.ShanduoActivity;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.mapper.ActivityScoreMapper;
 import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ExperienceService;
@@ -48,9 +47,6 @@ public class ActivityController {
 
 	@Autowired
 	private ExperienceService experienceService;
-	
-	@Autowired
-	private ActivityScoreMapper scoreMapper;
 	
 	/**
 	 * 发布活动
@@ -399,25 +395,26 @@ public class ActivityController {
 				log.error("此活动报名时间已过");
 				return new ErrorBean(10002,"此活动报名时间已过");
 			}
-			String gender = scoreMapper.selectByUserId(userToken); //查询当前用户的性别
+			String gender = activityService.selectByUserId(userToken); //查询当前用户的性别
 			ActivityRequirement activityRequirement = activityService.selectByNumber(activityId); //查询活动要求的男女生人数
+			int count = activityService.selectByGenders(activityId, gender); //根据活动id和用户性别查询参加总人数
 			if(gender.equals("1")) { //当前用户为男
-				if(activityRequirement.getManNumber() < 1) {
+				int manNumber = activityRequirement.getManNumber();
+				if(manNumber < 1) {
 					log.error("不需要男生");
 					return new ErrorBean(10002,"不需要男生");
 				} 
-				int count = scoreMapper.selectByGenders(activityId, gender); //根据活动id和用户性别查询参加总人数
-				if(count >= activityRequirement.getManNumber()) {
+				if(count >= manNumber) {
 					log.error("男生人数已满");
 					return new ErrorBean(10002,"男生人数已满");
 				}
 			} else { //当前用户为女
-				if(activityRequirement.getWomanNumber() < 1) {
+				int womanNumber = activityRequirement.getWomanNumber();
+				if(womanNumber < 1) {
 					log.error("不需要女生");
 					return new ErrorBean(10002,"不需要女生");
 				}
-				int count = scoreMapper.selectByGenders(activityId, gender); //根据活动id和用户性别查询参加总人数
-				if(count >= activityRequirement.getWomanNumber()) {
+				if(count >= womanNumber) {
 					log.error("女生人数已满");
 					return new ErrorBean(10002,"女生人数已满");
 				}
@@ -441,7 +438,7 @@ public class ActivityController {
 		ShanduoActivity activity = activityService.selectByPrimaryKey(activityId);
 		if(activity.getActivityStartTime().getTime() < System.currentTimeMillis()) {
 			log.error("该活动已过期");
-			return new ErrorBean(10002,"想踢的用户不能为空");
+			return new ErrorBean(10002,"该活动已过期");
 		}
 		if("2".equals(type)){
 			try {

@@ -68,7 +68,7 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public boolean selectByAll(Integer userId, String activityId){
-		ShanduoActivity shanduoActivity = shanduoActivityMapper.selectByPrimaryKey(activityId);
+		ShanduoActivity shanduoActivity = shanduoActivityMapper.selectByIds(activityId);
 		long starttime = shanduoActivity.getActivityStartTime().getTime()-1*60*60*1000;
 		long endtime = shanduoActivity.getActivityStartTime().getTime()+1*60*60*1000;
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -308,7 +308,7 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public ShanduoActivity selectByPrimaryKey(String id) {
-		ShanduoActivity shanduoActivity = shanduoActivityMapper.selectByPrimaryKey(id);
+		ShanduoActivity shanduoActivity = shanduoActivityMapper.selectByIds(id);
 		if(shanduoActivity == null) {
 			log.error("活动为空");
 			return null;
@@ -576,5 +576,17 @@ public class ActivityServiceImpl implements ActivityService {
 			e.printStackTrace();
 		}
 		return cutoff.getTime();
+	}
+
+	@Override
+	public int selectByGenders(String activityId, String gender) {
+		int i = activityScoreMapper.selectByGenders(activityId, gender);
+		return i;
+	}
+
+	@Override
+	public String selectByUserId(Integer userId) {
+		String i = activityScoreMapper.selectByUserId(userId);
+		return i;
 	}
 }
