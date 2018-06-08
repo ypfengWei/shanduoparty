@@ -31,7 +31,7 @@ import com.shanduo.party.util.StringUtils;
  * @author fanshixin
  * @date 2018年4月14日 下午4:20:00
  *
- */
+ */ 
 @Controller
 @RequestMapping(value="juser")
 public class UserController {
@@ -144,42 +144,6 @@ public class UserController {
 		}
 		Map<String, Object> resultMap = userService.selectById(isUserId);
 		return new SuccessBean(resultMap);
-	}
-	
-	/**
-	 * 检查手机号
-	 * @Title: checkPhone
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param phone 手机号
-	 * @param @param typeId 类型:1.注册检查,2.忘记密码检查
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "chenkphone",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean checkPhone(HttpServletRequest request,String phone,String typeId) {
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean(10002,"类型错误");
-		}
-		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
-			log.error("手机号格式错误");
-			return new ErrorBean(10002,"手机号格式错误");
-		}
-		if("1".equals(typeId)) {
-			if(userService.checkPhone(phone)) {
-				log.error("手机号已被注册");
-				return new ErrorBean(10002,"手机号已被注册");
-			}
-		}else {
-			if(!userService.checkPhone(phone)) {
-				log.error("该手机号没有注册");
-				return new ErrorBean(10002,"该手机号没有注册");
-			}
-		}
-		return new SuccessBean("可以使用");
 	}
 	
 	/**

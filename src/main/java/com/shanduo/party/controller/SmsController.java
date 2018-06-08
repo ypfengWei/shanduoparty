@@ -18,6 +18,7 @@ import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.CodeService;
+import com.shanduo.party.service.UserService;
 import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.SmsUtils;
 import com.shanduo.party.util.StringUtils;
@@ -38,6 +39,8 @@ public class SmsController {
 	
 	@Autowired
 	private CodeService codeService;
+	@Autowired
+	private UserService userService;
 	
 	/**
 	 * 发送多种类型短信接口
@@ -60,6 +63,12 @@ public class SmsController {
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[1234]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
+		}
+		if("1".equals(typeId)) {
+			if(userService.checkPhone(phone)) {
+				log.error("手机号已被注册");
+				return new ErrorBean(10002,"手机号已被注册");
+			}
 		}
 		if(codeService.checkCodeCount(phone)) {
 			log.error("60S内只能发送一次");
@@ -109,6 +118,7 @@ public class SmsController {
 			log.error("验证码错误");
 			return new ErrorBean(10002,"验证码错误");
 		}
+		System.out.println(typeId);
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[1234]$")) {
 			log.error("类型错误");
 			return new ErrorBean(10002,"类型错误");
