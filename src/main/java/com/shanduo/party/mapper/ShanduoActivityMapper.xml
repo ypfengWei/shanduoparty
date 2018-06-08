@@ -307,11 +307,10 @@
   </select>
   <select id="selectByNearbyUserIdCount" resultType="java.lang.Integer">
   	select 
-  	count(sa.id) 
-  	from shanduo_activity sa where del_flag = '0' 
-  	and sa.activity_cutoff_time &gt;= now()
- 	and lon &gt;= #{0} and lon &lt;= #{1}
- 	and lat &gt;= #{2} and lat &lt;= #{3}
+  	count(id) 
+  	from shanduo_activity where del_flag = '0' 
+  	and activity_cutoff_time &gt;= now()
+ 	and (((#{0}-lon)*100)*((#{0}-lon)*100)+((#{1}-lat)*100)*((#{1}-lat)*100)) &lt; 100
   </select>
   <select id="selectByNearbyUserId" resultMap="ActivityResultMap">
  	select 
@@ -324,11 +323,10 @@
     join shanduo_user su on sa.user_id = su.id 
  	where sa.del_flag = '0' and ar.del_flag = '0' 
  	and sa.activity_cutoff_time &gt;= now()
- 	and lon &gt;= #{0} and lon &lt;= #{1}
- 	and lat &gt;= #{2} and lat &lt;= #{3}
+ 	and (((#{0}-sa.lon)*100)*((#{0}-sa.lon)*100)+((#{1}-sa.lat)*100)*((#{1}-sa.lat)*100)) &lt; 100
  	and su.del_flag = '0'
  	order by sa.top_flag desc,sa.create_date desc
-    limit #{4},#{5}
+    limit #{2},#{3}
   </select>
   <select id="selectByUserIdCount" resultType="java.lang.Integer">
    	select 

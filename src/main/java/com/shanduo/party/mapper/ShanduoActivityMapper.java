@@ -90,7 +90,7 @@ public interface ShanduoActivityMapper {
      * @return int    返回类型
      * @throws
      */
-    int selectByNearbyUserIdCount(double minlon, double maxlon, double minlat, double maxlat);
+    int selectByNearbyUserIdCount(double lon, double lat);
     
     /**
      * 附近活动
@@ -107,7 +107,7 @@ public interface ShanduoActivityMapper {
      * @return List<ActivityInfo>    返回类型
      * @throws
      */
-    List<ActivityInfo> selectByNearbyUserId(double minlon, double maxlon, double minlat, double maxlat, Integer page, Integer pageSize);
+    List<ActivityInfo> selectByNearbyUserId(double lon, double lat, Integer page, Integer pageSize);
     
     /**
      * 用户举办活动记录数

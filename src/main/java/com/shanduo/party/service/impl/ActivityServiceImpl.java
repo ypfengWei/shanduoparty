@@ -233,12 +233,10 @@ public class ActivityServiceImpl implements ActivityService {
 		long longtime = System.currentTimeMillis();
 		Date time = new Date(longtime - 1000*60*60*12);
 		shanduoActivityMapper.updateById(time); // 置顶超过12小时的活动取消置顶
-		Double[] doubles = LocationUtils.getDoubles(lon, lat);
-		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(doubles[0], doubles[1], doubles[2], doubles[3]);
+		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(Double.parseDouble(lon), Double.parseDouble(lat));
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> resultList = shanduoActivityMapper.selectByNearbyUserId(doubles[0], doubles[1], 
-				doubles[2], doubles[3], pageNum, page.getPageSize());
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByNearbyUserId(Double.parseDouble(lon), Double.parseDouble(lat), pageNum, page.getPageSize());
 		activity(resultList, lon, lat, 0);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -268,16 +266,6 @@ public class ActivityServiceImpl implements ActivityService {
 			return null;
 		}
 		return labelList;
-	}
-
-	@Override
-	public ShanduoUser selectById(Integer id) {
-		ShanduoUser shanduoUser = shanduoUserMapper.selectByPrimaryKey(id);
-		if(shanduoUser == null) {
-			log.error("用户为空");
-			return null;
-		}
-		return shanduoUser;
 	}
 
 	@Override

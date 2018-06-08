@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ShanduoActivity;
-import com.shanduo.party.entity.ShanduoUser;
 /**
  * 活动业务层
  * @ClassName: ActivityService
@@ -153,17 +152,6 @@ public interface ActivityService {
 	 * @throws
 	 */
 	List<Map<String, Object>> selectByGender(String activityId);
-    
-	/**
-	 * 根据id来查询用户性别
-	 * @Title: selectById
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param id
-	 * @param @return    设定文件
-	 * @return ShanduoUser    返回类型
-	 * @throws
-	 */
-    ShanduoUser selectById(Integer id);
     
     /**
      * 参加活动
