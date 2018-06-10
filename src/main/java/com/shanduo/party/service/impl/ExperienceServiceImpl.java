@@ -216,7 +216,6 @@ public class ExperienceServiceImpl implements ExperienceService {
         cal.setTime(time);
         //判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了  
         int dayWeek = cal.get(Calendar.DAY_OF_WEEK);//获得当前日期是一个星期的第几天  
-        System.out.println(dayWeek);
         if(1 == dayWeek) {
           cal.add(Calendar.DAY_OF_MONTH, -1);
         }
@@ -228,7 +227,7 @@ public class ExperienceServiceImpl implements ExperienceService {
         cal.add(Calendar.DATE, cal.getFirstDayOfWeek()-day);
         String startDate = sdf.format(cal.getTime());  
         cal.add(Calendar.DATE, 7);
-        String endDate = sdf.format(cal.getTime());  
+        String endDate = sdf.format(cal.getTime());
         return moneyRecordMapper.weekSignInCount(userId, startDate, endDate);
 	}
 	
@@ -238,16 +237,19 @@ public class ExperienceServiceImpl implements ExperienceService {
 		if(weekSignInCount == 1) {
 			saveSignin(userId, "0");
 		}else if(weekSignInCount == 2) {
+			saveMoneyRecord(userId, "3",10+"","签到获得闪多豆:+10");
 			moneyService.payBeans(userId, 10,"1");
 		}else if(weekSignInCount == 3) {
 			saveSignin(userId, "1");
 		}else if(weekSignInCount == 4) {
+			saveMoneyRecord(userId, "3",15+"","签到获得闪多豆:+15");
 			moneyService.payBeans(userId, 15,"1");
 		}else if(weekSignInCount == 5) {
 			saveSignin(userId, "2");
 		}else if(weekSignInCount == 6) {
 			saveSignin(userId, "3");
 		}else if(weekSignInCount == 7) {
+			saveMoneyRecord(userId, "3",20+"","签到获得闪多豆:+20");
 			moneyService.payBeans(userId, 20,"1");
 		}
 		return 1;
@@ -265,11 +267,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 			log.error("添加经验失败");
 			throw new RuntimeException();
 		}
-		try {
-			saveMoneyRecord(userId, "3",addExperience+"","签到获得经验值:+"+addExperience);
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+		saveMoneyRecord(userId, "3",addExperience+"","签到获得经验值:+"+addExperience);
 		if(levelB > levelA) {
 			try {
 				moneyService.payBeans(userId, 10*levelA,"2");

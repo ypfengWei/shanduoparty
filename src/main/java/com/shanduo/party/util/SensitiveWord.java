@@ -32,10 +32,11 @@ public class SensitiveWord {
     	if(str == null || "".equals(str) || "null".equals(str)) {
     		return "";
     	}
+    	str = UnicodeUtils.unicodeToString(str);
     	InitializationWork();
-        StringBuilder buffer = new StringBuilder(str);  
+        StringBuilder buffer = new StringBuilder(str);
         HashMap<Integer, Integer> hash = new HashMap<Integer, Integer>(arrayList.size());  
-        String temp;  
+        String temp;
         for(int x = 0; x < arrayList.size();x++) {  
             temp = arrayList.get(x);
             int findIndexSize = 0;
@@ -56,7 +57,7 @@ public class SensitiveWord {
             buffer.replace(startIndex, endIndex, replaceAll.substring(0,endIndex-startIndex));
         }  
         hash.clear();  
-        return buffer.toString();  
+        return UnicodeUtils.stringToUnicode(buffer.toString());  
     } 
     
     /** 
@@ -96,9 +97,10 @@ public class SensitiveWord {
                 e.printStackTrace();  
             }  
         }  
-    }  
+    }
   
     public static void main(String[] args) {
-    	SensitiveWord.filterInfo("aa");
+    	String aa = SensitiveWord.filterInfo("\\u61\\u61");
+    	System.out.println(aa);
 	}
 }  
