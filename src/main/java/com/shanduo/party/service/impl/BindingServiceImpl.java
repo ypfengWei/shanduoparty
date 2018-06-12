@@ -1,5 +1,7 @@
 package com.shanduo.party.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,8 @@ import com.shanduo.party.util.UUIDGenerator;
 @Transactional(rollbackFor = Exception.class)
 public class BindingServiceImpl implements BindingService {
 	
+	private static final Logger log = LoggerFactory.getLogger(BindingServiceImpl.class);
+	
 	@Autowired
 	private UserBindingMapper bindingMapper;
 
@@ -22,16 +26,20 @@ public class BindingServiceImpl implements BindingService {
 	}
 
 	@Override
-	public int insertSelective(int userId, String openId, String unionId,String type) {
+	public int insertSelective(int userId, String unionId,String type) {
 		UserBinding userBinding = new UserBinding();
     	userBinding.setId(UUIDGenerator.getUUID());
     	userBinding.setUserId(userId);
-    	userBinding.setOpenId(openId);
-    	userBinding.setUnionId(unionId);
     	userBinding.setType(type);
-		return bindingMapper.insertSelective(userBinding);
+    	userBinding.setUnionId(unionId);
+    	int i = bindingMapper.insertSelective(userBinding);
+    	if(i < 1) {
+    		log.error("绑定失败");
+			throw new RuntimeException();
+    	}
+		return 1;
 	}
-
+	
 	@Override
 	public String selectOpenId(Integer userId, String type) {
 		return bindingMapper.selectOpenId(userId, type);

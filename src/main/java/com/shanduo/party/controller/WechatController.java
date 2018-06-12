@@ -103,7 +103,6 @@ public class WechatController {
 		String unionid = obj.getString("unionId");
 		Integer userId = bindingService.selectUserId(unionid, "1");
 		if (null == userId) {
-			
 			String json = "{\"openId\":\"" + openid + "\",\"unionId\":\"" + unionid + "\"}";
 			return new ErrorBean(10086, json);
 		}
@@ -134,8 +133,9 @@ public class WechatController {
 			if(StringUtils.isNull(openId) || StringUtils.isNull(unionId)) {
 				return new ErrorBean(10002, "openId或unionId为空");
 			}
-			int count = bindingService.insertSelective(userId, openId, unionId, type);
-			if (count < 1) {
+			try {
+				bindingService.insertSelective(userId, unionId, type);
+			} catch (Exception e) {
 				return new ErrorBean(10003, "失败");
 			}
 			return new SuccessBean(tokenInfo);
@@ -149,10 +149,7 @@ public class WechatController {
 		int userId = userService.saveUser(username, password, nickName, gender);
 		String type = "1";
 		try {
-			int count = bindingService.insertSelective(userId, openId, unionId, type);
-			if (count < 1) {
-				return new ErrorBean(10003, "失败");
-			}
+			bindingService.insertSelective(userId, unionId, type);
 		} catch (Exception e) {
 			return new ErrorBean(10003, "失败");
 		}

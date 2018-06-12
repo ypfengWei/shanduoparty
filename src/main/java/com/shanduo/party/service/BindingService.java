@@ -34,7 +34,7 @@ public interface BindingService {
 	 * @return int
 	 * @throws
 	 */
-	int insertSelective(int userId,String openId,String unionId,String type);
+	int insertSelective(int userId,String unionId,String type);
 	
 	/**
 	 * 获取绑定的openId
@@ -47,4 +47,5 @@ public interface BindingService {
 	 * @throws
 	 */
 	String selectOpenId(Integer userId,String type);
+	
 }

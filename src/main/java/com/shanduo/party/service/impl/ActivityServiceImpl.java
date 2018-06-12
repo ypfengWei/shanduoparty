@@ -27,6 +27,7 @@ import com.shanduo.party.mapper.ActivityScoreMapper;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.service.ActivityService;
+import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.LocationUtils;
@@ -65,6 +66,9 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Autowired
 	private VipService vipService;
+	
+	@Autowired
+	private ExperienceService experienceService;
 	
 	@Override
 	public boolean selectByAll(Integer userId, String activityId){
@@ -233,10 +237,12 @@ public class ActivityServiceImpl implements ActivityService {
 		long longtime = System.currentTimeMillis();
 		Date time = new Date(longtime - 1000*60*60*12);
 		shanduoActivityMapper.updateById(time); // 置顶超过12小时的活动取消置顶
-		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(Double.parseDouble(lon), Double.parseDouble(lat));
+		double lons = Double.parseDouble(lon);
+		double lats = Double.parseDouble(lat);
+		int totalrecord = shanduoActivityMapper.selectByNearbyUserIdCount(lons, lats);
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
-		List<ActivityInfo> resultList = shanduoActivityMapper.selectByNearbyUserId(Double.parseDouble(lon), Double.parseDouble(lat), pageNum, page.getPageSize());
+		List<ActivityInfo> resultList = shanduoActivityMapper.selectByNearbyUserId(lons, lats, pageNum, page.getPageSize());
 		activity(resultList, lon, lat, 0);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
@@ -414,6 +420,7 @@ public class ActivityServiceImpl implements ActivityService {
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
 			activityInfo.setLocation(location);
 		}
+		activityInfo.setLevel(experienceService.selectLevel(activityInfo.getUserId()));
     	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
     	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
 		if(resultMap != null) {

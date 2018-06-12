@@ -59,15 +59,15 @@ public class ReputationController {
 	public ResultBean creditDetails(HttpServletRequest request, String token, String userId, String page, String pageSize, String type) {
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean(10002,"页码错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean(10002,"记录错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(10002,"类型错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -76,7 +76,7 @@ public class ReputationController {
 		if(StringUtils.isNull(userId)) {
 			if (userToken == null) {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
 			if("1".equals(type)) {
 				resultMap = scoreService.selectReputation(null, userToken, pages, pageSizes);
@@ -92,7 +92,7 @@ public class ReputationController {
 		}
 		if(resultMap == null) {
 			log.error("用户不存在");
-			return new ErrorBean(10002,"用户不存在");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"用户不存在");
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -116,39 +116,39 @@ public class ReputationController {
 			String remarks) {
 		if(StringUtils.isNull(userId)) {
 			log.error("举报者id为空");
-			return new ErrorBean(10002,"举报者id为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报者id为空");
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(10002,"类型错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
 		}
 		String id = null;
 		if("1".equals(typeId)) {
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动为空");
-				return new ErrorBean(10002,"活动为空");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动为空");
 			}
 			id = scoreService.selectId(activityId, Integer.parseInt(userId));
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该活动");
-				return new ErrorBean(10002,"您已举报该活动");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该活动");
 			}
 		} else {
 			if(StringUtils.isNull(dynamicId)) {
 				log.error("动态为空");
-				return new ErrorBean(10002,"动态为空");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"动态为空");
 			}
 			id = scoreService.selectIds(dynamicId, Integer.parseInt(userId));
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该动态");
-				return new ErrorBean(10002,"您已举报该动态");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该动态");
 			}
 		}
 		try {
 			scoreService.report(Integer.parseInt(userId), activityId, dynamicId, typeId, remarks);
 		} catch (Exception e) {
 			log.error("举报记录添加失败");
-			return new ErrorBean(10003,"举报失败");
+			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报失败");
 		}
 		return new SuccessBean("举报成功");
 	}
@@ -170,15 +170,15 @@ public class ReputationController {
 	public ResultBean reportRecord(HttpServletRequest request, String typeId, String page, String pageSize) {
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(10002,"类型错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean(10002,"页码错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean(10002,"记录错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -203,17 +203,17 @@ public class ReputationController {
 	public ResultBean reportHandling(HttpServletRequest request, String activityId, String type, String dynamicId) {
 		if(StringUtils.isNull(activityId)&&StringUtils.isNull(dynamicId)) {
 			log.error("id为空");
-			return new ErrorBean(10002,"id为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"id为空");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(10002,"类型错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
 		}
 		try {
 			scoreService.updateReputation(activityId,type,dynamicId);
 		} catch (Exception e) {
 			log.error("信誉修改失败");
-			return new ErrorBean(10003,"举报处理失败");
+			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报处理失败");
 		}
 		return new SuccessBean("举报处理成功");
 	}

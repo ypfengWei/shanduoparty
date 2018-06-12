@@ -61,20 +61,20 @@ public class ScoreController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean(10002,"活动ID为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
 		}
 		if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
 			log.error("评分错误");
-			return new ErrorBean(10002,"评分错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"评分错误");
 		}
 		try {
 			scoreService.updateActivityScore(userToken, activityId, Integer.parseInt(score), evaluationcontent);
 		} catch (Exception e) {
-			return new ErrorBean(10003,"添加失败");
+			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"添加失败");
 		}
 		return new SuccessBean("添加成功");
 	}
@@ -97,26 +97,26 @@ public class ScoreController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)){
 			log.error("活动ID为空");
-			return new ErrorBean(10002,"活动ID为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
 		}
 		if(StringUtils.isNull(data)) {
 			log.error("没有进行评价");
-			return new ErrorBean(10002,"没有进行评价");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"没有进行评价");
 		}
 		List<Map<String, Object>> list = JsonStringUtils.getList(data);
 		if(list.isEmpty()) {
 			log.error("没有进行评价");
-			return new ErrorBean(10002,"没有进行评价");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"没有进行评价");
 		}
 		try {
 			scoreService.updateByUserId(activityId,list);
 		} catch (Exception e) {
 			log.error("评价失败");
-			return new ErrorBean(10003,"评价失败");
+			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"评价失败");
 		}
 		return new SuccessBean("评价成功");
 	}
@@ -139,15 +139,15 @@ public class ScoreController {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean(10002,"页码错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean(10002,"记录错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);

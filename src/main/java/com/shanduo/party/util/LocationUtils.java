@@ -19,20 +19,20 @@ public class LocationUtils {
         return d * Math.PI / 180.0;  
     }  
     
-    public static Double[] getDoubles(String lon,String lat) {
-    	double r = 6371;//地球半径千米
-        double dis = 10;//10千米距离
-        double dlng = 2*Math.asin(Math.sin(dis/(2*r))/Math.cos(Double.parseDouble(lat)*Math.PI/180));
-        dlng = dlng*180/Math.PI;//角度转为弧度
-        double dlat = dis/r;
-        dlat = dlat*180/Math.PI;        
-        Double[] doubles = new Double[4];
-        doubles[0] = Double.parseDouble(lon) - dlng;
-        doubles[1] = Double.parseDouble(lon) + dlng;
-        doubles[2] = Double.parseDouble(lat) - dlat;
-        doubles[3] = Double.parseDouble(lat) + dlat;
-		return doubles;
-    }
+//    public static Double[] getDoubles(String lon,String lat) {
+//    	double r = 6371;//地球半径千米
+//        double dis = 10;//10千米距离
+//        double dlng = 2*Math.asin(Math.sin(dis/(2*r))/Math.cos(Double.parseDouble(lat)*Math.PI/180));
+//        dlng = dlng*180/Math.PI;//角度转为弧度
+//        double dlat = dis/r;
+//        dlat = dlat*180/Math.PI;        
+//        Double[] doubles = new Double[4];
+//        doubles[0] = Double.parseDouble(lon) - dlng;
+//        doubles[1] = Double.parseDouble(lon) + dlng;
+//        doubles[2] = Double.parseDouble(lat) - dlat;
+//        doubles[3] = Double.parseDouble(lat) + dlat;
+//		return doubles;
+//    }
     
     /** 
      * 根据两点间经纬度坐标（double值），计算两点间距离，单位：千米 

@@ -20,5 +20,11 @@ public class ErrorCodeConstants {
     public static final String RC_INFO_DECLINE = "拒绝操作，您没有权限进行此项操作";
     public static final String RC_UNKNOWN = "充值未知错误";
     
+    public static final int TOKEN_INVALID = 10001; //token失效
+    public static final int PARAMETER_ERROR = 10002; //参数错误
+    public static final int BACKSTAGE_ERROR = 10003; //数据库操作错误
+    public static final int LOGIN_FAILURE = 10010; //登录失败
+    public static final int UNBOUND = 10011; //未绑定
+    public static final int BINDINGS_FAILURE = 10012; //绑定失败
     
 }

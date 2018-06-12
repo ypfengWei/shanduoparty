@@ -52,6 +52,8 @@ public class ActivityInfo {
     
     private Integer typeId; // 0:参与者未评价 1:参与者已评价 2:发起者未评价 3:发起者已评价 4:活动报名截止 5:报名截止活动未开始 
     
+    private Integer level; //经验等级
+    
 	public ActivityInfo(){
 		
 	}
@@ -243,4 +245,12 @@ public class ActivityInfo {
 		this.othersScore = othersScore;
 	}
 
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+	
 }

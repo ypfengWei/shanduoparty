@@ -4,7 +4,6 @@
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserBinding">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="open_id" jdbcType="VARCHAR" property="openId" />
     <result column="union_id" jdbcType="VARCHAR" property="unionId" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -12,7 +11,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, open_id, union_id, type, create_date, update_date, del_flag
+    id, user_id, union_id, type, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -25,12 +24,12 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.UserBinding">
-    insert into user_binding (id, user_id, open_id, 
-      union_id, type, create_date, 
-      update_date, del_flag)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR}, 
-      #{unionId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+    insert into user_binding (id, user_id, union_id, 
+      type, create_date, update_date, 
+      del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{unionId,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserBinding">
     insert into user_binding
@@ -40,9 +39,6 @@
       </if>
       <if test="userId != null">
         user_id,
-      </if>
-      <if test="openId != null">
-        open_id,
       </if>
       <if test="unionId != null">
         union_id,
@@ -67,9 +63,6 @@
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>
-      <if test="openId != null">
-        #{openId,jdbcType=VARCHAR},
-      </if>
       <if test="unionId != null">
         #{unionId,jdbcType=VARCHAR},
       </if>
@@ -93,9 +86,6 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
-      <if test="openId != null">
-        open_id = #{openId,jdbcType=VARCHAR},
-      </if>
       <if test="unionId != null">
         union_id = #{unionId,jdbcType=VARCHAR},
       </if>
@@ -117,7 +107,6 @@
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserBinding">
     update user_binding
     set user_id = #{userId,jdbcType=INTEGER},
-      open_id = #{openId,jdbcType=VARCHAR},
       union_id = #{unionId,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -132,10 +121,10 @@
     from user_binding
     where union_id = #{0} and type=#{1}
   </select>
-  <select id="selectOpenId" resultType="java.lang.String">
+  <!-- <select id="selectOpenId" resultType="java.lang.String">
     select
     open_id
     from user_binding
     where user_id = #{0} and type=#{1}
-  </select>
+  </select> -->
 </mapper>

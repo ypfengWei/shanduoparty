@@ -29,6 +29,7 @@ import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.ScoreUtils;
+import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 
@@ -66,13 +67,14 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Override
 	public int updateActivityScore(Integer userId, String activityId, Integer score, String evaluationcontent) {
-		int i = activityScoreMapper.updateByUserIdTwo(userId,activityId,score,evaluationcontent);
+		String content = SensitiveWord.filterInfo(evaluationcontent);
+		int i = activityScoreMapper.updateByUserIdTwo(userId,activityId,score,content);
 		if (i < 1) {
 			log.error("评价失败");
 			throw new RuntimeException();
 		}
 		if(score != 3) {
-			if(!getRecord(userId, activityId, score, evaluationcontent, 1)) {
+			if(!getRecord(userId, activityId, score, content, 1)) {
 				log.error("信誉历史数据添加失败");
 				throw new RuntimeException();
 			}
@@ -95,7 +97,7 @@ public class ScoreServiceImpl implements ScoreService {
 				log.error("评价用户为空");
 				throw new RuntimeException();
 			}
-			String evaluated = map.get("evaluated").toString();
+			String evaluated = SensitiveWord.filterInfo(map.get("evaluated").toString());
 			int n = activityScoreMapper.updateByUserId(userId, activityId, score, evaluated);
 			if (n < 1) {
 				log.error("评价失败");
@@ -271,44 +273,7 @@ public class ScoreServiceImpl implements ScoreService {
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", activityList);
-		List<Map<String, Object>> activityIds = shanduoActivityMapper.selectId(userId); //查询该用户下所有扣分标志为0以及开始时间过期的活动
-		if(activityIds != null) {
-			for(Map<String,Object> maps:activityIds){
-				String activityId = maps.get("id").toString();
-				Map<String, Object> ScoreRecords = shanduoActivityMapper.numberScore(activityId);
-				int join = Integer.parseInt(ScoreRecords.get("number").toString()); //参加记录
-				int score = Integer.parseInt(ScoreRecords.get("score").toString()); //评分记录
-				if(join != 0) {
-					if(join == score) { //如果参与的人全部评价完
-						List<Map<String, Object>> scores = shanduoActivityMapper.selectScore(activityId); //查询活动下的评分信息
-						int lowScore = 0;
-						int scoreCount = 0;
-						for (Map<String, Object> scoresMap : scores) {
-							scoreCount = Integer.parseInt(scoresMap.get("score").toString()); //评分
-							if(scoreCount < 3) {  
-								lowScore++;//如果评分小于3的累加
-							}
-						}
-						if(lowScore != 0) {
-							if(scoreCount/lowScore < 2) { //在一次活动中差评所占百分比大于50%的扣一分信誉分
-								int reputation = shanduoReputationMapper.selectByUserId(userId);
-								int reputations = shanduoReputationMapper.updateByUserId(userId, reputation-1);
-								if(reputations < 1) {
-									log.error("信誉等级修改失败");
-									throw new RuntimeException();
-								}
-								//修改信誉等级后将活动表中的扣分标志改为1，避免重复扣分
-								int i = shanduoActivityMapper.updateDownFlag(activityId);
-								if(i  < 1) {
-									log.error("活动扣分标志修改失败");
-									throw new RuntimeException();
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		updateReport(userId);
 		return resultMap;
 	}
 	
@@ -457,6 +422,48 @@ public class ScoreServiceImpl implements ScoreService {
 	public String selectIds(String dynamicId, Integer userId) {
 		String id = recordMapper.selectId(dynamicId, userId);
 		return id;
+	}
+
+	@Override
+	public int updateReport(Integer userId) {
+		List<Map<String, Object>> activityIds = shanduoActivityMapper.selectId(userId); //查询该用户下所有扣分标志为0以及开始时间过期的活动
+		if(activityIds != null) {
+			for(Map<String,Object> maps:activityIds){
+				String activityId = maps.get("id").toString();
+				Map<String, Object> ScoreRecords = shanduoActivityMapper.numberScore(activityId);
+				int join = Integer.parseInt(ScoreRecords.get("number").toString()); //参加记录
+				int scoreCount = Integer.parseInt(ScoreRecords.get("score").toString()); //评分记录
+				if(join != 0) {
+					if(join == scoreCount) { //如果参与的人全部评价完
+						List<Map<String, Object>> scores = shanduoActivityMapper.selectScore(activityId); //查询活动下的评分信息
+						int lowScore = 0;
+						for (Map<String, Object> scoresMap : scores) {
+							int score = Integer.parseInt(scoresMap.get("score").toString()); //评分
+							if(score < 3) {  
+								lowScore++;//如果评分小于3的累加
+							}
+						}
+						if(lowScore != 0) {
+							if(scoreCount/lowScore < 2) { //在一次活动中差评所占百分比大于50%的扣一分信誉分
+								int reputation = shanduoReputationMapper.selectByUserId(userId);
+								int reputations = shanduoReputationMapper.updateByUserId(userId, reputation-1);
+								if(reputations < 1) {
+									log.error("信誉等级修改失败");
+									throw new RuntimeException();
+								}
+								//修改信誉等级后将活动表中的扣分标志改为1，避免重复扣分
+								int i = shanduoActivityMapper.updateDownFlag(activityId);
+								if(i  < 1) {
+									log.error("活动扣分标志修改失败");
+									throw new RuntimeException();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return 1;
 	}
 
 }
