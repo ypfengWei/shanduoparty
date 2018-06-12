@@ -62,4 +62,11 @@ public class VipExperience {
     public void setDelFlag(String delFlag) {
         this.delFlag = delFlag == null ? null : delFlag.trim();
     }
+
+	@Override
+	public String toString() {
+		return "VipExperience [userId=" + userId + ", experience=" + experience + ", remarks=" + remarks
+				+ ", createDate=" + createDate + ", updateDate=" + updateDate + ", delFlag=" + delFlag + "]";
+	}
+
 }

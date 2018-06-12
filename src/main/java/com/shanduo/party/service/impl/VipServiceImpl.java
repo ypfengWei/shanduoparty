@@ -47,7 +47,7 @@ public class VipServiceImpl implements VipService {
 	public int saveVip(Integer userId, Date date,Integer month,String vipType,String isRefresh) {
 		ShanduoVip userVip = vipMapper.selectByVipType(userId,vipType);
 		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
-		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * 12);
+		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month);
 		DateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date endDate = null;
         try {

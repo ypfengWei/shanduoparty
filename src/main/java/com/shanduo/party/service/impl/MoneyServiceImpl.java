@@ -232,7 +232,6 @@ public class MoneyServiceImpl implements MoneyService {
 		List<VipExperience> vipList = vipExperienceMapper.vipList(today, null);
 		for (VipExperience vip : vipList) {
 			Integer userId = vip.getUserId();
-			Integer refresh = Integer.parseInt(vip.getRemarks());//保存的刷新次数
 			List<ShanduoVip> list = vipMapper.selectByUserId(userId);
 			if(list.size() == 1) {
 				ShanduoVip vips = list.get(0);
@@ -242,12 +241,14 @@ public class MoneyServiceImpl implements MoneyService {
 					if(svip != null) {
 						String vipEndDate =  format.format(svip.getVipEndTime());
 						if(vipEndDate.equals(yesterday)) {
+							Integer refresh = Integer.parseInt(vip.getRemarks());//保存的刷新次数
 							updateRefresh(vip.getUserId(), refresh);
 							log.info(userId+"svip过期重置刷新次数为上次开通svip前的vip剩余次数");
 						}
 					}
 				}
 				Long sub = isMonth(vipStartDate, today);
+				System.out.println(vipStartDate+"_"+today+":"+sub);
 				if(sub > 30 && sub%31 == 1) {
 					if("0".equals(vips.getVipType())) {
 						updateRefresh(vip.getUserId(), 50);
@@ -268,7 +269,7 @@ public class MoneyServiceImpl implements MoneyService {
 				}
 				String vipStartDate = format.format(svip.getVipStartTime());
 				Long sub = isMonth(vipStartDate, today);
-				if(sub%31 == 0) {
+				if(sub > 30 && sub%31 == 1) {
 					updateRefresh(vip.getUserId(), 100);
 					log.info(userId+"svip重置刷新次数100");
 				}
@@ -309,7 +310,7 @@ public class MoneyServiceImpl implements MoneyService {
 		if(i < 1) {
 			throw new RuntimeException();
 		}
-		log.info("刷新次数修改成功");
+		log.info(userId+"修改刷新次数成功:"+refresh);
 		return 1;
 	}
 

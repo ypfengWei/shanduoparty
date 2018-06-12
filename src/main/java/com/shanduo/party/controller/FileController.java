@@ -97,4 +97,47 @@ public class FileController {
         return new SuccessBean(pictureList);
     }   
 
+    /**
+     * 上传单张图片返回图片名字
+     * @Title: uploads
+     * @Description: TODO
+     * @param @param request
+     * @param @param file
+     * @param @param token
+     * @param @return
+     * @param @throws IOException
+     * @return ResultBean
+     * @throws
+     */
+    @RequestMapping(value="uploads",method=RequestMethod.POST)
+    @ResponseBody
+    public ResultBean uploads(HttpServletRequest request,@RequestParam("file") MultipartFile[] file,String token) throws IOException{
+    	Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+    	List<String> urlList = new ArrayList<>();
+    	String pictureList = "";
+    	for(int i=0;i<file.length;i++) {
+    		MultipartFile files = file[i];
+            String fileName = files.getOriginalFilename();
+            fileName = UUIDGenerator.getUUID()+fileName.substring(fileName.lastIndexOf("."));
+            pictureList += fileName+",";
+            File dir = new File(path,fileName);
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+            //MultipartFile自带的解析方法
+            files.transferTo(dir);
+            urlList.add(fileName);
+    	}
+    	try {
+    		pictureService.savePicture(isUserId, urlList);
+		} catch (Exception e) {
+			log.error("图片记录插入失败");
+			return new ErrorBean(10003,"上传失败");
+		}
+        return new SuccessBean(pictureList.substring(0, pictureList.length()-1));
+    }   
 }
