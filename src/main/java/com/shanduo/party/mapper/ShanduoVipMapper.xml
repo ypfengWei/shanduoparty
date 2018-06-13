@@ -156,5 +156,4 @@
   	and user_id = #{0}
   	and vip_end_time > now()
   </select>
-  
 </mapper>

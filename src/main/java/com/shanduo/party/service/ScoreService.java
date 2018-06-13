@@ -173,5 +173,14 @@ public interface ScoreService {
 	 */
 	Map<String, Object> reportRecord(String type, Integer pageNum, Integer pageSize);
 	
+	/**
+	 * 在一次活动中差评所占百分比大于50%的扣一分信誉分
+	 * @Title: updateReport
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userId
+	 * @param @return    设定文件
+	 * @return int    返回类型
+	 * @throws
+	 */
 	int updateReport(Integer userId);
 }

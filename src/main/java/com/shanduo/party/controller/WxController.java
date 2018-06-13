@@ -77,18 +77,18 @@ public class WxController {
 			log.error("验证码错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码错误");
 		}
-		if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
-			log.error("密码格式错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"密码格式错误");
-		}
 		if(codeService.checkCode(phone, code, "1")) {
 			log.error("验证码超时或错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码超时或错误");
 		}
+		if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
+			log.error("密码格式错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"密码格式错误");
+		}
 		userService.saveUser(phone, password);
 		TokenInfo tokenInfo = userService.loginUser(phone, password);
 		try {
-			bindingService.insertSelective(Integer.valueOf(tokenInfo.getUserId()), unionId, "0");
+			bindingService.insertSelective(Integer.parseInt(tokenInfo.getUserId()), unionId, "0");
 		} catch (Exception e) {
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "失败");
 		}
