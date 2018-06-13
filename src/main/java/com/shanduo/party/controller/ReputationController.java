@@ -85,9 +85,9 @@ public class ReputationController {
 			}
 		} else {
 			if("1".equals(type)) {
-				resultMap = scoreService.selectReputation(null, Integer.parseInt(userId), pages, pageSizes);
+				resultMap = scoreService.selectReputation(null, Integer.valueOf(userId), pages, pageSizes);
 			} else {
-				resultMap = scoreService.selectJoinActivity(Integer.parseInt(userId), pages, pageSizes);
+				resultMap = scoreService.selectJoinActivity(Integer.valueOf(userId), pages, pageSizes);
 			}
 		}
 		if(resultMap == null) {
@@ -128,7 +128,7 @@ public class ReputationController {
 				log.error("活动为空");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动为空");
 			}
-			id = scoreService.selectId(activityId, Integer.parseInt(userId));
+			id = scoreService.selectId(activityId, Integer.valueOf(userId));
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该活动");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该活动");
@@ -138,14 +138,14 @@ public class ReputationController {
 				log.error("动态为空");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"动态为空");
 			}
-			id = scoreService.selectIds(dynamicId, Integer.parseInt(userId));
+			id = scoreService.selectIds(dynamicId, Integer.valueOf(userId));
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该动态");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该动态");
 			}
 		}
 		try {
-			scoreService.report(Integer.parseInt(userId), activityId, dynamicId, typeId, remarks);
+			scoreService.report(Integer.valueOf(userId), activityId, dynamicId, typeId, remarks);
 		} catch (Exception e) {
 			log.error("举报记录添加失败");
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报失败");

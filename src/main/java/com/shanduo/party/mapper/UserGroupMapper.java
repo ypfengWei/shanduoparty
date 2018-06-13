@@ -1,5 +1,7 @@
 package com.shanduo.party.mapper;
 
+import java.util.List;
+
 import com.shanduo.party.entity.UserGroup;
 
 public interface UserGroupMapper {
@@ -15,11 +17,9 @@ public interface UserGroupMapper {
 
     int updateByPrimaryKey(UserGroup record);
     
-    int checkGroupType(Integer userId,String groupType);
+    int userGroupCount(Integer userId,String groupType);
     
-    UserGroup selectByGroupId(String groupId);
+    int deleteGroup(Integer userId,String groupId);
     
-    int updateGroupId(String groupId, Integer count);
-    
-    int deleteGroupId(Integer userId,String groupId);
+    List<String> nameList(String name);
 }

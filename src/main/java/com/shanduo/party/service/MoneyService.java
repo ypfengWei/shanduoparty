@@ -162,11 +162,10 @@ public interface MoneyService {
 	 * @Title: refreshActivity
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param typeId 类型:1.刷新次数;2.闪多豆
 	 * @param @param activityId 活动ID
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int refreshActivity(Integer userId,String typeId,String activityId);
+	int refreshActivity(Integer userId,String activityId);
 }

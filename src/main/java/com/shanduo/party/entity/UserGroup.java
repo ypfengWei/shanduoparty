@@ -7,9 +7,7 @@ public class UserGroup {
 
     private Integer userId;
 
-    private String groupId;
-
-    private Integer count;
+    private String name;
 
     private String groupType;
 
@@ -37,20 +35,12 @@ public class UserGroup {
         this.userId = userId;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public String getName() {
+        return name;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId == null ? null : groupId.trim();
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
     public String getGroupType() {

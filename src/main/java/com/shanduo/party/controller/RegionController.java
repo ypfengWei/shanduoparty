@@ -94,7 +94,7 @@ public class RegionController {
 			log.error("新密码格式错误");
 			return new ErrorBean(10002, "新密码格式错误");
 		}
-		Integer userIds = Integer.parseInt(userId);
+		Integer userIds = Integer.valueOf(userId);
 		try {
 			regionService.updatePassword(userIds, password, newPassword);
 		} catch (Exception e) {
@@ -121,7 +121,7 @@ public class RegionController {
 			log.error("用户ID为空");
 			return new ErrorBean(10002, "用户ID为空");
 		}
-		Integer userIds = Integer.parseInt(userId);
+		Integer userIds = Integer.valueOf(userId);
 		BigDecimal count = regionService.selectCurrentMonth(userIds);
 		if(count == null) {
 			log.error("没有此用户");
@@ -157,7 +157,7 @@ public class RegionController {
 			log.error("记录错误");
 			return new ErrorBean(10002,"记录错误");
 		}
-		Integer userIds = Integer.parseInt(userId);
+		Integer userIds = Integer.valueOf(userId);
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = regionService.countList(userIds, pages, pageSizes);

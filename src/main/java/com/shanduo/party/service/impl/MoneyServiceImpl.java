@@ -319,7 +319,7 @@ public class MoneyServiceImpl implements MoneyService {
 		UserMoney money = moneyMapper.selectByUserId(userId);
 		Integer refresh = money.getRefresh()-1;
 		if(refresh < 0) {
-			log.error("刷新次数错误");
+			log.error("刷新次数不足");
 			throw new RuntimeException();
 		}
 		money = new UserMoney();
@@ -333,12 +333,8 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 
 	@Override
-	public int refreshActivity(Integer userId, String typeId, String activityId) {
-		if("1".equals(typeId)) {
-			reduceRefresh(userId);
-		}else {
-			consumeBeans(userId, 200);
-		}
+	public int refreshActivity(Integer userId, String activityId) {
+		reduceRefresh(userId);
 		try {
 			activityService.activityRefresh(activityId);
 		} catch (Exception e) {

@@ -91,7 +91,7 @@ public class AttentionController {
 			log.error("账号格式错误");
 			return new ErrorBean(10002,"账号格式错误");
 		}
-		Map<String, Object> resultMap = userService.selectById(isUserId, Integer.parseInt(userId));
+		Map<String, Object> resultMap = userService.selectById(isUserId, Integer.valueOf(userId));
 		if(resultMap == null) {
 			log.error("找不到该用户");
 			return new ErrorBean(10002,"找不到该用户");

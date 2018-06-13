@@ -2,6 +2,7 @@ package com.shanduo.party.im;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -133,4 +134,22 @@ public class TXCloudUtil {
         JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.getGroupList), paramsJson));
     	return resultJson.toString();
     }
+    
+    /**
+     * 获取群组详细资料
+     * @Title: getGroupnfo
+     * @Description: TODO
+     * @param @param list
+     * @param @return
+     * @return String
+     * @throws
+     */
+    public static String getGroupnfo(List<String> list) {
+    	Map<String, Object> paramsMap = new HashMap<String, Object>();
+    	paramsMap.put("GroupIdList", list);
+    	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
+        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.getGroupInfo), paramsJson));
+    	return resultJson.toString();
+    }
+    
 }

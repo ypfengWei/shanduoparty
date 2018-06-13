@@ -72,7 +72,7 @@ public class ScoreController {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"评分错误");
 		}
 		try {
-			scoreService.updateActivityScore(userToken, activityId, Integer.parseInt(score), evaluationcontent);
+			scoreService.updateActivityScore(userToken, activityId, Integer.valueOf(score), evaluationcontent);
 		} catch (Exception e) {
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"添加失败");
 		}

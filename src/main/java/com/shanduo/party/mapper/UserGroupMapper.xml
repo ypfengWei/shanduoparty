@@ -4,8 +4,7 @@
   <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserGroup">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="group_id" jdbcType="VARCHAR" property="groupId" />
-    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="group_type" jdbcType="CHAR" property="groupType" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -13,7 +12,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, group_id, count, group_type, remarks, create_date, update_date, del_flag
+    id, user_id, name, group_type, remarks, create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -26,14 +25,12 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.shanduo.party.entity.UserGroup">
-    insert into user_group (id, user_id, group_id, 
-      count, group_type, remarks, 
-      create_date, update_date, del_flag
-      )
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{groupId,jdbcType=VARCHAR}, 
-      #{count,jdbcType=INTEGER}, #{groupType,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
-      )
+    insert into user_group (id, user_id, name, 
+      group_type, remarks, create_date, 
+      update_date, del_flag)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{groupType,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserGroup">
     insert into user_group
@@ -44,11 +41,8 @@
       <if test="userId != null">
         user_id,
       </if>
-      <if test="groupId != null">
-        group_id,
-      </if>
-      <if test="count != null">
-        count,
+      <if test="name != null">
+        name,
       </if>
       <if test="groupType != null">
         group_type,
@@ -73,11 +67,8 @@
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>
-      <if test="groupId != null">
-        #{groupId,jdbcType=VARCHAR},
-      </if>
-      <if test="count != null">
-        #{count,jdbcType=INTEGER},
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
       </if>
       <if test="groupType != null">
         #{groupType,jdbcType=CHAR},
@@ -102,11 +93,8 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
-      <if test="groupId != null">
-        group_id = #{groupId,jdbcType=VARCHAR},
-      </if>
-      <if test="count != null">
-        count = #{count,jdbcType=INTEGER},
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="groupType != null">
         group_type = #{groupType,jdbcType=CHAR},
@@ -129,8 +117,7 @@
   <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserGroup">
     update user_group
     set user_id = #{userId,jdbcType=INTEGER},
-      group_id = #{groupId,jdbcType=VARCHAR},
-      count = #{count,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
       group_type = #{groupType,jdbcType=CHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -139,28 +126,23 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
-  <select id="checkGroupType" resultType="java.lang.Integer">
+  <select id="userGroupCount" resultType="java.lang.Integer">
   	select 
     count(id)
     from user_group
     where user_id = #{0}
     and group_type = #{1}
   </select>
-  <select id="selectByGroupId" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    id, user_id, group_id, count, group_type
-    from user_group
-    where group_id = #{groupId,jdbcType=VARCHAR}
-  </select>
-  <update id="updateGroupId">
-    update user_group
-    set 
-      count = #{1}
-    where group_id = #{0}
-  </update>
-  <delete id="deleteGroupId">
+  <delete id="deleteGroup">
   	delete from user_group
     where user_id = #{0}
-    and group_id = #{1}
+    and id = #{1}
   </delete>
+  <select id="nameList" parameterType="java.lang.String" resultType="java.lang.String">
+    select
+    id
+    from user_group
+    where name like "%"#{name,jdbcType=VARCHAR}"%"
+    limit 10
+  </select>
 </mapper>

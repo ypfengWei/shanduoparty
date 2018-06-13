@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form id = "aaa" action="file/upload" method="post" enctype="multipart/form-data">
+<form id = "upload" action="file/upload" method="post" enctype="multipart/form-data">
 <input type="text" name="token" value="token"/><br>
 <input type="file" name= "file"><br>
 <input type="submit" value = "点击上传">

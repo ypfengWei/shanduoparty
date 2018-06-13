@@ -75,10 +75,12 @@
     	<servlet-name>spring</servlet-name>
     	<url-pattern>/</url-pattern>
   	</servlet-mapping>
+  	
   	<!-- 配置session超时,单位是分钟 -->
   	<session-config>
         <session-timeout>30</session-timeout>
    	</session-config>
+   	
  	<!-- 配置默认首页 -->
 	<welcome-file-list>
 		<welcome-file>/index.jsp</welcome-file>

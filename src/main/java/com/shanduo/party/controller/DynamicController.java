@@ -160,7 +160,7 @@ public class DynamicController {
 				log.error("闪多号格式错误");
 				return new ErrorBean(10002,"闪多号格式错误");
 			}
-			resultMap = dynamicService.dynamicList(Integer.parseInt(userId),lat, lon, pages, pageSizes);
+			resultMap = dynamicService.dynamicList(Integer.valueOf(userId),lat, lon, pages, pageSizes);
 		}
 		return new SuccessBean(resultMap);
 	}

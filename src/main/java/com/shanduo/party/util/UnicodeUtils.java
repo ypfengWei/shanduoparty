@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 装换16进制工具类
+ * 转换16进制工具类
  * @ClassName: AUtils
  * @Description: TODO
  * @author fanshixin

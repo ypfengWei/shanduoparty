@@ -1,7 +1,5 @@
 package com.shanduo.party.service;
 
-import com.shanduo.party.entity.UserGroup;
-
 /**
  * 群组管理业务层
  * @ClassName: GroupService
@@ -28,47 +26,15 @@ public interface GroupService {
 	 * 创建群组
 	 * @Title: saveGroup
 	 * @Description: TODO
-	 * @param @param userId
+	 * @param @param userId 用户ID
+	 * @param @param name 群组名称
+	 * @param @param groupId 群组ID
 	 * @param @param groupType 群类型:1.200;2.500;3.1000
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int saveGroup(Integer userId,String groupId,String groupType);
-	
-	/**
-	 * 查询单个群组详情
-	 * @Title: selectByGroupId
-	 * @Description: TODO
-	 * @param @param groupId
-	 * @param @return
-	 * @return UserGroup
-	 * @throws
-	 */
-	UserGroup selectByGroupId(String groupId);
-	
-	/**
-	 * 检查群人数是否上限
-	 * @Title: checkGroupCount
-	 * @Description: TODO
-	 * @param @param groupId 群组ID
-	 * @param @return
-	 * @return boolean
-	 * @throws
-	 */
-	boolean checkGroupCount(String groupId);
-	
-	/**
-	 * 修改群组人数
-	 * @Title: updateGroup
-	 * @Description: TODO
-	 * @param @param groupId 群组ID
-	 * @param @param count 人数
-	 * @param @return
-	 * @return int
-	 * @throws
-	 */
-	int updateGroup(String groupId,Integer count);
+	int saveGroup(Integer userId,String name,String groupId,String groupType);
 	
 	/**
 	 * 删除群组
@@ -81,5 +47,27 @@ public interface GroupService {
 	 * @throws
 	 */
 	int delGroup(Integer userId,String groupId);
-
+	
+	/**
+	 * 修改群名称
+	 * @Title: update
+	 * @Description: TODO
+	 * @param @param groupId
+	 * @param @param name
+	 * @param @return
+	 * @return int
+	 * @throws
+	 */
+	int update(String groupId,String name);
+	
+	/**
+	 * 模糊查找群
+	 * @Title: queryNameList
+	 * @Description: TODO
+	 * @param @param name
+	 * @param @return
+	 * @return String
+	 * @throws
+	 */
+	String queryNameList(String name);
 }

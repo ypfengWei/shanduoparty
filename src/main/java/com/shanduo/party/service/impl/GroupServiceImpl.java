@@ -1,5 +1,7 @@
 package com.shanduo.party.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.entity.UserGroup;
+import com.shanduo.party.im.TXCloudUtil;
 import com.shanduo.party.mapper.UserGroupMapper;
 import com.shanduo.party.service.GroupService;
 import com.shanduo.party.service.VipService;
-import com.shanduo.party.util.UUIDGenerator;
 
 /**
  * 
@@ -65,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
 	
 	@Override
 	public int checkGroupType(Integer userId, String groupType) {
-		int count = groupMapper.checkGroupType(userId, groupType);
+		int count = groupMapper.userGroupCount(userId, groupType);
 		int vip = vipService.selectVipLevel(userId);
 		int counts = getGroupCount(vip, groupType);
 		if(counts == 0) {
@@ -78,11 +80,11 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public int saveGroup(Integer userId,String groupId,String groupType) {
+	public int saveGroup(Integer userId,String name,String groupId,String groupType) {
 		UserGroup group = new UserGroup();
-		group.setId(UUIDGenerator.getUUID());
+		group.setId(groupId);
 		group.setUserId(userId);
-		group.setGroupId(groupId);
+		group.setName(name);
 		group.setGroupType(groupType);
 		int i = groupMapper.insertSelective(group);
 		if(i < 1) {
@@ -91,53 +93,37 @@ public class GroupServiceImpl implements GroupService {
 		}
 		return 1;
 	}
-
+	
 	@Override
-	public UserGroup selectByGroupId(String groupId) {
-		return groupMapper.selectByGroupId(groupId);
+	public int delGroup(Integer userId, String groupId) {
+		int i = groupMapper.deleteGroup(userId, groupId);
+		if(i < 1) {
+			log.error("删除群聊失败");
+			throw new RuntimeException();
+		}
+		return 1;
 	}
 	
 	@Override
-	public boolean checkGroupCount(String groupId) {
-		UserGroup group = selectByGroupId(groupId);
-		if(group == null) {
-			return true;
-		}
-		int count = group.getCount();
-		if(group.getGroupType().equals("1")) {
-			if(count >= 200) {
-				return true;
-			}
-		}else if(group.getGroupType().equals("2")) {
-			if(count >= 500) {
-				return true;
-			}
-		}else {
-			if(count >= 1000) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int updateGroup(String groupId, Integer count) {
-		int i = groupMapper.updateGroupId(groupId, count);
+	public int update(String groupId, String name) {
+		UserGroup group = new UserGroup();
+		group.setId(groupId);
+		group.setName(name);
+		int i = groupMapper.updateByPrimaryKeySelective(group);
 		if(i < 1) {
 			log.error("修改群聊失败");
 			throw new RuntimeException();
 		}
 		return 1;
 	}
-
+	
 	@Override
-	public int delGroup(Integer userId, String groupId) {
-		int i = groupMapper.deleteGroupId(userId, groupId);
-		if(i < 1) {
-			log.error("删除群聊失败");
-			throw new RuntimeException();
+	public String queryNameList(String name) {
+		List<String> list = groupMapper.nameList(name);
+		if(list == null || list.isEmpty()) {
+			return null;
 		}
-		return 1;
+		return TXCloudUtil.getGroupnfo(list);
 	}
 
 }

@@ -52,7 +52,7 @@ public class TXCloudHelper {
         String body = null;
         if(method != null & parameters != null && !"".equals(parameters.trim())) {
             try{
-                //建立一个NameValuePair数组，用于存储欲传送的参数 
+                //建立一个NameValuePair数组，用于存储欲传送的参数
                 method.addHeader("Content-type","application/json; charset=utf-8");
                 method.setHeader("Accept", "application/json");
                 method.setEntity(new StringEntity(parameters, Charset.forName("UTF-8")));
@@ -68,7 +68,7 @@ public class TXCloudHelper {
             }
         }
         return body;
-    }    
+    }
       
     /**
      * @see 随机数

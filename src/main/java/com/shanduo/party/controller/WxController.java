@@ -88,7 +88,7 @@ public class WxController {
 		userService.saveUser(phone, password);
 		TokenInfo tokenInfo = userService.loginUser(phone, password);
 		try {
-			bindingService.insertSelective(Integer.parseInt(tokenInfo.getUserId()), unionId, "0");
+			bindingService.insertSelective(Integer.valueOf(tokenInfo.getUserId()), unionId, "0");
 		} catch (Exception e) {
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "失败");
 		}
