@@ -12,7 +12,7 @@ import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.entity.service.TokenInfo;
+import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.BindingService;
 import com.shanduo.party.service.CodeService;
 import com.shanduo.party.service.UserService;
@@ -41,6 +41,9 @@ public class WxController {
 	
 	@Autowired
 	private BindingService bindingService;
+	
+	@Autowired
+	private BaseService baseService;
 	
 	/**
 	 * 绑定注册
@@ -86,9 +89,9 @@ public class WxController {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"密码格式错误");
 		}
 		userService.saveUser(phone, password);
-		TokenInfo tokenInfo = userService.loginUser(phone, password);
+		String tokenInfo = userService.loginUser(phone, password);
 		try {
-			bindingService.insertSelective(Integer.parseInt(tokenInfo.getUserId()), unionId, "0");
+			bindingService.insertSelective(baseService.checkUserToken(tokenInfo), unionId, "0");
 		} catch (Exception e) {
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "失败");
 		}
@@ -116,7 +119,7 @@ public class WxController {
 			log.error("此账户未绑定");
 			return new ErrorBean(ErrorCodeConstants.UNBOUND, "未绑定");
 		}
-		TokenInfo tokenInfo = userService.loginUser(userid);
+		String tokenInfo = userService.loginUser(userid);
 		if(tokenInfo == null) {
 			log.error("登录失败");
 			return new ErrorBean(ErrorCodeConstants.LOGIN_FAILURE,"登录失败");
@@ -138,14 +141,14 @@ public class WxController {
 	@RequestMapping(value = "binding", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean binding(String unionId, String username, String password) {
-		TokenInfo tokenInfo = userService.loginUser(username, password);
+		String tokenInfo = userService.loginUser(username, password);
 		if (null == tokenInfo) {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "账号或密码错误");
 		}
-		Integer userId = Integer.valueOf(tokenInfo.getUserId());
 		if(StringUtils.isNull(unionId)) {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
 		}
+		Integer userId = baseService.checkUserToken(tokenInfo);
 		try {
 			bindingService.insertSelective(userId, unionId, "0");
 		} catch (Exception e) {

@@ -36,7 +36,6 @@
     <result column="score" jdbcType="INTEGER" property="score" />
     <result column="head_portrait_id" jdbcType="VARCHAR" property="headPortraitId"/>
     <result column="birthday" jdbcType="VARCHAR" property="birthday" />
-    <result column="location" jdbcType="DOUBLE" property="location"/>
     <result column="lat" jdbcType="DECIMAL" property="lat" />
     <result column="lon" jdbcType="DECIMAL" property="lon" />
     <result column="top_flag" jdbcType="CHAR" property="topFlag" />
@@ -266,7 +265,7 @@
     select 
     count(id) from shanduo_activity 
     where id in (select activity_id from 
-	activity_score where score is not null and del_flag = '0') 
+	activity_score where score is not null and del_flag = '0')
 	and del_flag = '0'
   </select>
   <select id="selectByScore" resultMap="ActivityResultMap">
@@ -274,7 +273,7 @@
     sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address
+    sa.lon,sa.lat
     from shanduo_activity sa
 	join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id
@@ -295,7 +294,7 @@
     sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address
+    sa.lon,sa.lat
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id
@@ -317,7 +316,7 @@
  	sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address
+    sa.lon,sa.lat
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id 
     join shanduo_user su on sa.user_id = su.id 
@@ -339,7 +338,7 @@
 	sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address,sa.top_flag
+    sa.lon,sa.lat,sa.top_flag
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id 
@@ -385,7 +384,7 @@
  	sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address,ye.score
+    sa.lon,sa.lat,ye.score
  	from shanduo_activity sa 
  	join activity_score ye on sa.id = ye.activity_id 
  	join activity_requirement ar on sa.id = ar.activity_id 
@@ -409,7 +408,7 @@
 	sa.activity_name,sa.activity_start_time,sa.activity_address,
 	sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
 	su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-	sa.lon,sa.lat,sa.detailed_address,ye.score
+	sa.lon,sa.lat,ye.score
 	from shanduo_activity sa 
 	join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id 
@@ -511,7 +510,7 @@
 	sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat,sa.detailed_address 
+    sa.lon,sa.lat
   	from shanduo_activity sa
   	join activity_requirement ar on sa.id = ar.activity_id 
     join shanduo_user su on sa.user_id = su.id 

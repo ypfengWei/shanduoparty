@@ -17,8 +17,8 @@ import com.shanduo.party.entity.SessionKey;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.entity.service.TokenInfo;
 import com.shanduo.party.mapper.SessionKeyMapper;
+import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.BindingService;
 import com.shanduo.party.service.CodeService;
 import com.shanduo.party.service.UserService;
@@ -48,6 +48,8 @@ public class WechatController {
 	private UserService userService;
 	@Autowired
 	private CodeService codeService;
+	@Autowired
+	private BaseService baseService;
 
 	@RequestMapping(value = "loginWechat", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
@@ -70,7 +72,7 @@ public class WechatController {
 			String json = "{\"openId\":\"" + str.get(0) + "\",\"unionId\":\"" + str.get(2) + "\"}";
 			return new ErrorBean(10086, json);
 		}
-		TokenInfo tokenInfo = userService.loginUser(userId);
+		String tokenInfo = userService.loginUser(userId);
 		if(tokenInfo == null) {
 			log.error("登录失败");
 			return new ErrorBean(10002,"登录失败");
@@ -106,7 +108,7 @@ public class WechatController {
 			String json = "{\"openId\":\"" + openid + "\",\"unionId\":\"" + unionid + "\"}";
 			return new ErrorBean(10086, json);
 		}
-		TokenInfo tokenInfo = userService.loginUser(userId);
+		String tokenInfo = userService.loginUser(userId);
 		if(tokenInfo == null) {
 			log.error("登录失败");
 			return new ErrorBean(10002,"登录失败");
@@ -124,11 +126,11 @@ public class WechatController {
 			return new ErrorBean(10002, "此账号已绑定");
 		}
 		if (StringUtils.isNull(codes)) {
-			TokenInfo tokenInfo = userService.loginUser(username, password);
+			String tokenInfo = userService.loginUser(username, password);
 			if (null == tokenInfo) {
 				return new ErrorBean(10002, "账号或密码错误");
 			}
-			Integer userId = Integer.valueOf(tokenInfo.getUserId());
+			Integer userId = baseService.checkUserToken(tokenInfo);
 			String type = "1";
 			if(StringUtils.isNull(openId) || StringUtils.isNull(unionId)) {
 				return new ErrorBean(10002, "openId或unionId为空");
@@ -153,7 +155,7 @@ public class WechatController {
 		} catch (Exception e) {
 			return new ErrorBean(10003, "失败");
 		}
-		TokenInfo tokenInfo = userService.loginUser(username, password);
+		String tokenInfo = userService.loginUser(username, password);
 		if(tokenInfo == null) {
 			log.error("登录失败");
 			return new ErrorBean(10002,"登录失败");

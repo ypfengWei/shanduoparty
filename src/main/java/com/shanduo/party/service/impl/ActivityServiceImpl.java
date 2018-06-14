@@ -514,7 +514,7 @@ public class ActivityServiceImpl implements ActivityService {
         } else if(nowTime.substring(0, 4).equals(cutoffString.substring(0, 4))) {
         	cutoffTime = cutoffTime.substring(cutoffTime.length()-11, cutoffTime.length());
         }
-        try {  
+        try {
             Date startDate = formatter.parse(startString);  
             activityInfo.setActivityStartTime(startTime+WeekUtils.getWeek(startDate));
             activityInfo.setActivityCutoffTime(cutoffTime);
