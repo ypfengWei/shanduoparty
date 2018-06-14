@@ -273,7 +273,7 @@
     sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa
 	join activity_score ye on sa.id = ye.activity_id 
 	join activity_requirement ar on sa.id = ar.activity_id
@@ -294,7 +294,7 @@
     sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id
@@ -316,7 +316,7 @@
  	sa.activity_name,sa.activity_start_time,sa.activity_address,
     sa.remarks,sa.activity_cutoff_time,ar.`mode`,ar.man_number,ar.woman_number,
     su.user_name,su.head_portrait_id,su.gender,su.birthday,sa.user_id,sa.id,
-    sa.lon,sa.lat
+    sa.lon,sa.lat,sa.detailed_address
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id 
     join shanduo_user su on sa.user_id = su.id 
