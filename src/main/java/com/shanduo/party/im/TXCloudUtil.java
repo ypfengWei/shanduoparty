@@ -24,7 +24,16 @@ public class TXCloudUtil {
 	private static final Logger log = LoggerFactory.getLogger(TXCloudUtil.class);
 	
 	
-	
+	/**
+	 * IM导入账号
+	 * @Title: accountImport
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param name
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
 	public static boolean accountImport(String userId,String name) {
 		Map<String, Object> paramsMap = new HashMap<String, Object>();
 		paramsMap.put("Identifier", userId);
@@ -64,7 +73,7 @@ public class TXCloudUtil {
 			friendList.add(paramsImage);
 		}
 		paramsMap.put("ProfileItem", friendList);
-		String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据  
+		String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.setPortrait), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
             return false;

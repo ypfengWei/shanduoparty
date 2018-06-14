@@ -123,7 +123,7 @@ public class WxPayUtils {
      * @Description: TODO
      * @param @param requestUrl 请求地址  
      * @param @param requestMethod 请求方法 
-     * @param @param outputStr 参数 
+     * @param @param outputStr xml参数 
      * @param @return
      * @return String
      * @throws

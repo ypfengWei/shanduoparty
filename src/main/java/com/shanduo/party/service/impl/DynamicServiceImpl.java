@@ -273,8 +273,8 @@ public class DynamicServiceImpl implements DynamicService {
 			}
 			int n = dynamicMapper.updateByDelFlag(dynamicIds[i], userId);
 			if(n < 1) {
-				log.error("删除动态失败");
-//				throw new RuntimeException();
+				log.error("软删除动态失败");
+				throw new RuntimeException();
 			}
 		}
 		return 1;
@@ -284,7 +284,7 @@ public class DynamicServiceImpl implements DynamicService {
 	public int hideComment(String commentId, Integer userId) {
 		int i = commentMapper.updateByDelFlag(commentId, userId);
 		if(i < 1) {
-			log.error("删除评论失败");
+			log.error("软删除评论失败");
 			throw new RuntimeException();
 		}
 		return 1;

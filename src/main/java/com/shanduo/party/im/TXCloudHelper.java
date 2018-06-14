@@ -1,6 +1,7 @@
 package com.shanduo.party.im;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Random;
 import org.apache.http.HttpResponse;
@@ -67,9 +68,14 @@ public class TXCloudHelper {
                 e.printStackTrace();
             }
         }
+		try {
+			body = new String(body.getBytes("ISO-8859-1"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
         return body;
     }
-      
+    
     /**
      * @see 随机数
      */
