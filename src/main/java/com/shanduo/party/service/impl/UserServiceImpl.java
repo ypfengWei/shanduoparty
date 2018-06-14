@@ -16,6 +16,7 @@ import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.service.TokenInfo;
+import com.shanduo.party.im.TXCloudUtil;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
@@ -66,6 +67,35 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private ShanduoActivityMapper activityMapper;
 	
+	/**
+	 * 添加用户其他记录
+	 * @Title: saveUser
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param name
+	 * @return void
+	 * @throws
+	 */
+	public void saveUser(Integer userId,String name) {
+		UserMoney money = new UserMoney();
+		money.setUserId(userId);
+		money.setPassword(MD5Utils.getInstance().getMD5("111111"));
+		int n = moneyMapper.insertSelective(money);
+		if(n < 1) {
+			log.error("用户钱包插入失败");
+			throw new RuntimeException();
+		}
+		ShanduoReputation shanduoReputation = new ShanduoReputation();
+		shanduoReputation.setUserId(userId);
+		int count = shanduoReputationMapper.insertSelective(shanduoReputation);
+		if(count < 1) {
+			log.error("信誉添加失败");
+			throw new RuntimeException();
+		}
+		//向IM导入账号
+		TXCloudUtil.accountImport(userId+"", name);
+	}
+	
 	@Override
 	public int saveUser(String phone,String password) {
 		password = MD5Utils.getInstance().getMD5(password);
@@ -83,21 +113,7 @@ public class UserServiceImpl implements UserService {
 			log.error("用户记录插入失败");
 			throw new RuntimeException();
 		}
-		UserMoney money = new UserMoney();
-		money.setUserId(user.getId());
-		money.setPassword(MD5Utils.getInstance().getMD5("111111"));
-		int n = moneyMapper.insertSelective(money);
-		if(n < 1) {
-			log.error("用户币种插入失败");
-			throw new RuntimeException();
-		}
-		ShanduoReputation shanduoReputation = new ShanduoReputation();
-		shanduoReputation.setUserId(user.getId());
-		int count = shanduoReputationMapper.insertSelective(shanduoReputation);
-		if(count < 1) {
-			log.error("信誉添加失败");
-			throw new RuntimeException();
-		}
+		saveUser(user.getId(), name);
 		return 1;
 	}
 
@@ -118,21 +134,7 @@ public class UserServiceImpl implements UserService {
 			log.error("用户记录插入失败");
 			throw new RuntimeException();
 		}
-		UserMoney money = new UserMoney();
-		money.setUserId(user.getId());
-		money.setPassword(MD5Utils.getInstance().getMD5("111111"));
-		int n = moneyMapper.insertSelective(money);
-		if(n < 1) {
-			log.error("用户币种插入失败");
-			throw new RuntimeException();
-		}
-		ShanduoReputation shanduoReputation = new ShanduoReputation();
-		shanduoReputation.setUserId(user.getId());
-		int count = shanduoReputationMapper.insertSelective(shanduoReputation);
-		if(count < 1) {
-			log.error("信誉添加失败");
-			throw new RuntimeException();
-		}
+		saveUser(user.getId(), name);
 		return user.getId();
 	}
 	
@@ -267,6 +269,8 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException();
 		}
 		user = userMapper.selectByPrimaryKey(userId);
+		//向IM修改用户资料
+		TXCloudUtil.setPortrait(user.getId()+"",user.getUserName(),PictureUtils.getPictureUrl(user.getHeadPortraitId()));
 		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
 	}
 

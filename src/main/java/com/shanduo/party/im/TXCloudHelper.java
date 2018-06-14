@@ -61,7 +61,7 @@ public class TXCloudHelper {
                 if(statusCode != HttpStatus.SC_OK){
                     System.out.println(response.getStatusLine());
                 }
-                //获取响应数据 
+                //获取响应数据
                 body = EntityUtils.toString(response.getEntity());
             } catch (IOException e) {
                 e.printStackTrace();

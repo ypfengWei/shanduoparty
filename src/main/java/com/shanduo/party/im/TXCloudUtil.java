@@ -23,6 +23,56 @@ public class TXCloudUtil {
 	
 	private static final Logger log = LoggerFactory.getLogger(TXCloudUtil.class);
 	
+	
+	
+	public static boolean accountImport(String userId,String name) {
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("Identifier", userId);
+		paramsMap.put("Nick", name);
+		String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据  
+        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.accountImport), paramsJson));
+        if(resultJson.get("ActionStatus").toString().equals("OK")){
+            return false;
+        }
+        log.error(resultJson.toString());
+		return true;
+	}
+	
+	/**
+	 * 设置IM用户资料
+	 * @Title: setPortrait
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @param name
+	 * @param @param image
+	 * @param @return
+	 * @return boolean
+	 * @throws
+	 */
+	public static boolean setPortrait(String userId,String name,String image) {
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("From_Account", userId);
+		LinkedList<Map<String, String>> friendList = new LinkedList<Map<String, String>>();
+		Map<String, String> paramsName = new HashMap<>();
+		paramsName.put("Tag", "Tag_Profile_IM_Nick");
+		paramsName.put("Value", name);
+		friendList.add(paramsName);
+		if(image != null) {
+			Map<String, String> paramsImage = new HashMap<>();
+			paramsImage.put("Tag", "Tag_Profile_IM_Image");
+			paramsImage.put("Value", "https://yapinkeji.com/shanduoparty/picture/"+image);
+			friendList.add(paramsImage);
+		}
+		paramsMap.put("ProfileItem", friendList);
+		String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据  
+        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.setPortrait), paramsJson));
+        if(resultJson.get("ActionStatus").toString().equals("OK")){
+            return false;
+        }
+        log.error(resultJson.toJSONString());
+		return true;
+	}
+	
 	/**
 	 * 添加好友
 	 * @Title: addFriend
@@ -35,7 +85,7 @@ public class TXCloudUtil {
 	 */
     public static boolean addFriend(String userId, String friendId) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
-        LinkedList<Map<String, String>> friendList = new LinkedList<>();
+        LinkedList<Map<String, String>> friendList = new LinkedList<Map<String, String>>();
         Map<String, String> friendMap = new HashMap<String, String>();
         friendMap.put("To_Account", friendId);//好友的Identifier
         friendMap.put("AddSource", "AddSource_Type_App");//加好友来源 如:AddSource_Type_Android
@@ -72,7 +122,7 @@ public class TXCloudUtil {
      */
     public static boolean deleteFriend(String userId, String friendId) {  
         Map<String, Object> paramsMap = new HashMap<String, Object>();
-        LinkedList<String> friendList = new LinkedList<>();
+        LinkedList<String> friendList = new LinkedList<String>();
         friendList.add(friendId);
         paramsMap.put("From_Account", userId);//需要为该Identifier删除好友
         paramsMap.put("To_Account", friendList);//待删除的好友的Identifier
@@ -105,7 +155,7 @@ public class TXCloudUtil {
     public static String getGroupList(String userId) {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	Map<String, Object> responseFilter = new HashMap<String, Object>();
-    	LinkedList<String> groupBaseInfoFilter = new LinkedList<>();
+    	LinkedList<String> groupBaseInfoFilter = new LinkedList<String>();
     	groupBaseInfoFilter.add("Type");
     	groupBaseInfoFilter.add("Name");
     	groupBaseInfoFilter.add("Introduction");
@@ -121,7 +171,7 @@ public class TXCloudUtil {
     	groupBaseInfoFilter.add("ApplyJoinOption");
     	groupBaseInfoFilter.add("ShutUpAllMember");
     	responseFilter.put("GroupBaseInfoFilter", groupBaseInfoFilter);
-    	LinkedList<String> selfInfoFilter = new LinkedList<>();
+    	LinkedList<String> selfInfoFilter = new LinkedList<String>();
     	selfInfoFilter.add("SelfInfoFilter");
     	selfInfoFilter.add("Role");
     	selfInfoFilter.add("JoinTime");
