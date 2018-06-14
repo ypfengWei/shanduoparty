@@ -475,8 +475,8 @@ public class ActivityServiceImpl implements ActivityService {
         String startString = activityInfo.getActivityStartTime();  
         String cutoffString = activityInfo.getActivityCutoffTime();
         if(type == 1) {
-        	Long newstartTime = get(startString, null, 2);
-        	Long newcutoffTime = get(cutoffString, null, 2);
+        	Long newstartTime = getLongTime(startString, null, 2);
+        	Long newcutoffTime = getLongTime(cutoffString, null, 2);
         	Long nowTime = System.currentTimeMillis();
         	Map<String, Object> map = shanduoActivityMapper.numberAndScore(activityInfo.getId());
         	int i = Integer.parseInt(map.get("number").toString()); //参加记录
@@ -501,9 +501,9 @@ public class ActivityServiceImpl implements ActivityService {
         }
         String startTime = startString.substring(0,16).replace("-", "/").replace(" ", "/");
         String cutoffTime = cutoffString.substring(0,16).replace("-", "/").replace(" ", "/");
-        Long time = get(null, "yyyy-MM-dd 00:00", 1);
-        Long endTime = get(null, "yyyy-MM-dd 23:59", 1);
-        Long times = get(cutoffString, null, 2);
+        Long time = getLongTime(null, "yyyy-MM-dd 00:00", 1);
+        Long endTime = getLongTime(null, "yyyy-MM-dd 23:59", 1);
+        Long times = getLongTime(cutoffString, null, 2);
         String nowTime = formatter.format(new Date());
         if(time <= times &&  times <= endTime) {
         	cutoffTime = cutoffTime.substring(cutoffTime.length()-5, cutoffTime.length());
@@ -556,7 +556,7 @@ public class ActivityServiceImpl implements ActivityService {
 		return resultMap;
 	}
 	
-	public Long get(String time, String timeType, Integer type) {
+	public Long getLongTime(String time, String timeType, Integer type) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
 		Date cutoff = new Date();
 		try {
@@ -584,4 +584,5 @@ public class ActivityServiceImpl implements ActivityService {
 		String i = activityScoreMapper.selectByUserId(userId);
 		return i;
 	}
+	
 }

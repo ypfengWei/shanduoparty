@@ -51,4 +51,5 @@ public interface VipService {
 	 */
 	int selectVipLevel(Integer userId);
 	
+	int upgradeVip(Integer userId, Integer month, String vipType);
 }

@@ -226,5 +226,27 @@ public class VipServiceImpl implements VipService {
 		}
 		return 10+getVipLevel(userId);
 	}
-		
+	
+	@Override
+	public int upgradeVip(Integer userId, Integer month, String vipType) {
+		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
+		if(resultList != null && resultList.size() < 2) {
+			if("0".equals(resultList.get(0).getVipType())) {
+				ShanduoVip vip = resultList.get(0);
+				Date date = new Date();
+				long vipEndTime = vip.getVipEndTime().getTime();
+				long time = vipEndTime - date.getTime();
+				if(1000L*60*60*24*31*month - 1000L*60*60*24*15 <= time) {
+					addRemarks(userId);
+					//开通svip
+					saveVip(userId, date, month, vipType,"0");
+					return 1;
+				} else {
+					return 0; //高于可升级月份的限制或会员剩余时长不足16天
+				}
+			} 
+		}
+		return 0;
+	}
+	
 }

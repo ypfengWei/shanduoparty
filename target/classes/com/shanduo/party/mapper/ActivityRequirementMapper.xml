@@ -180,13 +180,18 @@
     </set>
     where activity_id = #{activityId,jdbcType=VARCHAR}
   </update>
+  
   <update id="deleteByActivityId" parameterType="java.lang.String">
-    update activity_requirement
+    update 
+    activity_requirement
     set del_flag = '1'
     where activity_id = #{activityId,jdbcType=VARCHAR}
   </update>
   <select id="selectByNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select man_number,woman_number from activity_requirement ar where ar.activity_id = #{activityId,jdbcType=VARCHAR}
-    and ar.del_flag = '0'
+    select 
+    man_number,woman_number 
+    from activity_requirement 
+    where activity_id = #{activityId,jdbcType=VARCHAR}
+    and del_flag = '0'
   </select>
 </mapper>
