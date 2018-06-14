@@ -57,7 +57,7 @@
 	 		<!-- 用户操作接口拦截 -->
 	 		<mvc:mapping path="/juser/updatephone"/>
 	 		<mvc:mapping path="/juser/updateuser"/>
-	 		<mvc:mapping path="/juser/usercount"/>
+	 		<mvc:mapping path="/juser/details"/>
 	 		<mvc:mapping path="/juser/checktoken"/>
 	 		<!-- 动态接口拦截 -->
 	 		<mvc:mapping path="/jdynamic/savedynamic"/>

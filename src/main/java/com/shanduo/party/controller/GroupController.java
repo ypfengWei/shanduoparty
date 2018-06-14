@@ -85,7 +85,7 @@ public class GroupController {
 	}
 	
 	/**
-	 * 
+	 * 创建或删除群
 	 * @Title: isGroup
 	 * @Description: TODO
 	 * @param @param request
@@ -144,6 +144,18 @@ public class GroupController {
 		return new SuccessBean("删除成功");
 	}
 	
+	/**
+	 * 修改群名称
+	 * @Title: updateGroup
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param name
+	 * @param @param groupId
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
 	@RequestMapping(value = "updategroup",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean updateGroup(HttpServletRequest request,String token,String name,String groupId) {

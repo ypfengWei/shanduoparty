@@ -1,8 +1,5 @@
 package com.shanduo.party.controller;
 
-
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -86,7 +83,7 @@ public class UserController {
 			log.error("注册失败");
 			return new ErrorBean(10003,"注册失败");
 		}
-		TokenInfo token = userService.loginUser(phone, password);
+		String token = userService.loginUser(phone, password);
 		if(token != null) {
 			return new SuccessBean(token);
 		}
@@ -115,7 +112,7 @@ public class UserController {
 			log.error("密码格式错误");
 			return new ErrorBean(10002,"密码格式错误");
 		}
-		TokenInfo token = userService.loginUser(username, password);
+		String token = userService.loginUser(username, password);
 		if(token == null) {
 			log.error("账号或密码错误");
 			return new ErrorBean(10002,"账号或密码错误");
@@ -123,10 +120,10 @@ public class UserController {
 		return new SuccessBean(token);
 	}
 	
-	
 	/**
-	 * 查询好友，活动，动态数量
-	 * @Title: userCount
+	 * 查询用户详细资料
+	 * 好友,活动,动态数量,vip,等级
+	 * @Title: details
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
@@ -134,16 +131,21 @@ public class UserController {
 	 * @return ResultBean
 	 * @throws
 	 */
-	@RequestMapping(value = "usercount",method={RequestMethod.POST,RequestMethod.GET})
+	@RequestMapping(value = "details",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean userCount(HttpServletRequest request,String token) {
+	public ResultBean details(HttpServletRequest request,String token) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		Map<String, Object> resultMap = userService.selectById(isUserId);
-		return new SuccessBean(resultMap);
+		TokenInfo tokens = userService.selectById(isUserId);
+		if(tokens == null) {
+			log.error("获取用户详细错误");
+			return new ErrorBean(10002,"获取用户详细错误");
+		}
+		tokens.setToken(token);
+		return new SuccessBean(tokens);
 	}
 	
 	/**
@@ -301,15 +303,14 @@ public class UserController {
 			log.error("情感状态错误");
 			return new ErrorBean(10002,"情感状态错误");
 		}
-		TokenInfo tokenInfo = new TokenInfo();
 		try {
-			tokenInfo = userService.updateUser(token,isUserId, name, picture, birthday, 
+			userService.updateUser(token,isUserId, name, picture, birthday, 
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");
 			return new ErrorBean(10003,"修改失败");
 		}
-		return new SuccessBean(tokenInfo);
+		return new SuccessBean("修改成功");
 	}
 	
 	/**

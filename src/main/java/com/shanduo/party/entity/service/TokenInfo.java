@@ -32,6 +32,9 @@ public class TokenInfo {
     private String jurisdiction;//权限 普通用户,商户
     private Integer vip;//vip等级
     private Integer level;//等级
+    private Integer attention;//好友数量
+    private Integer dynamic;//动态数量
+    private Integer activity;//活动数量
     private String remarks;//备注
     private String userSig;//IM聊天使用签名
     
@@ -39,28 +42,25 @@ public class TokenInfo {
     	
     }
     
-    public TokenInfo(ShanduoUser shanduoUser,String token,Integer vip,Integer level){
-    	this.token = token;
-    	this.userId = shanduoUser.getId()+"";
-    	this.name = shanduoUser.getUserName();
-    	this.picture = PictureUtils.getPictureUrl(shanduoUser.getHeadPortraitId());
-    	this.phone = shanduoUser.getPhoneNumber();
-    	this.birthday = shanduoUser.getBirthday();
+    public TokenInfo(ShanduoUser user){
+    	this.userId = user.getId()+"";
+    	this.name = user.getUserName();
+    	this.picture = PictureUtils.getPictureUrl(user.getHeadPortraitId());
+    	this.phone = user.getPhoneNumber();
+    	this.birthday = user.getBirthday();
     	this.age = AgeUtils.getAgeFromBirthTime(this.birthday);
-    	this.gender = shanduoUser.getGender();
-    	this.emotion = shanduoUser.getEmotion();
-    	this.signature = shanduoUser.getSignature();
+    	this.gender = user.getGender();
+    	this.emotion = user.getEmotion();
+    	this.signature = user.getSignature();
     	if(this.signature == null) {
     		this.signature = "因为个性所有没有签名";
     	}
-    	this.background = PictureUtils.getPictureUrl(shanduoUser.getBackground());
-    	this.hometown = shanduoUser.getHometown();
-    	this.occupation = shanduoUser.getOccupation();
-    	this.school = shanduoUser.getSchool();
-    	this.jurisdiction = shanduoUser.getJurisdiction()+"";
-    	this.vip = vip;
-    	this.level = level;
-    	this.remarks = shanduoUser.getRemarks();
+    	this.background = PictureUtils.getPictureUrl(user.getBackground());
+    	this.hometown = user.getHometown();
+    	this.occupation = user.getOccupation();
+    	this.school = user.getSchool();
+    	this.jurisdiction = user.getJurisdiction()+"";
+    	this.remarks = user.getRemarks();
 		this.userSig = tls_sigUtils.getSig(userId);
     }
 
@@ -198,6 +198,30 @@ public class TokenInfo {
 
 	public void setLevel(Integer level) {
 		this.level = level;
+	}
+
+	public Integer getAttention() {
+		return attention;
+	}
+
+	public void setAttention(Integer attention) {
+		this.attention = attention;
+	}
+
+	public Integer getDynamic() {
+		return dynamic;
+	}
+
+	public void setDynamic(Integer dynamic) {
+		this.dynamic = dynamic;
+	}
+
+	public Integer getActivity() {
+		return activity;
+	}
+
+	public void setActivity(Integer activity) {
+		this.activity = activity;
 	}
 
 	public String getRemarks() {

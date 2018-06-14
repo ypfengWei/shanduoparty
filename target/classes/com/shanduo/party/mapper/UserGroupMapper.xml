@@ -143,6 +143,7 @@
     id
     from user_group
     where name like "%"#{name,jdbcType=VARCHAR}"%"
+    or id = #{name,jdbcType=VARCHAR}
     limit 10
   </select>
 </mapper>

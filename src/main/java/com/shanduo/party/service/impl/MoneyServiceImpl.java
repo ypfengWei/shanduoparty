@@ -153,27 +153,29 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 
 	@Override
-	public int consumeBeans(Integer userId, Integer beans) {
-		UserMoney money = moneyMapper.selectByUserId(userId);
-		if(money == null) {
-			throw new RuntimeException();
+	public int switchBeans() {
+		List<UserMoney> list = moneyMapper.beansList();
+		if(list == null || list.isEmpty()) {
+			log.error("没有符合条件转换余额的用户");
+			return 1;
 		}
-		int beansa = money.getBeans();
-		if(beansa < beans) {
-			log.error("闪多豆不足");
-			throw new RuntimeException();
-		}
-		money = new UserMoney();
-		money.setUserId(userId);
-		money.setBeans(beansa - beans);
-		int i = moneyMapper.updateByPrimaryKeySelective(money);
-		if(i < 1) {
-			throw new RuntimeException();
-		}
-		try {
-			experienceService.saveMoneyRecord(userId, "10", beans+"","刷新活动");
-		} catch (Exception e) {
-			throw new RuntimeException();
+		for(UserMoney money : list) {
+			int userId = money.getUserId();
+			int beans = money.getBeans()/1000;
+			UserMoney userMoney = new UserMoney();
+			userMoney.setUserId(userId);
+			userMoney.setBeans(money.getBeans()%1000);
+			int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
+			if(i < 1) {
+				log.error("减闪多豆失败");
+				throw new RuntimeException();
+			}
+			try {
+				experienceService.saveMoneyRecord(userId, "10", beans*1000+"","转换余额");
+			} catch (Exception e) {
+				throw new RuntimeException();
+			}
+			payMoney(userId, new BigDecimal(beans+""), "闪多豆");
 		}
 		return 1;
 	}
@@ -329,6 +331,7 @@ public class MoneyServiceImpl implements MoneyService {
 		if(i < 1) {
 			throw new RuntimeException();
 		}
+		log.info(userId+"刷新活动1次");
 		return 1;
 	}
 

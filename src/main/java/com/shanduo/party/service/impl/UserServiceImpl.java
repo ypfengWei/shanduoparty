@@ -2,7 +2,6 @@ package com.shanduo.party.service.impl;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -148,7 +147,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TokenInfo loginUser(String username, String password) {
+	public String loginUser(String username, String password) {
 		password = MD5Utils.getInstance().getMD5(password);
 		ShanduoUser user = null;
 		if(username.length() != 11) {
@@ -163,12 +162,11 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isNull(token)) {
 			return null;
 		}
-		Integer userId = user.getId();
-		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
+		return token;
 	}
 
 	@Override
-	public TokenInfo loginUser(Integer userId) {
+	public String loginUser(Integer userId) {
 		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
 		if(user == null) {
 			return null;
@@ -177,7 +175,22 @@ public class UserServiceImpl implements UserService {
 		if(StringUtils.isNull(token)) {
 			return null;
 		}
-		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
+		return token;
+	}
+	
+	@Override
+	public TokenInfo selectById(Integer userId) {
+		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
+		if(user == null) {
+			return null;
+		}
+		TokenInfo token = new TokenInfo(user);
+		token.setVip(vipService.selectVipLevel(userId));
+		token.setLevel(experienceService.selectLevel(userId));
+		token.setAttention(attentionService.attentionCount(userId));
+		token.setDynamic(dynamicService.dynamicCount(userId));
+		token.setActivity(activityMapper.selectByUserIdCount(userId));
+		return token;
 	}
 	
 	@Override
@@ -229,7 +242,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TokenInfo updateUser(String token,Integer userId,String name,String picture,String birthday,String gender,
+	public int updateUser(String token,Integer userId,String name,String picture,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
 		ShanduoUser user = new ShanduoUser();
 		user.setId(userId);
@@ -271,7 +284,7 @@ public class UserServiceImpl implements UserService {
 		user = userMapper.selectByPrimaryKey(userId);
 		//向IM修改用户资料
 		TXCloudUtil.setPortrait(user.getId()+"",user.getUserName(),PictureUtils.getPictureUrl(user.getHeadPortraitId()));
-		return new TokenInfo(user,token,vipService.selectVipLevel(userId),experienceService.selectLevel(userId));
+		return 1;
 	}
 
 	@Override
@@ -324,13 +337,5 @@ public class UserServiceImpl implements UserService {
 		return resultMap;
 	}
 
-	@Override
-	public Map<String, Object> selectById(Integer userId) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("attention",attentionService.attentionCount(userId));
-		resultMap.put("dynamic",dynamicService.dynamicCount(userId));
-		resultMap.put("activity",activityMapper.selectByUserIdCount(userId));
-		return resultMap;
-	}
 
 }

@@ -89,16 +89,14 @@ public interface MoneyService {
 	int payBeans(Integer userId,Integer beans,String typeId);
 	
 	/**
-	 * 消费闪多豆
-	 * @Title: consumeBeans
+	 * 闪多豆装换余额:1000:1
+	 * @Title: switchBeans
 	 * @Description: TODO
-	 * @param @param userId 用户ID
-	 * @param @param beans 闪多豆数量
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int consumeBeans(Integer userId,Integer beans);
+	int switchBeans();
 	
 	/**
 	 * 检查支付密码

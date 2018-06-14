@@ -101,6 +101,10 @@ public class GroupServiceImpl implements GroupService {
 			log.error("删除群聊失败");
 			throw new RuntimeException();
 		}
+		if(TXCloudUtil.delGroup(groupId)) {
+			log.error("im删除群聊失败");
+			throw new RuntimeException();
+		}
 		return 1;
 	}
 	
@@ -112,6 +116,10 @@ public class GroupServiceImpl implements GroupService {
 		int i = groupMapper.updateByPrimaryKeySelective(group);
 		if(i < 1) {
 			log.error("修改群聊失败");
+			throw new RuntimeException();
+		}
+		if(TXCloudUtil.setGroup(groupId, name)) {
+			log.error("im修改群聊失败");
 			throw new RuntimeException();
 		}
 		return 1;

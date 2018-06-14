@@ -165,28 +165,10 @@ public class TXCloudUtil {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	Map<String, Object> responseFilter = new HashMap<String, Object>();
     	LinkedList<String> groupBaseInfoFilter = new LinkedList<String>();
-    	groupBaseInfoFilter.add("Type");
     	groupBaseInfoFilter.add("Name");
-    	groupBaseInfoFilter.add("Introduction");
-    	groupBaseInfoFilter.add("Notification");
     	groupBaseInfoFilter.add("FaceUrl");
-    	groupBaseInfoFilter.add("CreateTime");
-    	groupBaseInfoFilter.add("Owner_Account");
-    	groupBaseInfoFilter.add("LastInfoTime");
     	groupBaseInfoFilter.add("LastMsgTime");
-    	groupBaseInfoFilter.add("NextMsgSeq");
-    	groupBaseInfoFilter.add("MemberNum");
-    	groupBaseInfoFilter.add("MaxMemberNum");
-    	groupBaseInfoFilter.add("ApplyJoinOption");
-    	groupBaseInfoFilter.add("ShutUpAllMember");
     	responseFilter.put("GroupBaseInfoFilter", groupBaseInfoFilter);
-    	LinkedList<String> selfInfoFilter = new LinkedList<String>();
-    	selfInfoFilter.add("SelfInfoFilter");
-    	selfInfoFilter.add("Role");
-    	selfInfoFilter.add("JoinTime");
-    	selfInfoFilter.add("MsgFlag");
-    	selfInfoFilter.add("UnreadMsgNum");
-    	responseFilter.put("SelfInfoFilter", selfInfoFilter);
     	paramsMap.put("ResponseFilter", responseFilter);
     	paramsMap.put("Member_Account", userId);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
@@ -206,9 +188,59 @@ public class TXCloudUtil {
     public static String getGroupnfo(List<String> list) {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	paramsMap.put("GroupIdList", list);
+    	Map<String, Object> responseFilter = new HashMap<String, Object>();
+    	LinkedList<String> groupBaseInfoFilter = new LinkedList<String>();
+    	groupBaseInfoFilter.add("Name");
+    	groupBaseInfoFilter.add("FaceUrl");
+    	groupBaseInfoFilter.add("LastMsgTime");
+    	responseFilter.put("GroupBaseInfoFilter", groupBaseInfoFilter);
+    	paramsMap.put("ResponseFilter", responseFilter);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.getGroupInfo), paramsJson));
     	return resultJson.toString();
     }
     
+    /**
+     * 修改群组资料
+     * @Title: setGroup
+     * @Description: TODO
+     * @param @param groupId
+     * @param @param name
+     * @param @return
+     * @return boolean
+     * @throws
+     */
+    public static boolean setGroup(String groupId, String name) {
+    	Map<String, Object> paramsMap = new HashMap<String, Object>();
+    	paramsMap.put("GroupId", groupId);
+    	paramsMap.put("Name", name);
+    	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
+        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.setGroup), paramsJson));
+        if(resultJson.get("ActionStatus").toString().equals("OK")){
+        	return false;
+        }
+        log.error(resultJson.toJSONString());
+        return true;
+    }
+    
+    /**
+     * 解散群组
+     * @Title: delGroup
+     * @Description: TODO
+     * @param @param groupId
+     * @param @return
+     * @return boolean
+     * @throws
+     */
+    public static boolean delGroup(String groupId) {
+    	Map<String, Object> paramsMap = new HashMap<String, Object>();
+    	paramsMap.put("GroupId", groupId);
+    	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
+        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.delGroup), paramsJson));
+        if(resultJson.get("ActionStatus").toString().equals("OK")){
+        	return false;
+        }
+        log.error(resultJson.toJSONString());
+        return true;
+    }
 }

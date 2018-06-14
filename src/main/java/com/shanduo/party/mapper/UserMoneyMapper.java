@@ -1,5 +1,7 @@
 package com.shanduo.party.mapper;
 
+import java.util.List;
+
 import com.shanduo.party.entity.UserMoney;
 
 public interface UserMoneyMapper {
@@ -16,5 +18,7 @@ public interface UserMoneyMapper {
     int updateByPrimaryKey(UserMoney record);
     
     UserMoney selectByUserId(Integer userId);
+    
+    List<UserMoney> beansList();
     
 }

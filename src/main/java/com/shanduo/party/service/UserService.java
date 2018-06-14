@@ -60,10 +60,10 @@ public interface UserService {
 	 * @param @param username 手机号或者闪多号
 	 * @param @param password 密码
 	 * @param @return
-	 * @return ShanduoUser
+	 * @return String
 	 * @throws
 	 */
-	TokenInfo loginUser(String username,String password);
+	String loginUser(String username,String password);
 	
 	/**
 	 * 用户登录
@@ -71,10 +71,21 @@ public interface UserService {
 	 * @Description: TODO
 	 * @param @param userId
 	 * @param @return
-	 * @return TokenInfo
+	 * @return String
 	 * @throws
 	 */
-	TokenInfo loginUser(Integer userId);
+	String loginUser(Integer userId);
+	
+	/**
+	 * 查询用户详细资料
+	 * @Title: selectById
+	 * @Description: TODO
+	 * @param @param userId
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	TokenInfo selectById(Integer userId);
 	
 	/**
 	 * 修改绑定手机号
@@ -144,7 +155,7 @@ public interface UserService {
 	 * @return TokenInfo
 	 * @throws
 	 */
-	TokenInfo updateUser(String token,Integer userId,String name,String picture,String birthday,String gender,
+	int updateUser(String token,Integer userId,String name,String picture,String birthday,String gender,
 			String emotion,String signature,String background,String hometown,String occupation,String school);
 	
 	/**
@@ -192,14 +203,4 @@ public interface UserService {
 	 */
 	Map<String, Object> selectById(Integer userId,Integer attention);
 	
-	/**
-	 * 查询用户的好友，动态，活动数量
-	 * @Title: selectById
-	 * @Description: TODO
-	 * @param @param userId
-	 * @param @return
-	 * @return Map<String,Object>
-	 * @throws
-	 */
-	Map<String, Object> selectById(Integer userId);
 }
