@@ -555,6 +555,16 @@ public class ActivityServiceImpl implements ActivityService {
 		resultMap.put("totalpage", page.getTotalPage());
 		return resultMap;
 	}
+
+	@Override
+	public int selectByGenders(String activityId, String gender) {
+		return activityScoreMapper.selectByGenders(activityId, gender);
+	}
+
+	@Override
+	public String selectByUserId(Integer userId) {
+		return activityScoreMapper.selectByUserId(userId);
+	}
 	
 	public Long getLongTime(String time, String timeType, Integer type) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
@@ -571,18 +581,6 @@ public class ActivityServiceImpl implements ActivityService {
 			e.printStackTrace();
 		}
 		return cutoff.getTime();
-	}
-
-	@Override
-	public int selectByGenders(String activityId, String gender) {
-		int i = activityScoreMapper.selectByGenders(activityId, gender);
-		return i;
-	}
-
-	@Override
-	public String selectByUserId(Integer userId) {
-		String i = activityScoreMapper.selectByUserId(userId);
-		return i;
 	}
 	
 }

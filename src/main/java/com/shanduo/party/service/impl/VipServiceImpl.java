@@ -244,9 +244,8 @@ public class VipServiceImpl implements VipService {
 				} else {
 					return 0; //高于可升级月份的限制或会员剩余时长不足16天
 				}
-			} 
+			}
 		}
 		return 0;
 	}
-	
 }

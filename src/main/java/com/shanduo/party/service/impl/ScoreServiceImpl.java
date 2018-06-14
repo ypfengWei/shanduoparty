@@ -414,14 +414,12 @@ public class ScoreServiceImpl implements ScoreService {
 
 	@Override
 	public String selectId(String activityId, Integer userId) {
-		String id = recordMapper.selectId(activityId, userId);
-		return id;
+		return recordMapper.selectId(activityId, userId);
 	}
 
 	@Override
 	public String selectIds(String dynamicId, Integer userId) {
-		String id = recordMapper.selectId(dynamicId, userId);
-		return id;
+		return recordMapper.selectId(dynamicId, userId);
 	}
 
 	@Override
