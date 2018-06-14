@@ -46,22 +46,22 @@ public class VipServiceImpl implements VipService {
 	@Override
 	public int saveVip(Integer userId, Date date,Integer month,String vipType,String isRefresh) {
 		ShanduoVip userVip = vipMapper.selectByVipType(userId,vipType);
-		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
-		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month);
-		DateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date endDate = null;
-        try {
-			endDate = formats.parse(vipEndDate);
-		} catch (ParseException e) {
-			throw new RuntimeException();
-		}
+//		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+//		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month);
+//		DateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		Date endDate = null;
+//        try {
+//			endDate = formats.parse(vipEndDate);
+//		} catch (ParseException e) {
+//			throw new RuntimeException();
+//		}
 		if(userVip == null) {
 			userVip = new ShanduoVip();
 			userVip.setId(UUIDGenerator.getUUID());
 			userVip.setUserId(userId);
 			userVip.setVipType(vipType);
 			userVip.setVipStartTime(date);
-			userVip.setVipEndTime(endDate);
+			userVip.setVipEndTime(getDate(date, month));
 			int i = vipMapper.insertSelective(userVip);
 			if (i < 1) {
 				log.error("开通会员失败");
@@ -69,7 +69,7 @@ public class VipServiceImpl implements VipService {
 			}
 		}else {
 			userVip.setVipStartTime(date);
-			userVip.setVipEndTime(endDate);
+			userVip.setVipEndTime(getDate(date, month));
 			int i = vipMapper.updateByPrimaryKeySelective(userVip);
 			if (i < 1) {
 				log.error("重新开通会员失败");
@@ -228,24 +228,68 @@ public class VipServiceImpl implements VipService {
 	}
 	
 	@Override
-	public int upgradeVip(Integer userId, Integer month, String vipType) {
+	public int getMonth(Integer userId) {
 		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
+		int i = 0;
 		if(resultList != null && resultList.size() < 2) {
 			if("0".equals(resultList.get(0).getVipType())) {
 				ShanduoVip vip = resultList.get(0);
 				Date date = new Date();
 				long vipEndTime = vip.getVipEndTime().getTime();
 				long time = vipEndTime - date.getTime();
-				if(1000L*60*60*24*31*month - 1000L*60*60*24*15 <= time) {
-					addRemarks(userId);
-					//开通svip
-					saveVip(userId, date, month, vipType,"0");
-					return 1;
+				long b = 1000L*60*60*24*31;
+				if(1000L*60*60*24*16 > time) {
+					i = 0;
 				} else {
-					return 0; //高于可升级月份的限制或会员剩余时长不足16天
+					i = (int) (time/b);
+					if(i >= 1 && time%b>= 1000L*60*60*24*16) {
+						i = i+1;
+					}
+					if(i == 0) {
+						i = i+1;
+					}
 				}
 			}
 		}
-		return 0;
+		return i; //i=0:会员剩余时长不足16天或用户为svip不能升级
+	}
+	
+	@Override
+	public int upgradeVip(Integer userId, Integer month, String vipType) {
+		if(getMonth(userId) > 0) {
+			List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
+			if(resultList != null && resultList.size() < 2) {
+				if("0".equals(resultList.get(0).getVipType())) { //用户为vip
+					ShanduoVip vip = resultList.get(0);
+					Date date = new Date();
+					long vipEndTime = vip.getVipEndTime().getTime();
+					long time = vipEndTime - date.getTime();
+					if(1000L*60*60*24*31*month - 1000L*60*60*24*15 <= time) { //会员剩余时间在允许升级的月份之内
+						if(1000L*60*60*24*31*month > time) { //升级时间大于会员结束时间将vip延迟
+							//vip延长
+							renewVip(vip.getId(), getDate(date, month), month);
+						} 
+						addRemarks(userId);
+						//开通svip
+						saveVip(userId, date, month, vipType,"0");
+						return 1; //操作成功
+					}
+				}
+			}
+		}
+		return 0;//操作失败：高于可升级月份的限制或会员剩余时长不足16天或用户为svip不能升级
+	}
+	
+	public static Date getDate(Date date, Integer month) {
+		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month);
+		DateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date endDate = null;
+        try {
+			endDate = formats.parse(vipEndDate);
+		} catch (ParseException e) {
+			throw new RuntimeException();
+		}
+		return endDate;
 	}
 }

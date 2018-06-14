@@ -393,13 +393,17 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public int deleteByUserIds(String activityId, String userIds) {
-		String[] userId = userIds.split(",");
-		int len = userId.length;
-		for(int i=0;i< len;i++) {
-			int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userId[i]));
-			if(n < 1) {
-				log.error("踢人失败");
-			}
+//		String[] userId = userIds.split(",");
+//		int len = userId.length;
+//		for(int i=0;i< len;i++) {
+//			int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userId[i]));
+//			if(n < 1) {
+//				log.error("踢人失败");
+//			}
+//		}
+		int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userIds));
+		if(n < 1) {
+			log.error("踢人失败");
 		}
 		return 1;
 	}

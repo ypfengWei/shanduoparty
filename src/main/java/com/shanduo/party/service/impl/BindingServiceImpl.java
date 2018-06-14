@@ -11,6 +11,14 @@ import com.shanduo.party.mapper.UserBindingMapper;
 import com.shanduo.party.service.BindingService;
 import com.shanduo.party.util.UUIDGenerator;
 
+/**
+ * 绑定实现类
+ * @ClassName: BindingServiceImpl
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author fangwei
+ * @date 2018年6月14日 上午10:05:52
+ *
+ */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class BindingServiceImpl implements BindingService {

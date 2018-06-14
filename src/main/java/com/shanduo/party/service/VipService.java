@@ -51,5 +51,18 @@ public interface VipService {
 	 */
 	int selectVipLevel(Integer userId);
 	
+	int getMonth(Integer userId);
+	
+	/**
+	 * 升级vip为svip
+	 * @Title: upgradeVip
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userId
+	 * @param @param month
+	 * @param @param vipType
+	 * @param @return    设定文件
+	 * @return int    返回类型
+	 * @throws
+	 */
 	int upgradeVip(Integer userId, Integer month, String vipType);
 }
