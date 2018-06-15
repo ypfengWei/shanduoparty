@@ -24,6 +24,12 @@ public class SensitiveWord {
     private static String fileName = "CensorWords.txt";
     private static List<String> arrayList;
     
+    public static String unicodeInfo(String str) {
+    	str = UnicodeUtils.unicodeToString(str);
+    	str = filterInfo(str);
+    	return UnicodeUtils.stringToUnicode(str);
+    }
+    
     /** 
      * @param str 将要被过滤信息 
      * @return 过滤后的信息 
@@ -32,7 +38,6 @@ public class SensitiveWord {
     	if(str == null || "".equals(str) || "null".equals(str)) {
     		return "";
     	}
-    	str = UnicodeUtils.unicodeToString(str);
     	InitializationWork();
         StringBuilder buffer = new StringBuilder(str);
         HashMap<Integer, Integer> hash = new HashMap<Integer, Integer>(arrayList.size());  
@@ -57,7 +62,7 @@ public class SensitiveWord {
             buffer.replace(startIndex, endIndex, replaceAll.substring(0,endIndex-startIndex));
         }  
         hash.clear();  
-        return UnicodeUtils.stringToUnicode(buffer.toString());  
+        return buffer.toString();  
     } 
     
     /** 
