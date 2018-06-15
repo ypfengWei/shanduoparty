@@ -33,11 +33,19 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private VipService vipService;
 	
-	/*
+	/**
+	 * 获得创群的次数
 	 * 群类型:1.200群，2.500人群，3.1000人群
 	 * 普通用户 2*200
 	 * vip 5*200 2*500
 	 * svip 5*200 3*500 2*1000
+	 * @Title: getGroupCount
+	 * @Description: TODO
+	 * @param @param vip
+	 * @param @param groupType
+	 * @param @return
+	 * @return int
+	 * @throws
 	 */
 	public int getGroupCount(Integer vip, String groupType) {
 		if(vip == 0) {

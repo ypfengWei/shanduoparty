@@ -243,7 +243,8 @@ public class MoneyServiceImpl implements MoneyService {
 					if(svip != null) {
 						String vipEndDate =  format.format(svip.getVipEndTime());
 						if(vipEndDate.equals(yesterday)) {
-							Integer refresh = Integer.parseInt(vip.getRemarks());//保存的刷新次数
+							//保存的刷新次数
+							Integer refresh = Integer.parseInt(vip.getRemarks());
 							updateRefresh(vip.getUserId(), refresh);
 							log.info(userId+"svip过期重置刷新次数为上次开通svip前的vip剩余次数");
 						}

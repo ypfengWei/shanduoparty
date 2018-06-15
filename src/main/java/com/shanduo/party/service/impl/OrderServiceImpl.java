@@ -26,7 +26,7 @@ import com.shanduo.party.util.UUIDGenerator;
  *
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class OrderServiceImpl implements OrderService {
 
 	private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);

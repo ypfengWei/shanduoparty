@@ -24,5 +24,14 @@ public interface PictureService {
 	 */
 	String savePicture(Integer userId,List<String> urlList);
 	
+	/**
+	 * 查找单张图片
+	 * @Title: selectByPictureId
+	 * @Description: TODO
+	 * @param @param pictureId 图片ID
+	 * @param @return
+	 * @return String
+	 * @throws
+	 */
 	String selectByPictureId(String pictureId);
 }

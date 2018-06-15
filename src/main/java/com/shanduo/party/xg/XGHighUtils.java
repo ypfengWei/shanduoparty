@@ -242,6 +242,7 @@ public class XGHighUtils {
 	 * @throws
 	 */
 	public String isError(JSONObject resultJson) throws JSONException {
+		System.out.println(resultJson.toString());
 		if(resultJson.getInt("ret_code") != 0) {
   	  		return "ok";
   	  	}

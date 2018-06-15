@@ -44,6 +44,8 @@ public interface DynamicService {
 	 * @Title: attentionList
 	 * @Description: TODO
 	 * @param @param userId 用户ID
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
 	 * @param @param pageNum 页码
 	 * @param @param pageSize 记录数
 	 * @param @return

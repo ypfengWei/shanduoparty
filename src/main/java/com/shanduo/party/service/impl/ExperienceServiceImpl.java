@@ -213,11 +213,12 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Override
 	public int weekSignInCount(Integer userId) {
 		Date time = new Date();
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");//设置时间格式  
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();  
         cal.setTime(time);
         //判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了  
-        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);//获得当前日期是一个星期的第几天  
+        //获得当前日期是一个星期的第几天 
+        int dayWeek = cal.get(Calendar.DAY_OF_WEEK); 
         if(1 == dayWeek) {
           cal.add(Calendar.DAY_OF_MONTH, -1);
         }

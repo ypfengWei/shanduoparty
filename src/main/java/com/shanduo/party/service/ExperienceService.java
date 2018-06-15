@@ -18,6 +18,7 @@ public interface ExperienceService {
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param moneyType 记录类型
+	 * @param @param amount 对应数量
 	 * @param @param remarks 备注
 	 * @param @return
 	 * @return int

@@ -80,9 +80,10 @@ public interface UserService {
 	 * 查询用户详细资料
 	 * @Title: selectById
 	 * @Description: TODO
+	 * @param @param token
 	 * @param @param userId
 	 * @param @return
-	 * @return Map<String,Object>
+	 * @return TokenInfo
 	 * @throws
 	 */
 	TokenInfo selectById(String token,Integer userId);
@@ -184,7 +185,8 @@ public interface UserService {
 	 * 搜索用户
 	 * @Title: seekUser
 	 * @Description: TODO
-	 * @param @param query 搜索内容
+	 * @param @param userId 操作的用户ID
+	 * @param @param query 查询条件
 	 * @param @return
 	 * @return List<Map<String,Object>>
 	 * @throws
