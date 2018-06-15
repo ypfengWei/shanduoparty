@@ -398,7 +398,7 @@ public class ActivityController {
 			String gender = activityService.selectByUserId(userToken); //查询当前用户的性别
 			ActivityRequirement activityRequirement = activityService.selectByNumber(activityId); //查询活动要求的男女生人数
 			int count = activityService.selectByGenders(activityId, gender); //根据活动id和用户性别查询参加总人数
-			if(gender.equals("1")) { //当前用户为男
+			if("1".equals(gender)) { //当前用户为男
 				int manNumber = activityRequirement.getManNumber();
 				if(manNumber < 1) {
 					log.error("不需要男生");
