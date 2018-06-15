@@ -67,7 +67,7 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Override
 	public int updateActivityScore(Integer userId, String activityId, Integer score, String evaluationcontent) {
-		String content = SensitiveWord.filterInfo(evaluationcontent);
+		String content = SensitiveWord.unicodeInfo(evaluationcontent);
 		int i = activityScoreMapper.updateByUserIdTwo(userId,activityId,score,content);
 		if (i < 1) {
 			log.error("评价失败");
@@ -97,7 +97,7 @@ public class ScoreServiceImpl implements ScoreService {
 				log.error("评价用户为空");
 				throw new RuntimeException();
 			}
-			String evaluated = SensitiveWord.filterInfo(map.get("evaluated").toString());
+			String evaluated = SensitiveWord.unicodeInfo(map.get("evaluated").toString());
 			int n = activityScoreMapper.updateByUserId(userId, activityId, score, evaluated);
 			if (n < 1) {
 				log.error("评价失败");
@@ -345,12 +345,7 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Override
 	public int updateReputation(String activityId, String type, String dynamicId) {
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		if(StringUtils.isNull(activityId)) {
-			list = recordMapper.selectByDynamicId(dynamicId);
-		} else {
-			list = recordMapper.selectReportId(activityId);
-		}
+		List<Map<String, Object>> list = recordMapper.selectReportId(activityId, dynamicId);
 		int reputation = 0;
 		int reportId = 0;
 		for (Map<String, Object> map : list) {
@@ -381,12 +376,7 @@ public class ScoreServiceImpl implements ScoreService {
 				throw new RuntimeException();
 			}
 		}
-		int i = 0;
-		if(StringUtils.isNull(activityId)) {
-			i = recordMapper.updateByDynamicId(dynamicId);
-		} else {
-			i = recordMapper.updateByActivityId(activityId);
-		}
+		int i = recordMapper.deleteCount(activityId, dynamicId);
 		if(i < 1) {
 			log.error("删除举报记录失败");
 			throw new RuntimeException();
@@ -415,13 +405,8 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 
 	@Override
-	public String selectId(String activityId, Integer userId) {
-		return recordMapper.selectId(activityId, userId);
-	}
-
-	@Override
-	public String selectIds(String dynamicId, Integer userId) {
-		return recordMapper.selectId(dynamicId, userId);
+	public String selectId(String activityId, String dynamicId, String typeId, Integer userId) {
+		return recordMapper.selectId(activityId, dynamicId, typeId, userId);
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public interface ScoreService {
 	int updateByIdTime(String time);
 	
 	/**
-	 * 修改会员成长值
+	 * 修改信誉
 	 * @Title: updateByReputation
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @return    设定文件
@@ -137,28 +137,18 @@ public interface ScoreService {
 	int report(Integer userId, String activityId, String dynamicId, String typeId, String remarks);
 	
 	/**
-	 * 根据活动id以及用户id查询举报信息
+	 * 根据活动id或者动态id以及用户id查询举报信息
 	 * @Title: selectId
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param activityId
-	 * @param @param userId
-	 * @param @return    设定文件
-	 * @return String    返回类型
-	 * @throws
-	 */
-	String selectId(String activityId, Integer userId);
-	
-	/**
-	 * 根据动态id以及用户id查询举报信息
-	 * @Title: selectIds
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param dynamicId
+	 * @param @param typeId
 	 * @param @param userId
 	 * @param @return    设定文件
 	 * @return String    返回类型
 	 * @throws
 	 */
-	String selectIds(String dynamicId, Integer userId);
+	String selectId(String activityId, String dynamicId, String typeId, Integer userId);
 	
 	/**
 	 * 举报记录

@@ -123,27 +123,26 @@ public class ReputationController {
 			log.error("类型错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
 		}
+		if(StringUtils.isNull(remarks)) {
+			log.error("举报内容为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报内容不能为空");
+		}
 		String id = null;
 		if("1".equals(typeId)) {
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动为空");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动为空");
 			}
-			id = scoreService.selectId(activityId, userToken);
-			if(!StringUtils.isNull(id)) {
-				log.error("您已举报该活动");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该活动");
-			}
 		} else {
 			if(StringUtils.isNull(dynamicId)) {
 				log.error("动态为空");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"动态为空");
 			}
-			id = scoreService.selectIds(dynamicId, userToken);
-			if(!StringUtils.isNull(id)) {
-				log.error("您已举报该动态");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该动态");
-			}
+		}
+		id = scoreService.selectId(activityId, dynamicId, typeId, userToken);
+		if(!StringUtils.isNull(id)) {
+			log.error("已举报");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"已举报");
 		}
 		try {
 			scoreService.report(userToken, activityId, dynamicId, typeId, remarks);
