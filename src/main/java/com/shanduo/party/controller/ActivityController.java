@@ -301,7 +301,7 @@ public class ActivityController {
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		int joinActivity = 0;
 		if(StringUtils.isNull(token)) {
 			joinActivity = 2;
@@ -518,7 +518,7 @@ public class ActivityController {
 			log.error("活动ID为空");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
 		}
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		if(StringUtils.isNull(token)) {
 			resultMap = activityService.selectByActivityIds(activityId, null);
 		} else {

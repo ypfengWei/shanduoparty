@@ -72,7 +72,7 @@ public class ReputationController {
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Integer userToken = baseService.checkUserToken(token);
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(4);
 		if(StringUtils.isNull(userId)) {
 			if (userToken == null) {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -119,10 +119,6 @@ public class ReputationController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-//		if(StringUtils.isNull(userId)) {
-//			log.error("举报者id为空");
-//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报者id为空");
-//		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");

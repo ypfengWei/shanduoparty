@@ -513,8 +513,8 @@
     sa.lon,sa.lat
   	from shanduo_activity sa
   	join activity_requirement ar on sa.id = ar.activity_id 
-    join shanduo_user su on sa.user_id = su.id 
-  	where sa.activity_name 
+    join shanduo_user su on sa.user_id = su.id
+  	where sa.activity_name
   	like "%"#{0}"%" 
   	and sa.del_flag = '0' and ar.del_flag = '0' 
 	and su.del_flag = '0' and activity_start_time &gt; now()

@@ -119,7 +119,7 @@ public class ScoreServiceImpl implements ScoreService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum() - 1) * page.getPageSize();
 		List<ActivityScore> activityScores = activityScoreMapper.selectByIdScore(userId, pageNum, page.getPageSize());
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", activityScores);
@@ -227,35 +227,37 @@ public class ScoreServiceImpl implements ScoreService {
 		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //发布的活动与评价
 		List<Map<String, Object>> activityList = new ArrayList<Map<String, Object>>();
 		Set<String> activityIdSet = new HashSet<String>();
-		Map<String, Object> InitiatorMap = new HashMap<String, Object>();
+		Map<String, Object> InitiatorMap = new HashMap<String, Object>(8);
 		List<Map<String, Object>> ScoreMapList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> maps : list) {
-			if(activityIdSet.contains(maps.get("id").toString())) {
-				if(maps.get("uid").equals(userId)) {
-					getInitiatorMap(InitiatorMap, maps, userId);
+			if(activityIdSet.contains(maps.get("id").toString())) { //activityList中有活动id
+				if(maps.get("uid").equals(userId)) { //用户为发起者
+					getInitiatorMap(InitiatorMap, maps, userId); //得到活动信息
 				} else {
-					getScoreMap(maps).clear();
-					ScoreMapList.add(getScoreMap(maps));
+					getScoreMap(maps).clear(); //清除上一条评论信息
+					ScoreMapList.add(getScoreMap(maps)); //用户为参与者，添加评论信息到ScoreMapList中
 				}
-			} else {
-				activityIdSet.add(maps.get("id").toString());
-				if(!InitiatorMap.isEmpty()) {
+			} else { //activityList中没有活动id
+				activityIdSet.add(maps.get("id").toString()); //给activityList赋活动Id的值
+				if(!InitiatorMap.isEmpty()) { //活动信息不为空循环获取评论信息到ScoreMapLists
 					List<Map<String, Object>> ScoreMapLists = new ArrayList<Map<String, Object>>();
 					for(Map<String, Object> scoremap : ScoreMapList){
-						Map<String, Object> newscoremap = new HashMap<String, Object>();
-						newscoremap.put("head_portrait_id", scoremap.get("head_portrait_id"));
-						newscoremap.put("score", scoremap.get("score"));
-						newscoremap.put("evaluation_content", scoremap.get("evaluation_content"));
-						newscoremap.put("others_score", scoremap.get("others_score"));
-						newscoremap.put("be_evaluated", scoremap.get("be_evaluated"));
-						newscoremap.put("user_name", scoremap.get("user_name"));
+						Map<String, Object> newscoremap = new HashMap<String, Object>(6);
+//						newscoremap.put("head_portrait_id", scoremap.get("head_portrait_id"));
+//						newscoremap.put("score", scoremap.get("score"));
+//						newscoremap.put("evaluation_content", scoremap.get("evaluation_content"));
+//						newscoremap.put("others_score", scoremap.get("others_score"));
+//						newscoremap.put("be_evaluated", scoremap.get("be_evaluated"));
+//						newscoremap.put("user_name", scoremap.get("user_name"));
+						newscoremap.putAll(scoremap);
 						ScoreMapLists.add(newscoremap);
 					}
-					Map<String, Object> InitiatorMaps = new HashMap<>();
+					//将单个活动信息和此活动下的评论信息放在InitiatorMaps中代表一个整体
+					Map<String, Object> InitiatorMaps = new HashMap<String, Object>(2); 
 					InitiatorMaps.putAll(InitiatorMap);
 					InitiatorMaps.put("scoreList", ScoreMapLists);
 					activityList.add(InitiatorMaps);
-					ScoreMapList.clear();
+					ScoreMapList.clear();//清除上一个活动所有评论信息
 					InitiatorMap.clear();//清除上一个活动的信息
 				}
 				if(maps.get("uid").equals(userId)) {
@@ -268,7 +270,7 @@ public class ScoreServiceImpl implements ScoreService {
 		}
 		InitiatorMap.put("scoreList", ScoreMapList);
 		activityList.add(InitiatorMap);
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(4);
 		resultMap.put("map", map);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
@@ -285,7 +287,7 @@ public class ScoreServiceImpl implements ScoreService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> list = activityScoreMapper.selectActivitys(userId, pageNum, page.getPageSize()); //参与的活动
-		List<Map<String, Object>> scoreList = new ArrayList<>();
+		List<Map<String, Object>> scoreList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> maps : list) {
 			maps.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString()));
 			maps.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString()));
@@ -297,7 +299,7 @@ public class ScoreServiceImpl implements ScoreService {
 			}
 			maps.put("scoreList", scoreList);
 		}
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(4);
 		resultMap.put("map", map);
 		resultMap.put("list", list);
 		resultMap.put("page", page.getPageNum());
@@ -318,7 +320,7 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 	
 	public Map<String, Object> getScoreMap(Map<String, Object> maps){
-		Map<String, Object> ScoreMap = new HashMap<String, Object>();
+		Map<String, Object> ScoreMap = new HashMap<String, Object>(6);
 		ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //参与者头像
 		ScoreMap.put("score", maps.get("score")); //参与者评分
 		ScoreMap.put("evaluation_content", maps.get("evaluation_content")); //参与者评价
@@ -334,7 +336,7 @@ public class ScoreServiceImpl implements ScoreService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> list = recordMapper.selectInfo(typeId, pageNum, page.getPageSize()); //举报的活动或动态
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("list", list);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());

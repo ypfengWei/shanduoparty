@@ -101,7 +101,7 @@ public class ActivityServiceImpl implements ActivityService {
 				activityInfo.setTypeId(3);//发起者已评价
 			}
 		}
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -124,7 +124,7 @@ public class ActivityServiceImpl implements ActivityService {
 				map.put("joinActivity", joinActivity);
 			}
 		}
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -211,7 +211,7 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByScore(pageNum,page.getPageSize());
 		activity(resultList, lon, lat, 0);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -225,7 +225,7 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByFriendsUserId(userId, pageNum, page.getPageSize());
 		activity(resultList, lon, lat, 0);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -244,7 +244,7 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByNearbyUserId(lons, lats, pageNum, page.getPageSize());
 		activity(resultList, lon, lat, 0);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -258,7 +258,7 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserId(userId, pageNum, page.getPageSize());
 		activity(resultList, lon, lat,1);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -320,7 +320,7 @@ public class ActivityServiceImpl implements ActivityService {
 			activityInfo.setTypeId(9);
 		}
 		activity(resultList, lon, lat, 0);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -341,7 +341,7 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 		}
 		activity(resultList, lon, lat, 0);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -354,7 +354,7 @@ public class ActivityServiceImpl implements ActivityService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByHistorical(userId, pageNum, page.getPageSize());
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", resultList);
@@ -424,55 +424,58 @@ public class ActivityServiceImpl implements ActivityService {
 			double location = LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), activityInfo.getLon(), activityInfo.getLat());
 			activityInfo.setLocation(location);
 		}
-		activityInfo.setLevel(experienceService.selectLevel(activityInfo.getUserId()));
-    	activityInfo.setVipGrade(vipService.selectVipLevel(activityInfo.getUserId()));
+		int userId = activityInfo.getUserId();
+		activityInfo.setLevel(experienceService.selectLevel(userId));
+    	activityInfo.setVipGrade(vipService.selectVipLevel(userId));
     	List<Map<String, Object>> resultMap = activityScoreMapper.selectByGender(activityInfo.getId());//获取男女生参与活动的人数
+    	String womanNumber = activityInfo.getWomanNumber();
+    	String manNumber = activityInfo.getManNumber();
 		if(resultMap != null) {
 			for (Map<String, Object> map : resultMap) {
 				int count = Integer.parseInt(map.get("count").toString());
     			if(count < 10) {
     			    if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
-    			    	if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+    			    	if(0 < Integer.parseInt(womanNumber) && Integer.parseInt(womanNumber) < 10) {
     			    		//如果参加的女生人数以及活动要求的女生人数小于10则在前面加0
-    			    		activityInfo.setWomanNumber("0"+count+"/"+"0"+activityInfo.getWomanNumber());
+    			    		activityInfo.setWomanNumber("0"+count+"/"+"0"+womanNumber);
     					} else {
     						//如果参加的女生人数小于10，活动要求的女生人数大于10则在参加的女生人数前面加0
-     						activityInfo.setWomanNumber("0"+count+"/"+activityInfo.getWomanNumber());
+     						activityInfo.setWomanNumber("0"+count+"/"+womanNumber);
      					}
      				}else {//参加活动的男生人数
-     					if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+     					if(0 < Integer.parseInt(manNumber) && Integer.parseInt(manNumber) < 10) {
      						//如果参加的男生人数以及活动要求的男生人数小于10则在前面加0
-     			    		activityInfo.setManNumber("0"+count+"/"+"0"+activityInfo.getManNumber());
+     			    		activityInfo.setManNumber("0"+count+"/"+"0"+manNumber);
      					} else {
      						//如果参加的男生人数小于10，活动要求的男生人数大于10则在参加的女生人数前面加0
-     						activityInfo.setManNumber("0"+count+"/"+activityInfo.getManNumber());
+     						activityInfo.setManNumber("0"+count+"/"+manNumber);
      					}
      				}
     			} else { //因为参加的人数不能大于活动要求的人数，故不做其他限制
 	    			if(map.get("gender").toString().equals("1")) { //参加活动的男生人数
 	    				//如果参加的男生人数大于10则不做改变
-				    	activityInfo.setManNumber(count+"/"+activityInfo.getManNumber());
+				    	activityInfo.setManNumber(count+"/"+manNumber);
 	 				}
 	 				if(map.get("gender").toString().equals("0")) { //参加活动的女生人数
 	 					//如果参加的女生人数大于10则不做改变
-	 					activityInfo.setWomanNumber(count+"/"+activityInfo.getWomanNumber());
+	 					activityInfo.setWomanNumber(count+"/"+womanNumber);
 	    			} 
     			}
 			}
 		}
 		//参加人数为0
-		if(activityInfo.getManNumber().matches("^\\d+$")) {
-			if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
-				activityInfo.setManNumber("0/"+"0"+activityInfo.getManNumber());
+		if(manNumber.matches("^\\d+$")) {
+			if(0 < Integer.parseInt(manNumber) && Integer.parseInt(manNumber) < 10) {
+				activityInfo.setManNumber("0/"+"0"+manNumber);
 			} else{
-				activityInfo.setManNumber("0/"+activityInfo.getManNumber());
+				activityInfo.setManNumber("0/"+manNumber);
 			}
 		}
-		if(activityInfo.getWomanNumber().matches("^\\d+$")) {
-			if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
-				activityInfo.setWomanNumber("0/"+"0"+activityInfo.getWomanNumber());
+		if(womanNumber.matches("^\\d+$")) {
+			if(0 < Integer.parseInt(womanNumber) && Integer.parseInt(womanNumber) < 10) {
+				activityInfo.setWomanNumber("0/"+"0"+womanNumber);
 			} else {
-				activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
+				activityInfo.setWomanNumber("0/"+womanNumber);
 			}
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
@@ -532,7 +535,7 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		showActivity(activityInfo, null, null, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		int joinActivity = 0;
 		for (Map<String, Object> map : resultList) {
 			if(userId != null && map.get("id").equals(userId)) {
@@ -553,7 +556,7 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> list = shanduoActivityMapper.selectQuery(query, pageNum, page.getPageSize());
 		activity(list, lon, lat, 0);
-		Map<String, Object> resultMap = new HashMap<>(3);
+		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("list", list);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());

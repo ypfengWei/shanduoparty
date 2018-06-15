@@ -55,13 +55,14 @@ public class VipServiceImpl implements VipService {
 //		} catch (ParseException e) {
 //			throw new RuntimeException();
 //		}
+		Date endDate = getDate(date, month);
 		if(userVip == null) {
 			userVip = new ShanduoVip();
 			userVip.setId(UUIDGenerator.getUUID());
 			userVip.setUserId(userId);
 			userVip.setVipType(vipType);
 			userVip.setVipStartTime(date);
-			userVip.setVipEndTime(getDate(date, month));
+			userVip.setVipEndTime(endDate);
 			int i = vipMapper.insertSelective(userVip);
 			if (i < 1) {
 				log.error("开通会员失败");
@@ -69,7 +70,7 @@ public class VipServiceImpl implements VipService {
 			}
 		}else {
 			userVip.setVipStartTime(date);
-			userVip.setVipEndTime(getDate(date, month));
+			userVip.setVipEndTime(endDate);
 			int i = vipMapper.updateByPrimaryKeySelective(userVip);
 			if (i < 1) {
 				log.error("重新开通会员失败");
