@@ -227,21 +227,21 @@ public class ScoreServiceImpl implements ScoreService {
 		List<Map<String, Object>> list = activityScoreMapper.selectActivity(userId, pageNum, page.getPageSize()); //发布的活动与评价
 		List<Map<String, Object>> activityList = new ArrayList<Map<String, Object>>();
 		Set<String> activityIdSet = new HashSet<String>();
-		Map<String, Object> InitiatorMap = new HashMap<String, Object>(8);
-		List<Map<String, Object>> ScoreMapList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> initiatorMap = new HashMap<String, Object>(8);
+		List<Map<String, Object>> scoreMapList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> maps : list) {
 			if(activityIdSet.contains(maps.get("id").toString())) { //activityList中有活动id
 				if(maps.get("uid").equals(userId)) { //用户为发起者
-					getInitiatorMap(InitiatorMap, maps, userId); //得到活动信息
+					getInitiatorMap(initiatorMap, maps, userId); //得到活动信息
 				} else {
 					getScoreMap(maps).clear(); //清除上一条评论信息
-					ScoreMapList.add(getScoreMap(maps)); //用户为参与者，添加评论信息到ScoreMapList中
+					scoreMapList.add(getScoreMap(maps)); //用户为参与者，添加评论信息到ScoreMapList中
 				}
 			} else { //activityList中没有活动id
 				activityIdSet.add(maps.get("id").toString()); //给activityList赋活动Id的值
-				if(!InitiatorMap.isEmpty()) { //活动信息不为空循环获取评论信息到ScoreMapLists
-					List<Map<String, Object>> ScoreMapLists = new ArrayList<Map<String, Object>>();
-					for(Map<String, Object> scoremap : ScoreMapList){
+				if(!initiatorMap.isEmpty()) { //活动信息不为空循环获取评论信息到ScoreMapLists
+					List<Map<String, Object>> scoreMapLists = new ArrayList<Map<String, Object>>();
+					for(Map<String, Object> scoremap : scoreMapList){
 						Map<String, Object> newscoremap = new HashMap<String, Object>(6);
 //						newscoremap.put("head_portrait_id", scoremap.get("head_portrait_id"));
 //						newscoremap.put("score", scoremap.get("score"));
@@ -250,26 +250,26 @@ public class ScoreServiceImpl implements ScoreService {
 //						newscoremap.put("be_evaluated", scoremap.get("be_evaluated"));
 //						newscoremap.put("user_name", scoremap.get("user_name"));
 						newscoremap.putAll(scoremap);
-						ScoreMapLists.add(newscoremap);
+						scoreMapLists.add(newscoremap);
 					}
 					//将单个活动信息和此活动下的评论信息放在InitiatorMaps中代表一个整体
-					Map<String, Object> InitiatorMaps = new HashMap<String, Object>(2); 
-					InitiatorMaps.putAll(InitiatorMap);
-					InitiatorMaps.put("scoreList", ScoreMapLists);
-					activityList.add(InitiatorMaps);
-					ScoreMapList.clear();//清除上一个活动所有评论信息
-					InitiatorMap.clear();//清除上一个活动的信息
+					Map<String, Object> initiatorMaps = new HashMap<String, Object>(2); 
+					initiatorMaps.putAll(initiatorMap);
+					initiatorMaps.put("scoreList", scoreMapLists);
+					activityList.add(initiatorMaps);
+					scoreMapList.clear();//清除上一个活动所有评论信息
+					initiatorMap.clear();//清除上一个活动的信息
 				}
 				if(maps.get("uid").equals(userId)) {
-					getInitiatorMap(InitiatorMap, maps, userId);
+					getInitiatorMap(initiatorMap, maps, userId);
 				} else {
 					getScoreMap(maps).clear();
-					ScoreMapList.add(getScoreMap(maps));
+					scoreMapList.add(getScoreMap(maps));
 				}
 			}
 		}
-		InitiatorMap.put("scoreList", ScoreMapList);
-		activityList.add(InitiatorMap);
+		initiatorMap.put("scoreList", scoreMapList);
+		activityList.add(initiatorMap);
 		Map<String, Object> resultMap = new HashMap<String, Object>(4);
 		resultMap.put("map", map);
 		resultMap.put("page", page.getPageNum());
@@ -294,8 +294,8 @@ public class ScoreServiceImpl implements ScoreService {
 			maps.put("vipGrade",vipService.selectVipLevel(userId));
 			String activityId = maps.get("id").toString();
 			scoreList = activityScoreMapper.selectScore(activityId);//活动下的发起人评分
-			for (Map<String, Object> ScoreMap : scoreList) {
-				ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(ScoreMap.get("head_portrait_id").toString()));
+			for (Map<String, Object> scoreMap : scoreList) {
+				scoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(scoreMap.get("head_portrait_id").toString()));
 			}
 			maps.put("scoreList", scoreList);
 		}
@@ -307,27 +307,27 @@ public class ScoreServiceImpl implements ScoreService {
 		return resultMap;
 	}
 	
-	public Map<String, Object> getInitiatorMap(Map<String, Object> InitiatorMap,Map<String, Object> maps, Integer userId){
-		InitiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString())); //年龄
-		InitiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
-		InitiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //发起者头像
-		InitiatorMap.put("user_name",maps.get("user_name")); //发起者名称
-		InitiatorMap.put("uid",maps.get("uid")); //发起者id
-		InitiatorMap.put("mode",maps.get("mode")); //活动支付方式
-		InitiatorMap.put("id",maps.get("id"));	//活动Id
-		InitiatorMap.put("activity_name",maps.get("activity_name")); //活动名称
-		return InitiatorMap;
+	public Map<String, Object> getInitiatorMap(Map<String, Object> initiatorMap,Map<String, Object> maps, Integer userId){
+		initiatorMap.put("birthday", AgeUtils.getAgeFromBirthTime(maps.get("birthday").toString())); //年龄
+		initiatorMap.put("vipGrade",vipService.selectVipLevel(userId)); //vip等级
+		initiatorMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //发起者头像
+		initiatorMap.put("user_name",maps.get("user_name")); //发起者名称
+		initiatorMap.put("uid",maps.get("uid")); //发起者id
+		initiatorMap.put("mode",maps.get("mode")); //活动支付方式
+		initiatorMap.put("id",maps.get("id"));	//活动Id
+		initiatorMap.put("activity_name",maps.get("activity_name")); //活动名称
+		return initiatorMap;
 	}
 	
 	public Map<String, Object> getScoreMap(Map<String, Object> maps){
-		Map<String, Object> ScoreMap = new HashMap<String, Object>(6);
-		ScoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //参与者头像
-		ScoreMap.put("score", maps.get("score")); //参与者评分
-		ScoreMap.put("evaluation_content", maps.get("evaluation_content")); //参与者评价
-		ScoreMap.put("others_score", maps.get("others_score")); //发起者评分
-		ScoreMap.put("be_evaluated", maps.get("be_evaluated")); //发起者评价
-		ScoreMap.put("user_name", maps.get("user_name")); //参与者名称
-		return ScoreMap;
+		Map<String, Object> scoreMap = new HashMap<String, Object>(6);
+		scoreMap.put("head_portrait_id", PictureUtils.getPictureUrl(maps.get("head_portrait_id").toString())); //参与者头像
+		scoreMap.put("score", maps.get("score")); //参与者评分
+		scoreMap.put("evaluation_content", maps.get("evaluation_content")); //参与者评价
+		scoreMap.put("others_score", maps.get("others_score")); //发起者评分
+		scoreMap.put("be_evaluated", maps.get("be_evaluated")); //发起者评价
+		scoreMap.put("user_name", maps.get("user_name")); //参与者名称
+		return scoreMap;
 	}
  
 	@Override
@@ -430,9 +430,9 @@ public class ScoreServiceImpl implements ScoreService {
 		if(activityIds != null) {
 			for(Map<String,Object> maps:activityIds){
 				String activityId = maps.get("id").toString();
-				Map<String, Object> ScoreRecords = shanduoActivityMapper.numberScore(activityId);
-				int join = Integer.parseInt(ScoreRecords.get("number").toString()); //参加记录
-				int scoreCount = Integer.parseInt(ScoreRecords.get("score").toString()); //评分记录
+				Map<String, Object> scoreRecords = shanduoActivityMapper.numberScore(activityId);
+				int join = Integer.parseInt(scoreRecords.get("number").toString()); //参加记录
+				int scoreCount = Integer.parseInt(scoreRecords.get("score").toString()); //评分记录
 				if(join != 0) {
 					if(join == scoreCount) { //如果参与的人全部评价完
 						List<Map<String, Object>> scores = shanduoActivityMapper.selectScore(activityId); //查询活动下的评分信息

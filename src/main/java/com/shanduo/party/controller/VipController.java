@@ -17,8 +17,16 @@ import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.VipService;
 
+/**
+ * vip控制层
+ * @ClassName: VipController
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author lishan
+ * @date 2018年6月15日 下午3:30:49
+ *
+ */
 @Controller
-@RequestMapping(value = "activity")
+@RequestMapping(value = "vip")
 public class VipController {
 	
 	private static final Logger log = LoggerFactory.getLogger(VipController.class);
