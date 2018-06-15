@@ -201,6 +201,8 @@ public class OrderServiceImpl implements OrderService {
 					throw new RuntimeException();
 				}
 				break;
+			default:
+				break;
 		}
 		//修改订单状态
 		UserOrder order = new UserOrder();

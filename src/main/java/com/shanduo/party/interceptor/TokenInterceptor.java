@@ -16,9 +16,9 @@ import com.shanduo.party.entity.common.ErrorBean;
 import net.sf.json.JSONObject;
 
 /**
- * 过滤token
+ * token拦截器
  * @ClassName: TokenInterceptor
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: TODO
  * @author fanshixin
  * @date 2018年4月21日 下午3:22:26
  *
@@ -33,7 +33,6 @@ public class TokenInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		boolean check = false;
-//		log.info("token拦截中");
 		ErrorBean errorBean = new ErrorBean();
 		String token = request.getParameter("token");
 		if ("".equals(token) || token == null) {

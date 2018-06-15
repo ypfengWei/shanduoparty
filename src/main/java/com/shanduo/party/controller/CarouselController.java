@@ -32,8 +32,6 @@ public class CarouselController {
 
 	private static final Logger log = LoggerFactory.getLogger(CarouselController.class);
 	
-//	@Autowired
-//	private BaseService baseService;
 	@Autowired
 	private CarouselService carouselService;
 	

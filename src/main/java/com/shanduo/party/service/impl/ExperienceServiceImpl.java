@@ -126,42 +126,44 @@ public class ExperienceServiceImpl implements ExperienceService {
 			rate = rate.add(new BigDecimal("0.1"));
 		}
 		switch (moneyType) {
-		case "0":
-			//每个星期第1次签到
-			rate = rate.multiply(new BigDecimal("10"));
-			break;
-		case "1":
-			rate = rate.multiply(new BigDecimal("15"));
-			//每个星期第3次签到
-			break;
-		case "2":
-			rate = rate.multiply(new BigDecimal("20"));
-			//每个星期第5次签到
-			break;
-		case "3":
-			rate = rate.multiply(new BigDecimal("25"));
-			//每个星期第6次签到
-			break;
-		case "4":
-			//发表动态
-			rate = rate.multiply(new BigDecimal("5"));
-			break;
-		case "5":
-			//发起活动
-			rate = rate.multiply(new BigDecimal("20"));
-			break;
-		case "6":
-			//动态点赞
-			rate = rate.multiply(new BigDecimal("1"));
-			break;
-		case "7":
-			//动态评论
-			rate = rate.multiply(new BigDecimal("2"));
-			break;
-		case "8":
-			//参加活动
-			rate = rate.multiply(new BigDecimal("10"));
-			break;
+			case "0":
+				//每个星期第1次签到
+				rate = rate.multiply(new BigDecimal("10"));
+				break;
+			case "1":
+				rate = rate.multiply(new BigDecimal("15"));
+				//每个星期第3次签到
+				break;
+			case "2":
+				rate = rate.multiply(new BigDecimal("20"));
+				//每个星期第5次签到
+				break;
+			case "3":
+				rate = rate.multiply(new BigDecimal("25"));
+				//每个星期第6次签到
+				break;
+			case "4":
+				//发表动态
+				rate = rate.multiply(new BigDecimal("5"));
+				break;
+			case "5":
+				//发起活动
+				rate = rate.multiply(new BigDecimal("20"));
+				break;
+			case "6":
+				//动态点赞
+				rate = rate.multiply(new BigDecimal("1"));
+				break;
+			case "7":
+				//动态评论
+				rate = rate.multiply(new BigDecimal("2"));
+				break;
+			case "8":
+				//参加活动
+				rate = rate.multiply(new BigDecimal("10"));
+				break;
+			default:
+				break;
 		}
 		rate = rate.setScale(0,BigDecimal.ROUND_HALF_UP);
 		return rate.intValue();

@@ -15,7 +15,7 @@ import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
 import com.shanduo.party.entity.service.TokenInfo;
-import com.shanduo.party.im.TXCloudUtil;
+import com.shanduo.party.im.ImUtils;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.mapper.ShanduoReputationMapper;
 import com.shanduo.party.mapper.ShanduoUserMapper;
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException();
 		}
 		//向IM导入账号
-		TXCloudUtil.accountImport(userId+"", name);
+		ImUtils.accountImport(userId+"", name);
 	}
 	
 	@Override
@@ -158,11 +158,7 @@ public class UserServiceImpl implements UserService {
 		if(user == null) {
 			return null;
 		}
-		String token = savaToken(user.getId());
-		if(StringUtils.isNull(token)) {
-			return null;
-		}
-		return token;
+		return savaToken(user.getId());
 	}
 
 	@Override
@@ -171,26 +167,23 @@ public class UserServiceImpl implements UserService {
 		if(user == null) {
 			return null;
 		}
-		String token = savaToken(user.getId());
-		if(StringUtils.isNull(token)) {
-			return null;
-		}
-		return token;
+		return savaToken(user.getId());
 	}
 	
 	@Override
-	public TokenInfo selectById(Integer userId) {
+	public TokenInfo selectById(String token,Integer userId) {
 		ShanduoUser user = userMapper.selectByPrimaryKey(userId);
 		if(user == null) {
 			return null;
 		}
-		TokenInfo token = new TokenInfo(user);
-		token.setVip(vipService.selectVipLevel(userId));
-		token.setLevel(experienceService.selectLevel(userId));
-		token.setAttention(attentionService.attentionCount(userId));
-		token.setDynamic(dynamicService.dynamicCount(userId));
-		token.setActivity(activityMapper.selectByUserIdCount(userId));
-		return token;
+		TokenInfo tokens = new TokenInfo(user);
+		tokens.setToken(token);
+		tokens.setVip(vipService.selectVipLevel(userId));
+		tokens.setLevel(experienceService.selectLevel(userId));
+		tokens.setAttention(attentionService.attentionCount(userId));
+		tokens.setDynamic(dynamicService.dynamicCount(userId));
+		tokens.setActivity(activityMapper.selectByUserIdCount(userId));
+		return tokens;
 	}
 	
 	@Override
@@ -273,17 +266,18 @@ public class UserServiceImpl implements UserService {
 		if(!StringUtils.isNull(occupation)) {
 			user.setOccupation(occupation);
 		}
-		if(!StringUtils.isNull(occupation)) {
-			user.setSchool(occupation);
+		if(!StringUtils.isNull(school)) {
+			user.setSchool(school);
 		}
 		int i = userMapper.updateByPrimaryKeySelective(user);
 		if(i < 1) {
 			log.error("修改个人资料失败");
 			throw new RuntimeException();
 		}
-		user = userMapper.selectByPrimaryKey(userId);
 		//向IM修改用户资料
-		TXCloudUtil.setPortrait(user.getId()+"",user.getUserName(),PictureUtils.getPictureUrl(user.getHeadPortraitId()));
+		if(!StringUtils.isNull(name) || !StringUtils.isNull(picture)) {
+			ImUtils.setPortrait(user.getId()+"",user.getUserName(),PictureUtils.getPictureUrl(user.getHeadPortraitId()));
+		}
 		return 1;
 	}
 
@@ -293,7 +287,7 @@ public class UserServiceImpl implements UserService {
 		int i = tokenMapper.insertOrUpdate(token, token, userId);
 		if (i <= 0) {
 			log.error("token生成错误");
-			return "";
+			return null;
 		}
 		return token;
 	}

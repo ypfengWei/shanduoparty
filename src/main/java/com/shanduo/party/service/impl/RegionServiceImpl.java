@@ -125,6 +125,8 @@ public class RegionServiceImpl implements RegionService {
 			case "11":
 				startDate = format.format(time-1000L*60*60*24*30);
 				break;
+			default:
+				break;
 		}
 		List<RegionAgency> list = agencyMapper.agencyList();
 		for (RegionAgency agency : list) {

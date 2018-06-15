@@ -78,7 +78,7 @@ public class PayController {
 		if(flag) {
 			//订单支付状态
 			String tradeStatus = params.get("trade_status");
-			if(!tradeStatus.equals("TRADE_SUCCESS")) {
+			if(!"TRADE_SUCCESS".equals(tradeStatus)) {
 				return "SUCCESS";
 			}
 			//订单号
@@ -154,12 +154,12 @@ public class PayController {
         boolean flag = WxPayUtils.isWechatSigns(resultMap, WxPayConfig.KEY, "utf-8");
         if(flag) {
         	String returnCode = resultMap.get("return_code").toString();
-    		if(!returnCode.equals("SUCCESS")) {
+    		if(!"SUCCESS".equals(returnCode)) {
     			log.error(resultMap.get("return_msg").toString());
     			return returnXML(WxPayConfig.FAIL);
     		}
     		String resultCode = resultMap.get("result_code").toString();
-    		if(!resultCode.equals("SUCCESS")) {
+    		if(!"SUCCESS".equals(resultCode)) {
     			log.error(resultMap.get("err_code_des").toString());
     			return returnXML(WxPayConfig.FAIL);
     		}

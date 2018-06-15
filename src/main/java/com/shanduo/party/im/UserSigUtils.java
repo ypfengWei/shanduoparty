@@ -16,7 +16,7 @@ import com.shanduo.party.im.tls_sigature.GenTLSSignatureResult;
  * @date 2018年5月2日 下午2:39:39
  *
  */
-public class tls_sigUtils {
+public class UserSigUtils {
 
 	/**
 	 * 生成签名

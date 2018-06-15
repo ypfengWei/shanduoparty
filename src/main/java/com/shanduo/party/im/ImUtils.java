@@ -19,9 +19,9 @@ import com.alibaba.fastjson.JSONObject;
  * @date 2018年6月7日 下午2:37:36
  *
  */
-public class TXCloudUtil {
+public class ImUtils {
 	
-	private static final Logger log = LoggerFactory.getLogger(TXCloudUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(ImUtils.class);
 	
 	
 	/**
@@ -39,7 +39,7 @@ public class TXCloudUtil {
 		paramsMap.put("Identifier", userId);
 		paramsMap.put("Nick", name);
 		String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据  
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.accountImport), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.ACCOUNT_IMPORT), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
             return false;
         }
@@ -62,10 +62,12 @@ public class TXCloudUtil {
 		Map<String, Object> paramsMap = new HashMap<String, Object>();
 		paramsMap.put("From_Account", userId);
 		LinkedList<Map<String, String>> friendList = new LinkedList<Map<String, String>>();
-		Map<String, String> paramsName = new HashMap<>();
-		paramsName.put("Tag", "Tag_Profile_IM_Nick");
-		paramsName.put("Value", name);
-		friendList.add(paramsName);
+		if(name != null) {
+			Map<String, String> paramsName = new HashMap<>();
+			paramsName.put("Tag", "Tag_Profile_IM_Nick");
+			paramsName.put("Value", name);
+			friendList.add(paramsName);
+		}
 		if(image != null) {
 			Map<String, String> paramsImage = new HashMap<>();
 			paramsImage.put("Tag", "Tag_Profile_IM_Image");
@@ -74,7 +76,7 @@ public class TXCloudUtil {
 		}
 		paramsMap.put("ProfileItem", friendList);
 		String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.setPortrait), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.PORTRAIT_SET), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
             return false;
         }
@@ -104,7 +106,7 @@ public class TXCloudUtil {
         paramsMap.put("AddType", "Add_Type_Both");//表示双向加好友
         paramsMap.put("ForceAddFlags", 1);//管理员强制加好友
         String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据  
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.addFriend), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.FRIEND_ADD), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
         	String ResultCode =  resultJson.getJSONArray("ResultItem").getJSONObject(0).getString("ResultCode");
         	if("0".equals(ResultCode)) {
@@ -137,7 +139,7 @@ public class TXCloudUtil {
         paramsMap.put("To_Account", friendList);//待删除的好友的Identifier
         paramsMap.put("DeleteType", "Delete_Type_Both");//双向删除好友
         String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.deleteFriend), paramsJson)); 
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.FRIEND_DELETE), paramsJson)); 
         if(resultJson.get("ActionStatus").toString().equals("OK")){
         	String ResultCode =  resultJson.getJSONArray("ResultItem").getJSONObject(0).getString("ResultCode");
         	if("0".equals(ResultCode)) {
@@ -172,7 +174,7 @@ public class TXCloudUtil {
     	paramsMap.put("ResponseFilter", responseFilter);
     	paramsMap.put("Member_Account", userId);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.getGroupList), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_LIST), paramsJson));
     	return resultJson.toString();
     }
     
@@ -196,7 +198,7 @@ public class TXCloudUtil {
     	responseFilter.put("GroupBaseInfoFilter", groupBaseInfoFilter);
     	paramsMap.put("ResponseFilter", responseFilter);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.getGroupInfo), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_INFO), paramsJson));
     	return resultJson.toString();
     }
     
@@ -210,12 +212,17 @@ public class TXCloudUtil {
      * @return boolean
      * @throws
      */
-    public static boolean setGroup(String groupId, String name) {
+    public static boolean setGroup(String groupId, String name,String image) {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	paramsMap.put("GroupId", groupId);
-    	paramsMap.put("Name", name);
+    	if(name != null) {
+    		paramsMap.put("Name", name);
+    	}
+    	if(image != null) {
+    		paramsMap.put("FaceUrl", "https://yapinkeji.com/shanduoparty/picture/"+image);
+    	}
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.setGroup), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.MODIFY_GROUP_BASE_INFO), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
         	return false;
         }
@@ -236,7 +243,7 @@ public class TXCloudUtil {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	paramsMap.put("GroupId", groupId);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
-        JSONObject resultJson = JSON.parseObject(TXCloudHelper.executePost(TXCloudHelper.getUrl(CloudData.delGroup), paramsJson));
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.DESTROY_GROUP), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
         	return false;
         }

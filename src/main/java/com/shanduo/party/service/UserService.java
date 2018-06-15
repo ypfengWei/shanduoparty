@@ -85,7 +85,7 @@ public interface UserService {
 	 * @return Map<String,Object>
 	 * @throws
 	 */
-	TokenInfo selectById(Integer userId);
+	TokenInfo selectById(String token,Integer userId);
 	
 	/**
 	 * 修改绑定手机号

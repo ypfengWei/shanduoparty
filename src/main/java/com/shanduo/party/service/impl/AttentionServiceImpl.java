@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.entity.UserAttention;
 import com.shanduo.party.entity.UserAttentionApply;
-import com.shanduo.party.im.TXCloudUtil;
+import com.shanduo.party.im.ImUtils;
 import com.shanduo.party.mapper.UserAttentionApplyMapper;
 import com.shanduo.party.mapper.UserAttentionMapper;
 import com.shanduo.party.service.AttentionService;
@@ -50,7 +50,7 @@ public class AttentionServiceImpl implements AttentionService {
 		if(attentions == null) {
 			return 0;
 		}
-		if(attentions.getAttentionType().equals("1")) {
+		if("1".equals(attentions.getAttentionType())) {
 			return 1;
 		}
 		return 2;
@@ -58,7 +58,7 @@ public class AttentionServiceImpl implements AttentionService {
 	
 	@Override
 	public int saveAttention(Integer userId, Integer attention) {
-		boolean flag = TXCloudUtil.addFriend(userId+"", attention+"");
+		boolean flag = ImUtils.addFriend(userId+"", attention+"");
 		if(flag) {
 			log.error("IM添加好友失败");
 			throw new RuntimeException();
@@ -199,7 +199,7 @@ public class AttentionServiceImpl implements AttentionService {
 	@Override
 	public int delAttention(Integer userId, Integer attention, String typeId) {
 		if("1".equals(typeId)) {
-			boolean flag = TXCloudUtil.deleteFriend(userId+"", attention+"");
+			boolean flag = ImUtils.deleteFriend(userId+"", attention+"");
 			if(flag) {
 				log.error("IM删除好友失败");
 				throw new RuntimeException();

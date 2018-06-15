@@ -1,5 +1,7 @@
 package com.shanduo.party.timing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import com.shanduo.party.service.MoneyService;
 @Component
 public class RefreshTiming {
 
+	private static final Logger log = LoggerFactory.getLogger(RefreshTiming.class);
 	
 	@Autowired
 	private MoneyService moneyService;
@@ -31,6 +34,7 @@ public class RefreshTiming {
 	 */
 	@Scheduled(cron = "0 0 0 * * ? ")
 	public void updateRefresh() {
+		log.info("重置刷新次数启动");
 		moneyService.updateRefresh();
 	}
 }

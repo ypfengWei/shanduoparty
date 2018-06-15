@@ -10,6 +10,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 过滤器
+ * @ClassName: SimpleCORSFilter
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年6月15日 下午3:01:34
+ *
+ */
 public class SimpleCORSFilter implements Filter {
 
 	public void destroy() {

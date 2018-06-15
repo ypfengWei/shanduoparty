@@ -134,14 +134,14 @@ public class AttentionController {
 		}
 		ShanduoUser user = userService.selectByUserId(attentions);
 		String addition = user.getAddition();
-		if(user.getAddition().equals("0")) {
+		if("0".equals(addition)) {
 			try {
 				attentionService.saveAttention(isUserId, attentions);
 			} catch (Exception e) {
 				log.error("添加好友失败");
 				return new ErrorBean(10003,"添加好友失败");
 			}
-		}else if(addition.equals("1")){
+		}else if("1".equals(addition)){
 			if(attentionService.checkAttentionApply(isUserId, attentions)) {
 				log.error("已经申请");
 				return new ErrorBean(10002,"已经申请");

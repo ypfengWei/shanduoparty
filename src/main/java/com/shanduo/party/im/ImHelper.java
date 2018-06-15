@@ -20,7 +20,7 @@ import org.apache.http.util.EntityUtils;
  * @date 2018年6月7日 下午2:27:18
  *
  */
-public class TXCloudHelper {
+public class ImHelper {
 
 	/**
 	 * 获取url
@@ -32,7 +32,7 @@ public class TXCloudHelper {
 	 * @throws
 	 */
     public static String getUrl(String servicename) {
-        String url = "https://console.tim.qq.com/v4/"+servicename+"?"+"usersig="+tls_sigUtils.getSig(ImConfig.IDENTIFIER)
+        String url = "https://console.tim.qq.com/v4/"+servicename+"?"+"usersig="+UserSigUtils.getSig(ImConfig.IDENTIFIER)
         			 +"&identifier="+ImConfig.IDENTIFIER+"&sdkappid="+ImConfig.APP_ID+"&random="+randomInt()+"&contenttype=json";
         return url;
     }

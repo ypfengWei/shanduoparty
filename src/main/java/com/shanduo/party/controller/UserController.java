@@ -139,12 +139,11 @@ public class UserController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		TokenInfo tokens = userService.selectById(isUserId);
+		TokenInfo tokens = userService.selectById(token,isUserId);
 		if(tokens == null) {
 			log.error("获取用户详细错误");
 			return new ErrorBean(10002,"获取用户详细错误");
 		}
-		tokens.setToken(token);
 		return new SuccessBean(tokens);
 	}
 	

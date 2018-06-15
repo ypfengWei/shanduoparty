@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.entity.UserGroup;
-import com.shanduo.party.im.TXCloudUtil;
+import com.shanduo.party.im.ImUtils;
 import com.shanduo.party.mapper.UserGroupMapper;
 import com.shanduo.party.service.GroupService;
 import com.shanduo.party.service.VipService;
@@ -44,6 +44,8 @@ public class GroupServiceImpl implements GroupService {
 			switch (groupType) {
 				case "1":
 					return 2;
+				default:
+					return 0;
 			}
 		}else if(vip < 10) {
 			switch (groupType) {
@@ -51,6 +53,8 @@ public class GroupServiceImpl implements GroupService {
 					return 5;
 				case "2":
 					return 2;
+				default:
+					return 0;
 			}
 		}else{
 			switch (groupType) {
@@ -60,9 +64,10 @@ public class GroupServiceImpl implements GroupService {
 					return 3;
 				case "3":
 					return 2;
+				default:
+					return 0;
 			}
 		}
-		return 0;
 	}
 	
 	@Override
@@ -101,7 +106,7 @@ public class GroupServiceImpl implements GroupService {
 			log.error("删除群聊失败");
 			throw new RuntimeException();
 		}
-		if(TXCloudUtil.delGroup(groupId)) {
+		if(ImUtils.delGroup(groupId)) {
 			log.error("im删除群聊失败");
 			throw new RuntimeException();
 		}
@@ -109,16 +114,18 @@ public class GroupServiceImpl implements GroupService {
 	}
 	
 	@Override
-	public int update(String groupId, String name) {
-		UserGroup group = new UserGroup();
-		group.setId(groupId);
-		group.setName(name);
-		int i = groupMapper.updateByPrimaryKeySelective(group);
-		if(i < 1) {
-			log.error("修改群聊失败");
-			throw new RuntimeException();
+	public int updateGroup(String groupId, String name,String image) {
+		if(name != null) {
+			UserGroup group = new UserGroup();
+			group.setId(groupId);
+			group.setName(name);
+			int i = groupMapper.updateByPrimaryKeySelective(group);
+			if(i < 1) {
+				log.error("修改群聊失败");
+				throw new RuntimeException();
+			}
 		}
-		if(TXCloudUtil.setGroup(groupId, name)) {
+		if(ImUtils.setGroup(groupId, name, image)) {
 			log.error("im修改群聊失败");
 			throw new RuntimeException();
 		}
@@ -131,7 +138,7 @@ public class GroupServiceImpl implements GroupService {
 		if(list == null || list.isEmpty()) {
 			return null;
 		}
-		return TXCloudUtil.getGroupnfo(list);
+		return ImUtils.getGroupnfo(list);
 	}
 
 }

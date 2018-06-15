@@ -16,7 +16,7 @@ import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.im.TXCloudUtil;
+import com.shanduo.party.im.ImUtils;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.GroupService;
 import com.shanduo.party.util.JsonStringUtils;
@@ -158,7 +158,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "updategroup",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean updateGroup(HttpServletRequest request,String token,String name,String groupId) {
+	public ResultBean updateGroup(HttpServletRequest request,String token,String groupId,String name,String image) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -168,12 +168,12 @@ public class GroupController {
 			log.error("群组ID为空");
 			return new ErrorBean(10002,"群组ID为空");
 		}
-		if(StringUtils.isNull(name)) {
-			log.error("群名称为空");
-			return new ErrorBean(10002,"群名称为空");
+		if(StringUtils.isNull(name) || StringUtils.isNull(image)) {
+			log.error("参数错误");
+			return new ErrorBean(10002,"参数错误");
 		}
 		try {
-			groupService.update(groupId, name);
+			groupService.updateGroup(groupId, name, image);
 		} catch (Exception e) {
 			log.error("修改群组失败");
 			return new ErrorBean(10003,"修改失败");
@@ -199,7 +199,7 @@ public class GroupController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		String result = TXCloudUtil.getGroupList(isUserId+"");
+		String result = ImUtils.getGroupList(isUserId+"");
 		Map<String, Object> resultMap = JsonStringUtils.getMap(result);
 		return new SuccessBean(resultMap);
 	}

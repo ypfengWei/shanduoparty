@@ -49,16 +49,17 @@ public interface GroupService {
 	int delGroup(Integer userId,String groupId);
 	
 	/**
-	 * 修改群名称
-	 * @Title: update
+	 * 修改群资料
+	 * @Title: updateGroup
 	 * @Description: TODO
 	 * @param @param groupId
 	 * @param @param name
+	 * @param @param image
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int update(String groupId,String name);
+	int updateGroup(String groupId,String name,String image);
 	
 	/**
 	 * 模糊查找群

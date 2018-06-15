@@ -2,7 +2,7 @@ package com.shanduo.party.entity.service;
 
 
 import com.shanduo.party.entity.ShanduoUser;
-import com.shanduo.party.im.tls_sigUtils;
+import com.shanduo.party.im.UserSigUtils;
 import com.shanduo.party.util.AgeUtils;
 import com.shanduo.party.util.PictureUtils;
 
@@ -61,7 +61,7 @@ public class TokenInfo {
     	this.school = user.getSchool();
     	this.jurisdiction = user.getJurisdiction()+"";
     	this.remarks = user.getRemarks();
-		this.userSig = tls_sigUtils.getSig(userId);
+		this.userSig = UserSigUtils.getSig(userId);
     }
 
 	public String getToken() {
