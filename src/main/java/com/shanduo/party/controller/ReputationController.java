@@ -112,12 +112,17 @@ public class ReputationController {
 	 */
 	@RequestMapping(value = "saveReport", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean saveReport(HttpServletRequest request, String userId, String activityId, String dynamicId, String typeId, 
+	public ResultBean saveReport(HttpServletRequest request, String token, String activityId, String dynamicId, String typeId, 
 			String remarks) {
-		if(StringUtils.isNull(userId)) {
-			log.error("举报者id为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报者id为空");
+		Integer userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
+//		if(StringUtils.isNull(userId)) {
+//			log.error("举报者id为空");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报者id为空");
+//		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
@@ -128,7 +133,7 @@ public class ReputationController {
 				log.error("活动为空");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动为空");
 			}
-			id = scoreService.selectId(activityId, Integer.valueOf(userId));
+			id = scoreService.selectId(activityId, userToken);
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该活动");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该活动");
@@ -138,14 +143,14 @@ public class ReputationController {
 				log.error("动态为空");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"动态为空");
 			}
-			id = scoreService.selectIds(dynamicId, Integer.valueOf(userId));
+			id = scoreService.selectIds(dynamicId, userToken);
 			if(!StringUtils.isNull(id)) {
 				log.error("您已举报该动态");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"您已举报该动态");
 			}
 		}
 		try {
-			scoreService.report(Integer.valueOf(userId), activityId, dynamicId, typeId, remarks);
+			scoreService.report(userToken, activityId, dynamicId, typeId, remarks);
 		} catch (Exception e) {
 			log.error("举报记录添加失败");
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报失败");
