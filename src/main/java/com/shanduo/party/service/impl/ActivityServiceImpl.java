@@ -149,7 +149,7 @@ public class ActivityServiceImpl implements ActivityService {
 		activity.setUserId(userId);
 		activity.setActivityName(SensitiveWord.filterInfo(activityName));
 		activity.setRemarks(SensitiveWord.unicodeInfo(remarks));
-		activity.setDetailedAddress(SensitiveWord.unicodeInfo(detailedAddress));
+		activity.setDetailedAddress(SensitiveWord.filterInfo(detailedAddress));
 		activity.setLon(new BigDecimal(lon));
 		activity.setLat(new BigDecimal(lat));
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -464,18 +464,18 @@ public class ActivityServiceImpl implements ActivityService {
 			}
 		}
 		//参加人数为0
-		if(manNumber.matches("^\\d+$")) {
-			if(0 < Integer.parseInt(manNumber) && Integer.parseInt(manNumber) < 10) {
-				activityInfo.setManNumber("0/"+"0"+manNumber);
+		if(activityInfo.getManNumber().matches("^\\d+$")) {
+			if(0 < Integer.parseInt(activityInfo.getManNumber()) && Integer.parseInt(activityInfo.getManNumber()) < 10) {
+				activityInfo.setManNumber("0/"+"0"+activityInfo.getManNumber());
 			} else{
-				activityInfo.setManNumber("0/"+manNumber);
+				activityInfo.setManNumber("0/"+activityInfo.getManNumber());
 			}
 		}
-		if(womanNumber.matches("^\\d+$")) {
-			if(0 < Integer.parseInt(womanNumber) && Integer.parseInt(womanNumber) < 10) {
-				activityInfo.setWomanNumber("0/"+"0"+womanNumber);
+		if(activityInfo.getWomanNumber().matches("^\\d+$")) {
+			if(0 < Integer.parseInt(activityInfo.getWomanNumber()) && Integer.parseInt(activityInfo.getWomanNumber()) < 10) {
+				activityInfo.setWomanNumber("0/"+"0"+activityInfo.getWomanNumber());
 			} else {
-				activityInfo.setWomanNumber("0/"+womanNumber);
+				activityInfo.setWomanNumber("0/"+activityInfo.getWomanNumber());
 			}
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
