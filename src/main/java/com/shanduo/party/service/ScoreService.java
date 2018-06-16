@@ -173,4 +173,5 @@ public interface ScoreService {
 	 * @throws
 	 */
 	int updateReport(Integer userId);
+	
 }

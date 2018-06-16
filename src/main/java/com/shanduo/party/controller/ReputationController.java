@@ -217,4 +217,5 @@ public class ReputationController {
 		}
 		return new SuccessBean("举报处理成功");
 	}
+	
 }

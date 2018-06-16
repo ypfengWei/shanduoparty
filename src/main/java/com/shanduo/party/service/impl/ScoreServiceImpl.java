@@ -230,14 +230,14 @@ public class ScoreServiceImpl implements ScoreService {
 		Map<String, Object> initiatorMap = new HashMap<String, Object>(8);
 		List<Map<String, Object>> scoreMapList = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> maps : list) {
-			if(activityIdSet.contains(maps.get("id").toString())) { //activityList中有活动id
+			if(activityIdSet.contains(maps.get("id").toString())) { //activityList中有该活动id
 				if(maps.get("uid").equals(userId)) { //用户为发起者
 					getInitiatorMap(initiatorMap, maps, userId); //得到活动信息
 				} else {
 					getScoreMap(maps).clear(); //清除上一条评论信息
-					scoreMapList.add(getScoreMap(maps)); //用户为参与者，添加评论信息到ScoreMapList中
+					scoreMapList.add(getScoreMap(maps)); //用户为参与者
 				}
-			} else { //activityList中没有活动id
+			} else { //activityList中没有该活动id
 				activityIdSet.add(maps.get("id").toString()); //给activityList赋活动Id的值
 				if(!initiatorMap.isEmpty()) { //活动信息不为空循环获取评论信息到ScoreMapLists
 					List<Map<String, Object>> scoreMapLists = new ArrayList<Map<String, Object>>();

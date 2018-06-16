@@ -147,7 +147,7 @@ public class ActivityServiceImpl implements ActivityService {
 		ShanduoActivity activity = new ShanduoActivity();
 		activity.setId(UUIDGenerator.getUUID());
 		activity.setUserId(userId);
-		activity.setActivityName(SensitiveWord.unicodeInfo(activityName));
+		activity.setActivityName(SensitiveWord.filterInfo(activityName));
 		activity.setRemarks(SensitiveWord.unicodeInfo(remarks));
 		activity.setDetailedAddress(SensitiveWord.unicodeInfo(detailedAddress));
 		activity.setLon(new BigDecimal(lon));
