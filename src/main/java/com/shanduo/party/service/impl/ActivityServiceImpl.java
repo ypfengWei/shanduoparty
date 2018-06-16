@@ -148,8 +148,8 @@ public class ActivityServiceImpl implements ActivityService {
 		activity.setId(UUIDGenerator.getUUID());
 		activity.setUserId(userId);
 		activity.setActivityName(SensitiveWord.filterInfo(activityName));
-		activity.setRemarks(SensitiveWord.filterInfo(remarks));
-		activity.setDetailedAddress(SensitiveWord.filterInfo(detailedAddress));
+		activity.setRemarks(SensitiveWord.unicodeInfo(remarks));
+		activity.setDetailedAddress(SensitiveWord.unicodeInfo(detailedAddress));
 		activity.setLon(new BigDecimal(lon));
 		activity.setLat(new BigDecimal(lat));
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");

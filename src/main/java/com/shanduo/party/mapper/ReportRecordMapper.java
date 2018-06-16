@@ -18,19 +18,13 @@ public interface ReportRecordMapper {
 
     int updateByPrimaryKey(ReportRecord record);
     
-    List<Map<String, Object>> selectReportId(String activityId);
+    List<Map<String, Object>> selectReportId(String activityId, String dynamicId);
     
-    List<Map<String, Object>> selectByDynamicId(String dynamicId);
-    
-    String selectId(String activityId, Integer userId);
-    
-    String selectIds(String dynamicId, Integer userId);
+    String selectId(String activityId, String dynamicId, String typeId, Integer userId);
     
     int selectUserId(String dynamicId);
     
-    int updateByActivityId(String activityId);
-    
-    int updateByDynamicId(String dynamicId);
+    int deleteCount(String activityId, String dynamicId);
     
     int selectCount(String typeId);
     
