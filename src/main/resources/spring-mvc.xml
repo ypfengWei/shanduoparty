@@ -51,8 +51,6 @@
 	 		<mvc:mapping path="/activity/selectByHistorical"/>
 	 		<!-- 评论操作接口拦截 -->
 	 		<mvc:mapping path="/score/**"/>
-	 		<!-- 信誉操作接口拦截 -->
-	 		<mvc:mapping path="/reputation/saveReport"/>
 	 		<!-- 上传图片接口拦截 -->
 	 		<mvc:mapping path="/file/**"/>
 	 		<!-- 用户操作接口拦截 -->
