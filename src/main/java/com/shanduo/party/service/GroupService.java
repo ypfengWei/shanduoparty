@@ -1,5 +1,7 @@
 package com.shanduo.party.service;
 
+import java.util.Map;
+
 /**
  * 群组管理业务层
  * @ClassName: GroupService
@@ -54,12 +56,11 @@ public interface GroupService {
 	 * @Description: TODO
 	 * @param @param groupId
 	 * @param @param name
-	 * @param @param image
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int updateGroup(String groupId,String name,String image);
+	int updateGroup(String groupId,String name);
 	
 	/**
 	 * 模糊查找群
@@ -67,8 +68,8 @@ public interface GroupService {
 	 * @Description: TODO
 	 * @param @param name
 	 * @param @return
-	 * @return String
+	 * @return Map<String, Object>
 	 * @throws
 	 */
-	String queryNameList(String name);
+	Map<String, Object> queryNameList(String name);
 }

@@ -12,11 +12,11 @@ import java.util.List;
 /** 
  *  敏感词过滤 工具类   -- 【匹配度高，可以使用】
  *  《高效精准》敏感字&词过滤：http://blog.csdn.net/hubiao_0618/article/details/45076871
- * @author hubiao 
- * @version 0.1 
- * @CreateDate 2015年4月16日 15:28:32 
- */  
-public class SensitiveWord {  
+ * @author hubiao
+ * @version 0.1
+ * @CreateDate 2015年4月16日 15:28:32
+ */
+public class SensitiveWord {
     private static StringBuilder replaceAll;//初始化
     private static String encoding = "UTF-8";
     private static String replceStr = "*";

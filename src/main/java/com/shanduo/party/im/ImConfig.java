@@ -37,4 +37,6 @@ public class ImConfig {
     public static final String GROUP_INFO = "group_open_http_svc/get_group_info";//获取群组详细资料
     public static final String MODIFY_GROUP_BASE_INFO = "group_open_http_svc/modify_group_base_info";//修改群组基础资料
     public static final String DESTROY_GROUP = "group_open_http_svc/destroy_group";//解散群组
+    public static final String GROUP_MEMBER_INFO = "group_open_http_svc/get_group_member_info";//获取群组成员详细资料 
+   
 }

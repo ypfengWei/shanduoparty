@@ -19,7 +19,6 @@ import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.im.ImUtils;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.GroupService;
-import com.shanduo.party.util.JsonStringUtils;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -158,7 +157,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "updategroup",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean updateGroup(HttpServletRequest request,String token,String groupId,String name,String image) {
+	public ResultBean updateGroup(HttpServletRequest request,String token,String groupId,String name) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -168,12 +167,12 @@ public class GroupController {
 			log.error("群组ID为空");
 			return new ErrorBean(10002,"群组ID为空");
 		}
-		if(StringUtils.isNull(name) || StringUtils.isNull(image)) {
-			log.error("参数错误");
-			return new ErrorBean(10002,"参数错误");
+		if(StringUtils.isNull(name)) {
+			log.error("群昵称为空");
+			return new ErrorBean(10002,"群昵称为空");
 		}
 		try {
-			groupService.updateGroup(groupId, name, image);
+			groupService.updateGroup(groupId, name);
 		} catch (Exception e) {
 			log.error("修改群组失败");
 			return new ErrorBean(10003,"修改失败");
@@ -199,8 +198,7 @@ public class GroupController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		String result = ImUtils.getGroupList(isUserId+"");
-		Map<String, Object> resultMap = JsonStringUtils.getMap(result);
+		Map<String, Object> resultMap = ImUtils.getGroupList(isUserId+"");
 		return new SuccessBean(resultMap);
 	}
 	
@@ -227,11 +225,43 @@ public class GroupController {
 			log.error("群名称为空");
 			return new ErrorBean(10002,"群名称为空");
 		}
-		String result = groupService.queryNameList(name);
-		if(result == null) {
+		Map<String, Object> resultMap = groupService.queryNameList(name);
+		if(resultMap == null) {
 			return new ErrorBean(10002,"没有符合条件的群");
 		}
-		Map<String, Object> resultMap = JsonStringUtils.getMap(result);
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
+	 * 分页获取群组成员信息
+	 * @Title: getGroupUser
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param groupId
+	 * @param @param page 页数
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "getgroupuser",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean getGroupUser(HttpServletRequest request,String token,String groupId,String page) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(groupId)) {
+			log.error("群组ID为空");
+			return new ErrorBean(10002,"群组ID为空");
+		}
+		if(StringUtils.isNull(page) || !page.matches("^[1-9]\\d*$")) {
+			log.error("页数错误");
+			return new ErrorBean(10002,"页数错误");
+		}
+		Integer pages = Integer.valueOf(page);
+		Map<String, Object> resultMap = ImUtils.getGroupUser(groupId, pages);
 		return new SuccessBean(resultMap);
 	}
 }

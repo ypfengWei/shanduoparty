@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.shanduo.party.util.JsonStringUtils;
+import com.shanduo.party.util.Page;
 
 /**
  * IM操作工具类
@@ -163,7 +165,7 @@ public class ImUtils {
      * @return String
      * @throws
      */
-    public static String getGroupList(String userId) {
+    public static Map<String, Object> getGroupList(String userId) {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	Map<String, Object> responseFilter = new HashMap<String, Object>();
     	LinkedList<String> groupBaseInfoFilter = new LinkedList<String>();
@@ -175,7 +177,8 @@ public class ImUtils {
     	paramsMap.put("Member_Account", userId);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_LIST), paramsJson));
-    	return resultJson.toString();
+        Map<String, Object> resultMap = JsonStringUtils.getMap(resultJson.toString());
+    	return resultMap;
     }
     
     /**
@@ -187,7 +190,7 @@ public class ImUtils {
      * @return String
      * @throws
      */
-    public static String getGroupnfo(List<String> list) {
+    public static Map<String, Object> getGroupnfo(List<String> list) {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	paramsMap.put("GroupIdList", list);
     	Map<String, Object> responseFilter = new HashMap<String, Object>();
@@ -199,7 +202,8 @@ public class ImUtils {
     	paramsMap.put("ResponseFilter", responseFilter);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_INFO), paramsJson));
-    	return resultJson.toString();
+        Map<String, Object> resultMap = JsonStringUtils.getMap(resultJson.toString());
+    	return resultMap;
     }
     
     /**
@@ -212,15 +216,10 @@ public class ImUtils {
      * @return boolean
      * @throws
      */
-    public static boolean setGroup(String groupId, String name,String image) {
+    public static boolean setGroup(String groupId, String name) {
     	Map<String, Object> paramsMap = new HashMap<String, Object>();
     	paramsMap.put("GroupId", groupId);
-    	if(name != null) {
-    		paramsMap.put("Name", name);
-    	}
-    	if(image != null) {
-    		paramsMap.put("FaceUrl", "https://yapinkeji.com/shanduoparty/picture/"+image);
-    	}
+    	paramsMap.put("Name", name);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.MODIFY_GROUP_BASE_INFO), paramsJson));
         if(resultJson.get("ActionStatus").toString().equals("OK")){
@@ -247,7 +246,46 @@ public class ImUtils {
         if(resultJson.get("ActionStatus").toString().equals("OK")){
         	return false;
         }
+        if(resultJson.get("ErrorCode").toString().equals("10010")) {
+        	return false;
+        }
         log.error(resultJson.toJSONString());
         return true;
+    }
+    
+    /**
+     * 获取群组成员详细资料
+     * @Title: getGroupUser
+     * @Description: TODO
+     * @param @param groupId
+     * @param @param page
+     * @param @return
+     * @return Map<String, Object>
+     * @throws
+     */
+    public static Map<String, Object> getGroupUser(String groupId,int pageNum) {
+    	Map<String, Object> paramsMap = new HashMap<String, Object>();
+    	paramsMap.put("GroupId", groupId);
+    	paramsMap.put("Limit", 20);//最多获取多少个成员的资料
+    	paramsMap.put("Offset", pageNum*20-20); //从第多少个成员开始获取资料
+    	LinkedList<String> memberInfoFilter = new LinkedList<String>();
+    	memberInfoFilter.add("Role");// 成员身份
+    	memberInfoFilter.add("JoinTime");//成员加入时间
+    	memberInfoFilter.add("MsgSeq");//成员已读消息seq
+    	memberInfoFilter.add("MsgFlag");//成员消息屏蔽类型
+    	memberInfoFilter.add("LastSendMsgTime");//成员最后发消息时间
+    	memberInfoFilter.add("ShutUpUntil");//0表示未被禁言，否则为禁言的截止时间
+    	memberInfoFilter.add("NameCard");//成员名片
+    	paramsMap.put("MemberInfoFilter", memberInfoFilter);
+    	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
+        JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_MEMBER_INFO), paramsJson));
+        Map<String, Object> resultMap = JsonStringUtils.getMap(resultJson.toString());
+        if(resultMap.get("ActionStatus").toString().equals("OK")) {
+        	String MemberNum = resultMap.get("MemberNum").toString();
+        	Page page = new Page(Integer.parseInt(MemberNum), 20, pageNum);
+        	resultMap.put("totalPage", page.getTotalPage());
+        	resultMap.put("page", page.getPageNum());
+        }
+    	return resultMap;
     }
 }

@@ -1,6 +1,7 @@
 package com.shanduo.party.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +123,7 @@ public class GroupServiceImpl implements GroupService {
 	}
 	
 	@Override
-	public int updateGroup(String groupId, String name,String image) {
+	public int updateGroup(String groupId, String name) {
 		if(name != null) {
 			UserGroup group = new UserGroup();
 			group.setId(groupId);
@@ -133,15 +134,15 @@ public class GroupServiceImpl implements GroupService {
 				throw new RuntimeException();
 			}
 		}
-		if(ImUtils.setGroup(groupId, name, image)) {
-			log.error("im修改群聊失败");
-			throw new RuntimeException();
-		}
+//		if(ImUtils.setGroup(groupId, name)) {
+//			log.error("im修改群聊失败");
+//			throw new RuntimeException();
+//		}
 		return 1;
 	}
 	
 	@Override
-	public String queryNameList(String name) {
+	public Map<String, Object> queryNameList(String name) {
 		List<String> list = groupMapper.nameList(name);
 		if(list == null || list.isEmpty()) {
 			return null;
