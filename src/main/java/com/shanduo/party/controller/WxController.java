@@ -12,6 +12,7 @@ import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
+import com.shanduo.party.entity.service.TokenInfo;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.BindingService;
 import com.shanduo.party.service.CodeService;
@@ -49,53 +50,110 @@ public class WxController {
 	 * 绑定注册
 	 * @Title: bingding
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param openId
-	 * @param @param unionId
-	 * @param @param nickName
-	 * @param @param gender
-	 * @param @param username
-	 * @param @param password
-	 * @param @param codes
+	 * @param @param unionId 
+	 * @param @param phone APP账号登录或微信注册传
+	 * @param @param password APP账号登录或注册传
+	 * @param @param code 注册才传
+	 * @param @param type 1:绑定注册 2:登录 3:绑定
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
 	@RequestMapping(value = "bindingUser", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean bingding(String unionId, String phone,String password, String code) {
-		Integer userid = bindingService.selectUserId(unionId, "0");
-		if(userid != null) {
-			log.error("此账号已绑定");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "此账号已绑定");
+	public ResultBean bingding(String unionId, String phone,String password, String code, String type) {
+		if(StringUtils.isNull(type) || !type.matches("^[123]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002,"类型错误");
 		}
-		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
-			log.error("手机号格式错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"手机号格式错误");
+		Integer userId = null;
+		String tokenInfo = null;
+		if("1".equals(type)) {
+			userId = bindingService.selectUserId(unionId, "0");
+			if(userId != null) {
+				log.error("此账号已绑定");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "此账号已绑定");
+			}
+			if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
+				log.error("手机号格式错误");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"手机号格式错误");
+			}
+			if(userService.checkPhone(phone)) {
+				log.error("手机号已被注册");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"手机号已被注册");
+			}
+			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
+				log.error("验证码错误");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码错误");
+			}
+			if(codeService.checkCode(phone, code, "1")) {
+				log.error("验证码超时或错误");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码超时或错误");
+			}
+			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
+				log.error("密码格式错误");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"密码格式错误");
+			}
+			try {
+				userService.saveUser(phone, password);
+			} catch (Exception e) {
+				log.error("注册失败");
+				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "注册失败");
+			}
+			tokenInfo = userService.loginUser(phone, password);
+			if(tokenInfo == null) {
+				log.error("token为空");
+				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "token为空");
+			}
+			try {
+				bindingService.insertSelective(baseService.checkUserToken(tokenInfo), unionId, "0");
+			} catch (Exception e) {
+				log.error("绑定失败");
+				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "绑定失败");
+			}
+		} else if("2".equals(type)) {
+			if(StringUtils.isNull(unionId)) {
+				log.error("unionId为空");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"unionId为空");
+			}
+			userId = bindingService.selectUserId(unionId, "0");
+			if(userId == null) {
+				log.error("此账户未绑定");
+				return new ErrorBean(ErrorCodeConstants.UNBOUND, "未绑定");
+			}
+			tokenInfo = userService.loginUser(userId);
+			if(tokenInfo == null) {
+				log.error("token为空");
+				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "token为空");
+			}
+		} else {
+			tokenInfo = userService.loginUser(phone, password);
+			if (null == tokenInfo) {
+				log.error("登录失败");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "账号或密码错误");
+			}
+			if(StringUtils.isNull(unionId)) {
+				log.error("unionId为空");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
+			}
+			userId = baseService.checkUserToken(tokenInfo);
+			if(userId == null) {
+				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			}
+			try {
+				bindingService.insertSelective(userId, unionId, "0");
+			} catch (Exception e) {
+				log.error("绑定失败");
+				return new ErrorBean(ErrorCodeConstants.BINDINGS_FAILURE, "绑定失败");
+			}
 		}
-		if(userService.checkPhone(phone)) {
-			log.error("手机号已被注册");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"手机号已被注册");
+		TokenInfo tokens = userService.selectById(tokenInfo,userId);
+		if(tokens == null) {
+			log.error("获取用户详细错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"获取用户详细错误");
 		}
-		if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
-			log.error("验证码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码错误");
-		}
-		if(codeService.checkCode(phone, code, "1")) {
-			log.error("验证码超时或错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码超时或错误");
-		}
-		if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
-			log.error("密码格式错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"密码格式错误");
-		}
-		userService.saveUser(phone, password);
-		String tokenInfo = userService.loginUser(phone, password);
-		try {
-			bindingService.insertSelective(baseService.checkUserToken(tokenInfo), unionId, "0");
-		} catch (Exception e) {
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "失败");
-		}
-		return new SuccessBean(tokenInfo);
+		return new SuccessBean(tokens);
 	}
 	
 	/**

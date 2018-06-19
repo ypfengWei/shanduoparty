@@ -72,12 +72,14 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Override
 	public boolean selectByAll(Integer userId, String activityId){
+		//根据活动id查询活动信息
 		ShanduoActivity shanduoActivity = shanduoActivityMapper.selectByIds(activityId);
 		long starttime = shanduoActivity.getActivityStartTime().getTime()-1*60*60*1000;
 		long endtime = shanduoActivity.getActivityStartTime().getTime()+1*60*60*1000;
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String mintime = format.format(starttime);
 		String maxtime = format.format(endtime);
+		//查询此时间段该用户有无参加或举办其他活动
 		int i = shanduoActivityMapper.selectByAll(userId, mintime, maxtime);
 		if(i == 0) {
 			return false;
@@ -121,7 +123,7 @@ public class ActivityServiceImpl implements ActivityService {
 				map.put("joinActivity", joinActivity);
 				break;
 			} else {
-				map.put("joinActivity", joinActivity);
+				map.put("joinActivity", joinActivity);//joinActivity 0:未参加 1:已参加 2:未登陆
 			}
 		}
 		Map<String, Object> resultMap = new HashMap<String, Object>(3);
@@ -506,15 +508,18 @@ public class ActivityServiceImpl implements ActivityService {
         		activityInfo.setTypeId(2);
         	}
         }
+        //转换时间格式，活动开始时间如2018/6/19/9:49星期二，活动报名截止时间如2018/6/18/9:49
         String startTime = startString.substring(0,16).replace("-", "/").replace(" ", "/");
         String cutoffTime = cutoffString.substring(0,16).replace("-", "/").replace(" ", "/");
         Long time = getLongTime(null, "yyyy-MM-dd 00:00", 1);
         Long endTime = getLongTime(null, "yyyy-MM-dd 23:59", 1);
         Long times = getLongTime(cutoffString, null, 2);
         String nowTime = formatter.format(new Date());
-        if(time <= times &&  times <= endTime) {
+        //如果活动报名截止时间与系统时间在同一天，则转换成9:49
+        if(time <= times && times <= endTime) {
         	cutoffTime = cutoffTime.substring(cutoffTime.length()-5, cutoffTime.length());
         } else if(nowTime.substring(0, 4).equals(cutoffString.substring(0, 4))) {
+        	//如果活动报名截止时间与系统时间在同一年，则转换成6/18/9:49
         	cutoffTime = cutoffTime.substring(cutoffTime.length()-11, cutoffTime.length());
         }
         try {
@@ -536,7 +541,7 @@ public class ActivityServiceImpl implements ActivityService {
 		showActivity(activityInfo, null, null, 0);
 		List<Map<String, Object>> resultList = shanduoActivityMapper.selectActivityIds(activityId);
 		Map<String, Object> resultMap = new HashMap<String, Object>(3);
-		int joinActivity = 0;
+		int joinActivity = 0; //joinActivity 0:未参加 1:已参加
 		for (Map<String, Object> map : resultList) {
 			if(userId != null && map.get("id").equals(userId)) {
 				joinActivity = 1;

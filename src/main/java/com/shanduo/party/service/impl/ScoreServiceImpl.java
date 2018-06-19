@@ -243,12 +243,6 @@ public class ScoreServiceImpl implements ScoreService {
 					List<Map<String, Object>> scoreMapLists = new ArrayList<Map<String, Object>>();
 					for(Map<String, Object> scoremap : scoreMapList){
 						Map<String, Object> newscoremap = new HashMap<String, Object>(6);
-//						newscoremap.put("head_portrait_id", scoremap.get("head_portrait_id"));
-//						newscoremap.put("score", scoremap.get("score"));
-//						newscoremap.put("evaluation_content", scoremap.get("evaluation_content"));
-//						newscoremap.put("others_score", scoremap.get("others_score"));
-//						newscoremap.put("be_evaluated", scoremap.get("be_evaluated"));
-//						newscoremap.put("user_name", scoremap.get("user_name"));
 						newscoremap.putAll(scoremap);
 						scoreMapLists.add(newscoremap);
 					}
