@@ -9,11 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shanduo.party.common.ShanduoConstants;
+import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserGroup;
 import com.shanduo.party.im.ImUtils;
+import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.mapper.UserGroupMapper;
 import com.shanduo.party.service.GroupService;
 import com.shanduo.party.service.VipService;
+import com.shanduo.party.util.Page;
+import com.shanduo.party.util.PictureUtils;
 
 /**
  * 
@@ -33,6 +38,8 @@ public class GroupServiceImpl implements GroupService {
 	private UserGroupMapper groupMapper;
 	@Autowired
 	private VipService vipService;
+	@Autowired
+	private ShanduoUserMapper userMapper;
 	
 	/**
 	 * 获得创群的次数
@@ -148,6 +155,25 @@ public class GroupServiceImpl implements GroupService {
 			return null;
 		}
 		return ImUtils.getGroupnfo(list);
+	}
+
+	@Override
+	public Map<String, Object> getGroupUser(String groupId, Integer pageNum) {
+		Map<String, Object> resultMap = ImUtils.getGroupUser(groupId, pageNum);
+		if(resultMap.get("ActionStatus").toString().equals("OK")) {
+        	String memberNum = resultMap.get("MemberNum").toString();
+        	Page page = new Page(Integer.parseInt(memberNum), 20, pageNum);
+        	resultMap.put("totalPage", page.getTotalPage());
+        	resultMap.put("page", page.getPageNum());
+        	List<Map<String, Object>> list = (List<Map<String, Object>>) resultMap.get("MemberList");
+        	for(Map<String, Object> map : list) {
+        		String userId = map.get("Member_Account").toString();
+        		ShanduoUser user = userMapper.selectByPrimaryKey(Integer.valueOf(userId));
+        		map.put("name", user.getUserName());
+        		map.put("picture", ShanduoConstants.PICTURE+PictureUtils.getPictureUrl(user.getHeadPortraitId()));
+        	}
+        }
+		return resultMap;
 	}
 
 }

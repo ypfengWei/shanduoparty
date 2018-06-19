@@ -72,4 +72,16 @@ public interface GroupService {
 	 * @throws
 	 */
 	Map<String, Object> queryNameList(String name);
+	
+	/**
+	 * 获取群成员信息
+	 * @Title: getGroupUser
+	 * @Description: TODO
+	 * @param @param groupId
+	 * @param @param pageNum
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> getGroupUser(String groupId,Integer pageNum);
 }

@@ -261,7 +261,7 @@ public class GroupController {
 			return new ErrorBean(10002,"页数错误");
 		}
 		Integer pages = Integer.valueOf(page);
-		Map<String, Object> resultMap = ImUtils.getGroupUser(groupId, pages);
+		Map<String, Object> resultMap = groupService.getGroupUser(groupId, pages);
 		return new SuccessBean(resultMap);
 	}
 }

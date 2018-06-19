@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.shanduo.party.common.ShanduoConstants;
 import com.shanduo.party.util.JsonStringUtils;
-import com.shanduo.party.util.Page;
 
 /**
  * IM操作工具类
@@ -73,7 +73,7 @@ public class ImUtils {
 		if(image != null) {
 			Map<String, String> paramsImage = new HashMap<>();
 			paramsImage.put("Tag", "Tag_Profile_IM_Image");
-			paramsImage.put("Value", "https://yapinkeji.com/shanduoparty/picture/"+image);
+			paramsImage.put("Value", ShanduoConstants.PICTURE+image);
 			friendList.add(paramsImage);
 		}
 		paramsMap.put("ProfileItem", friendList);
@@ -202,7 +202,10 @@ public class ImUtils {
     	paramsMap.put("ResponseFilter", responseFilter);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_INFO), paramsJson));
-        Map<String, Object> resultMap = JsonStringUtils.getMap(resultJson.toString());
+        String result = resultJson.toString();
+        String [] res = result.split("GroupInfo");
+        result = res[0]+"GroupIdList"+res[1];
+        Map<String, Object> resultMap = JsonStringUtils.getMap(result);
     	return resultMap;
     }
     
@@ -270,22 +273,16 @@ public class ImUtils {
     	paramsMap.put("Offset", pageNum*20-20); //从第多少个成员开始获取资料
     	LinkedList<String> memberInfoFilter = new LinkedList<String>();
     	memberInfoFilter.add("Role");// 成员身份
-    	memberInfoFilter.add("JoinTime");//成员加入时间
-    	memberInfoFilter.add("MsgSeq");//成员已读消息seq
-    	memberInfoFilter.add("MsgFlag");//成员消息屏蔽类型
-    	memberInfoFilter.add("LastSendMsgTime");//成员最后发消息时间
-    	memberInfoFilter.add("ShutUpUntil");//0表示未被禁言，否则为禁言的截止时间
+//    	memberInfoFilter.add("JoinTime");//成员加入时间
+//    	memberInfoFilter.add("MsgSeq");//成员已读消息seq
+//    	memberInfoFilter.add("MsgFlag");//成员消息屏蔽类型
+//    	memberInfoFilter.add("LastSendMsgTime");//成员最后发消息时间
+//    	memberInfoFilter.add("ShutUpUntil");//0表示未被禁言，否则为禁言的截止时间
     	memberInfoFilter.add("NameCard");//成员名片
     	paramsMap.put("MemberInfoFilter", memberInfoFilter);
     	String paramsJson = JSON.toJSONString(paramsMap);//拼装json数据
         JSONObject resultJson = JSON.parseObject(ImHelper.executePost(ImHelper.getUrl(ImConfig.GROUP_MEMBER_INFO), paramsJson));
         Map<String, Object> resultMap = JsonStringUtils.getMap(resultJson.toString());
-        if(resultMap.get("ActionStatus").toString().equals("OK")) {
-        	String MemberNum = resultMap.get("MemberNum").toString();
-        	Page page = new Page(Integer.parseInt(MemberNum), 20, pageNum);
-        	resultMap.put("totalPage", page.getTotalPage());
-        	resultMap.put("page", page.getPageNum());
-        }
     	return resultMap;
     }
 }

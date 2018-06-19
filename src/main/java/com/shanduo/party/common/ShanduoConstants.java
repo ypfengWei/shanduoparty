@@ -35,5 +35,7 @@ public class ShanduoConstants {
 	public static final long HOUR = 60 * MINUTE;
 	public static final long DAY = 24 * HOUR;
 	public static final long WEEK = 7 * DAY;
+	
+	public static final String PICTURE = "https://yapinkeji.com/shanduoparty/picture/";
 	 
 }
