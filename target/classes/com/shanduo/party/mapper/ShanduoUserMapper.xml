@@ -333,6 +333,16 @@
  	or phone_number = #{query}
  	limit 10
   </select>
+  <select id="seekAttention" resultType="map">
+  	select
+  	id as userId, user_name as name, head_portrait_id as picture, birthday as age, gender,
+    signature, hometown
+  	from shanduo_user
+  	where 
+  	id in (select attention from user_attention where user_id = #{0} and attention_type = '1')
+  	and (id like "%"#{1}"%" or user_name like "%"#{1}"%" or phone_number = #{1})
+ 	limit 10
+  </select>
   <select id="selectById" parameterType="java.lang.Integer" resultType="map">
     select 
     id as userId, user_name as name,head_portrait_id as picture,

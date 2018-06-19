@@ -194,6 +194,18 @@ public interface UserService {
 	List<Map<String, Object>> seekUser(Integer userId,String query);
 	
 	/**
+	 * 搜索好友
+	 * @Title: seekAttention
+	 * @Description: TODO
+	 * @param @param userId 操作的用户ID
+	 * @param @param query 查询条件
+	 * @param @return
+	 * @return List<Map<String,Object>>
+	 * @throws
+	 */
+	List<Map<String, Object>> seekAttention(Integer userId,String query);
+	
+	/**
 	 * 查询用户的个人信息
 	 * @Title: selectById
 	 * @Description: TODO

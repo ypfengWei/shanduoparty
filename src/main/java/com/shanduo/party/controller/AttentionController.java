@@ -69,6 +69,29 @@ public class AttentionController {
 	}
 	
 	/**
+	 * 搜索好友
+	 * @Title: seekUser
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param query 手机号或昵称或闪多号
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "seekattention",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean seekAttention(HttpServletRequest request,String token,String query) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		List<Map<String, Object>> resultList = userService.seekAttention(isUserId,query);
+		return new SuccessBean(resultList);
+	}
+	
+	/**
 	 * 查询用户信息
 	 * @Title: userDetails
 	 * @Description: TODO
@@ -134,14 +157,14 @@ public class AttentionController {
 		}
 		ShanduoUser user = userService.selectByUserId(attentions);
 		String addition = user.getAddition();
-		if("0".equals(addition)) {
+		if(user.getAddition().equals("0")) {
 			try {
 				attentionService.saveAttention(isUserId, attentions);
 			} catch (Exception e) {
 				log.error("添加好友失败");
 				return new ErrorBean(10003,"添加好友失败");
 			}
-		}else if("1".equals(addition)){
+		}else if(addition.equals("1")){
 			if(attentionService.checkAttentionApply(isUserId, attentions)) {
 				log.error("已经申请");
 				return new ErrorBean(10002,"已经申请");

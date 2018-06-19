@@ -310,6 +310,17 @@ public class UserServiceImpl implements UserService {
 		}
 		return resultList;
 	}
+	
+	@Override
+	public List<Map<String, Object>> seekAttention(Integer userId,String query) {
+		List<Map<String, Object>> resultList = userMapper.seekAttention(userId,query);
+		for (Map<String, Object> map : resultList) {
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture")));
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+			map.put("vip", vipService.selectVipLevel(Integer.parseInt(map.get("userId").toString())));
+		}
+		return resultList;
+	}
 
 	@Override
 	public Map<String, Object> selectById(Integer userId,Integer attention) {
