@@ -106,6 +106,8 @@ public class ReputationController {
 	 * @param @param beReported 被举报者
 	 * @param @param activityId 活动Id
 	 * @param @param dynamicId 动态Id
+	 * @param @param typeId 1:活动 2:动态
+	 * @param @param remarks 举报内容
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws
@@ -192,8 +194,8 @@ public class ReputationController {
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param activityId 活动id
-	 * @param @param type 1:通过  2:未通过
 	 * @param @param dynamicId 动态Id
+	 * @param @param type 1:通过  2:未通过
 	 * @param @return    设定文件
 	 * @return ResultBean    返回类型
 	 * @throws

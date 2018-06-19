@@ -219,30 +219,30 @@ public class VipServiceImpl implements VipService {
 		if(resultList == null || resultList.isEmpty()) {
 			return 0;
 		}
-		if(resultList.size() == 2) {
+		if(resultList.size() == 2) { //svip
 			return 10+getVipLevel(userId);
 		}
-		if("0".equals(resultList.get(0).getVipType())) {
+		if("0".equals(resultList.get(0).getVipType())) { //vip
 			return getVipLevel(userId);
 		}
-		return 10+getVipLevel(userId);
+		return 10+getVipLevel(userId); //svip
 	}
 	
 	@Override
 	public int getMonth(Integer userId) {
 		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
 		int i = 0;
-		if(resultList != null && resultList.size() < 2) {
+		if(resultList != null && resultList.size() < 2) { //vip
 			if("0".equals(resultList.get(0).getVipType())) {
 				ShanduoVip vip = resultList.get(0);
 				Date date = new Date();
 				long vipEndTime = vip.getVipEndTime().getTime();
 				long time = vipEndTime - date.getTime();
 				long b = 1000L*60*60*24*31;
-				if(1000L*60*60*24*16 > time) {
+				if(1000L*60*60*24*16 > time) { //vip剩余时间不足16天不能升级
 					i = 0;
 				} else {
-					i = (int) (time/b);
+					i = (int) (time/b); 
 					if(i >= 1 && time%b>= 1000L*60*60*24*16) {
 						i = i+1;
 					}
