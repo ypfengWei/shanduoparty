@@ -40,20 +40,20 @@ public interface OrderService {
 	UserOrder selectByOrderId(String orderId);
 	
 	/**
-	 * 余额支付订单
+	 * 余额或赏金支付订单
 	 * @Title: updateOrder
 	 * @Description: TODO
 	 * @param @param orderId
-	 * @param @param userId
+	 * @param @param typeId
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int updateOrder(String orderId);
+	int updateOrder(String orderId,String typeId);
 	
 	/**
 	 * 第三方支付订单
-	 * @Title: updateOrder
+	 * @Title: updateOrders
 	 * @Description: TODO
 	 * @param @param orderId 订单ID
 	 * @param @param payId 类型ID:2.支付宝;3.微信;4.小程序;
@@ -61,6 +61,6 @@ public interface OrderService {
 	 * @return int
 	 * @throws
 	 */
-	int updateOrder(String orderId,String payId);
+	int updateOrders(String orderId,String payId);
 	
 }

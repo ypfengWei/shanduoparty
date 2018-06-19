@@ -1,5 +1,6 @@
 package com.shanduo.party.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,36 +59,22 @@ public class AttentionController {
 	 */
 	@RequestMapping(value = "seekuser",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean seekUser(HttpServletRequest request,String token,String query) {
+	public ResultBean seekUser(HttpServletRequest request,String token,String query,String typeId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		List<Map<String, Object>> resultList = userService.seekUser(isUserId,query);
-		return new SuccessBean(resultList);
-	}
-	
-	/**
-	 * 搜索好友
-	 * @Title: seekUser
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @param query 手机号或昵称或闪多号
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "seekattention",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean seekAttention(HttpServletRequest request,String token,String query) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
+			log.error("类型错误");
+			return new ErrorBean(10002, "类型错误");
 		}
-		List<Map<String, Object>> resultList = userService.seekAttention(isUserId,query);
+		List<Map<String, Object>> resultList = new ArrayList<>();
+		if("1".equals(typeId)) {
+			resultList = userService.seekUser(isUserId,query);
+		}else {
+			resultList = userService.seekAttention(isUserId,query);
+		}
 		return new SuccessBean(resultList);
 	}
 	

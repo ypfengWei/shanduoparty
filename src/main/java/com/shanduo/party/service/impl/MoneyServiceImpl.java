@@ -67,6 +67,7 @@ public class MoneyServiceImpl implements MoneyService {
 		resultMap.put("money", money.getMoney());
 		resultMap.put("beans", money.getBeans());
 		resultMap.put("refresh", money.getRefresh());
+		resultMap.put("reward", money.getReward());
 		return resultMap;
 	}
 	
@@ -102,19 +103,32 @@ public class MoneyServiceImpl implements MoneyService {
 	}
 	
 	@Override
-	public boolean checkMoney(Integer userId, BigDecimal money) {
+	public boolean checkMoney(Integer userId, BigDecimal money, String typeId) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		if(userMoney.getMoney().compareTo(money) < 0) {
-			return true;
+		if("1".equals(typeId)) {
+			if(userMoney.getMoney().compareTo(money) < 0) {
+				return true;
+			}
+		}else {
+			if(userMoney.getReward().compareTo(money) < 0) {
+				return true;
+			}
 		}
 		return false;
 	}
 	
 	@Override
-	public int consumeMoney(Integer userId, BigDecimal money, String remarks) {
+	public int consumeMoney(Integer userId, BigDecimal money, String remarks, String typeId) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		BigDecimal moneys = userMoney.getMoney().subtract(money);
-		userMoney.setMoney(moneys);
+		if("1".equals(typeId)) {
+			BigDecimal moneys = userMoney.getMoney().subtract(money);
+			userMoney.setMoney(moneys);
+			remarks = "余额"+remarks;
+		}else {
+			BigDecimal rewards = userMoney.getReward().subtract(money);
+			userMoney.setReward(rewards);
+			remarks = "赏金"+remarks;
+		}
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
 			log.error("消费失败");
@@ -144,11 +158,7 @@ public class MoneyServiceImpl implements MoneyService {
 		}else {
 			remarks = "升级赠送闪多豆"+beans+"颗";
 		}
-		try {
-			experienceService.saveMoneyRecord(userId, "9", beans+"",remarks);
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+		experienceService.saveMoneyRecord(userId, "9", beans+"",remarks);
 		return 1;
 	}
 
@@ -162,20 +172,18 @@ public class MoneyServiceImpl implements MoneyService {
 		for(UserMoney money : list) {
 			int userId = money.getUserId();
 			int beans = money.getBeans()/1000;
-			UserMoney userMoney = new UserMoney();
-			userMoney.setUserId(userId);
-			userMoney.setBeans(money.getBeans()%1000);
-			int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
+			money.setUserId(userId);
+			money.setBeans(money.getBeans()%1000);
+			BigDecimal reward = money.getReward().add(new BigDecimal(beans+""));
+			money.setReward(reward);
+			int i = moneyMapper.updateByPrimaryKeySelective(money);
 			if(i < 1) {
-				log.error("减闪多豆失败");
+				log.error("减闪多豆充值赏金余额失败");
 				throw new RuntimeException();
 			}
-			try {
-				experienceService.saveMoneyRecord(userId, "10", beans*1000+"","转换余额");
-			} catch (Exception e) {
-				throw new RuntimeException();
-			}
-			payMoney(userId, new BigDecimal(beans+""), "闪多豆");
+			experienceService.saveMoneyRecord(userId, "10", beans*1000+"", "转换赏金余额");
+			experienceService.saveMoneyRecord(userId, "1", beans+"", "闪多豆充值赏金余额");
+			log.info(userId+":闪多豆充值赏金余额_"+beans);
 		}
 		return 1;
 	}

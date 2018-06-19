@@ -97,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	public int updateOrder(String orderId) {
+	public int updateOrder(String orderId,String typeId) {
 		UserOrder order = selectByOrderId(orderId);
 		if(order == null) {
 			throw new RuntimeException();
@@ -106,22 +106,22 @@ public class OrderServiceImpl implements OrderService {
 		BigDecimal money = order.getMoney();
 		Integer month = order.getMonth();
 		String activityId = order.getActivityId();
-		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),"1");
+		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),"1",typeId);
 		return 1;
 	}
 
 	@Override
-	public int updateOrder(String orderId,String payId) {
+	public int updateOrders(String orderId,String payId) {
 		pay(orderId, payId);
 		return 1;
 	}
 	
 	/**
-	 * 第三方支付订单
+	 * 支付订单
 	 * @Title: pay
 	 * @Description: TODO
 	 * @param @param orderId 订单ID
-	 * @param @param payId 1.余额,2.支付宝,3.微信,4.小程序
+	 * @param @param payId 1.余额或赏金,2.支付宝,3.微信,4.小程序,5.公众号
 	 * @return void
 	 * @throws
 	 */
@@ -147,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
-		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),payId);
+		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),payId,"1");
 	}
 	
 	/**
@@ -161,17 +161,18 @@ public class OrderServiceImpl implements OrderService {
 	 * @param @param activityId 活动ID
 	 * @param @param orderType 订单类型
 	 * @param @param payId 支付类型ID
+	 * @param @param typeId 币种类型:1.余额,2.赏金
 	 * @return void
 	 * @throws
 	 */
-	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String orderType,String payId) {
+	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String orderType,String payId,String typeId) {
 		//1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
 		switch (orderType) {
 			case "1":
 				break;
 			case "2":
 				try {
-					moneyService.consumeMoney(userId, money, "开通"+month+"个月VIP");
+					moneyService.consumeMoney(userId, money, "开通"+month+"个月VIP",typeId);
 					vipService.updateVip(userId, month, "0");
 				} catch (Exception e) {
 					throw new RuntimeException();
@@ -179,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
 				break;
 			case "3":
 				try {
-					moneyService.consumeMoney(userId, money, "开通"+month+"个月SVIP");
+					moneyService.consumeMoney(userId, money, "开通"+month+"个月SVIP",typeId);
 					vipService.updateVip(userId, month, "1");
 				} catch (Exception e) {
 					throw new RuntimeException();
@@ -187,7 +188,7 @@ public class OrderServiceImpl implements OrderService {
 				break;
 			case "4":
 				try {
-					moneyService.consumeMoney(userId, money, "活动刷新");
+					moneyService.consumeMoney(userId, money, "活动刷新",typeId);
 					activityService.activityRefresh(activityId);
 				} catch (Exception e) {
 					throw new RuntimeException();
@@ -195,7 +196,7 @@ public class OrderServiceImpl implements OrderService {
 				break;
 			case "5":
 				try {
-					moneyService.consumeMoney(userId, money, "活动置顶");
+					moneyService.consumeMoney(userId, money, "活动置顶",typeId);
 					activityService.updateBysetTop(activityId);
 				} catch (Exception e) {
 					throw new RuntimeException();

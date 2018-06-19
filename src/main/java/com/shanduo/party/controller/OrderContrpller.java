@@ -67,7 +67,7 @@ public class OrderContrpller {
 	 * @Description: TODO
 	 * @param @param request
 	 * @param @param token
-	 * @param @param payId 支付类型:1.余额;2.支付宝;3.微信;4.微信小程序
+	 * @param @param payId 支付类型:1.余额;2.支付宝;3.微信;4.微信小程序;5.微信公众号支付;6.赏金支付
 	 * @param @param password 余额支付时传的支付密码
 	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
 	 * @param @param money 金额,充值才传
@@ -106,16 +106,22 @@ public class OrderContrpller {
 		UserOrder order = (UserOrder) resultBean.getResult();
 		if("1".equals(payId)) {
 			//余额
-			return payment(isUserId, order, password);
+			return payment(isUserId, order, password,"1");
 		}else if("2".equals(payId)) {
 			//支付宝
 			return aliPayOrder(order);
 		}else if("3".equals(payId)) {
 			//微信
 			return wxPayOrder(order,request);
-		}else {
+		}else if("4".equals(payId)) {
 			//微信小程序
-			return wxPayOrder(isUserId, order, request);
+			return null;
+		}else if("5".equals(payId)) {
+			//微信公众号
+			return null;
+		}else{
+			//赏金
+			return payment(isUserId, order, password,"2");
 		}
 	}
 	
@@ -165,17 +171,18 @@ public class OrderContrpller {
 	}
 	
 	/**
-	 * 余额支付
+	 * 余额或赏金支付
 	 * @Title: payment
 	 * @Description: TODO
 	 * @param @param userId
 	 * @param @param order
 	 * @param @param password
+	 * @param @param typeId
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
 	 */
-	public ResultBean payment(Integer userId,UserOrder order,String password) {
+	public ResultBean payment(Integer userId,UserOrder order,String password,String typeId) {
 		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
 			log.error("密码格式错误");
 			return new ErrorBean(10002,"密码格式错误");
@@ -184,12 +191,12 @@ public class OrderContrpller {
 			log.error("支付密码错误");
 			return new ErrorBean(10002,"支付密码错误");
 		}
-		if(moneyService.checkMoney(userId,order.getMoney())) {
+		if(moneyService.checkMoney(userId,order.getMoney(),typeId)) {
 			log.error("余额不足");
 			return new ErrorBean(10002,"余额不足");
 		}
 		try {
-			orderService.updateOrder(order.getId());
+			orderService.updateOrder(order.getId(),typeId);
 		} catch (Exception e) {
 			log.error("支付失败");
 			return new ErrorBean(10003,"支付失败");

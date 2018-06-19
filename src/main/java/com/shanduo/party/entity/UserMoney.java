@@ -14,6 +14,8 @@ public class UserMoney {
 
     private Integer beans;
 
+    private BigDecimal reward;
+
     private Integer refresh;
 
     private String remarks;
@@ -62,6 +64,14 @@ public class UserMoney {
 
     public void setBeans(Integer beans) {
         this.beans = beans;
+    }
+
+    public BigDecimal getReward() {
+        return reward;
+    }
+
+    public void setReward(BigDecimal reward) {
+        this.reward = reward;
     }
 
     public Integer getRefresh() {

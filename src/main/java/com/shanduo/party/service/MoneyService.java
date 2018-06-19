@@ -56,11 +56,12 @@ public interface MoneyService {
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param money 消费金额
+	 * @param @param typeId 币种类型:1.余额,2.赏金
 	 * @param @return
 	 * @return boolean
 	 * @throws
 	 */
-	boolean checkMoney(Integer userId,BigDecimal money);
+	boolean checkMoney(Integer userId,BigDecimal money,String typeId);
 	
 	/**
 	 * 消费余额
@@ -69,11 +70,12 @@ public interface MoneyService {
 	 * @param @param userId 用户ID
 	 * @param @param money 消费金额
 	 * @param @param remarks 备注：消费方式等
+	 * @param @param typeId 币种类型:1.余额,2.赏金
 	 * @param @return
 	 * @return int
 	 * @throws
 	 */
-	int consumeMoney(Integer userId,BigDecimal money,String remarks);
+	int consumeMoney(Integer userId,BigDecimal money,String remarks,String typeId);
 	
 	/**
 	 * 赠送闪多豆

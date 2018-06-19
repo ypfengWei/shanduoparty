@@ -107,7 +107,7 @@ public class PayController {
 				return "SUCCESS";
 			}
 			try {
-				orderService.updateOrder(orderId,"2");
+				orderService.updateOrders(orderId,"2");
 			} catch (Exception e) {
 				log.error("修改订单错误");
 				return "SUCCESS";
@@ -188,7 +188,7 @@ public class PayController {
     			return returnXML(WxPayConfig.FAIL);
     		}
     		try {
-				orderService.updateOrder(orderId,"3");
+				orderService.updateOrders(orderId,"3");
 			} catch (Exception e) {
 				log.error("修改订单错误");
 				return returnXML(WxPayConfig.FAIL);
@@ -259,7 +259,7 @@ public class PayController {
     			return returnXML(WechatPayConfig.FAIL);
     		}
     		try {
-				orderService.updateOrder(orderId,"4");
+				orderService.updateOrders(orderId,"4");
 			} catch (Exception e) {
 				log.error("修改订单错误");
 				return returnXML(WechatPayConfig.FAIL);
