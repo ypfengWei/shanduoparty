@@ -145,10 +145,18 @@ public class MoneyServiceImpl implements MoneyService {
 			throw new RuntimeException();
 		}
 		String remarks = "";
-		if("1".equals(typeId)) {
+		switch (typeId) {
+		case "1":
 			remarks = "签到赠送闪多豆"+beans+"颗";
-		}else {
+			break;
+		case "2":
 			remarks = "升级赠送闪多豆"+beans+"颗";
+			break;
+		case "3":
+			remarks = "任务赠送闪多豆"+beans+"颗";
+			break;
+		default:
+			break;
 		}
 		experienceService.saveMoneyRecord(userId, "9", beans+"",remarks);
 		return 1;
