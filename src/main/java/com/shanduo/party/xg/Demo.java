@@ -33,10 +33,10 @@ public class Demo {
     public static void main(String[] args) throws JSONException {
     	Demo t = new Demo();
         //Android单推
-//        System.out.println(t.demoPushSingleDeviceMessage("标题", "测试", "97d2740d1ee608d24d0e84ea54f41f6149690335"));
-//        System.out.println(t.demoPushSingleDeviceNotification("97d2740d1ee608d24d0e84ea54f41f6149690335"));
-//        System.out.println(t.demoPushSingleDeviceNotificationIntent());
-//        System.out.println(t.demoPushSingleAccount("标题", "测试", "bd034a7a00349f984afab7ee5ab86d14890c2b21"));
+        System.out.println(t.demoPushSingleDeviceMessage("标题", "测试", "97d2740d1ee608d24d0e84ea54f41f6149690335"));
+        System.out.println(t.demoPushSingleDeviceNotification("97d2740d1ee608d24d0e84ea54f41f6149690335"));
+        System.out.println(t.demoPushSingleDeviceNotificationIntent());
+        System.out.println(t.demoPushSingleAccount("标题", "测试", "bd034a7a00349f984afab7ee5ab86d14890c2b21"));
 
         //iOS推送
         /*System.out.println(t.demoPushSingleDeviceMessageIOS());

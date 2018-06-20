@@ -164,7 +164,7 @@ public class XGUtils {
 	 * @throws
 	 */
 	public static String isError(JSONObject resultJson) throws JSONException {
-  	  	if(resultJson.getInt("ret_code") != 0) {
+  	  	if(resultJson.getInt("ret_code") == 0) {
   	  		return "ok";
   	  	}
 		return resultJson.getString("err_msg").toString();

@@ -4,7 +4,7 @@ public class ErrorCodeConstants {
 
 	public static final String USER_TOKEN_ERROR = "用户登录超时";
 	public static final String USER_TOKEN_PASTDUR = "登录已失效";
-	public static final String TOKEN_TEXT_ISNULL = "Token为空";
+	public static final String TOKEN_TEXT_ISNULL = "请先登录";
 	public static final String USER_LIMITED_AUTHORITY = "权限不足";
 	public static final String PAGE_NONUMBER = "页数格式错误";
 	public static final String CORRECT_DATA ="输入正确的数据";

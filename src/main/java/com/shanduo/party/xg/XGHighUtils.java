@@ -49,7 +49,7 @@ public class XGHighUtils {
 	 * @return String
 	 * @throws
 	 */
-	protected String pushSingleDeviceNotification(String title,String content,String token,Integer typeId) throws JSONException {
+	public String pushSingleDeviceNotification(String title,String content,String token,Integer typeId) throws JSONException {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushSingleDevice(token, message);
         return isError(resultJson);
@@ -68,7 +68,7 @@ public class XGHighUtils {
 	 * @return String
 	 * @throws
 	 */
-    protected String pushSingleAccount(String title,String content,String account,Integer typeId) throws JSONException {
+    public String pushSingleAccount(String title,String content,String account,Integer typeId) throws JSONException {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushSingleAccount(0, account, message);
 		return isError(resultJson);
@@ -87,7 +87,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    protected String pushAccountList(String title,String content,List<String> accountList,Integer typeId) throws JSONException {
+    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId) throws JSONException {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushAccountList(0, accountList, message);
         return isError(resultJson);
@@ -105,7 +105,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    protected String pushAllDevice(String title,String content,Integer typeId) throws JSONException {
+    public String pushAllDevice(String title,String content,Integer typeId) throws JSONException {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushAllDevice(0, message);
         return isError(resultJson);
@@ -124,7 +124,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    protected String pushTags(String title,String content,Integer typeId,List<String> tagList) throws JSONException {
+    public String pushTags(String title,String content,Integer typeId,List<String> tagList) throws JSONException {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushTags(0, tagList, "OR", message);
         return isError(resultJson);
@@ -144,7 +144,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    protected String pushAccountListMultiple(String title,String content,Integer typeId,List<String> accountList) throws JSONException {
+    public String pushAccountListMultiple(String title,String content,Integer typeId,List<String> accountList) throws JSONException {
         Message message = getMessage(title, content, typeId);
         JSONObject ret = xinge.createMultipush(message);
         if (ret.getInt("ret_code") != 0)
@@ -170,7 +170,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    protected String demoPushDeviceListMultiple(String title,String content,Integer typeId,List<String> deviceList) throws JSONException {
+    public String demoPushDeviceListMultiple(String title,String content,Integer typeId,List<String> deviceList) throws JSONException {
         Message message = getMessage(title, content, typeId);
         JSONObject ret = xinge.createMultipush(message);
         if (ret.getInt("ret_code") != 0)
@@ -224,6 +224,10 @@ public class XGHighUtils {
 			action.setActionType(ClickAction.TYPE_INTENT);
 	        action.setIntent("intent:10086#Intent;scheme=tel;action=android.intent.action.DIAL;S.key=value;end");
 			break;
+		case 3:
+			action.setActionType(ClickAction.TYPE_ACTIVITY);
+	        action.setActivity("com.yapin.shanduo.ui.activity.LoginActivity");
+			break;
 		default:
 			break;
 		}
@@ -242,8 +246,7 @@ public class XGHighUtils {
 	 * @throws
 	 */
 	public String isError(JSONObject resultJson) throws JSONException {
-		System.out.println(resultJson.toString());
-		if(resultJson.getInt("ret_code") != 0) {
+		if(resultJson.getInt("ret_code") == 0) {
   	  		return "ok";
   	  	}
 		return resultJson.getString("err_msg").toString();

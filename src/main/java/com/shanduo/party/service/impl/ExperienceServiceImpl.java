@@ -229,23 +229,28 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Override
 	public int signin(Integer userId) {
 		int weekSignInCount = weekSignInCount(userId)+1;
-		if(weekSignInCount == 1) {
-			saveSignin(userId, "0");
-		}else if(weekSignInCount == 2) {
-			saveMoneyRecord(userId, "3",10+"","签到获得闪多豆:+10");
-			moneyService.payBeans(userId, 10,"1");
-		}else if(weekSignInCount == 3) {
-			saveSignin(userId, "1");
-		}else if(weekSignInCount == 4) {
-			saveMoneyRecord(userId, "3",15+"","签到获得闪多豆:+15");
-			moneyService.payBeans(userId, 15,"1");
-		}else if(weekSignInCount == 5) {
-			saveSignin(userId, "2");
-		}else if(weekSignInCount == 6) {
-			saveSignin(userId, "3");
-		}else if(weekSignInCount == 7) {
-			saveMoneyRecord(userId, "3",20+"","签到获得闪多豆:+20");
-			moneyService.payBeans(userId, 20,"1");
+		switch (weekSignInCount) {
+		case 1:
+			moneyService.payBeans(userId, 58,"1");
+			saveMoneyRecord(userId, "3",58+"","签到获得闪多豆:+58");
+			break;
+		case 2:
+			moneyService.payBeans(userId, 128,"1");
+			saveMoneyRecord(userId, "3",128+"","签到获得闪多豆:+128");
+			break;
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+			moneyService.payBeans(userId, 88,"1");
+			saveMoneyRecord(userId, "3",88+"","签到获得闪多豆:+88");
+			break;
+		case 7:
+			moneyService.payBeans(userId, 588,"1");
+			saveMoneyRecord(userId, "3",588+"","签到获得闪多豆:+588");
+			break;
+		default:
+			break;
 		}
 		return 1;
 	}

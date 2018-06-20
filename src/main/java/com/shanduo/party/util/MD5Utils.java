@@ -5,7 +5,7 @@ package com.shanduo.party.util;
  */  
 public class MD5Utils {  
     /** 
-     * 单例 
+     * 单例
      */  
     private static MD5Utils instance;  
   

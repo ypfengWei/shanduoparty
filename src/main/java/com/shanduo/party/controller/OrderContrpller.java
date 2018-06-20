@@ -83,11 +83,11 @@ public class OrderContrpller {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-		if(StringUtils.isNull(payId) || !payId.matches("^[1234]$")) {
+		if(StringUtils.isNull(payId) || !payId.matches("^[1-6]$")) {
 			log.error("支付类型错误");
 			return new ErrorBean(10002,"支付类型错误");
 		}
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[1-5]$")) {
+		if(StringUtils.isNull(typeId) || !typeId.matches("^[1-6]$")) {
 			log.error("消费类型错误");
 			return new ErrorBean(10002,"消费类型错误");
 		}
