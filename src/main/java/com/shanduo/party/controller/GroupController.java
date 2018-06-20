@@ -203,7 +203,7 @@ public class GroupController {
 	}
 	
 	/**
-	 * 模糊群名称查找
+	 * 模糊群名称或群ID查找
 	 * @Title: queryName
 	 * @Description: TODO
 	 * @param @param request
@@ -222,8 +222,8 @@ public class GroupController {
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(name)) {
-			log.error("群名称为空");
-			return new ErrorBean(10002,"群名称为空");
+			log.error(ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
 		}
 		Map<String, Object> resultMap = groupService.queryNameList(name);
 		if(resultMap == null) {

@@ -32,6 +32,7 @@ public class JsonStringUtils {
 			return new ArrayList<>(0);
 		}
 		JSONArray jsonArray = JSONArray.fromObject(json);
+		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> list = (List<Map<String, Object>>) JSONArray.toCollection(jsonArray, Map.class);
 		return list;
 	}
@@ -50,6 +51,7 @@ public class JsonStringUtils {
 			return new HashMap<>(0);
 		}
 		JSONObject jsonObject = JSONObject.fromObject(json);
+		@SuppressWarnings("unchecked")
 		Map<String,Object> map = JSONObject.fromObject(jsonObject);
 		return map;
 	}

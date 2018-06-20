@@ -181,16 +181,18 @@ public class WxPayUtils {
     
     public static Map<String, Object> Dom2Map(Document doc){
         Map<String, Object> map = new HashMap<String, Object>();
-        if(doc == null)
+        if(doc == null) {
             return map;
+        }
         Element root = doc.getRootElement();
-        for (Iterator iterator = root.elementIterator(); iterator.hasNext();) {
+        for (Iterator<?> iterator = root.elementIterator(); iterator.hasNext();) {
             Element e = (Element) iterator.next();
-            List list = e.elements();
+            List<?> list = e.elements();
             if(list.size() > 0){
                 map.put(e.getName(), Dom2Map(e));
-            }else
+            }else {
                 map.put(e.getName(), e.getText());
+            }
         }
         return map;
     }
@@ -238,8 +240,9 @@ public class WxPayUtils {
                         map.put(iter.getName(), iter.getText());
                 }
             }
-        }else
+        }else {
             map.put(e.getName(), e.getText());
+        }
         return map;
     }
     

@@ -165,7 +165,8 @@ public class GroupServiceImpl implements GroupService {
         	Page page = new Page(Integer.parseInt(memberNum), 20, pageNum);
         	resultMap.put("totalPage", page.getTotalPage());
         	resultMap.put("page", page.getPageNum());
-        	List<Map<String, Object>> list = (List<Map<String, Object>>) resultMap.get("MemberList");
+        	@SuppressWarnings("unchecked")
+			List<Map<String, Object>> list = (List<Map<String, Object>>) resultMap.get("MemberList");
         	for(Map<String, Object> map : list) {
         		String userId = map.get("Member_Account").toString();
         		ShanduoUser user = userMapper.selectByPrimaryKey(Integer.valueOf(userId));

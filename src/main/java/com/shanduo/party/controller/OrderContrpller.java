@@ -64,7 +64,7 @@ public class OrderContrpller {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param payId 支付类型:1.余额;2.支付宝;3.微信;4.微信小程序;5.微信公众号支付;6.赏金支付
-	 * @param @param password 余额支付时传的支付密码
+	 * @param @param password 余额或赏金支付时传的支付密码
 	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
 	 * @param @param money 金额,充值才传
 	 * @param @param month 月份,开通vip才传
@@ -92,6 +92,10 @@ public class OrderContrpller {
 			return new ErrorBean(10002,"消费类型错误");
 		}
 		if("1".equals(payId) && "1".equals(typeId)) {
+			log.error("充值方式错误");
+			return new ErrorBean(10002,"充值方式错误");
+		}
+		if("1".equals(payId) && "6".equals(typeId)) {
 			log.error("充值方式错误");
 			return new ErrorBean(10002,"充值方式错误");
 		}

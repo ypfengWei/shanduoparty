@@ -56,7 +56,8 @@ public class PayController {
 	@ResponseBody
 	public String aliPay(HttpServletRequest request) throws AlipayApiException {
 		//获取支付宝POST过来反馈信息
-		Map requestParams = request.getParameterMap();
+		@SuppressWarnings("unchecked")
+		Map<String, ?> requestParams = request.getParameterMap();
 		Map<String,String> params = new HashMap<String,String>(requestParams.size());
 		for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
 		    String name = iter.next();
@@ -196,6 +197,5 @@ public class PayController {
         }
     	return returnXML(WxPayConfig.FAIL);
 	}
-	
 	
 }

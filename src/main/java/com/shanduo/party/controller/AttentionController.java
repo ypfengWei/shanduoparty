@@ -53,6 +53,7 @@ public class AttentionController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param query 手机号或昵称或闪多号
+	 * @param @param typeId 类型:1.搜索用户;2.搜索好友
 	 * @param @return
 	 * @return ResultBean
 	 * @throws

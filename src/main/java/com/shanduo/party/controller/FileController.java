@@ -98,7 +98,7 @@ public class FileController {
     }   
 
     /**
-     * 上传单张图片返回图片名字
+     * 上传图片返回图片名字
      * @Title: uploads
      * @Description: TODO
      * @param @param request

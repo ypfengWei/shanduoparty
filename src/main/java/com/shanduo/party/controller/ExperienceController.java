@@ -28,7 +28,7 @@ import com.shanduo.party.service.ExperienceService;
  *
  */
 @Controller
-@RequestMapping(value = "experience")
+@RequestMapping(value = "jexperience")
 public class ExperienceController {
 
 	private static final Logger log = LoggerFactory.getLogger(ExperienceController.class);
@@ -69,6 +69,16 @@ public class ExperienceController {
 		return new SuccessBean("签到成功");
 	}
 	
+	/**
+	 * 检查签到
+	 * @Title: checkSignIn
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
 	@RequestMapping(value = "checksignin",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean checkSignIn(HttpServletRequest request,String token) {

@@ -76,7 +76,6 @@
 	 		<mvc:mapping path="/jorder/**"/>
 	 		<!-- 群聊接口拦截 -->
 	 		<mvc:mapping path="/jgroup/**"/>
-	 		
 	 		<bean class="com.shanduo.party.interceptor.TokenInterceptor"/>
 		</mvc:interceptor>
  	</mvc:interceptors>

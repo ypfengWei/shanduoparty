@@ -74,7 +74,7 @@ public class MoneyControllrt {
 	}
 	
 	/**
-	 * 查询余额历史操作记录
+	 * 查询钱包历史记录
 	 * @Title: moneyList
 	 * @Description: TODO
 	 * @param @param request
