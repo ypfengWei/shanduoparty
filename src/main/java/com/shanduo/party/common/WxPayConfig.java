@@ -1,14 +1,22 @@
-package com.shanduo.party.pay;
+package com.shanduo.party.common;
 
-public class WechatPayConfig {
+/**
+ * 微信支付基础配置类
+ * @ClassName: WxPayConfig
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年5月22日 下午2:39:37
+ *
+ */
+public class WxPayConfig {
 	
 	/**
-	 * 小程序ID
+	 * APPID
 	 */
-    public static final String APPID = "wxf0a4b4f4e27b7aa6";
+    public static final String APPID = "wx3dd985759741b34e";
     
     /**
-     * 商户ID
+     * 商户id
      */
     public static final String MCH_ID = "1504783251";
     
@@ -25,18 +33,17 @@ public class WechatPayConfig {
     /**
      * 交易类型
      */
-    public static final String TRADETYPE = "JSAPI";
+    public static final String TRADETYPE = "APP";
     
     /**
      * 微信统一下单接口地址
      */
     public static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     
-    
     /**
      * 支付回调url
      */
-    public static final String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/jsapiwxpay";
+    public static final String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/appwxpay";
     
     /**
      * 调用微信接口的返回值的false
@@ -48,4 +55,4 @@ public class WechatPayConfig {
      */
     public static final String SUCCESS = "SUCCESS";
     
-}	
+}

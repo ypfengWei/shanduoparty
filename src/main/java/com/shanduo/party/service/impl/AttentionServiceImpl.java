@@ -198,16 +198,16 @@ public class AttentionServiceImpl implements AttentionService {
 
 	@Override
 	public int delAttention(Integer userId, Integer attention, String typeId) {
+		int i = attentionMapper.deleteAttention(userId, attention, typeId);
+		if(i < 1) {
+			throw new RuntimeException();
+		}
 		if("1".equals(typeId)) {
 			boolean flag = ImUtils.deleteFriend(userId+"", attention+"");
 			if(flag) {
 				log.error("IM删除好友失败");
 				throw new RuntimeException();
 			}
-		}
-		int i = attentionMapper.deleteAttention(userId, attention, typeId);
-		if(i < 1) {
-			throw new RuntimeException();
 		}
 		return 1;
 	}
@@ -219,12 +219,7 @@ public class AttentionServiceImpl implements AttentionService {
 			return 1;
 		}
 		if(i == 1) {
-			try {
-				delAttention(userId, attention,"1");
-			} catch (Exception e) {
-				log.error("删除好友失败");
-				throw new RuntimeException();
-			}
+			delAttention(userId, attention,"1");
 		}
 		UserAttention attentions = new UserAttention();
 		attentions.setId(UUIDGenerator.getUUID());

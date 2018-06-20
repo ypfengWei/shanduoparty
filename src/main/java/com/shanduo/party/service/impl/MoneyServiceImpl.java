@@ -94,11 +94,7 @@ public class MoneyServiceImpl implements MoneyService {
 			log.error("充值失败");
 			throw new RuntimeException();
 		}
-		try {
-			experienceService.saveMoneyRecord(userId, "1",money+"", remarks+"充值余额");
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+		experienceService.saveMoneyRecord(userId, "1",money+"", remarks+"充值余额");
 		return 1;
 	}
 	
@@ -134,11 +130,7 @@ public class MoneyServiceImpl implements MoneyService {
 			log.error("消费失败");
 			throw new RuntimeException();
 		}
-		try {
-			experienceService.saveMoneyRecord(userId, "2", money+"",remarks);
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+		experienceService.saveMoneyRecord(userId, "2", money+"",remarks);
 		return 1;
 	}
 
@@ -181,8 +173,8 @@ public class MoneyServiceImpl implements MoneyService {
 				log.error("减闪多豆充值赏金余额失败");
 				throw new RuntimeException();
 			}
-			experienceService.saveMoneyRecord(userId, "10", beans*1000+"", "转换赏金余额");
-			experienceService.saveMoneyRecord(userId, "1", beans+"", "闪多豆充值赏金余额");
+			experienceService.saveMoneyRecord(userId, "10", beans*1000+"", "转换赏金");
+			experienceService.saveMoneyRecord(userId, "1", beans+"", "闪多豆充值赏金");
 			log.info(userId+":闪多豆充值赏金余额_"+beans);
 		}
 		return 1;
@@ -347,12 +339,7 @@ public class MoneyServiceImpl implements MoneyService {
 	@Override
 	public int refreshActivity(Integer userId, String activityId) {
 		reduceRefresh(userId);
-		try {
-			activityService.activityRefresh(activityId);
-		} catch (Exception e) {
-			log.error("活动刷新失败");
-			throw new RuntimeException();
-		}
+		activityService.activityRefresh(activityId);
 		return 1;
 	}
 

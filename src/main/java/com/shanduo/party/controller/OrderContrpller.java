@@ -20,16 +20,14 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
+import com.shanduo.party.common.AliPayConfig;
 import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.WxPayConfig;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
-import com.shanduo.party.pay.AliPayConfig;
-import com.shanduo.party.pay.WechatPayConfig;
-import com.shanduo.party.pay.WxPayConfig;
 import com.shanduo.party.service.BaseService;
-import com.shanduo.party.service.BindingService;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.IpUtils;
@@ -58,8 +56,6 @@ public class OrderContrpller {
 	private OrderService orderService;
 	@Autowired
 	private MoneyService moneyService;
-	@Autowired
-	private BindingService bindingService;
 
 	/**
 	 * 支付订单
@@ -115,10 +111,10 @@ public class OrderContrpller {
 			return wxPayOrder(order,request);
 		}else if("4".equals(payId)) {
 			//微信小程序
-			return null;
+			return new ErrorBean(10002,"暂不支持该支付");
 		}else if("5".equals(payId)) {
 			//微信公众号
-			return null;
+			return new ErrorBean(10002,"暂不支持该支付");
 		}else{
 			//赏金
 			return payment(isUserId, order, password,"2");
@@ -333,79 +329,4 @@ public class OrderContrpller {
 		return new SuccessBean(responseMap);
 	}
 	
-	/**
-	 * 小程序支付
-	 * @Title: wxPayOrder
-	 * @Description: TODO
-	 * @param @param userId
-	 * @param @param order
-	 * @param @param request
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	public ResultBean wxPayOrder(Integer userId,UserOrder order,HttpServletRequest request) {
-		String openId = bindingService.selectOpenId(userId, "1");
-		if(openId == null) {
-			log.error("openId获取出错");
-			return new ErrorBean(10002,"连接超时");
-		}
-		String body = "";
-		if("1".equals(order.getOrderType())) {
-			body = "充值余额";
-		}else if("2".equals(order.getOrderType())){
-			body = "开通VIP"+order.getMonth()+"个月";
-		}else if("3".equals(order.getOrderType())){
-			body = "开通SVIP"+order.getMonth()+"个月";
-		}else if("4".equals(order.getOrderType())){
-			body = "刷新活动";
-		}else {
-			body = "置顶活动";
-		}
-		body = body + order.getMoney();
-		//价格，单位为分
-		BigDecimal amount = order.getMoney();
-		amount = amount.multiply(new BigDecimal("100"));
-		//订单总金额
-		Integer moneys = amount.intValue();
-		Map<String, String> paramsMap = new HashMap<>(11);
-		paramsMap.put("appid", WechatPayConfig.APPID);
-		paramsMap.put("mch_id", WechatPayConfig.MCH_ID);
-		paramsMap.put("nonce_str", UUIDGenerator.getUUID());
-		paramsMap.put("body", body);
-		paramsMap.put("out_trade_no", order.getId());
-		paramsMap.put("total_fee", moneys+"");
-		paramsMap.put("spbill_create_ip", IpUtils.getIpAddress(request));
-		paramsMap.put("notify_url", WechatPayConfig.NOTIFY_URL);
-		paramsMap.put("trade_type", WechatPayConfig.TRADETYPE);
-		paramsMap.put("openid", openId);
-		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-		String paramsString = WxPayUtils.createLinkString(paramsMap);
-		//MD5运算生成签名
-		String sign = WxPayUtils.sign(paramsString, WechatPayConfig.KEY, "utf-8").toUpperCase();
-		//签名
-		paramsMap.put("sign", sign);
-		String paramsXml = WxPayUtils.map2Xmlstring(paramsMap);
-		String result = WxPayUtils.httpRequest(WechatPayConfig.PAY_URL, "POST", paramsXml);
-		Map<String, Object> resultMap = WxPayUtils.Str2Map(result);
-		String returnCode = resultMap.get("return_code").toString();
-		if(!returnCode.equals("SUCCESS")) {
-			log.error(resultMap.get("return_msg").toString());
-			return new ErrorBean(10002,"连接超时");
-		}
-		String resultCode = resultMap.get("result_code").toString();
-		if(!resultCode.equals("SUCCESS")) {
-			log.error(resultMap.get("err_code_des").toString());
-			return new ErrorBean(10002,"连接超时");
-		}
-		String prepayId = resultMap.get("prepay_id").toString();
-		Map<String, String> responseMap = new HashMap<String, String>(7);
-		responseMap.put("appId", WechatPayConfig.APPID);
-		Long timeStamp = System.currentTimeMillis() / 1000;
-		responseMap.put("timeStamp", timeStamp + "");
-		responseMap.put("nonceStr", UUIDGenerator.getUUID());
-		responseMap.put("package", "prepay_id="+prepayId);
-		responseMap.put("signType", WechatPayConfig.SIGNTYPE);
-		return new SuccessBean(responseMap);
-	}
 }

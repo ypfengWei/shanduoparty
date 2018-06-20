@@ -194,17 +194,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 		}else if("8".equals(moneyType)) {
 			remarks = "参加活动获得经验值:+"+addExperience;
 		}
-		try {
-			saveMoneyRecord(userId, moneyType,addExperience+"",remarks);
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+		saveMoneyRecord(userId, moneyType,addExperience+"",remarks);
 		if(levelB > levelA) {
-			try {
-				moneyService.payBeans(userId, 10*levelA,"2");
-			} catch (Exception e) {
-				throw new RuntimeException();
-			}
+			moneyService.payBeans(userId, 10*levelA,"2");
 			//推送升级奖励
 		}
 		return 1;
@@ -272,11 +264,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 		}
 		saveMoneyRecord(userId, "3",addExperience+"","签到获得经验值:+"+addExperience);
 		if(levelB > levelA) {
-			try {
-				moneyService.payBeans(userId, 10*levelA,"2");
-			} catch (Exception e) {
-				throw new RuntimeException();
-			}
+			moneyService.payBeans(userId, 10*levelA,"2");
 			//推送升级奖励
 		}
 		return 1;

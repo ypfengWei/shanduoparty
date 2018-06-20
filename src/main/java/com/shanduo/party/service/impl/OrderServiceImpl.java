@@ -142,11 +142,7 @@ public class OrderServiceImpl implements OrderService {
 		}else {
 			remarks = "小程序";
 		}
-		try {
-			moneyService.payMoney(userId, money, remarks);
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
+		moneyService.payMoney(userId, money, remarks);
 		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),payId,"1");
 	}
 	
@@ -171,36 +167,20 @@ public class OrderServiceImpl implements OrderService {
 			case "1":
 				break;
 			case "2":
-				try {
-					moneyService.consumeMoney(userId, money, "开通"+month+"个月VIP",typeId);
-					vipService.updateVip(userId, month, "0");
-				} catch (Exception e) {
-					throw new RuntimeException();
-				}
+				moneyService.consumeMoney(userId, money, "开通"+month+"个月VIP",typeId);
+				vipService.updateVip(userId, month, "0");
 				break;
 			case "3":
-				try {
-					moneyService.consumeMoney(userId, money, "开通"+month+"个月SVIP",typeId);
-					vipService.updateVip(userId, month, "1");
-				} catch (Exception e) {
-					throw new RuntimeException();
-				}
+				moneyService.consumeMoney(userId, money, "开通"+month+"个月SVIP",typeId);
+				vipService.updateVip(userId, month, "1");
 				break;
 			case "4":
-				try {
-					moneyService.consumeMoney(userId, money, "活动刷新",typeId);
-					activityService.activityRefresh(activityId);
-				} catch (Exception e) {
-					throw new RuntimeException();
-				}
+				moneyService.consumeMoney(userId, money, "活动刷新",typeId);
+				activityService.activityRefresh(activityId);
 				break;
 			case "5":
-				try {
-					moneyService.consumeMoney(userId, money, "活动置顶",typeId);
-					activityService.updateBysetTop(activityId);
-				} catch (Exception e) {
-					throw new RuntimeException();
-				}
+				moneyService.consumeMoney(userId, money, "活动置顶",typeId);
+				activityService.updateBysetTop(activityId);
 				break;
 			default:
 				break;

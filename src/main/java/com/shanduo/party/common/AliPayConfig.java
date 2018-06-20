@@ -1,4 +1,4 @@
-package com.shanduo.party.pay;
+package com.shanduo.party.common;
 
 
 /**
