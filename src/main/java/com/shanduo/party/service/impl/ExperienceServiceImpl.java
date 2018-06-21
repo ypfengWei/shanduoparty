@@ -23,6 +23,7 @@ import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.LevelUtils;
 import com.shanduo.party.util.UUIDGenerator;
+import com.shanduo.party.xg.XGHighUtils;
 
 /**
  * 
@@ -198,6 +199,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 		if(levelB > levelA) {
 			moneyService.payBeans(userId, 10*levelA,"2");
 			//推送升级奖励
+			XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "升级获得"+10*levelA+"闪多豆", userId,2);
 		}
 		return 1;
 	}
@@ -251,26 +253,6 @@ public class ExperienceServiceImpl implements ExperienceService {
 			break;
 		default:
 			break;
-		}
-		return 1;
-	}
-	
-	public int saveSignin(Integer userId,String signinType) {
-		UserMoney userMoney = moneyMapper.selectByUserId(userId);
-		int levelA = LevelUtils.getLevel(userMoney.getExperience());
-		int addExperience = getVipExperience(userId,signinType);
-		Integer experience = userMoney.getExperience() + addExperience;
-		int levelB = LevelUtils.getLevel(experience);
-		userMoney.setExperience(experience);
-		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
-		if(i < 1) {
-			log.error("添加经验失败");
-			throw new RuntimeException();
-		}
-		saveMoneyRecord(userId, "3",addExperience+"","签到获得经验值:+"+addExperience);
-		if(levelB > levelA) {
-			moneyService.payBeans(userId, 10*levelA,"2");
-			//推送升级奖励
 		}
 		return 1;
 	}

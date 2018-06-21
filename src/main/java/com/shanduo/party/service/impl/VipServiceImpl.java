@@ -21,6 +21,7 @@ import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.UUIDGenerator;
+import com.shanduo.party.xg.XGHighUtils;
 
 /**
  * 
@@ -46,15 +47,6 @@ public class VipServiceImpl implements VipService {
 	@Override
 	public int saveVip(Integer userId, Date date,Integer month,String vipType,String isRefresh) {
 		ShanduoVip userVip = vipMapper.selectByVipType(userId,vipType);
-//		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
-//		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month);
-//		DateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		Date endDate = null;
-//        try {
-//			endDate = formats.parse(vipEndDate);
-//		} catch (ParseException e) {
-//			throw new RuntimeException();
-//		}
 		Date endDate = getDate(date, month);
 		if(userVip == null) {
 			userVip = new ShanduoVip();
@@ -96,6 +88,7 @@ public class VipServiceImpl implements VipService {
 				throw new RuntimeException();
 			}
 		}
+		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "恭喜你成功开通VIP", userId,1);
 		return 1;
 	}
 	

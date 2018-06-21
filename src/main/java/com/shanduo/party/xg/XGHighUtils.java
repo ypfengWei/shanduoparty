@@ -5,6 +5,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.shanduo.party.common.ActivityConfig;
 import com.tencent.xinge.ClickAction;
 import com.tencent.xinge.Message;
 import com.tencent.xinge.Style;
@@ -36,25 +37,58 @@ public class XGHighUtils {
 		return xGHighUtils;
 	}
 	
-	/**
-	 * Android单个设备下发
-	 * @Title: pushSingleDeviceNotification
-	 * @Description: TODO
-	 * @param @param title
-	 * @param @param content
-	 * @param @param token
-	 * @param @param typeId 1:透传消息,2.打开app
-	 * @param @return
-	 * @param @throws JSONException
-	 * @return String
-	 * @throws
-	 */
-	public String pushSingleDeviceNotification(String title,String content,String token,Integer typeId) throws JSONException {
-    	Message message = getMessage(title, content, typeId);
-        JSONObject resultJson = xinge.pushSingleDevice(token, message);
-        return isError(resultJson);
+	 /**
+     * 根据类型生成Message
+     * @Title: getMessage
+     * @Description: TODO
+     * @param @param title 标题
+     * @param @param content 通知内容
+     * @param @param typeId 类型:0.透传消息;1.打开vip页面;2.打开钱包页面;
+     * @param @return
+     * @return Message
+     * @throws
+     */
+    public Message getMessage(String title,String content,Integer typeId) {
+    	Message message = new Message();
+    	message.setTitle(title);
+        message.setContent(content);
+        if(typeId == 0) {
+        	message.setType(Message.TYPE_MESSAGE);
+            message.setExpireTime(86400);
+            return message;
+        }
+        //表示一个允许推送的时间闭区间(起始小时，起始分钟，截止小时，截止分钟)
+        message.addAcceptTime(new TimeInterval(0, 0, 23, 59));
+        //消息类型必填
+        //TYPE_NOTIFICATION:通知;TYPE_MESSAGE:透传消息。
+        //注意：TYPE_MESSAGE类型消息默认在终端是不展示的,不会弹出通知
+        message.setType(Message.TYPE_NOTIFICATION);
+        //定义通知消息如何展现
+        //通知样式,响铃,不震动,通知栏可清除,展示本条通知且不影响其他通知
+        Style style = new Style(4,1,0,1,0);
+        message.setStyle(style);
+        ClickAction action = new ClickAction();
+        switch (typeId) {
+		case 1:
+			action.setActionType(ClickAction.TYPE_ACTIVITY);
+	        action.setActivity(ActivityConfig.VIP);
+			break;
+		case 2:
+			action.setActionType(ClickAction.TYPE_ACTIVITY);
+			action.setActivity(ActivityConfig.MONEY);
+			break;
+		case 3:
+			
+			break;
+		default:
+//			action.setActionType(ClickAction.TYPE_INTENT);
+//			action.setIntent("intent:10086#Intent;scheme=tel;action=android.intent.action.DIAL;S.key=value;end");
+			break;
+		}
+        message.setAction(action);
+        return message;
     }
-	
+    
 	/**
 	 * Android单个账号下发
 	 * @Title: pushSingleAccount
@@ -68,9 +102,9 @@ public class XGHighUtils {
 	 * @return String
 	 * @throws
 	 */
-    public String pushSingleAccount(String title,String content,String account,Integer typeId) throws JSONException {
+    public String pushSingleAccount(String title,String content,Integer account,Integer typeId) {
     	Message message = getMessage(title, content, typeId);
-        JSONObject resultJson = xinge.pushSingleAccount(0, account, message);
+        JSONObject resultJson = xinge.pushSingleAccount(0, account+"", message);
 		return isError(resultJson);
     }
     
@@ -78,16 +112,16 @@ public class XGHighUtils {
      * Android多个账号下发
      * @Title: pushAccountList
      * @Description: TODO
-     * @param @param title
-     * @param @param content
-     * @param @param account
-     * @param @param typeId
+     * @param @param title 标题内容
+     * @param @param content 通知内容
+     * @param @param account 账号
+     * @param @param typeId 类型
      * @param @return
      * @param @throws JSONException
      * @return String
      * @throws
      */
-    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId) throws JSONException {
+    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId) {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushAccountList(0, accountList, message);
         return isError(resultJson);
@@ -105,7 +139,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    public String pushAllDevice(String title,String content,Integer typeId) throws JSONException {
+    public String pushAllDevice(String title,String content,Integer typeId) {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushAllDevice(0, message);
         return isError(resultJson);
@@ -124,7 +158,7 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    public String pushTags(String title,String content,Integer typeId,List<String> tagList) throws JSONException {
+    public String pushTags(String title,String content,Integer typeId,List<String> tagList) {
     	Message message = getMessage(title, content, typeId);
         JSONObject resultJson = xinge.pushTags(0, tagList, "OR", message);
         return isError(resultJson);
@@ -155,7 +189,6 @@ public class XGHighUtils {
         }
     }
     
-    
     /**
      * 大批量下发给设备 
      * iOS请构造MessageIOS消息
@@ -181,60 +214,6 @@ public class XGHighUtils {
         }
     }
     
-    
-    
-    
-    /**
-     * 根据类型生成Message
-     * @Title: getMessage
-     * @Description: TODO
-     * @param @param title
-     * @param @param content
-     * @param @param typeId
-     * @param @return
-     * @return Message
-     * @throws
-     */
-    public Message getMessage(String title,String content,Integer typeId) {
-    	Message message = new Message();
-    	message.setTitle(title);
-        message.setContent(content);
-        if(typeId == 0) {
-        	message.setType(Message.TYPE_MESSAGE);
-            message.setExpireTime(86400);
-            return message;
-        }
-        //表示一个允许推送的时间闭区间(起始小时，起始分钟，截止小时，截止分钟)
-        message.addAcceptTime(new TimeInterval(0, 0, 23, 59));
-        //消息类型必填
-        //TYPE_NOTIFICATION:通知;TYPE_MESSAGE:透传消息。
-        //注意：TYPE_MESSAGE类型消息默认在终端是不展示的,不会弹出通知
-        message.setType(Message.TYPE_NOTIFICATION);
-        //定义通知消息如何展现
-        //通知样式,响铃,不震动,通知栏可清除,展示本条通知且不影响其他通知
-        Style style = new Style(4,1,0,1,0);
-        message.setStyle(style);
-        ClickAction action = new ClickAction();
-        switch (typeId) {
-		case 1:
-			action.setActionType(ClickAction.TYPE_URL);
-			action.setUrl("http://xg.qq.com");
-			break;
-		case 2:
-			action.setActionType(ClickAction.TYPE_INTENT);
-	        action.setIntent("intent:10086#Intent;scheme=tel;action=android.intent.action.DIAL;S.key=value;end");
-			break;
-		case 3:
-			action.setActionType(ClickAction.TYPE_ACTIVITY);
-	        action.setActivity("com.yapin.shanduo.ui.activity.LoginActivity");
-			break;
-		default:
-			break;
-		}
-        message.setAction(action);
-        return message;
-    }
-    
     /**
 	 * 判断返回
 	 * @Title: getError
@@ -245,10 +224,16 @@ public class XGHighUtils {
 	 * @return String
 	 * @throws
 	 */
-	public String isError(JSONObject resultJson) throws JSONException {
-		if(resultJson.getInt("ret_code") == 0) {
-  	  		return "ok";
-  	  	}
-		return resultJson.getString("err_msg").toString();
+	public String isError(JSONObject resultJson){
+		try {
+			if(resultJson.getInt("ret_code") == 0) {
+				return "ok";
+			}
+			return resultJson.getString("err_msg").toString();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

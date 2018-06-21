@@ -31,7 +31,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushTokenAndroid(String title,String content,String token) throws JSONException {
+	public static String pushTokenAndroid(String title,String content,String token) {
 		JSONObject resultJson = XingeApp.pushTokenAndroid(ACCESS_ID, SECRET_KEY, title, content, token);
 		return isError(resultJson);
 	}
@@ -48,8 +48,8 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAccountAndroid(String title,String content,String account) throws JSONException {
-		JSONObject resultJson =  XingeApp.pushAccountAndroid(ACCESS_ID, SECRET_KEY, title, content, account);
+	public static String pushAccountAndroid(String title,String content,Integer account) {
+		JSONObject resultJson =  XingeApp.pushAccountAndroid(ACCESS_ID, SECRET_KEY, title, content, account+"");
 		return isError(resultJson);
 	}
 	
@@ -64,7 +64,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAllAndroid(String  title,String content) throws JSONException {
+	public static String pushAllAndroid(String  title,String content) {
 		JSONObject resultJson = XingeApp.pushAllAndroid(ACCESS_ID, SECRET_KEY, title, content);
 		return isError(resultJson);
 	}
@@ -81,7 +81,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushTagAndroid(String  title,String content,String tag) throws JSONException {
+	public static String pushTagAndroid(String  title,String content,String tag) {
 		JSONObject resultJson = XingeApp.pushTagAndroid(ACCESS_ID, SECRET_KEY, title, content, tag);
 		return isError(resultJson);
 	}
@@ -98,7 +98,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushTokenIos(String content,String token,int environment) throws JSONException {
+	public static String pushTokenIos(String content,String token,int environment) {
 		JSONObject resultJson = XingeApp.pushAccountIos(ACCESS_ID, SECRET_KEY, content, token, environment);
 		return isError(resultJson);
 	}
@@ -115,7 +115,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAccountIos(String content,String account,int environment) throws JSONException {
+	public static String pushAccountIos(String content,String account,int environment) {
 		JSONObject resultJson = XingeApp.pushAccountIos(ACCESS_ID, SECRET_KEY, content, account, environment);
 		return isError(resultJson);
 	}
@@ -131,7 +131,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAllIos(String  content,int environment) throws JSONException {
+	public static String pushAllIos(String  content,int environment) {
 		JSONObject resultJson = XingeApp.pushAllIos(ACCESS_ID, SECRET_KEY, content, environment);
 		return isError(resultJson);
 	}
@@ -148,7 +148,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushTagIos(String content,String tag,int environment) throws JSONException {
+	public static String pushTagIos(String content,String tag,int environment) {
 		JSONObject resultJson = XingeApp.pushTagIos(ACCESS_ID, SECRET_KEY, content, tag, environment);
 		return isError(resultJson);
 	}
@@ -163,10 +163,16 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String isError(JSONObject resultJson) throws JSONException {
-  	  	if(resultJson.getInt("ret_code") == 0) {
-  	  		return "ok";
-  	  	}
-		return resultJson.getString("err_msg").toString();
+	public static String isError(JSONObject resultJson) {
+  	  	try {
+			if(resultJson.getInt("ret_code") == 0) {
+				return "ok";
+			}
+			return resultJson.getString("err_msg").toString();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+  	  	return null;
 	}
 }

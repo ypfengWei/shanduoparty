@@ -105,7 +105,6 @@ public class AttentionServiceImpl implements AttentionService {
 			log.error("申请好友记录录入失败");
 			throw new RuntimeException();
 		}
-		//推送消息
 		return 1;
 	}
 
@@ -165,7 +164,6 @@ public class AttentionServiceImpl implements AttentionService {
 			log.error("修改申请好友记录失败");
 			throw new RuntimeException();
 		}
-		//推送
 		return 1;
 	}
 
@@ -179,7 +177,7 @@ public class AttentionServiceImpl implements AttentionService {
 			int n = attentionApplyMapper.updateAttentionApply(applyId[i], attention);
 			if(n < 1) {
 				log.error("软删除申请好友记录失败");
-//				throw new RuntimeException();
+				throw new RuntimeException();
 			}
 		}
 		return 1;
