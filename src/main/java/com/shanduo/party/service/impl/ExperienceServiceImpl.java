@@ -275,8 +275,13 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Override
 	public Map<String, Object> checkSignin(Integer userId) {
 		Map<String, Object> resultMap = new HashMap<>(2);
-		resultMap.put("count", weekSignInCount(userId)+1);
-		resultMap.put("isSignin", checkCount(userId, "3"));
+		boolean isSignin = checkCount(userId, "3");
+		resultMap.put("isSignin", isSignin);
+		if(isSignin) {
+			resultMap.put("count", weekSignInCount(userId));
+		}else {
+			resultMap.put("count", weekSignInCount(userId)+1);
+		}
 		return resultMap;
 	}
 
