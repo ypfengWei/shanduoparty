@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.UserTaskRecordMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.UserTaskRecord">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, activity_id, type, create_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_task_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user_task_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.UserTaskRecord">
+    insert into user_task_record (id, user_id, activity_id, 
+      type, create_date)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{activityId,jdbcType=VARCHAR}, 
+      #{type,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserTaskRecord">
+    insert into user_task_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.UserTaskRecord">
+    update user_task_record
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.UserTaskRecord">
+    update user_task_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=VARCHAR},
+      type = #{type,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="taskRecord" resultType="java.lang.Integer">
+  	select 
+  	count(id) 
+  	from user_task_record 
+  	where user_id = #{0} 
+  	and create_date between #{1} and now() and type = #{2}
+  </select>
+  <select id="releaseRecord" resultType="java.lang.String">
+  	select 
+  	id
+  	from shanduo_activity 
+  	where user_id = #{1} 
+  	and id in 
+  	(select activity_id from activity_score where del_flag = '0')
+	and activity_start_time between #{0} and now() and del_flag = '0'
+	and id not in 
+	(select activity_id from user_task_record where user_id = #{1} and type = '0' and create_date between #{0} and now())
+	limit #{2}
+  </select>
+  <select id="joinRecord" resultType="java.lang.String">
+  	select
+  	sa.id
+  	from shanduo_activity sa
+	join activity_score ye on sa.id = ye.activity_id
+	where sa.activity_start_time between #{0} and now()
+	and ye.user_id = #{1}
+	and sa.del_flag = '0' and ye.del_flag = '0'
+	and sa.id not in 
+	(select activity_id from user_task_record where user_id = #{1} and type = '1' and create_date between #{0} and now())
+	limit #{2}
+  </select>
+</mapper>

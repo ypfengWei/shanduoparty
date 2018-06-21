@@ -296,7 +296,38 @@ public interface ActivityService {
      */
     Map<String, Object> selectQuery(String query, String lon, String lat, Integer page, Integer pageSize);
     
+    /**
+     * 根据活动id和用户性别查询参加总人数
+     * @Title: selectByGenders
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param activityId
+     * @param @param gender
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
     int selectByGenders(String activityId, String gender);
     
+    /**
+     * 查询当前用户的性别
+     * @Title: selectByUserId
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param userId
+     * @param @return    设定文件
+     * @return String    返回类型
+     * @throws
+     */
     String selectByUserId(Integer userId);
+    
+    /**
+     * 根据用户id查询参加过的活动或者发布过的活动记录（活动成功）
+     * @Title: selectRecord
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param @param userId
+     * @param @return    设定文件
+     * @return int    返回类型
+     * @throws
+     */
+    boolean selectRecord(Integer userId); 
+    
 }

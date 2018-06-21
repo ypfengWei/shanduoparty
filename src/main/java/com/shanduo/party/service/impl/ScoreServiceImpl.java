@@ -128,20 +128,12 @@ public class ScoreServiceImpl implements ScoreService {
 
 	@Override
 	public int updateById(String time) {
-		int i = activityScoreMapper.updateById(time);
-		if (i > 0) {
-			return i;
-		}
-		return 0;
+		return activityScoreMapper.updateById(time);
 	}
 
 	@Override
 	public int updateByIdTime(String time) {
-		int i = activityScoreMapper.updateByIdTime(time);
-		if (i > 0) {
-			return i;
-		}
-		return 0;
+		return activityScoreMapper.updateByIdTime(time);
 	}
 	
 	@Override
@@ -310,6 +302,7 @@ public class ScoreServiceImpl implements ScoreService {
 		initiatorMap.put("mode",maps.get("mode")); //活动支付方式
 		initiatorMap.put("id",maps.get("id"));	//活动Id
 		initiatorMap.put("activity_name",maps.get("activity_name")); //活动名称
+		initiatorMap.put("gender",maps.get("gender")); //性别
 		return initiatorMap;
 	}
 	

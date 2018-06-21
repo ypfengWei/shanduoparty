@@ -226,7 +226,7 @@ public class ActivityServiceImpl implements ActivityService {
 		Page page = new Page(totalrecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByFriendsUserId(userId, pageNum, page.getPageSize());
-		activity(resultList, lon, lat, 0);
+		activity(resultList, lon, lat, 2);
 		Map<String, Object> resultMap = new HashMap<String, Object>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
@@ -483,29 +483,37 @@ public class ActivityServiceImpl implements ActivityService {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
         String startString = activityInfo.getActivityStartTime();  
         String cutoffString = activityInfo.getActivityCutoffTime();
-        if(type == 1) {
+        if(type != 0) {
         	Long newstartTime = getLongTime(startString, null, 2);
-        	Long newcutoffTime = getLongTime(cutoffString, null, 2);
         	Long nowTime = System.currentTimeMillis();
-        	Map<String, Object> map = shanduoActivityMapper.numberAndScore(activityInfo.getId());
-        	int i = Integer.parseInt(map.get("number").toString()); //参加记录
-        	int count = Integer.parseInt(map.get("score").toString()); //评分记录
-        	if(nowTime < newcutoffTime) {
-        		activityInfo.setTypeId(4);
-        	} else if(newcutoffTime < nowTime && nowTime < newstartTime) {
-        		activityInfo.setTypeId(5);
-        	} else if(i > 0){
-        		if(count > 0) {
-        			if(i > count) {
-        				activityInfo.setTypeId(2);
+        	if(type == 1) {
+        		Long newcutoffTime = getLongTime(cutoffString, null, 2);
+        		Map<String, Object> map = shanduoActivityMapper.numberAndScore(activityInfo.getId());
+        		int i = Integer.parseInt(map.get("number").toString()); //参加记录
+        		int count = Integer.parseInt(map.get("score").toString()); //评分记录
+        		if(nowTime < newcutoffTime) {
+        			activityInfo.setTypeId(4);
+        		} else if(newcutoffTime < nowTime && nowTime < newstartTime) {
+        			activityInfo.setTypeId(5);
+        		} else if(i > 0){
+        			if(count > 0) {
+        				if(i > count) {
+        					activityInfo.setTypeId(2);
+        				} else {
+        					activityInfo.setTypeId(3);
+        				} 
         			} else {
-        				activityInfo.setTypeId(3);
-        			} 
+        				activityInfo.setTypeId(2);
+        			}
         		} else {
         			activityInfo.setTypeId(2);
         		}
         	} else {
-        		activityInfo.setTypeId(2);
+        		if(nowTime < newstartTime) {
+        			activityInfo.setTypeId(1); //活动未结束
+        		} else {
+        			activityInfo.setTypeId(2); //活动结束
+        		}
         	}
         }
         //转换时间格式，活动开始时间如2018/6/19/9:49星期二，活动报名截止时间如2018/6/18/9:49
@@ -578,6 +586,16 @@ public class ActivityServiceImpl implements ActivityService {
 		return activityScoreMapper.selectByUserId(userId);
 	}
 	
+	@Override
+	public boolean selectRecord(Integer userId) {
+		int i = shanduoActivityMapper.selectRecord(userId);
+		if(i == 0) {
+			return false;
+		}
+		return true;
+//		return shanduoActivityMapper.selectRecord(userId);
+	}
+	
 	public Long getLongTime(String time, String timeType, Integer type) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
 		Date cutoff = new Date();
@@ -594,5 +612,5 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		return cutoff.getTime();
 	}
-	
+
 }

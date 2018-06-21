@@ -199,7 +199,7 @@ public class ActivityController {
 	 * type=4 查看用户参加的已经结束的活动
 	 * type=5 查看用户报名的活动
 	 * type=6 查看单个用户举办的活动
-	 * type=7 根据userId查询别人举报的活动
+	 * type=7 根据userId查询别人举办的活动
 	 * @Title: queryHotActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
@@ -330,31 +330,31 @@ public class ActivityController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "selectByActivityId", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean selectByActivityId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(activityId)) {
-			log.error("活动ID为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = activityService.selectByScoreActivity(activityId, pages, pageSizes);
-		return new SuccessBean(resultMap);
-	}
+//	@RequestMapping(value = "selectByActivityId", method = { RequestMethod.POST, RequestMethod.GET })
+//	@ResponseBody
+//	public ResultBean selectByActivityId(HttpServletRequest request, String token, String activityId, String page, String pageSize) {
+//		Integer userToken = baseService.checkUserToken(token);
+//		if (userToken == null) {
+//			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//		}
+//		if(StringUtils.isNull(activityId)) {
+//			log.error("活动ID为空");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
+//		}
+//		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+//			log.error("页码错误");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
+//		}
+//		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+//			log.error("记录错误");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
+//		}
+//		Integer pages = Integer.valueOf(page);
+//		Integer pageSizes = Integer.valueOf(pageSize);
+//		Map<String, Object> resultMap = activityService.selectByScoreActivity(activityId, pages, pageSizes);
+//		return new SuccessBean(resultMap);
+//	}
 	
 	/**
 	 * 参加或取消活动
@@ -478,27 +478,27 @@ public class ActivityController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "selectByHistorical", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean selectByHistorical(HttpServletRequest request, String token, String page, String pageSize) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = activityService.selectByHistorical(userToken, pages, pageSizes);
-		return new SuccessBean(resultMap);
-	}
+//	@RequestMapping(value = "selectByHistorical", method = { RequestMethod.POST, RequestMethod.GET })
+//	@ResponseBody
+//	public ResultBean selectByHistorical(HttpServletRequest request, String token, String page, String pageSize) {
+//		Integer userToken = baseService.checkUserToken(token);
+//		if (userToken == null) {
+//			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//		}
+//		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+//			log.error("页码错误");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
+//		}
+//		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+//			log.error("记录错误");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
+//		}
+//		Integer pages = Integer.valueOf(page);
+//		Integer pageSizes = Integer.valueOf(pageSize);
+//		Map<String, Object> resultMap = activityService.selectByHistorical(userToken, pages, pageSizes);
+//		return new SuccessBean(resultMap);
+//	}
 	
 	/**
 	 * 查看单个活动详情及参与人及参加活动状态(小程序)

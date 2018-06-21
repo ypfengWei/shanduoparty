@@ -356,4 +356,7 @@ public interface ShanduoActivityMapper {
     int selectUserId(String activityId);
     
     ShanduoActivity selectByIds(String activityId);
+    
+    int selectRecord(Integer userId);
+    
 }
