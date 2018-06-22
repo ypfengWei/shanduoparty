@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ShanduoActivity;
+import com.shanduo.party.entity.service.ActivityInfo;
 /**
  * 活动业务层
  * @ClassName: ActivityService
@@ -159,11 +160,13 @@ public interface ActivityService {
      * @Description: TODO(这里用一句话描述这个方法的作用)
      * @param @param userId
      * @param @param activityId
+     * @param @param userName
+     * @param @param activityName
      * @param @return    设定文件
      * @return int    返回类型
      * @throws
      */
-    int insertSelective(Integer userId,String activityId);
+    int insertSelective(Integer userId,String activityId,String activityName,Integer userIds);
     
     /**
      * 根据活动id来查询要求表中的男女人数
@@ -256,7 +259,7 @@ public interface ActivityService {
      * @return int    返回类型
      * @throws
      */
-    int deleteByUserId(String activityId, Integer token);
+    int deleteByUserId(String activityId, Integer token, String activityName, Integer userId);
     
     /**
      * 踢人
@@ -268,7 +271,7 @@ public interface ActivityService {
      * @return int    返回类型
      * @throws
      */
-    int deleteByUserIds(String activityId, String userId);
+    int deleteByUserIds(String activityId, String userId, String activityName, Integer userIds);
     
     /**
      * 查看单个活动详情
@@ -330,4 +333,5 @@ public interface ActivityService {
      */
     boolean selectRecord(Integer userId); 
     
+    ActivityInfo activityDetails(String activityId, String lon, String lat);
 }

@@ -133,26 +133,26 @@ public class ScoreController {
 	 * @return ResultBean    返回类型
 	 * @throws
 	 */
-	@RequestMapping(value = "selHistoryScore", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean selActivityScore(HttpServletRequest request, String token, String page, String pageSize) {
-		Integer userToken = baseService.checkUserToken(token);
-		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = scoreService.selectByIdScore(userToken, pages, pageSizes);
-		return new SuccessBean(resultMap);
-	}
+//	@RequestMapping(value = "selHistoryScore", method = { RequestMethod.POST, RequestMethod.GET })
+//	@ResponseBody
+//	public ResultBean selActivityScore(HttpServletRequest request, String token, String page, String pageSize) {
+//		Integer userToken = baseService.checkUserToken(token);
+//		if (userToken == null) {
+//			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+//		}
+//		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+//			log.error("页码错误");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
+//		}
+//		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+//			log.error("记录错误");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
+//		}
+//		Integer pages = Integer.valueOf(page);
+//		Integer pageSizes = Integer.valueOf(pageSize);
+//		Map<String, Object> resultMap = scoreService.selectByIdScore(userToken, pages, pageSizes);
+//		return new SuccessBean(resultMap);
+//	}
 	
 }

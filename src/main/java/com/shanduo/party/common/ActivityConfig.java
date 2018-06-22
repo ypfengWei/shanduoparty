@@ -17,5 +17,12 @@ public class ActivityConfig {
 	public static final String MONEY = ACTIVITY+"MywalletActivity";
 	//我的消息
 	public static final String xiaoxi = ACTIVITY+"";
-	//踢人,活动取消,退出活动
+	//删除活动 参与者跳参加活动页面
+	public static final String DELETEACTIVITY = ACTIVITY+"";
+	//参加活动 组织者跳活动详情页面
+	public static final String JOINACTIVITY = ACTIVITY+"";
+	//踢人 参与者活动详情页面
+	public static final String KICKING = ACTIVITY+"";
+	//退出活动 组织者跳活动详情页面
+	public static final String SIGNOUTACTIVITY = ACTIVITY+"";
 }

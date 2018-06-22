@@ -3,7 +3,7 @@ package com.shanduo.party.util;
 import java.util.Calendar;
 
 /**
- * 
+ * 计算年龄工具类
  * @ClassName: AgeUtils
  * @Description: TODO(这里用一句话描述这个类的作用)
  * @author lishan

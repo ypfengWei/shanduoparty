@@ -7,9 +7,8 @@ import java.util.Map;
  * 评价业务层
  * @ClassName: ScoreService
  * @Description: TODO(这里用一句话描述这个类的作用)
- * @author A18ccms a18ccms_gmail_com
+ * @author lishan
  * @date 2018年5月18日 下午4:20:28
- *
  */
 public interface ScoreService {
 	

@@ -18,6 +18,13 @@ import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.TaskService;
 import com.shanduo.party.util.UUIDGenerator;
 
+/**
+ * 任务操作实现类
+ * @ClassName: TaskServiceImpl
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author lishan
+ * @date 2018年6月21日 上午10:19:30
+ */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TaskServiceImpl implements TaskService {
@@ -40,18 +47,18 @@ public class TaskServiceImpl implements TaskService {
 	    	if(releaseRecord != null) {
 	    		for (String id : releaseRecord) {
 	    			saveTask(id, userId, "0");
-	    			moneyService.payBeans(userId, 100, "3");//添加闪多豆
+	    			moneyService.payBeans(userId, 188, "3");//添加闪多豆
 	    			i++;
 	    		}
 	    	}
 	    }
 	    int n = taskRecordMapper.taskRecord(userId, timeStr, "1");//查询任务记录表中参加活动的记录
-	    if(n < 2) {
-	    	List<String> joinRecord = taskRecordMapper.joinRecord(timeStr, userId, 2-n); //查询参加活动成功的活动Id
+	    if(n < 3) {
+	    	List<String> joinRecord = taskRecordMapper.joinRecord(timeStr, userId, 3-n); //查询参加活动成功的活动Id
 	    	if(joinRecord != null) {
 	    		for (String id : joinRecord) {
 	    			saveTask(id, userId, "1");
-	    			moneyService.payBeans(userId, 50, "3");//添加闪多豆
+	    			moneyService.payBeans(userId, 88, "3");//添加闪多豆
 	    			n++;
 	    		}
 	    	}
