@@ -116,21 +116,24 @@ public class MoneyServiceImpl implements MoneyService {
 	@Override
 	public int consumeMoney(Integer userId, BigDecimal money, String remarks, String typeId) {
 		UserMoney userMoney = moneyMapper.selectByUserId(userId);
+		String moneyType = "";
 		if("1".equals(typeId)) {
 			BigDecimal moneys = userMoney.getMoney().subtract(money);
 			userMoney.setMoney(moneys);
 			remarks = "余额"+remarks;
+			moneyType = "2";
 		}else {
 			BigDecimal rewards = userMoney.getReward().subtract(money);
 			userMoney.setReward(rewards);
 			remarks = "赏金"+remarks;
+			moneyType = "12";
 		}
 		int i = moneyMapper.updateByPrimaryKeySelective(userMoney);
 		if(i < 1) {
 			log.error("消费失败");
 			throw new RuntimeException();
 		}
-		experienceService.saveMoneyRecord(userId, "2", money+"",remarks);
+		experienceService.saveMoneyRecord(userId, moneyType, money+"",remarks);
 		return 1;
 	}
 
@@ -182,7 +185,7 @@ public class MoneyServiceImpl implements MoneyService {
 				throw new RuntimeException();
 			}
 			experienceService.saveMoneyRecord(userId, "10", beans*1000+"", "转换赏金");
-			experienceService.saveMoneyRecord(userId, "1", beans+"", "闪多豆充值赏金");
+			experienceService.saveMoneyRecord(userId, "11", beans+"", "闪多豆充值赏金");
 			log.info(userId+":闪多豆充值赏金余额_"+beans);
 		}
 		return 1;

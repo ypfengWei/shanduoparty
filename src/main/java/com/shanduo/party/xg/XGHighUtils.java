@@ -206,9 +206,9 @@ public class XGHighUtils {
     public String demoPushDeviceListMultiple(String title,String content,Integer typeId,List<String> deviceList) throws JSONException {
         Message message = getMessage(title, content, typeId);
         JSONObject ret = xinge.createMultipush(message);
-        if (ret.getInt("ret_code") != 0)
+        if (ret.getInt("ret_code") != 0) {
         	return isError(ret);
-        else {
+        }else {
             JSONObject result = xinge.pushDeviceListMultiple(ret.getJSONObject("result").getLong("push_id"), deviceList);
             return isError(result);
         }

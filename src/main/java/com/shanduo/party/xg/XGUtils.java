@@ -64,7 +64,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAllAndroid(String  title,String content) {
+	public static String pushAllAndroid(String title,String content) {
 		JSONObject resultJson = XingeApp.pushAllAndroid(ACCESS_ID, SECRET_KEY, title, content);
 		return isError(resultJson);
 	}
@@ -115,8 +115,8 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAccountIos(String content,String account,int environment) {
-		JSONObject resultJson = XingeApp.pushAccountIos(ACCESS_ID, SECRET_KEY, content, account, environment);
+	public static String pushAccountIos(String content,Integer account,int environment) {
+		JSONObject resultJson = XingeApp.pushAccountIos(ACCESS_ID, SECRET_KEY, content, account+"", environment);
 		return isError(resultJson);
 	}
 	
@@ -131,7 +131,7 @@ public class XGUtils {
 	 * @return String
 	 * @throws
 	 */
-	public static String pushAllIos(String  content,int environment) {
+	public static String pushAllIos(String content,int environment) {
 		JSONObject resultJson = XingeApp.pushAllIos(ACCESS_ID, SECRET_KEY, content, environment);
 		return isError(resultJson);
 	}
