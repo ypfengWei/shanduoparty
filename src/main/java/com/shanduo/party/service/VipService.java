@@ -1,6 +1,7 @@
 package com.shanduo.party.service;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * vip业务层
@@ -65,4 +66,6 @@ public interface VipService {
 	 * @throws
 	 */
 	int upgradeVip(Integer userId, Integer month, String vipType);
+	
+	Map<String, Object> vipLecel(Integer userId);
 }

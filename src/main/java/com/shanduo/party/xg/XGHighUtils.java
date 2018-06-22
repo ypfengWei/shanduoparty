@@ -48,7 +48,7 @@ public class XGHighUtils {
      * @return Message
      * @throws
      */
-    public Message getMessage(String title,String content,Integer typeId) {
+    public Message getMessage(String title,String content,Integer typeId,String activityId) {
     	Message message = new Message();
     	message.setTitle(title);
         message.setContent(content);
@@ -78,7 +78,11 @@ public class XGHighUtils {
 			action.setActivity(ActivityConfig.MONEY);
 			break;
 		case 3:
-			
+			action.setActionType(ClickAction.TYPE_INTENT);
+			action.setIntent(ActivityConfig.INTENT_URI + ActivityConfig.ACT_DETAIL +"?actId="+activityId+"&type=1");
+			break;
+		case 4:
+			action.setActionType(ClickAction.TYPE_ACTIVITY);
 			break;
 		default:
 //			action.setActionType(ClickAction.TYPE_INTENT);
@@ -102,8 +106,8 @@ public class XGHighUtils {
 	 * @return String
 	 * @throws
 	 */
-    public String pushSingleAccount(String title,String content,Integer account,Integer typeId) {
-    	Message message = getMessage(title, content, typeId);
+    public String pushSingleAccount(String title,String content,Integer account,Integer typeId,String activityId) {
+    	Message message = getMessage(title, content, typeId, activityId);
         JSONObject resultJson = xinge.pushSingleAccount(0, account+"", message);
 		return isError(resultJson);
     }
@@ -121,8 +125,8 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId) {
-    	Message message = getMessage(title, content, typeId);
+    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId, String activityId) {
+    	Message message = getMessage(title, content, typeId, activityId);
         JSONObject resultJson = xinge.pushAccountList(0, accountList, message);
         return isError(resultJson);
     }
@@ -139,8 +143,8 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    public String pushAllDevice(String title,String content,Integer typeId) {
-    	Message message = getMessage(title, content, typeId);
+    public String pushAllDevice(String title,String content,Integer typeId,String activityId) {
+    	Message message = getMessage(title, content, typeId,activityId);
         JSONObject resultJson = xinge.pushAllDevice(0, message);
         return isError(resultJson);
     }
@@ -159,7 +163,7 @@ public class XGHighUtils {
      * @throws
      */
     public String pushTags(String title,String content,Integer typeId,List<String> tagList) {
-    	Message message = getMessage(title, content, typeId);
+    	Message message = getMessage(title, content, typeId, null);
         JSONObject resultJson = xinge.pushTags(0, tagList, "OR", message);
         return isError(resultJson);
     }
@@ -179,7 +183,7 @@ public class XGHighUtils {
      * @throws
      */
     public String pushAccountListMultiple(String title,String content,Integer typeId,List<String> accountList) throws JSONException {
-        Message message = getMessage(title, content, typeId);
+        Message message = getMessage(title, content, typeId, null);
         JSONObject ret = xinge.createMultipush(message);
         if (ret.getInt("ret_code") != 0)
             return isError(ret);
@@ -204,11 +208,11 @@ public class XGHighUtils {
      * @throws
      */
     public String demoPushDeviceListMultiple(String title,String content,Integer typeId,List<String> deviceList) throws JSONException {
-        Message message = getMessage(title, content, typeId);
+        Message message = getMessage(title, content, typeId, null);
         JSONObject ret = xinge.createMultipush(message);
-        if (ret.getInt("ret_code") != 0) {
+        if (ret.getInt("ret_code") != 0)
         	return isError(ret);
-        }else {
+        else {
             JSONObject result = xinge.pushDeviceListMultiple(ret.getJSONObject("result").getLong("push_id"), deviceList);
             return isError(result);
         }
@@ -236,4 +240,5 @@ public class XGHighUtils {
 		}
 		return null;
 	}
+	
 }

@@ -17,12 +17,8 @@ public class ActivityConfig {
 	public static final String MONEY = ACTIVITY+"MywalletActivity";
 	//我的消息
 	public static final String xiaoxi = ACTIVITY+"";
-	//删除活动 参与者跳参加活动页面
-	public static final String DELETEACTIVITY = ACTIVITY+"";
-	//参加活动 组织者跳活动详情页面
-	public static final String JOINACTIVITY = ACTIVITY+"";
-	//踢人 参与者活动详情页面
-	public static final String KICKING = ACTIVITY+"";
-	//退出活动 组织者跳活动详情页面
-	public static final String SIGNOUTACTIVITY = ACTIVITY+"";
+	//跳转到安卓
+	public static final String INTENT_URI = "xgscheme://com.xg.push";
+	//安卓活动详情页
+	public static final String ACT_DETAIL = "/notify_act_detail";
 }

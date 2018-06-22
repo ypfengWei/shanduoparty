@@ -199,7 +199,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 		if(levelB > levelA) {
 			moneyService.payBeans(userId, 10*levelA,"2");
 			//推送升级奖励
-			XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "升级获得"+10*levelA+"闪多豆", userId,2);
+			XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "升级获得"+10*levelA+"闪多豆", userId,2,null);
 		}
 		return 1;
 	}

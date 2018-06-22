@@ -1,5 +1,7 @@
 package com.shanduo.party.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -61,5 +63,27 @@ public class VipController {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"vip不能升级");
 		}
 		return new SuccessBean(i);
+	}
+	
+	/**
+	 * 获取vip经验等级
+	 * @Title: getVipLevel
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param token
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "getVipLevel", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean getVipLevel(HttpServletRequest request, String token) {
+		Integer userToken = baseService.checkUserToken(token);
+		if (userToken == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		Map<String, Object> resultMap = vipService.vipLecel(userToken);
+		return new SuccessBean(resultMap);
 	}
 }

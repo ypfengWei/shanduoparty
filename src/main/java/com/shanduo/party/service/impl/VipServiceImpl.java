@@ -5,6 +5,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public class VipServiceImpl implements VipService {
 				throw new RuntimeException();
 			}
 		}
-		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "恭喜你成功开通VIP", userId,1);
+		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "恭喜你成功开通VIP", userId,1,null);
 		return 1;
 	}
 	
@@ -274,6 +275,16 @@ public class VipServiceImpl implements VipService {
 		return 0;//操作失败：高于可升级月份的限制或会员剩余时长不足16天或用户为svip不能升级
 	}
 	
+	@Override
+	public Map<String, Object> vipLecel(Integer userId) {
+		int experience = experienceMapper.selectByUserId(userId);
+		int level = selectVipLevel(userId);
+		Map<String, Object> map = new HashMap<String, Object>(2);
+		map.put("experience", experience);
+		map.put("level", level);
+		return map;
+	}
+	
 	public static Date getDate(Date date, Integer month) {
 		Format format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
 		String vipEndDate = format.format(date.getTime() + 1000L * 60L * 60L * 24L * 31L * month);
@@ -286,4 +297,5 @@ public class VipServiceImpl implements VipService {
 		}
 		return endDate;
 	}
+
 }
