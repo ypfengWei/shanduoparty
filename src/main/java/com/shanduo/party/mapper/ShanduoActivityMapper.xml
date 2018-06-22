@@ -579,4 +579,15 @@
 	and sa.del_flag = '0' and ye.del_flag = '0'
 	and sa.activity_start_time &lt; now()
   </select>
+  <select id="selectActivityName" resultMap="BaseResultMap">
+  	select
+  	activity_name,activity_start_time
+  	from shanduo_activity where id = #{0}
+  </select>
+  <select id="selectUserName" resultType="map">
+  	select 
+  	user_name,gender 
+  	from shanduo_user 
+  	where id = #{0} and del_flag = '0'
+  </select>
 </mapper>

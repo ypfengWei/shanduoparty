@@ -156,62 +156,62 @@ public class WxController {
 		return new SuccessBean(tokens);
 	}
 	
-	/**
-	 * 登录
-	 * @Title: loginUser
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param unionId
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "loginUser", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean loginUser(String unionid) {
-		if(StringUtils.isNull(unionid)) {
-			log.error("unionId为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"unionId为空");
-		}
-		Integer userid = bindingService.selectUserId(unionid, "0");
-		if(userid == null) {
-			log.error("此账户未绑定");
-			return new ErrorBean(ErrorCodeConstants.UNBOUND, "未绑定");
-		}
-		String tokenInfo = userService.loginUser(userid);
-		if(tokenInfo == null) {
-			log.error("登录失败");
-			return new ErrorBean(ErrorCodeConstants.LOGIN_FAILURE,"登录失败");
-		}
-		return new SuccessBean(tokenInfo);
-	}
-	
-	/**
-	 * 绑定
-	 * @Title: binding
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param unionId
-	 * @param @param username
-	 * @param @param password
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "binding", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean binding(String unionId, String username, String password) {
-		String tokenInfo = userService.loginUser(username, password);
-		if (null == tokenInfo) {
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "账号或密码错误");
-		}
-		if(StringUtils.isNull(unionId)) {
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
-		}
-		Integer userId = baseService.checkUserToken(tokenInfo);
-		try {
-			bindingService.insertSelective(userId, unionId, "0");
-		} catch (Exception e) {
-			return new ErrorBean(ErrorCodeConstants.BINDINGS_FAILURE, "失败");
-		}
-		return new SuccessBean(tokenInfo);
-	}
+//	/**
+//	 * 登录
+//	 * @Title: loginUser
+//	 * @Description: TODO(这里用一句话描述这个方法的作用)
+//	 * @param @param unionId
+//	 * @param @return    设定文件
+//	 * @return ResultBean    返回类型
+//	 * @throws
+//	 */
+//	@RequestMapping(value = "loginUser", method = { RequestMethod.POST, RequestMethod.GET })
+//	@ResponseBody
+//	public ResultBean loginUser(String unionid) {
+//		if(StringUtils.isNull(unionid)) {
+//			log.error("unionId为空");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"unionId为空");
+//		}
+//		Integer userid = bindingService.selectUserId(unionid, "0");
+//		if(userid == null) {
+//			log.error("此账户未绑定");
+//			return new ErrorBean(ErrorCodeConstants.UNBOUND, "未绑定");
+//		}
+//		String tokenInfo = userService.loginUser(userid);
+//		if(tokenInfo == null) {
+//			log.error("登录失败");
+//			return new ErrorBean(ErrorCodeConstants.LOGIN_FAILURE,"登录失败");
+//		}
+//		return new SuccessBean(tokenInfo);
+//	}
+//	
+//	/**
+//	 * 绑定
+//	 * @Title: binding
+//	 * @Description: TODO(这里用一句话描述这个方法的作用)
+//	 * @param @param unionId
+//	 * @param @param username
+//	 * @param @param password
+//	 * @param @return    设定文件
+//	 * @return ResultBean    返回类型
+//	 * @throws
+//	 */
+//	@RequestMapping(value = "binding", method = { RequestMethod.POST, RequestMethod.GET })
+//	@ResponseBody
+//	public ResultBean binding(String unionId, String username, String password) {
+//		String tokenInfo = userService.loginUser(username, password);
+//		if (null == tokenInfo) {
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "账号或密码错误");
+//		}
+//		if(StringUtils.isNull(unionId)) {
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
+//		}
+//		Integer userId = baseService.checkUserToken(tokenInfo);
+//		try {
+//			bindingService.insertSelective(userId, unionId, "0");
+//		} catch (Exception e) {
+//			return new ErrorBean(ErrorCodeConstants.BINDINGS_FAILURE, "失败");
+//		}
+//		return new SuccessBean(tokenInfo);
+//	}
 }

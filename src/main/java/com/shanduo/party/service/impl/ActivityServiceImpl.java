@@ -16,16 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shanduo.party.controller.ActivityController;
 import com.shanduo.party.entity.ActivityRequirement;
 import com.shanduo.party.entity.ActivityScore;
 import com.shanduo.party.entity.ShanduoActivity;
-import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.service.ActivityInfo;
 import com.shanduo.party.mapper.ActivityRequirementMapper;
 import com.shanduo.party.mapper.ActivityScoreMapper;
 import com.shanduo.party.mapper.ShanduoActivityMapper;
-import com.shanduo.party.mapper.ShanduoUserMapper;
 import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.ExperienceService;
 import com.shanduo.party.service.VipService;
@@ -37,6 +34,7 @@ import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 import com.shanduo.party.util.WeekUtils;
+import com.shanduo.party.xg.XGHighUtils;
 
 /**
  * 活动操作实现类
@@ -50,7 +48,7 @@ import com.shanduo.party.util.WeekUtils;
 @Transactional(rollbackFor = Exception.class)
 public class ActivityServiceImpl implements ActivityService {
 
-	private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
+	private static final Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
 	@Autowired
 	private ShanduoActivityMapper shanduoActivityMapper;
@@ -60,9 +58,6 @@ public class ActivityServiceImpl implements ActivityService {
 	
 	@Autowired
 	private ActivityScoreMapper activityScoreMapper;
-	
-	@Autowired
-	private ShanduoUserMapper shanduoUserMapper;
 	
 	@Autowired
 	private VipService vipService;
@@ -199,9 +194,14 @@ public class ActivityServiceImpl implements ActivityService {
 			log.error("删除需求失败");
 			throw new RuntimeException();
 		}
+		List<String> userIds = activityScoreMapper.selectUserId(activityId);
 		int score = activityScoreMapper.deleteByActivityId(activityId);
 		if(score < 1) {
 			log.error("没有用户参加活动");
+		}
+		ShanduoActivity activity = shanduoActivityMapper.selectActivityName(activityId);
+		if(activity.getActivityStartTime().getTime() > System.currentTimeMillis()) {
+			XGHighUtils.getInstance().pushAccountList("闪多", activity.getActivityName()+"被组织者解散", userIds, 3);
 		}
 		return 1;
 	}
@@ -277,18 +277,20 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public int insertSelective(Integer userId,String activityId) {
+	public int insertSelective(Integer userId,String activityId,String activityName,Integer userIds) {
 		ActivityScore activityScore = new ActivityScore();
 		activityScore.setId(UUIDGenerator.getUUID());
 		activityScore.setUserId(userId);
 		activityScore.setActivityId(activityId);
-		ShanduoUser shanduoUser = shanduoUserMapper.selectByPrimaryKey(userId);
-		activityScore.setGender(shanduoUser.getGender());
+		Map<String, Object> user = shanduoActivityMapper.selectUserName(userId);
+		activityScore.setGender(user.get("gender").toString());
 		int i = activityScoreMapper.insertSelective(activityScore);
 		if(i < 1) {
 			log.error("参加活动失败");
 			throw new RuntimeException();
 		}
+		//给组织者推送消息
+		XGHighUtils.getInstance().pushSingleAccount("闪多", user.get("user_name")+"参加了您的"+activityName+"活动", userIds, 4);
 		return 1;
 	}
 
@@ -384,17 +386,20 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 	
 	@Override
-	public int deleteByUserId(String activityId, Integer token) {
+	public int deleteByUserId(String activityId, Integer token, String activityName, Integer userId) {
 		int i = activityScoreMapper.deleteByUserId(activityId, token);
 		if(i < 1) {
 			log.error("取消活动失败");
 			throw new RuntimeException();
-		}
+		} 
+		Map<String, Object> user = shanduoActivityMapper.selectUserName(token);
+		//给组织者推送消息
+		XGHighUtils.getInstance().pushSingleAccount("闪多", user.get("user_name")+"退出了您的"+activityName+"活动", userId, 4);
 		return 1;
 	}
 	
 	@Override
-	public int deleteByUserIds(String activityId, String userIds) {
+	public int deleteByUserIds(String activityId, String userIds, String activityName, Integer initiatorId) {
 //		String[] userId = userIds.split(",");
 //		int len = userId.length;
 //		for(int i=0;i< len;i++) {
@@ -403,10 +408,13 @@ public class ActivityServiceImpl implements ActivityService {
 //				log.error("踢人失败");
 //			}
 //		}
-		int n = activityScoreMapper.deleteByUserId(activityId, Integer.parseInt(userIds));
+		int userId = Integer.parseInt(userIds);
+		int n = activityScoreMapper.deleteByUserId(activityId, userId);
 		if(n < 1) {
 			log.error("踢人失败");
 		}
+		Map<String, Object> user = shanduoActivityMapper.selectUserName(initiatorId);
+		XGHighUtils.getInstance().pushSingleAccount("闪多", "您已被"+user.get("user_name")+"请出了他的"+activityName+"活动", userId, 4);
 		return 1;
 	}
 	
@@ -537,6 +545,16 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (ParseException e) {  
             e.printStackTrace();  
         }  
+		return activityInfo;
+	}
+	
+	@Override
+	public ActivityInfo activityDetails(String activityId, String lon, String lat) {
+		ActivityInfo activityInfo = shanduoActivityMapper.selectByActivityIds(activityId);
+		if(activityInfo == null) {
+			return null;
+		}
+		showActivity(activityInfo, lon, lat, 2);
 		return activityInfo;
 	}
 	

@@ -192,28 +192,26 @@
 	order by sa.activity_start_time desc,ae.create_date desc
 	limit #{1},#{2}
   </select>
-  <update id="updateById" parameterType="java.lang.String">
+  <update id="updateById">
     update 
     activity_score 
     set score = '5' 
-    where id in ( select id  from 
-	(select ae.id from activity_score ae
-	join shanduo_activity sa on sa.id = ae.activity_id where ae.user_id in
-	(select user_id from activity_score where score is null and del_flag = '0') 
-	and sa.del_flag = '0' and ae.del_flag = '0'
-	and sa.activity_start_time &lt;= #{activityStartTime,jdbcType=VARCHAR}) as ids)
+    where id in 
+    	(select id from (select ye.id from activity_score ye
+		join shanduo_activity sa on sa.id = ye.activity_id
+		where ye.score is null and sa.activity_start_time &lt;= #{0}
+		and ye.del_flag = '0' and sa.del_flag = '0') as a)
 	and del_flag = '0'
   </update>
-  <update id="updateByIdTime" parameterType="java.lang.String">
+  <update id="updateByIdTime">
 	update 
 	activity_score 
 	set others_score = '5' 
-	where id in ( select id  from 
-	(select ae.id from activity_score ae
-	join shanduo_activity sa on sa.id = ae.activity_id where ae.user_id in
-	(select user_id from activity_score where others_score is null and del_flag = '0') 
-	and sa.del_flag = '0' and ae.del_flag = '0'
-	and sa.activity_start_time &lt;= #{activityStartTime,jdbcType=VARCHAR}) as ids)
+	where id in 
+		(select id from (select ye.id from activity_score ye
+		join shanduo_activity sa on sa.id = ye.activity_id
+		where ye.others_score is null and sa.activity_start_time &lt;= #{0}
+		and ye.del_flag = '0' and sa.del_flag = '0') as a)
 	and del_flag = '0'
   </update>
   <update id="updateByUserId">
@@ -242,6 +240,12 @@
     from activity_score 
  	where activity_id = #{activityId,jdbcType=VARCHAR} and del_flag = '0'
 	group by gender
+  </select>
+  <select id="selectUserId" resultType="java.lang.String">
+  	select 
+  	user_id 
+  	from activity_score 
+  	where activity_id = #{0} and del_flag = '0'
   </select>
   <update id="deleteByActivityId">
     update 

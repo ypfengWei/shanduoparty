@@ -20,6 +20,7 @@ import com.shanduo.party.entity.ShanduoActivity;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
+import com.shanduo.party.entity.service.ActivityInfo;
 import com.shanduo.party.service.ActivityService;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.ExperienceService;
@@ -200,7 +201,7 @@ public class ActivityController {
 	 * type=5 查看用户报名的活动
 	 * type=6 查看单个用户举办的活动
 	 * type=7 根据userId查询别人举办的活动
-	 * @Title: queryHotActivity
+	 * @Title: showHotActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param @param request
 	 * @param @param type
@@ -216,7 +217,7 @@ public class ActivityController {
 	 */
 	@RequestMapping(value = "showHotActivity", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public ResultBean queryHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, 
+	public ResultBean showHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, 
 			String token, String userId) {
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
@@ -313,6 +314,33 @@ public class ActivityController {
 				return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
 			resultMap = activityService.selectByActivityId(activityId, pages, pageSizes,userToken,joinActivity);
+		}
+		return new SuccessBean(resultMap);
+	}
+	
+	/**
+	 * 查看单个活动详情
+	 * @Title: activityDetails
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param request
+	 * @param @param activityId
+	 * @param @param lon
+	 * @param @param lat
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
+	@RequestMapping(value = "details", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public ResultBean details(HttpServletRequest request, String activityId, String lon, String lat) {
+		if(StringUtils.isNull(activityId)) {
+			log.error("活动ID为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
+		}
+		ActivityInfo resultMap = activityService.activityDetails(activityId, lon, lat);
+		if(resultMap == null) {
+			log.error("没有查到记录");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"该活动已被删除");
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -420,7 +448,8 @@ public class ActivityController {
 				}
 			}
 			try {
-				activityService.insertSelective(userToken, activityId);
+				;
+				activityService.insertSelective(userToken, activityId,shanduoActivity.getActivityName(), shanduoActivity.getUserId());
 			} catch (Exception e) {
 				log.error("参加活动失败");
 				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"参加活动失败");
@@ -442,7 +471,7 @@ public class ActivityController {
 		}
 		if("2".equals(type)){
 			try {
-				activityService.deleteByUserId(activityId, userToken);
+				activityService.deleteByUserId(activityId, userToken, activity.getActivityName(), activity.getUserId());
 			} catch (Exception e) {
 				log.error("活动取消失败");
 				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"活动取消失败");
@@ -457,7 +486,7 @@ public class ActivityController {
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"不是活动发起者禁止踢人");
 			}
 			try {
-				activityService.deleteByUserIds(activityId, userIds);
+				activityService.deleteByUserIds(activityId, userIds, activity.getActivityName(), activity.getUserId());
 			} catch (Exception e) {
 				log.error("踢人失败");
 				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"踢人失败");

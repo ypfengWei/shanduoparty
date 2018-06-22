@@ -359,4 +359,8 @@ public interface ShanduoActivityMapper {
     
     int selectRecord(Integer userId);
     
+    ShanduoActivity selectActivityName(String id);
+    
+    Map<String, Object> selectUserName(Integer userId);
+    
 }
