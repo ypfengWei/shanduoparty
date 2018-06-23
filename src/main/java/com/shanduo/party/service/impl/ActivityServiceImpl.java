@@ -518,9 +518,9 @@ public class ActivityServiceImpl implements ActivityService {
         		}
         	} else {
         		if(nowTime < newstartTime) {
-        			activityInfo.setTypeId(1); //活动未结束
+        			activityInfo.setTypeId(6); //活动未结束
         		} else {
-        			activityInfo.setTypeId(2); //活动结束
+        			activityInfo.setTypeId(7); //活动结束
         		}
         	}
         }
