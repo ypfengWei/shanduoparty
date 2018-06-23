@@ -43,7 +43,7 @@ public class XGHighUtils {
      * @Description: TODO
      * @param @param title 标题
      * @param @param content 通知内容
-     * @param @param typeId 类型:0.透传消息;1.打开vip页面;2.打开钱包页面;
+     * @param @param typeId 类型:0.透传消息;1.打开vip页面;2.打开钱包页面;3.打开活动详情页面;4.打开我报名的活动页面
      * @param @return
      * @return Message
      * @throws
@@ -82,7 +82,8 @@ public class XGHighUtils {
 			action.setIntent(ActivityConfig.INTENT_URI + ActivityConfig.ACT_DETAIL +"?actId="+activityId+"&type=1");
 			break;
 		case 4:
-			action.setActionType(ClickAction.TYPE_ACTIVITY);
+			action.setActionType(ClickAction.TYPE_INTENT);
+			action.setIntent(ActivityConfig.INTENT_URI + ActivityConfig.USER_ACT +"?type=1");
 			break;
 		default:
 //			action.setActionType(ClickAction.TYPE_INTENT);
@@ -125,8 +126,8 @@ public class XGHighUtils {
      * @return String
      * @throws
      */
-    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId, String activityId) {
-    	Message message = getMessage(title, content, typeId, activityId);
+    public String pushAccountList(String title,String content,List<String> accountList,Integer typeId) {
+    	Message message = getMessage(title, content, typeId,null);
         JSONObject resultJson = xinge.pushAccountList(0, accountList, message);
         return isError(resultJson);
     }

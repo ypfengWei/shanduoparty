@@ -21,4 +21,6 @@ public class ActivityConfig {
 	public static final String INTENT_URI = "xgscheme://com.xg.push";
 	//安卓活动详情页
 	public static final String ACT_DETAIL = "/notify_act_detail";
+	//安卓我报名的活动页面
+	public static final String USER_ACT = "/notify_user_act";
 }

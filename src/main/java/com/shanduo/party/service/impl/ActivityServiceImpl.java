@@ -201,7 +201,7 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		ShanduoActivity activity = shanduoActivityMapper.selectActivityName(activityId);
 		if(activity.getActivityStartTime().getTime() > System.currentTimeMillis()) {
-			XGHighUtils.getInstance().pushAccountList("闪多", activity.getActivityName()+"被组织者解散", userIds, 4, activity.getId());
+			XGHighUtils.getInstance().pushAccountList("闪多", activity.getActivityName()+"被组织者解散", userIds, 4);
 		}
 		return 1;
 	}
