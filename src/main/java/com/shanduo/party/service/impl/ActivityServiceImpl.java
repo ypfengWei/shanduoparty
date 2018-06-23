@@ -34,7 +34,7 @@ import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
 import com.shanduo.party.util.UUIDGenerator;
 import com.shanduo.party.util.WeekUtils;
-import com.shanduo.party.xg.XGHighUtils;
+import com.shanduo.party.util.XGHighUtils;
 
 /**
  * 活动操作实现类

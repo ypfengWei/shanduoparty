@@ -1,4 +1,4 @@
-package com.shanduo.party.xg;
+package com.shanduo.party.util;
 
 import java.util.List;
 
@@ -79,11 +79,11 @@ public class XGHighUtils {
 			break;
 		case 3:
 			action.setActionType(ClickAction.TYPE_INTENT);
-			action.setIntent(ActivityConfig.INTENT_URI + ActivityConfig.ACT_DETAIL +"?actId="+activityId+"&type=1");
+			action.setIntent(ActivityConfig.ACT_DETAIL +"?actId="+activityId+"&type=1");
 			break;
 		case 4:
 			action.setActionType(ClickAction.TYPE_INTENT);
-			action.setIntent(ActivityConfig.INTENT_URI + ActivityConfig.USER_ACT +"?type=1");
+			action.setIntent(ActivityConfig.USER_ACT +"?type=1");
 			break;
 		default:
 //			action.setActionType(ClickAction.TYPE_INTENT);

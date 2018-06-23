@@ -22,7 +22,7 @@ import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.UUIDGenerator;
-import com.shanduo.party.xg.XGHighUtils;
+import com.shanduo.party.util.XGHighUtils;
 
 /**
  * 

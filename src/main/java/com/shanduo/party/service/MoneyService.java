@@ -83,7 +83,7 @@ public interface MoneyService {
 	 * @Description: TODO
 	 * @param @param userId 用户ID
 	 * @param @param beans 闪多豆数量
-	 * @param @param typeId 1.签到;2.升级
+	 * @param @param typeId 1.签到;2.升级;3.任务;
 	 * @param @return
 	 * @return int
 	 * @throws

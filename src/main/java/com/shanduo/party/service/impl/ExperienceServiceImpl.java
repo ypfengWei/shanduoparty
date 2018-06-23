@@ -23,7 +23,7 @@ import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.LevelUtils;
 import com.shanduo.party.util.UUIDGenerator;
-import com.shanduo.party.xg.XGHighUtils;
+import com.shanduo.party.util.XGHighUtils;
 
 /**
  * 
@@ -127,22 +127,6 @@ public class ExperienceServiceImpl implements ExperienceService {
 			rate = rate.add(new BigDecimal("0.1"));
 		}
 		switch (moneyType) {
-			case "0":
-				//每个星期第1次签到
-				rate = rate.multiply(new BigDecimal("10"));
-				break;
-			case "1":
-				rate = rate.multiply(new BigDecimal("15"));
-				//每个星期第3次签到
-				break;
-			case "2":
-				rate = rate.multiply(new BigDecimal("20"));
-				//每个星期第5次签到
-				break;
-			case "3":
-				rate = rate.multiply(new BigDecimal("25"));
-				//每个星期第6次签到
-				break;
 			case "4":
 				//发表动态
 				rate = rate.multiply(new BigDecimal("5"));
