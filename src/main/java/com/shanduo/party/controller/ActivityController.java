@@ -82,7 +82,7 @@ public class ActivityController {
 		}
 		if (StringUtils.isNull(activityName)) {
 			log.error("标题不能为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"标题不能为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"主题不能为空");
 		}
 		if (StringUtils.isNull(activityStartTime)) {
 			log.error("活动开始时间不能为空");
@@ -185,7 +185,7 @@ public class ActivityController {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动Id为空");
 		}
 		try {
-			activityService.deleteActivity(activityId,userToken);
+			activityService.deleteByActivity(activityId,userToken);
 		} catch (Exception e) {
 			log.error("活动删除失败");
 			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"删除失败");

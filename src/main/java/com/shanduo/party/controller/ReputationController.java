@@ -18,7 +18,7 @@ import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
-import com.shanduo.party.service.ScoreService;
+import com.shanduo.party.service.ReputationService;
 import com.shanduo.party.util.StringUtils;
 
 /**
@@ -38,7 +38,7 @@ public class ReputationController {
 	private BaseService baseService;
 	
 	@Autowired
-	private ScoreService scoreService;
+	private ReputationService reputationService;
 	
 	/**
 	 * 信誉轨迹
@@ -79,15 +79,15 @@ public class ReputationController {
 				return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			}
 			if("1".equals(type)) {
-				resultMap = scoreService.selectReputation(null, userToken, pages, pageSizes);
+				resultMap = reputationService.selectReputation(null, userToken, pages, pageSizes);
 			} else {
-				resultMap = scoreService.selectJoinActivity(userToken, pages, pageSizes);
+				resultMap = reputationService.selectJoinActivity(userToken, pages, pageSizes);
 			}
 		} else {
 			if("1".equals(type)) {
-				resultMap = scoreService.selectReputation(null, Integer.valueOf(userId), pages, pageSizes);
+				resultMap = reputationService.selectReputation(null, Integer.valueOf(userId), pages, pageSizes);
 			} else {
-				resultMap = scoreService.selectJoinActivity(Integer.valueOf(userId), pages, pageSizes);
+				resultMap = reputationService.selectJoinActivity(Integer.valueOf(userId), pages, pageSizes);
 			}
 		}
 		if(resultMap == null) {
@@ -95,129 +95,6 @@ public class ReputationController {
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"用户不存在");
 		}
 		return new SuccessBean(resultMap);
-	}
-	
-	/**
-	 * 举报
-	 * @Title: saveReport
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param report 举报者
-	 * @param @param beReported 被举报者
-	 * @param @param activityId 活动Id
-	 * @param @param dynamicId 动态Id
-	 * @param @param typeId 1:活动 2:动态
-	 * @param @param remarks 举报内容
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "saveReport", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean saveReport(HttpServletRequest request, String userId, String activityId, String dynamicId, String typeId, 
-			String remarks) {
-		Integer userIds = Integer.parseInt(userId);
-		if (userId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
-		}
-		if(StringUtils.isNull(remarks)) {
-			log.error("举报内容为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报内容不能为空");
-		}
-		String id = null;
-		if("1".equals(typeId)) {
-			if(StringUtils.isNull(activityId)) {
-				log.error("活动为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动为空");
-			}
-		} else {
-			if(StringUtils.isNull(dynamicId)) {
-				log.error("动态为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"动态为空");
-			}
-		}
-		id = scoreService.selectId(activityId, dynamicId, typeId, userIds);
-		if(!StringUtils.isNull(id)) {
-			log.error("已举报");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"已举报");
-		}
-		try {
-			scoreService.report(userIds, activityId, dynamicId, typeId, remarks);
-		} catch (Exception e) {
-			log.error("举报记录添加失败");
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报失败");
-		}
-		return new SuccessBean("举报成功");
-	}
-	
-	/**
-	 * 查看举报的活动或动态记录
-	 * @Title: reportRecord
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param typeId 1:活动记录 2:动态记录
-	 * @param @param page 页码
-	 * @param @param pageSize 记录
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "reportRecord", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean reportRecord(HttpServletRequest request, String typeId, String page, String pageSize) {
-		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
-		}
-		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
-			log.error("页码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
-		}
-		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
-			log.error("记录错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
-		}
-		Integer pages = Integer.valueOf(page);
-		Integer pageSizes = Integer.valueOf(pageSize);
-		Map<String, Object> resultMap = scoreService.reportRecord(typeId, pages, pageSizes);
-		return new SuccessBean(resultMap);
-	}
-	
-	/**
-	 * 举报处理
-	 * @Title: ReportHandling
-	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param request
-	 * @param @param activityId 活动id
-	 * @param @param dynamicId 动态Id
-	 * @param @param type 1:通过  2:未通过
-	 * @param @return    设定文件
-	 * @return ResultBean    返回类型
-	 * @throws
-	 */
-	@RequestMapping(value = "reportHandling", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public ResultBean reportHandling(HttpServletRequest request, String activityId, String type, String dynamicId) {
-		if(StringUtils.isNull(activityId)&&StringUtils.isNull(dynamicId)) {
-			log.error("id为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"id为空");
-		}
-		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
-			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
-		}
-		try {
-			scoreService.updateReputation(activityId,type,dynamicId);
-		} catch (Exception e) {
-			log.error("信誉修改失败");
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报处理失败");
-		}
-		return new SuccessBean("举报处理成功");
 	}
 	
 }

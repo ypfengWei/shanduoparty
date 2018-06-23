@@ -46,9 +46,7 @@
 			<!-- 活动操作接口拦截 -->
 	 		<mvc:mapping path="/activity/saveactivity"/>
 	 		<mvc:mapping path="/activity/deleteActivity"/>
-	 		<mvc:mapping path="/activity/selectByActivityId"/>
 	 		<mvc:mapping path="/activity/joinActivities"/>
-	 		<mvc:mapping path="/activity/selectByHistorical"/>
 	 		<!-- 评论操作接口拦截 -->
 	 		<mvc:mapping path="/score/**"/>
 	 		<!-- 任务操作接口拦截 -->

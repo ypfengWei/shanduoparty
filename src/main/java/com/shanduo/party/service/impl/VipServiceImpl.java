@@ -277,9 +277,14 @@ public class VipServiceImpl implements VipService {
 	
 	@Override
 	public Map<String, Object> vipLecel(Integer userId) {
-		int experience = experienceMapper.selectByUserId(userId);
-		int level = selectVipLevel(userId);
+		Integer experience = experienceMapper.selectByUserId(userId);
 		Map<String, Object> map = new HashMap<String, Object>(2);
+		if(experience == null) {
+			map.put("experience", 0);
+			map.put("level", 0);
+			return map;
+		}
+		int level = selectVipLevel(userId);
 		map.put("experience", experience);
 		map.put("level", level);
 		return map;

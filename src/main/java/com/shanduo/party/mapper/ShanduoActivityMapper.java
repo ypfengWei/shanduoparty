@@ -31,6 +31,8 @@ public interface ShanduoActivityMapper {
      */
     int deleteByActivity(String activityId, Integer userId);
     
+    int deleteActivity(String activityId);
+    
     /**
      * 热门活动记录数
      * @Title: selectByScoreCount

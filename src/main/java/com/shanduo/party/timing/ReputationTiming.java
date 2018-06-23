@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shanduo.party.service.ScoreService;
+import com.shanduo.party.service.ReputationService;
 
 /**
  * 信誉分定时器   (reputation一天最多加减十分)
@@ -21,10 +21,10 @@ public class ReputationTiming {
 	private static final Logger logger = LoggerFactory.getLogger(ActivityScoreTiming.class);
 	
 	@Autowired
-	private ScoreService scoreService;
+	private ReputationService reputationService;
 	@Scheduled(cron = "59 59 23 * * ? ")
 	public void reputationTiming() {
-		int i =  scoreService.updateByReputation();
+		int i =  reputationService.updateByReputation();
 		logger.info("信誉分:" + i);
 	}
 }

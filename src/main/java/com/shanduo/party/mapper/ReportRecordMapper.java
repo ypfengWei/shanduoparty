@@ -26,7 +26,13 @@ public interface ReportRecordMapper {
     
     int deleteCount(String activityId, String dynamicId);
     
-    int selectCount(String typeId);
+    List<Map<String, Object>> selectInfo(String activityId, String dynamicId);
     
-    List<Map<String, Object>> selectInfo(String typeId, Integer page, Integer pageSize);
+    List<Map<String, Object>> selectActivityInfo(Integer page, Integer pageSize);
+    
+    List<Map<String, Object>> selectDynamicInfo(Integer page, Integer pageSize);
+    
+    int activityCount();
+    
+    int dynamicCount();
 }

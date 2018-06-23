@@ -63,13 +63,25 @@ public interface ActivityService {
 	 * 删除活动信息
 	 * @Title: deleteActivity
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param id
+	 * @param @param activityId
+	 * @param @param userId
 	 * @param @return    设定文件
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int deleteActivity(String id, Integer userId);
+	int deleteByActivity(String activityId, Integer userId);
 
+	/**
+	 * 删除活动信息
+	 * @Title: deleteActivity
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param activityId
+	 * @param @return    设定文件
+	 * @return int    返回类型
+	 * @throws
+	 */
+	int deleteActivity(String activityId);
+	
 	/**
 	 * 展示热点活动以及活动要求信息
 	 * @Title: selectByScore

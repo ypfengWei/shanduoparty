@@ -183,7 +183,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public int deleteActivity(String activityId, Integer userId) {
+	public int deleteByActivity(String activityId, Integer userId) {
 		int i = shanduoActivityMapper.deleteByActivity(activityId,userId);
 		if(i < 1) {
 			log.error("删除活动失败");
@@ -202,6 +202,25 @@ public class ActivityServiceImpl implements ActivityService {
 		ShanduoActivity activity = shanduoActivityMapper.selectActivityName(activityId);
 		if(activity.getActivityStartTime().getTime() > System.currentTimeMillis()) {
 			XGHighUtils.getInstance().pushAccountList("闪多", activity.getActivityName()+"被组织者解散", userIds, 4);
+		}
+		return 1;
+	}
+	
+	@Override
+	public int deleteActivity(String activityId) {
+		int i = shanduoActivityMapper.deleteActivity(activityId);
+		if(i < 1) {
+			log.error("删除活动失败");
+			throw new RuntimeException();
+		}
+		int count = activityRequirementMapper.deleteByActivityId(activityId);
+		if(count < 1) {
+			log.error("删除需求失败");
+			throw new RuntimeException();
+		}
+		int score = activityScoreMapper.deleteByActivityId(activityId);
+		if(score < 1) {
+			log.error("没有用户参加活动");
 		}
 		return 1;
 	}
@@ -321,7 +340,7 @@ public class ActivityServiceImpl implements ActivityService {
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<ActivityInfo> resultList = shanduoActivityMapper.selectByUserIdTime(userId, pageNum, page.getPageSize());
 		for (ActivityInfo activityInfo : resultList) {
-			activityInfo.setTypeId(9);
+			activityInfo.setTypeId(9);//安卓用作判断。
 		}
 		activity(resultList, lon, lat, 0);
 		Map<String, Object> resultMap = new HashMap<String, Object>(3);
@@ -412,6 +431,7 @@ public class ActivityServiceImpl implements ActivityService {
 		int n = activityScoreMapper.deleteByUserId(activityId, userId);
 		if(n < 1) {
 			log.error("踢人失败");
+			throw new RuntimeException();
 		}
 		Map<String, Object> user = shanduoActivityMapper.selectUserName(initiatorId);
 		XGHighUtils.getInstance().pushSingleAccount("闪多", "您已被"+user.get("user_name")+"请出了他的"+activityName+"活动", userId, 3, activityId);

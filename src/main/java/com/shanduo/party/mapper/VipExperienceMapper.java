@@ -28,7 +28,7 @@ public interface VipExperienceMapper {
      * @return int
      * @throws
      */
-    int selectByUserId(Integer userId);
+    Integer selectByUserId(Integer userId);
     
     /**
      * 加svip成长值

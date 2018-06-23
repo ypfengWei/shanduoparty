@@ -261,6 +261,12 @@
     set del_flag = '1'
     where id = #{0} and user_id = #{1}
   </update>
+  <update id="deleteActivity">
+    update 
+    shanduo_activity
+    set del_flag = '1'
+    where id = #{0} and user_id = #{1}
+  </update>
   <select id="selectByScoreCount" resultType="java.lang.Integer">
     select 
     count(id) from shanduo_activity 

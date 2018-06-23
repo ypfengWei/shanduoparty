@@ -168,17 +168,46 @@
   	set del_flag = '1'
   	where activity_id = #{0} or dynamic_id = #{1}
   </update>
-  <select id="selectCount" resultType="java.lang.Integer">
-  	select 
-  	count(id) 
-  	from report_record 
-  	where type_id = #{0} and del_flag = '0'
-  </select>
   <select id="selectInfo" resultType="map">
   	select 
-  	activity_id,user_id,create_date,remarks 
+  	user_id,create_date,remarks 
   	from report_record 
-  	where type_id = #{0} and del_flag = '0'
-  	limit #{1},#{2}
+  	where del_flag = '0'
+  	and activity_id = #{0} or dynamic_id = #{1}
+  </select>
+  <select id="selectActivityInfo" resultType="map">
+  	select 
+  	sa.id,sa.activity_name,sa.remarks,sa.activity_address,sa.detailed_address,sa.activity_start_time,
+  	sa.activity_cutoff_time,sa.user_id,count(rd.user_id) as record
+  	from report_record rd 
+	join shanduo_activity sa on rd.activity_id = sa.id
+	where rd.type_id = '1' and sa.del_flag = '0' and rd.del_flag = '0'
+	group by rd.activity_id
+	order by rd.create_date desc
+	limit #{0},#{1}
+  </select>
+  <select id="selectDynamicInfo" resultType="map">
+  	select 
+  	sd.id,sd.location,sd.picture,sd.content,sd.user_id,count(rd.user_id) as record
+  	from report_record rd 
+	join shanduo_dynamic sd on rd.dynamic_id = sd.id
+	where rd.type_id = '2' and sd.del_flag = '0' and rd.del_flag = '0'
+	group by rd.dynamic_id
+	order by rd.create_date desc
+	limit #{0},#{1}
+  </select>
+  <select id="activityCount" resultType="java.lang.Integer">
+  	select 
+  	count(*) 
+  	from (select activity_id from report_record where type_id = '1' and del_flag = '0' and activity_id in 
+  	(select id from shanduo_activity where del_flag = '0')
+	group by activity_id) a
+  </select>
+  <select id="dynamicCount" resultType="java.lang.Integer">
+  	select 
+  	count(*) 
+  	from (select dynamic_id from report_record where type_id = '2' and dynamic_id in 
+  	(select id from shanduo_dynamic where del_flag = '0')
+	group by dynamic_id) a
   </select>
 </mapper>
