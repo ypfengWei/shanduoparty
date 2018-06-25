@@ -42,6 +42,12 @@ public interface ActivityScoreMapper {
      */
     List<ActivityScore> selectByIdScore(Integer userId, Integer page, Integer pageSize);
     
+    List<String> selectId(String time);
+    
+    Map<String, Object> selectById(String id);
+    
+    List<String> selectIds(String time);
+    
     /**
      * 参与者默认好评
      * @Title: updateById
@@ -72,7 +78,6 @@ public interface ActivityScoreMapper {
      * @param @param activityId
      * @param @param othersScore
      * @param @param beEvaluated
-     * @param @param remarks
      * @param @return    设定文件
      * @return int    返回类型
      * @throws

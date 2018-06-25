@@ -79,16 +79,11 @@ public class ReputationServiceImpl implements ReputationService {
 	}
 	
 	@Override
-	public boolean getRecord(Integer userId, String activityId, Integer score, String evaluation, Integer type) {
+	public boolean getRecord(Integer userId, Integer otheruserId, Integer score) {
 		ShanduoReputationRecord shanduoReputationRecord = new ShanduoReputationRecord();
 		shanduoReputationRecord.setId(UUIDGenerator.getUUID());
-		if(type == 1) {
-			shanduoReputationRecord.setUserId(shanduoActivityMapper.selectById(activityId));
-			shanduoReputationRecord.setOtheruserId(userId);
-		} else {
-			shanduoReputationRecord.setUserId(userId);
-			shanduoReputationRecord.setOtheruserId(shanduoActivityMapper.selectById(activityId));
-		}
+		shanduoReputationRecord.setUserId(otheruserId);
+		shanduoReputationRecord.setOtheruserId(userId);
 		if(ScoreUtils.getScore(shanduoReputationRecord.getUserId(), shanduoReputationRecord.getOtheruserId())){
 			switch (score) {//未满6分
 			case 1:

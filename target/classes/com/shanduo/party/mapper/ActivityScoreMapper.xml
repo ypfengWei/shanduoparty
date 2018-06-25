@@ -192,26 +192,42 @@
 	order by sa.activity_start_time desc,ae.create_date desc
 	limit #{1},#{2}
   </select>
+  <select id="selectId" resultType="java.lang.String">
+  	select 
+  	ye.id 
+  	from activity_score ye
+	join shanduo_activity sa on sa.id = ye.activity_id
+	where ye.score is null and sa.activity_start_time &lt;= #{0}
+	and ye.del_flag = '0' and sa.del_flag = '0'
+  </select>
+  <select id="selectIds" resultType="java.lang.String">
+  	select 
+  	ye.id 
+  	from activity_score ye
+	join shanduo_activity sa on sa.id = ye.activity_id
+	where ye.others_score is null and sa.activity_start_time &lt;= #{0}
+	and ye.del_flag = '0' and sa.del_flag = '0'
+  </select>
+  <select id="selectById" resultType="map">
+  	select 
+  	sa.user_id,ye.user_id as otheruser_id
+  	from activity_score ye
+	join shanduo_activity sa on ye.activity_id = sa.id
+	where ye.id = #{0}
+	and sa.del_flag = '0' and ye.del_flag = '0'
+  </select>
   <update id="updateById">
     update 
     activity_score 
     set score = '5' 
-    where id in 
-    	(select id from (select ye.id from activity_score ye
-		join shanduo_activity sa on sa.id = ye.activity_id
-		where ye.score is null and sa.activity_start_time &lt;= #{0}
-		and ye.del_flag = '0' and sa.del_flag = '0') as a)
+    where id = #{0}
 	and del_flag = '0'
   </update>
   <update id="updateByIdTime">
 	update 
 	activity_score 
 	set others_score = '5' 
-	where id in 
-		(select id from (select ye.id from activity_score ye
-		join shanduo_activity sa on sa.id = ye.activity_id
-		where ye.others_score is null and sa.activity_start_time &lt;= #{0}
-		and ye.del_flag = '0' and sa.del_flag = '0') as a)
+	where id = #{0}
 	and del_flag = '0'
   </update>
   <update id="updateByUserId">

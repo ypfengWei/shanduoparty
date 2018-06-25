@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shanduo.party.entity.ActivityScore;
 import com.shanduo.party.mapper.ActivityScoreMapper;
+import com.shanduo.party.mapper.ShanduoActivityMapper;
 import com.shanduo.party.service.ReputationService;
 import com.shanduo.party.service.ScoreService;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.SensitiveWord;
 import com.shanduo.party.util.StringUtils;
-
 
 /**
  * 评价操作实现类
@@ -38,6 +38,8 @@ public class ScoreServiceImpl implements ScoreService {
 	@Autowired
 	private ReputationService reputationService;
 	
+	@Autowired
+	private ShanduoActivityMapper shanduoActivityMapper;
 	
 	@Override
 	public int updateActivityScore(Integer userId, String activityId, Integer score, String evaluationcontent) {
@@ -48,7 +50,7 @@ public class ScoreServiceImpl implements ScoreService {
 			throw new RuntimeException();
 		}
 		if(score != 3) {
-			if(!reputationService.getRecord(userId, activityId, score, content, 1)) {
+			if(!reputationService.getRecord(userId, shanduoActivityMapper.selectById(activityId), score)) {
 				log.error("信誉历史数据添加失败");
 				throw new RuntimeException();
 			}
@@ -78,7 +80,7 @@ public class ScoreServiceImpl implements ScoreService {
 				throw new RuntimeException();
 			}
 			if(score != 3) {
-				if(!reputationService.getRecord(userId, activityId, score, evaluated, 2)) {
+				if(!reputationService.getRecord(shanduoActivityMapper.selectById(activityId), userId, score)) {
 					log.error("信誉历史数据添加失败");
 					throw new RuntimeException();
 				}
@@ -102,12 +104,42 @@ public class ScoreServiceImpl implements ScoreService {
 
 	@Override
 	public int updateById(String time) {
-		return activityScoreMapper.updateById(time);
+		List<String> scoreId = activityScoreMapper.selectId(time);
+		for (String string : scoreId) {
+			int i = activityScoreMapper.updateById(string);
+			if(i < 1) {
+				log.error("修改评分失败");
+				throw new RuntimeException();
+			}
+			Map<String, Object> userIds = activityScoreMapper.selectById(string);
+			Integer userId = Integer.parseInt(userIds.get("user_id").toString()); //被评论者id
+			Integer otherUserId = Integer.parseInt(userIds.get("otheruser_id").toString()); //评论者id
+			if(!reputationService.getRecord(otherUserId, userId, 5)) {
+				log.error("信誉历史数据添加失败");
+				throw new RuntimeException();
+			}
+		}
+		return scoreId.size();
 	}
 
 	@Override
 	public int updateByIdTime(String time) {
-		return activityScoreMapper.updateByIdTime(time);
+		List<String> scoreId = activityScoreMapper.selectIds(time);
+		for (String string : scoreId) {
+			int i = activityScoreMapper.updateByIdTime(string);
+			if(i < 1) {
+				log.error("修改评分失败");
+				throw new RuntimeException();
+			}
+			Map<String, Object> userIds = activityScoreMapper.selectById(string);
+			Integer userId = Integer.parseInt(userIds.get("user_id").toString()); //评论者id
+			Integer otherUserId = Integer.parseInt(userIds.get("otheruser_id").toString()); //被评论者id
+			if(!reputationService.getRecord(userId, otherUserId, 5)) {
+				log.error("信誉历史数据添加失败");
+				throw new RuntimeException();
+			}
+		}
+		return scoreId.size();
 	}
 
 }

@@ -25,16 +25,14 @@ public interface ReputationService {
 	 * 添加信誉记录
 	 * @Title: getRecord
 	 * @Description: TODO(这里用一句话描述这个方法的作用)
-	 * @param @param userId
-	 * @param @param activityId
+	 * @param @param userId 评论者id
+	 * @param @param otheruserId 被评论者id
 	 * @param @param score
-	 * @param @param evaluation
-	 * @param @param type
 	 * @param @return    设定文件
 	 * @return boolean    返回类型
 	 * @throws
 	 */
-	boolean getRecord(Integer userId, String activityId, Integer score, String evaluation, Integer type);
+	boolean getRecord(Integer userId, Integer otheruserId, Integer score);
 	
 	/**
 	 * 查询信誉分和用户发布的活动及评价
