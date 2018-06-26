@@ -48,7 +48,7 @@ public class XGHighUtils {
      * @return Message
      * @throws
      */
-    public Message getMessage(String title,String content,Integer typeId,String activityId) {
+    public Message getMessage(String title,String content,Integer typeId,String parameter) {
     	Message message = new Message();
     	message.setTitle(title);
         message.setContent(content);
@@ -79,7 +79,7 @@ public class XGHighUtils {
 			break;
 		case 3:
 			action.setActionType(ClickAction.TYPE_INTENT);
-			action.setIntent(ActivityConfig.ACT_DETAIL +"?actId="+activityId+"&type=1");
+			action.setIntent(ActivityConfig.ACT_DETAIL +"?actId="+parameter+"&type=1");
 			break;
 		case 4:
 			action.setActionType(ClickAction.TYPE_INTENT);

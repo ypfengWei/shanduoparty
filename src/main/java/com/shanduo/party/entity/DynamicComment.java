@@ -15,7 +15,7 @@ public class DynamicComment {
 
     private String commentId;
 
-    private Integer respondent;
+    private String replyCommentId;
 
     private String remarks;
 
@@ -73,12 +73,12 @@ public class DynamicComment {
         this.commentId = commentId == null ? null : commentId.trim();
     }
 
-    public Integer getRespondent() {
-        return respondent;
+    public String getReplyCommentId() {
+        return replyCommentId;
     }
 
-    public void setRespondent(Integer respondent) {
-        this.respondent = respondent;
+    public void setReplyCommentId(String replyCommentId) {
+        this.replyCommentId = replyCommentId == null ? null : replyCommentId.trim();
     }
 
     public String getRemarks() {

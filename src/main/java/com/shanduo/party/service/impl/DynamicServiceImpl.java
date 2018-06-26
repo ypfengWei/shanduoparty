@@ -244,7 +244,7 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public int saveDynamicComment(Integer userId, String dynamicId, String comment, String typeId, String commentId,String respondent) {
+	public int saveDynamicComment(Integer userId, String dynamicId, String comment, String typeId, String commentId,String replyCommentId) {
 		String id = UUIDGenerator.getUUID();
 		DynamicComment comments = new DynamicComment();
 		comments.setId(id);
@@ -254,7 +254,7 @@ public class DynamicServiceImpl implements DynamicService {
 		comments.setReplyType(typeId);
 		if("2".equals(typeId)) {
 			comments.setCommentId(commentId);
-			comments.setRespondent(Integer.parseInt(respondent));
+			comments.setReplyCommentId(replyCommentId);
 		}
 		int i = commentMapper.insertSelective(comments);
 		if(i < 1) {

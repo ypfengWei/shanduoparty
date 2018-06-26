@@ -195,8 +195,8 @@ public class ExperienceServiceImpl implements ExperienceService {
         Calendar cal = Calendar.getInstance();  
         cal.setTime(time);
         //判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了  
-        //获得当前日期是一个星期的第几天 
-        int dayWeek = cal.get(Calendar.DAY_OF_WEEK); 
+        //获得当前日期是一个星期的第几天
+        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
         if(1 == dayWeek) {
           cal.add(Calendar.DAY_OF_MONTH, -1);
         }
@@ -218,24 +218,19 @@ public class ExperienceServiceImpl implements ExperienceService {
 		switch (weekSignInCount) {
 		case 1:
 			moneyService.payBeans(userId, 58,"1");
-			saveMoneyRecord(userId, "3",58+"","签到获得闪多豆:+58");
+			saveMoneyRecord(userId, "3","58","签到获得闪多豆:+58");
 			break;
 		case 2:
 			moneyService.payBeans(userId, 128,"1");
-			saveMoneyRecord(userId, "3",128+"","签到获得闪多豆:+128");
-			break;
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-			moneyService.payBeans(userId, 88,"1");
-			saveMoneyRecord(userId, "3",88+"","签到获得闪多豆:+88");
+			saveMoneyRecord(userId, "3","128","签到获得闪多豆:+128");
 			break;
 		case 7:
 			moneyService.payBeans(userId, 588,"1");
-			saveMoneyRecord(userId, "3",588+"","签到获得闪多豆:+588");
+			saveMoneyRecord(userId, "3","588","签到获得闪多豆:+588");
 			break;
 		default:
+			moneyService.payBeans(userId, 88,"1");
+			saveMoneyRecord(userId, "3","88","签到获得闪多豆:+88");
 			break;
 		}
 		return 1;
@@ -259,9 +254,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Override
 	public Map<String, Object> checkSignin(Integer userId) {
 		Map<String, Object> resultMap = new HashMap<>(2);
-		boolean isSignin = checkCount(userId, "3");
-		resultMap.put("isSignin", isSignin);
-		if(isSignin) {
+		boolean flag = checkCount(userId, "3");
+		resultMap.put("isSignin", flag);
+		if(flag) {
 			resultMap.put("count", weekSignInCount(userId));
 		}else {
 			resultMap.put("count", weekSignInCount(userId)+1);

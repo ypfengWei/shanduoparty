@@ -8,15 +8,15 @@
     <result column="comment" jdbcType="VARCHAR" property="comment" />
     <result column="reply_type" jdbcType="CHAR" property="replyType" />
     <result column="comment_id" jdbcType="VARCHAR" property="commentId" />
-    <result column="respondent" jdbcType="INTEGER" property="respondent" />
+    <result column="reply_comment_id" jdbcType="VARCHAR" property="replyCommentId" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, dynamic_id, user_id, comment, reply_type, comment_id, respondent, remarks, create_date, 
-    update_date, del_flag
+    id, dynamic_id, user_id, comment, reply_type, comment_id, reply_comment_id, remarks, 
+    create_date, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -31,11 +31,11 @@
   <insert id="insert" parameterType="com.shanduo.party.entity.DynamicComment">
     insert into dynamic_comment (id, dynamic_id, user_id, 
       comment, reply_type, comment_id, 
-      respondent, remarks, create_date, 
+      reply_comment_id, remarks, create_date, 
       update_date, del_flag)
     values (#{id,jdbcType=VARCHAR}, #{dynamicId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
       #{comment,jdbcType=VARCHAR}, #{replyType,jdbcType=CHAR}, #{commentId,jdbcType=VARCHAR}, 
-      #{respondent,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{replyCommentId,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.DynamicComment">
@@ -59,8 +59,8 @@
       <if test="commentId != null">
         comment_id,
       </if>
-      <if test="respondent != null">
-        respondent,
+      <if test="replyCommentId != null">
+        reply_comment_id,
       </if>
       <if test="remarks != null">
         remarks,
@@ -94,8 +94,8 @@
       <if test="commentId != null">
         #{commentId,jdbcType=VARCHAR},
       </if>
-      <if test="respondent != null">
-        #{respondent,jdbcType=INTEGER},
+      <if test="replyCommentId != null">
+        #{replyCommentId,jdbcType=VARCHAR},
       </if>
       <if test="remarks != null">
         #{remarks,jdbcType=VARCHAR},
@@ -129,8 +129,8 @@
       <if test="commentId != null">
         comment_id = #{commentId,jdbcType=VARCHAR},
       </if>
-      <if test="respondent != null">
-        respondent = #{respondent,jdbcType=INTEGER},
+      <if test="replyCommentId != null">
+        reply_comment_id = #{replyCommentId,jdbcType=VARCHAR},
       </if>
       <if test="remarks != null">
         remarks = #{remarks,jdbcType=VARCHAR},
@@ -154,7 +154,7 @@
       comment = #{comment,jdbcType=VARCHAR},
       reply_type = #{replyType,jdbcType=CHAR},
       comment_id = #{commentId,jdbcType=VARCHAR},
-      respondent = #{respondent,jdbcType=INTEGER},
+      reply_comment_id = #{replyCommentId,jdbcType=VARCHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -213,7 +213,8 @@
  		dc.`comment`,dc.create_date as createDate
 	from dynamic_comment dc
 	 	join shanduo_user usOne on usOne.id = dc.user_id
-	 	join shanduo_user usTwo on usTwo.id = dc.respondent
+	 	join dynamic_comment ac on ac.id = dc.reply_comment_id
+	 	join shanduo_user usTwo on usTwo.id = ac.user_id
 	where dc.del_flag = '0'
 	and dc.reply_type = '2'
 	and dc.comment_id = #{0}

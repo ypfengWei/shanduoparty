@@ -332,7 +332,7 @@ public class DynamicController {
 	 * @param @param comment 评论内容
 	 * @param @param typeId 评论类型:1.1级,2.2级
 	 * @param @param commentId 1级评论ID
-	 * @param @param respondent 1级评论用户ID
+	 * @param @param replyCommentId 回复的评论ID
 	 * @param @return
 	 * @return ResultBean
 	 * @throws
@@ -340,7 +340,7 @@ public class DynamicController {
 	@RequestMapping(value = "savecomment",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean saveComment(HttpServletRequest request,String token,String dynamicId,
-			String comment,String typeId,String commentId,String respondent) {
+			String comment,String typeId,String commentId,String respondent,String replyCommentId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -360,16 +360,16 @@ public class DynamicController {
 		}
 		if("2".equals(typeId)) {
 			if(StringUtils.isNull(commentId)) {
-				log.error("评论ID为空");
-				return new ErrorBean(10002,"评论ID为空");
+				log.error("1级评论ID为空");
+				return new ErrorBean(10002,"1级评论ID为空");
 			}
-			if(StringUtils.isNull(respondent) || PatternUtils.patternUser(respondent)) {
-				log.error("被回复用户ID错误");
-				return new ErrorBean(10002,"被回复用户ID错误");
+			if(StringUtils.isNull(replyCommentId)) {
+				log.error("被回复评论ID为空");
+				return new ErrorBean(10002,"被回复用户ID为空");
 			}
 		}
 		try {
-			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, respondent);
+			dynamicService.saveDynamicComment(isUserId, dynamicId, comment, typeId, commentId, replyCommentId);
 		} catch (Exception e) {
 			log.error("评论失败");
 			return new ErrorBean(10003,"评论失败");
