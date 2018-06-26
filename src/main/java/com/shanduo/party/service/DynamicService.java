@@ -187,4 +187,16 @@ public interface DynamicService {
 	 */
 	int dynamicCount(Integer userId);
 	
+	/**
+	 * 我的消息
+	 * @Title: myMessage
+	 * @Description: TODO
+	 * @param @param userId 用户ID
+	 * @param @param pageNum 页码
+	 * @param @param pageSize 记录数
+	 * @param @return
+	 * @return Map<String,Object>
+	 * @throws
+	 */
+	Map<String, Object> myMessage(Integer userId,Integer pageNum,Integer pageSize);
 }

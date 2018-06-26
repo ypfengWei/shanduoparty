@@ -365,7 +365,7 @@ public class DynamicController {
 			}
 			if(StringUtils.isNull(replyCommentId)) {
 				log.error("被回复评论ID为空");
-				return new ErrorBean(10002,"被回复用户ID为空");
+				return new ErrorBean(10002,"被回复评论ID为空");
 			}
 		}
 		try {
@@ -449,4 +449,37 @@ public class DynamicController {
 		return new SuccessBean("删除成功");
 	}
 	
+	/**
+	 * 我的消息
+	 * @Title: myMessage
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param page
+	 * @param @param pageSize
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "mymessage",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean myMessage(HttpServletRequest request,String token,String page,String pageSize) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
+			log.error("页码错误");
+			return new ErrorBean(10002,"页码错误");
+		}
+		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
+			log.error("记录错误");
+			return new ErrorBean(10002,"记录错误");
+		}
+		Integer pages = Integer.valueOf(page);
+		Integer pageSizes = Integer.valueOf(pageSize);
+		Map<String, Object> resultMap = dynamicService.myMessage(isUserId, pages, pageSizes);
+		return new SuccessBean(resultMap);
+	}
 }

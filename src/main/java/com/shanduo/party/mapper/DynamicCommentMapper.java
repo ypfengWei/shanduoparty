@@ -79,5 +79,18 @@ public interface DynamicCommentMapper {
      */
     List<Map<String, Object>> twoCommentIdList(String commentId,Integer page,Integer pageSize);
     
+    /**
+     * 查询单个1级评论
+     * @Title: selectByCommentId
+     * @Description: TODO
+     * @param @param commentId
+     * @param @return
+     * @return Map<String,Object>
+     * @throws
+     */
     Map<String, Object> selectByCommentId(String commentId);
+    
+    int myMessageCount(Integer userId);
+    
+    List<Map<String, Object>> myMessage(Integer userId,Integer pageNum,Integer pageSize);
 }

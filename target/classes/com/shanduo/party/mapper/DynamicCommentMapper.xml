@@ -232,4 +232,37 @@
 	and ac.reply_type = '1'
 	and ac.id = #{commentId}
   </select>
+  <select id="myMessageCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  	select
+		count(dc.id)
+	from dynamic_comment dc
+	join shanduo_dynamic sd on sd.id = dc.dynamic_id
+	where dc.del_flag = '0' and sd.del_flag = '0'
+	and (
+		(sd.user_id = #{userId} and dc.reply_type = '1') 
+			or 
+		(dc.reply_comment_id in (select id from dynamic_comment where user_id = #{userId} and del_flag = '0'))
+		)
+  </select>
+  <select id="myMessage" resultType="map">
+  	select
+		dc.id,dc.user_id as replyUserId,dcus.user_name as replyName,dcus.head_portrait_id as portraitId,dcus.birthday as age,dcus.gender,
+		dc.`comment` as replyComment,dc.reply_type as type,dc.comment_id as commentId,
+		dc.dynamic_id as dynamicId,sd.user_id as issueId,dyus.user_name as issueName,sd.content,sd.picture,sd.location,
+		dc2.user_id as userId,dcus2.user_name as `name`,dc2.`comment`
+	from dynamic_comment dc
+		join shanduo_user dcus on dcus.id = dc.user_id
+		join shanduo_dynamic sd on sd.id = dc.dynamic_id
+		join shanduo_user dyus on dyus.id = sd.user_id
+		left join dynamic_comment dc2 on dc.reply_comment_id = dc2.id
+		left join shanduo_user dcus2 on dcus2.id = dc2.user_id
+	where dc.del_flag = '0' and sd.del_flag = '0'
+	and (
+		(sd.user_id = #{0} and dc.reply_type = '1')
+		or
+		(dc.reply_comment_id in (select id from dynamic_comment where user_id = #{0} and del_flag = '0'))
+		)
+	order by dc.create_date desc 
+	limit #{1},#{2}
+  </select>
 </mapper>

@@ -66,6 +66,7 @@
 	 		<mvc:mapping path="/jdynamic/savecomment"/>
 	 		<mvc:mapping path="/jdynamic/hidedynamics"/>
 	 		<mvc:mapping path="/jdynamic/hidecomment"/>
+	 		<mvc:mapping path="/jdynamic/mymessage"/>
 	 		<!-- 好友接口拦截 -->
 	 		<mvc:mapping path="/jattention/**"/>
 	 		<!-- 收藏接口拦截 -->

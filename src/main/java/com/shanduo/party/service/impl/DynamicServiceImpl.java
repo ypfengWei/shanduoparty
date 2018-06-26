@@ -295,4 +295,25 @@ public class DynamicServiceImpl implements DynamicService {
 		return dynamicMapper.selectMyCount(userId);
 	}
 
+	@Override
+	public Map<String, Object> myMessage(Integer userId, Integer pageNum, Integer pageSize) {
+		int totalRecord = commentMapper.myMessageCount(userId);
+		Page page = new Page(totalRecord, pageSize, pageNum);
+		pageNum = (page.getPageNum()-1)*page.getPageSize();
+		List<Map<String, Object>> resultList = commentMapper.myMessage(userId, pageNum, page.getPageSize());
+		for(Map<String, Object> map : resultList) {
+			//头像
+			map.put("portraitId", PictureUtils.getPictureUrl(map.get("portraitId")));
+			//vip
+			map.put("vip", vipService.selectVipLevel(Integer.valueOf(map.get("replyUserId").toString())));
+			//保存年龄
+			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+		}
+		Map<String, Object> resultMap = new HashMap<>(3);
+		resultMap.put("page", page.getPageNum());
+		resultMap.put("totalPage", page.getTotalPage());
+		resultMap.put("list", resultList);
+		return resultMap;
+	}
+
 }
