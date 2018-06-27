@@ -233,16 +233,10 @@ public class VipServiceImpl implements VipService {
 				long vipEndTime = vip.getVipEndTime().getTime();
 				long time = vipEndTime - date.getTime();
 				long b = 1000L*60*60*24*31;
-				if(1000L*60*60*24*16 > time) { //vip剩余时间不足16天不能升级
-					i = 0;
+				if(time%b >= 1000L*60*60*24*16) {
+					i = (int) (time/b) + 1;
 				} else {
-					i = (int) (time/b); 
-					if(i >= 1 && time%b>= 1000L*60*60*24*16) {
-						i = i+1;
-					}
-					if(i == 0) {
-						i = i+1;
-					}
+					i = (int) (time/b);
 				}
 			}
 		}
@@ -251,28 +245,30 @@ public class VipServiceImpl implements VipService {
 	
 	@Override
 	public int upgradeVip(Integer userId, Integer month) {
-		if(getMonth(userId) > 0) {
-			List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
-			if(resultList != null && resultList.size() < 2) {
-				if("0".equals(resultList.get(0).getVipType())) { //用户为vip
-					ShanduoVip vip = resultList.get(0);
-					Date date = new Date();
-					long vipEndTime = vip.getVipEndTime().getTime();
-					long time = vipEndTime - date.getTime();
-					if(1000L*60*60*24*31*month - 1000L*60*60*24*15 <= time) { //会员剩余时间在允许升级的月份之内
-						if(1000L*60*60*24*31*month > time) { //升级时间大于会员结束时间将vip延迟
-							//vip延长
-							renewVip(vip.getId(), getDate(date, month), month);
-						}
-						addRemarks(userId);
-						//开通svip
-						saveVip(userId, date, month, "1","0");
-						return 1; //操作成功
-					}
+		int months = getMonth(userId);
+		if(months == 0) {
+			log.error(userId+"不能升级SVIP");
+			throw new RuntimeException();
+		}
+		if(month > months) {
+			log.error(userId+"升级SVIP月份过大");
+			throw new RuntimeException();
+		}
+		//开通svip
+		saveVip(userId, new Date(), month, "1","0");
+		if(month == months) {
+			Date date = getDate(new Date(), month);
+			ShanduoVip userVip = vipMapper.selectByVipType(userId,"0");
+			if(userVip.getVipEndTime().getTime() < date.getTime()) {
+				userVip.setVipEndTime(getDate(new Date(), month));
+				int i = vipMapper.updateByPrimaryKeySelective(userVip);
+				if (i < 1) {
+					log.error("续费会员失败");
+					throw new RuntimeException();
 				}
 			}
 		}
-		return 0;//操作失败：高于可升级月份的限制或会员剩余时长不足16天或用户为svip不能升级
+		return 1;
 	}
 	
 	@Override

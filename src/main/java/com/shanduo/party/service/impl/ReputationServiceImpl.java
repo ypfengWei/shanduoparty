@@ -115,7 +115,7 @@ public class ReputationServiceImpl implements ReputationService {
 			default:
 				log.error("评分异常");
 				break;
-		}
+			}
 		}
 		int n =reputationRecordMapper.insertSelective(shanduoReputationRecord);
 		if(n < 1) {
