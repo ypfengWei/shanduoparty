@@ -226,7 +226,7 @@ public class VipServiceImpl implements VipService {
 	public int getMonth(Integer userId) {
 		List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
 		int i = 0;
-		if(resultList != null && resultList.size() < 2) { //vip
+		if(resultList != null && resultList.size() == 1) { //vip
 			if("0".equals(resultList.get(0).getVipType())) {
 				ShanduoVip vip = resultList.get(0);
 				Date date = new Date();
