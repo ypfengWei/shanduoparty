@@ -65,7 +65,7 @@ public interface VipService {
 	 * @return int    返回类型
 	 * @throws
 	 */
-	int upgradeVip(Integer userId, Integer month, String vipType);
+	int upgradeVip(Integer userId, Integer month);
 	
 	Map<String, Object> vipLecel(Integer userId);
 }

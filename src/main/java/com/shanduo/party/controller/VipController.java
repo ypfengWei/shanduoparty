@@ -58,10 +58,6 @@ public class VipController {
 			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
 		int i =	vipService.getMonth(userToken);
-		if(i < 1) {
-			log.error("不能升级vip");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"vip不能升级");
-		}
 		return new SuccessBean(i);
 	}
 	

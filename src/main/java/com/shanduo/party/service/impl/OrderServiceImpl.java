@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 			}else {
 				order.setMoney(new BigDecimal("0.1"));
 			}
-		}else {
+		}else if("5".equals(orderType)){
 			order.setActivityId(activityId);
 			int vip = vipService.selectVipLevel(userId);
 			if(vip == 0) {
@@ -78,6 +78,10 @@ public class OrderServiceImpl implements OrderService {
 			}else {
 				order.setMoney(new BigDecimal("1"));
 			}
+		}else {
+			order.setMonth(Integer.parseInt(month));
+			moneys = new BigDecimal(month+"").multiply(new BigDecimal("4"));
+			order.setMoney(moneys);
 		}
 		int i = orderMapper.insertSelective(order);
 		if(i < 1) {
@@ -181,6 +185,10 @@ public class OrderServiceImpl implements OrderService {
 			case "5":
 				moneyService.consumeMoney(userId, money, "活动置顶",typeId);
 				activityService.updateBysetTop(activityId);
+				break;
+			case "6":
+				moneyService.consumeMoney(userId, money, "升级svip",typeId);
+				vipService.upgradeVip(userId, month);
 				break;
 			default:
 				break;

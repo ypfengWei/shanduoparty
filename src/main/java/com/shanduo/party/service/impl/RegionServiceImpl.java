@@ -105,29 +105,21 @@ public class RegionServiceImpl implements RegionService {
 		Format format = new SimpleDateFormat("yyyy-MM-01");
 		String endDate = format.format(time);
 		String month = endDate.substring(5, 7);
-		String startDate = "";
 		switch (month) {
-			case "01":
 			case "03":
+				time = time-1000L*60*60*24*28;
+				break;
 			case "05":
 			case "07":
-			case "08":
 			case "10":
 			case "12":
-				startDate = format.format(time-1000L*60*60*24*31);
-				break;
-			case "02":
-				startDate = format.format(time-1000L*60*60*24*28);
-				break;
-			case "04":
-			case "06":
-			case "09":
-			case "11":
-				startDate = format.format(time-1000L*60*60*24*30);
+				time = time-1000L*60*60*24*30;
 				break;
 			default:
+				time = time-1000L*60*60*24*31;
 				break;
 		}
+		String startDate = format.format(time);
 		List<RegionAgency> list = agencyMapper.agencyList();
 		for (RegionAgency agency : list) {
 			Integer userId = agency.getId();

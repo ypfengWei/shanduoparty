@@ -250,7 +250,7 @@ public class VipServiceImpl implements VipService {
 	}
 	
 	@Override
-	public int upgradeVip(Integer userId, Integer month, String vipType) {
+	public int upgradeVip(Integer userId, Integer month) {
 		if(getMonth(userId) > 0) {
 			List<ShanduoVip> resultList = vipMapper.selectByUserId(userId);
 			if(resultList != null && resultList.size() < 2) {
@@ -263,10 +263,10 @@ public class VipServiceImpl implements VipService {
 						if(1000L*60*60*24*31*month > time) { //升级时间大于会员结束时间将vip延迟
 							//vip延长
 							renewVip(vip.getId(), getDate(date, month), month);
-						} 
+						}
 						addRemarks(userId);
 						//开通svip
-						saveVip(userId, date, month, vipType,"0");
+						saveVip(userId, date, month, "1","0");
 						return 1; //操作成功
 					}
 				}

@@ -24,12 +24,14 @@ import com.shanduo.party.common.AliPayConfig;
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.common.WxPayConfig;
 import com.shanduo.party.entity.UserOrder;
+import com.shanduo.party.entity.VipExperience;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.MoneyService;
 import com.shanduo.party.service.OrderService;
+import com.shanduo.party.service.VipService;
 import com.shanduo.party.util.IpUtils;
 import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
@@ -56,6 +58,8 @@ public class OrderContrpller {
 	private OrderService orderService;
 	@Autowired
 	private MoneyService moneyService;
+	@Autowired
+	private VipService vipService;
 
 	/**
 	 * 支付订单
@@ -65,7 +69,7 @@ public class OrderContrpller {
 	 * @param @param token
 	 * @param @param payId 支付类型:1.余额;2.支付宝;3.微信;4.微信小程序;5.微信公众号支付;6.赏金支付
 	 * @param @param password 余额或赏金支付时传的支付密码
-	 * @param @param typeId 订单类型:,1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
+	 * @param @param typeId 订单类型:1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶,6.升级svip
 	 * @param @param money 金额,充值才传
 	 * @param @param month 月份,开通vip才传
 	 * @param @param activityId 活动ID,刷新置顶才传
@@ -95,7 +99,7 @@ public class OrderContrpller {
 			log.error("充值方式错误");
 			return new ErrorBean(10002,"充值方式错误");
 		}
-		if("1".equals(payId) && "6".equals(typeId)) {
+		if("6".equals(payId) && "1".equals(typeId)) {
 			log.error("充值方式错误");
 			return new ErrorBean(10002,"充值方式错误");
 		}
@@ -144,21 +148,38 @@ public class OrderContrpller {
 			log.error("位置为空");
 			return new ErrorBean(10002,"位置为空");
 		}
-		if("1".equals(typeId)) {
+		switch (typeId) {
+		case "1":
 			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})$")) {
 				log.error("充值金额错误");
 				return new ErrorBean(10002,"充值金额错误");
 			}
-		}else if("2".equals(typeId) || "3".equals(typeId)) {
+			break;
+		case "2":
+		case "3":
 			if(StringUtils.isNull(month) || !month.matches("^[1-9]\\d*$")) {
-				log.error("开通vip月份错误");
-				return new ErrorBean(10002,"开通vip月份错误");
+				log.error("vip月份错误");
+				return new ErrorBean(10002,"vip月份错误");
 			}
-		}else {
+			break;
+		case "6":
+			if(StringUtils.isNull(month) || !month.matches("^[1-9]\\d*$")) {
+				log.error("vip月份错误");
+				return new ErrorBean(10002,"vip月份错误");
+			}
+			int i = vipService.getMonth(userId);
+			int a = Integer.valueOf(month);
+			if(a > i) {
+				log.error("超出可升级月份");
+				return new ErrorBean(10002,"超出可升级月份");
+			}
+			break;
+		default:
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动ID为空");
 				return new ErrorBean(10002,"活动ID为空");
 			}
+			break;
 		}
 		UserOrder order = new UserOrder();
 		try {
