@@ -26,6 +26,7 @@ import com.shanduo.party.util.LocationUtils;
 import com.shanduo.party.util.Page;
 import com.shanduo.party.util.PictureUtils;
 import com.shanduo.party.util.UUIDGenerator;
+import com.shanduo.party.util.XGHighUtils;
 
 /**
  * 
@@ -261,6 +262,9 @@ public class DynamicServiceImpl implements DynamicService {
 			log.error("评论失败");
 			throw new RuntimeException();
 		}
+		//推送
+		DynamicComment commentTui = commentMapper.selectByPrimaryKey(replyCommentId);
+		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "你有新的消息", commentTui.getUserId(), 5, null);
 		return 1;
 	}
 	
@@ -308,6 +312,8 @@ public class DynamicServiceImpl implements DynamicService {
 			map.put("vip", vipService.selectVipLevel(Integer.valueOf(map.get("replyUserId").toString())));
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
+			//动态图片
+			map.put("picture", PictureUtils.getPictureUrlList(map.get("picture")));
 		}
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());

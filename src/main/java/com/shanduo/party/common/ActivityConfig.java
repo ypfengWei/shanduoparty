@@ -16,7 +16,7 @@ public class ActivityConfig {
 	//钱包
 	public static final String MONEY = ACTIVITY+"MywalletActivity";
 	//我的消息
-	public static final String xiaoxi = ACTIVITY+"";
+	public static final String MESSAGE = ACTIVITY+"MyMessageActivity";
 	//跳转到安卓
 	public static final String INTENT_URI = "xgscheme://com.xg.push";
 	//安卓活动详情页

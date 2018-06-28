@@ -43,7 +43,7 @@ public class XGHighUtils {
      * @Description: TODO
      * @param @param title 标题
      * @param @param content 通知内容
-     * @param @param typeId 类型:0.透传消息;1.打开vip页面;2.打开钱包页面;3.打开活动详情页面;4.打开我报名的活动页面
+     * @param @param typeId 类型:0.透传消息;1.打开vip页面;2.打开钱包页面;3.打开活动详情页面;4.打开我报名的活动页面;5.打开我的消息页码
      * @param @return
      * @return Message
      * @throws
@@ -85,9 +85,11 @@ public class XGHighUtils {
 			action.setActionType(ClickAction.TYPE_INTENT);
 			action.setIntent(ActivityConfig.USER_ACT +"?type=1");
 			break;
+		case 5:
+			action.setActionType(ClickAction.TYPE_ACTIVITY);
+	        action.setActivity(ActivityConfig.MESSAGE);
+			break;
 		default:
-//			action.setActionType(ClickAction.TYPE_INTENT);
-//			action.setIntent("intent:10086#Intent;scheme=tel;action=android.intent.action.DIAL;S.key=value;end");
 			break;
 		}
         message.setAction(action);

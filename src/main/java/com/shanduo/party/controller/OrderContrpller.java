@@ -24,7 +24,6 @@ import com.shanduo.party.common.AliPayConfig;
 import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.common.WxPayConfig;
 import com.shanduo.party.entity.UserOrder;
-import com.shanduo.party.entity.VipExperience;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
