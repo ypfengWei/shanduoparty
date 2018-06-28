@@ -93,9 +93,9 @@ public class DynamicServiceImpl implements DynamicService {
 	 * @return void
 	 * @throws
 	 */
-	public void addList(List<Map<String, Object>> list,String lon,String lat) {
+	public void addList(List<Map<String, Object>> list,Integer lookId,String lon,String lat) {
 		for (Map<String, Object> map : list) {
-			putMap(map, lon, lat);
+			putMap(map, lookId, lon, lat);
 		}
 	}
 	
@@ -109,7 +109,7 @@ public class DynamicServiceImpl implements DynamicService {
 	 * @return void
 	 * @throws
 	 */
-	public void putMap(Map<String, Object> map,String lon,String lat) {
+	public void putMap(Map<String, Object> map,Integer lookId,String lon,String lat) {
 			String dynamicId = map.get("id").toString();
 			//保存年龄
 			map.put("age", AgeUtils.getAgeFromBirthTime(map.get("age").toString()));
@@ -121,6 +121,8 @@ public class DynamicServiceImpl implements DynamicService {
 			map.put("dynamicCount",commentMapper.dynamicIdCount(dynamicId));
 			//点赞人数
 			map.put("praise", praiseService.selectByCount(dynamicId));
+			//是否点赞
+			map.put("isPraise", praiseService.checkPraise(lookId, dynamicId));
 			Integer userId = Integer.parseInt(map.get("userId").toString());
 			//vip等级
 			map.put("vip", vipService.selectVipLevel(userId));
@@ -128,7 +130,7 @@ public class DynamicServiceImpl implements DynamicService {
 			map.put("level", experienceService.selectLevel(userId));
 			//距离
 			if(lon != null && lat != null) {
-				double distance = 
+				double distance =
 						LocationUtils.getDistance(Double.parseDouble(lon), Double.parseDouble(lat), Double.parseDouble(map.get("lon").toString()), Double.parseDouble(map.get("lat").toString()));
 				map.put("distance", distance);
 			}
@@ -140,7 +142,7 @@ public class DynamicServiceImpl implements DynamicService {
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList = dynamicMapper.attentionList(userId, pageNum, page.getPageSize());
-		addList(resultList, lon, lat);
+		addList(resultList, userId, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -149,14 +151,14 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> nearbyList(String lat,String lon, Integer pageNum, Integer pageSize) {
+	public Map<String, Object> nearbyList(Integer lookId,String lat,String lon, Integer pageNum, Integer pageSize) {
 		double lons = Double.parseDouble(lon);
 		double lats = Double.parseDouble(lat);
 		int totalRecord = dynamicMapper.nearbyCount(lons, lats);
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.nearbyList(lons, lats, pageNum, page.getPageSize());
-		addList(resultList, lon, lat);
+		addList(resultList, lookId, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -165,12 +167,12 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> dynamicList(Integer userId,String lat,String lon, Integer pageNum, Integer pageSize) {
+	public Map<String, Object> dynamicList(Integer userId,Integer lookId,String lat,String lon, Integer pageNum, Integer pageSize) {
 		int totalRecord = dynamicMapper.selectMyCount(userId);
 		Page page = new Page(totalRecord, pageSize, pageNum);
 		pageNum = (page.getPageNum()-1)*page.getPageSize();
 		List<Map<String, Object>> resultList =  dynamicMapper.selectMyList(userId, pageNum, page.getPageSize());
-		addList(resultList, lon, lat);
+		addList(resultList, lookId, lon, lat);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalPage", page.getTotalPage());
@@ -179,12 +181,12 @@ public class DynamicServiceImpl implements DynamicService {
 	}
 	
 	@Override
-	public Map<String, Object> selectById(String dynamicId,String lat,String lon) {
+	public Map<String, Object> selectById(String dynamicId,Integer lookId,String lat,String lon) {
 		Map<String, Object> resultMap = dynamicMapper.selectByDynamicId(dynamicId);
 		if(resultMap == null) {
 			return null;
 		}
-		putMap(resultMap, lon, lat);
+		putMap(resultMap, lookId, lon, lat);
 		return resultMap;
 	}
 	
