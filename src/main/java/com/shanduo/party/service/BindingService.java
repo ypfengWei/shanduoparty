@@ -23,6 +23,18 @@ public interface BindingService {
 	Integer selectUserId(String union_id,String type);
 	
 	/**
+	 * 检查用户是否绑定
+	 * @Title: selectUnionId
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param userId
+	 * @param @param type
+	 * @param @return    设定文件
+	 * @return String    返回类型
+	 * @throws
+	 */
+	String selectUnionId(Integer userId,String type);
+	
+	/**
 	 * 
 	 * @Title: insertSelective
 	 * @Description: TODO
