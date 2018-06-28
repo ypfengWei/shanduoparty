@@ -41,9 +41,9 @@ public class WxPayConfig {
     public static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     
     /**
-     * 支付回调url
+     * 回调url
      */
-    public static final String NOTIFY_URL = "https://yapinkeji.com/shanduoparty/jpay/appwxpay";
+    public static final String NOTIFY_URL= SystemConfig.API+"/jpay/appwxpay";
     
     /**
      * 调用微信接口的返回值的false

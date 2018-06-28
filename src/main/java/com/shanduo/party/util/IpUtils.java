@@ -3,11 +3,12 @@ package com.shanduo.party.util;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 类说明
- * @Description
- * @author 作者 : Fan van
- * @version 创建时间 : 2017年12月13日 下午8:22:57
- * 
+ * 获取请求的IP
+ * @ClassName: IpUtils
+ * @Description: TODO
+ * @author fanshixin
+ * @date 2018年6月28日 上午10:19:17
+ *
  */
 public class IpUtils {
 
