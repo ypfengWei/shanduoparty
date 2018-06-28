@@ -263,8 +263,13 @@ public class DynamicServiceImpl implements DynamicService {
 			throw new RuntimeException();
 		}
 		//推送
-		DynamicComment commentTui = commentMapper.selectByPrimaryKey(replyCommentId);
-		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "你有新的消息", commentTui.getUserId(), 5, null);
+		if("1".equals(typeId)) {
+			ShanduoDynamic dynamic = dynamicMapper.selectByPrimaryKey(dynamicId);
+			XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "有人评论了你的动态", dynamic.getUserId(), 5, null);
+		}else {
+			DynamicComment commentTui = commentMapper.selectByPrimaryKey(replyCommentId);
+			XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "有人回复了你的评论", commentTui.getUserId(), 5, null);
+		}
 		return 1;
 	}
 	

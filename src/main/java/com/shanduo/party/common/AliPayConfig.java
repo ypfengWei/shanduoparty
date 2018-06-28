@@ -49,6 +49,6 @@ public class AliPayConfig {
 	/**
 	 * 支付宝支付回调地址
 	 */
-	public static final String NOTIFY_URL = SystemConfig.API+"/jpay/alipay";
+	public static final String NOTIFY_URL = SystemConfig.API_URL+"/jpay/alipay";
 	
 }

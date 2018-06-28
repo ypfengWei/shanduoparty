@@ -43,7 +43,7 @@ public class WxPayConfig {
     /**
      * 回调url
      */
-    public static final String NOTIFY_URL= SystemConfig.API+"/jpay/appwxpay";
+    public static final String NOTIFY_URL= SystemConfig.API_URL+"/jpay/appwxpay";
     
     /**
      * 调用微信接口的返回值的false
