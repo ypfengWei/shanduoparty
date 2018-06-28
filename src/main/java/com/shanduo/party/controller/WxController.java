@@ -105,6 +105,7 @@ public class WxController {
 				log.error("token为空");
 				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "token为空");
 			}
+			userId = baseService.checkUserToken(tokenInfo);
 			try {
 				bindingService.insertSelective(baseService.checkUserToken(tokenInfo), unionId, "0");
 			} catch (Exception e) {
@@ -127,19 +128,24 @@ public class WxController {
 				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "token为空");
 			}
 		} else {
+			if(StringUtils.isNull(unionId)) {
+				log.error("unionId为空");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
+			}
 			tokenInfo = userService.loginUser(phone, password);
 			if (null == tokenInfo) {
 				log.error("登录失败");
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "账号或密码错误");
 			}
-			if(StringUtils.isNull(unionId)) {
-				log.error("unionId为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
-			}
 			userId = baseService.checkUserToken(tokenInfo);
 			if(userId == null) {
 				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			}
+			String unionIds = bindingService.selectUnionId(userId, "0");
+			if(unionIds != null) {
+				log.error("此账号已在其他微信上绑定");
+				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "此账号已在其他微信上绑定");
 			}
 			try {
 				bindingService.insertSelective(userId, unionId, "0");

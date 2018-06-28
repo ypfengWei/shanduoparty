@@ -17,5 +17,7 @@ public interface UserBindingMapper {
     
     Integer selectUserId(String union_id,String type);
     
+    String selectUnionId(Integer userId,String type);
+    
     String selectOpenId(Integer userId,String type);
 }

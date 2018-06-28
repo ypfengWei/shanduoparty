@@ -32,6 +32,11 @@ public class BindingServiceImpl implements BindingService {
 	public Integer selectUserId(String union_id,String type) {
 		return bindingMapper.selectUserId(union_id,type);
 	}
+	
+	@Override
+	public String selectUnionId(Integer userId,String type) {
+		return bindingMapper.selectUnionId(userId,type);
+	}
 
 	@Override
 	public int insertSelective(int userId, String unionId,String type) {

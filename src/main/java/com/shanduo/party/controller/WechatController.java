@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shanduo.party.common.ErrorCodeConstants;
 import com.shanduo.party.entity.SessionKey;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
+import com.shanduo.party.entity.service.TokenInfo;
 import com.shanduo.party.mapper.SessionKeyMapper;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.BindingService;
@@ -77,7 +79,12 @@ public class WechatController {
 			log.error("登录失败");
 			return new ErrorBean(10002,"登录失败");
 		}
-		return new SuccessBean(tokenInfo);
+		TokenInfo tokens = userService.selectById(tokenInfo,userId);
+		if(tokens == null) {
+			log.error("获取用户详细错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"获取用户详细错误");
+		}
+		return new SuccessBean(tokens);
 	}
 
 	// 获取信息
@@ -113,7 +120,12 @@ public class WechatController {
 			log.error("登录失败");
 			return new ErrorBean(10002,"登录失败");
 		}
-		return new SuccessBean(tokenInfo);
+		TokenInfo tokens = userService.selectById(tokenInfo,userId);
+		if(tokens == null) {
+			log.error("获取用户详细错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"获取用户详细错误");
+		}
+		return new SuccessBean(tokens);
 	}
 
 	@RequestMapping(value = "bindingUser", method = { RequestMethod.POST, RequestMethod.GET })
@@ -160,6 +172,11 @@ public class WechatController {
 			log.error("登录失败");
 			return new ErrorBean(10002,"登录失败");
 		}
-		return new SuccessBean(tokenInfo);
+		TokenInfo tokens = userService.selectById(tokenInfo,userId);
+		if(tokens == null) {
+			log.error("获取用户详细错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"获取用户详细错误");
+		}
+		return new SuccessBean(tokens);
 	}
 }
