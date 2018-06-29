@@ -39,7 +39,7 @@ public class FileController {
 	
 	private static final Logger log = LoggerFactory.getLogger(FileController.class);
 	
-	private String path = "/www/app/picture/";
+	private static String path = "/www/app/picture/";
 	@Autowired
 	private BaseService baseService;
 	@Autowired

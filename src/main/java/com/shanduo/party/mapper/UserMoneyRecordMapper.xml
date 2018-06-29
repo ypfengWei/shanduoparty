@@ -159,7 +159,7 @@
   	 id, money_type as moneyType,amount,remarks, create_date as createDate 
   	from user_money_record
   	where user_id = #{0}
-    and money_type in ('1','2','9','10')
+    and money_type in ('1','2','9','10','11','12')
     order by create_date desc
     limit #{1},#{2}
   </select>
