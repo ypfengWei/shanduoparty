@@ -24,12 +24,6 @@ public class SensitiveWord {
     private static String fileName = "CensorWords.txt";
     private static List<String> arrayList;
     
-    public static String unicodeInfo(String str) {
-    	str = UnicodeUtils.unicodeToString(str);
-    	str = filterInfo(str);
-    	return UnicodeUtils.stringToUnicode(str);
-    }
-    
     /** 
      * @param str 将要被过滤信息 
      * @return 过滤后的信息 

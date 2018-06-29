@@ -43,7 +43,7 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Override
 	public int updateActivityScore(Integer userId, String activityId, Integer score, String evaluationcontent) {
-		String content = SensitiveWord.unicodeInfo(evaluationcontent);
+		String content = SensitiveWord.filterInfo(evaluationcontent);
 		int i = activityScoreMapper.updateByUserIdTwo(userId,activityId,score,content);
 		if (i < 1) {
 			log.error("评价失败");
@@ -73,7 +73,7 @@ public class ScoreServiceImpl implements ScoreService {
 				log.error("评价用户为空");
 				throw new RuntimeException();
 			}
-			String evaluated = SensitiveWord.unicodeInfo(map.get("evaluated").toString());
+			String evaluated = SensitiveWord.filterInfo(map.get("evaluated").toString());
 			int n = activityScoreMapper.updateByUserId(userId, activityId, score, evaluated);
 			if (n < 1) {
 				log.error("评价失败");
