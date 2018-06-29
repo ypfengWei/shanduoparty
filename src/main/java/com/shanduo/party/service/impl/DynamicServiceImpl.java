@@ -58,7 +58,7 @@ public class DynamicServiceImpl implements DynamicService {
 		ShanduoDynamic dynamic = new ShanduoDynamic();
 		dynamic.setId(UUIDGenerator.getUUID());
 		dynamic.setUserId(userId);
-		dynamic.setContent(SensitiveWord.unicodeInfo(content));
+		dynamic.setContent(SensitiveWord.filterInfo(content));
 		picture = picture.replaceAll("\"","");
 		picture = picture.replaceAll("\\[","");
 		picture = picture.replaceAll("\\]","");
@@ -253,7 +253,7 @@ public class DynamicServiceImpl implements DynamicService {
 		comments.setId(id);
 		comments.setUserId(userId);
 		comments.setDynamicId(dynamicId);
-		comments.setComment(SensitiveWord.unicodeInfo(comment));
+		comments.setComment(SensitiveWord.filterInfo(comment));
 		comments.setReplyType(typeId);
 		if("2".equals(typeId)) {
 			comments.setCommentId(commentId);
