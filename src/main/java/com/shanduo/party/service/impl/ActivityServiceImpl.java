@@ -201,7 +201,7 @@ public class ActivityServiceImpl implements ActivityService {
 		}
 		ShanduoActivity activity = shanduoActivityMapper.selectActivityName(activityId);
 		if(activity.getActivityStartTime().getTime() > System.currentTimeMillis()) {
-			XGHighUtils.getInstance().pushAccountList("闪多", activity.getActivityName()+"被组织者解散", userIds, 4);
+			XGHighUtils.getInstance().pushAccountList("ShanDuo", activity.getActivityName()+"被组织者解散", userIds, 4);
 		}
 		return 1;
 	}
@@ -309,7 +309,7 @@ public class ActivityServiceImpl implements ActivityService {
 			throw new RuntimeException();
 		}
 		//给组织者推送消息
-		XGHighUtils.getInstance().pushSingleAccount("闪多", user.get("user_name")+"参加了您的"+activityName+"活动", userIds, 3, activityId);
+		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", user.get("user_name")+"参加了您的"+activityName+"活动", userIds, 3, activityId);
 		return 1;
 	}
 
@@ -413,7 +413,7 @@ public class ActivityServiceImpl implements ActivityService {
 		} 
 		Map<String, Object> user = shanduoActivityMapper.selectUserName(token);
 		//给组织者推送消息
-		XGHighUtils.getInstance().pushSingleAccount("闪多", user.get("user_name")+"退出了您的"+activityName+"活动", userId, 3, activityId);
+		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", user.get("user_name")+"退出了您的"+activityName+"活动", userId, 3, activityId);
 		return 1;
 	}
 	
@@ -434,7 +434,7 @@ public class ActivityServiceImpl implements ActivityService {
 			throw new RuntimeException();
 		}
 		Map<String, Object> user = shanduoActivityMapper.selectUserName(initiatorId);
-		XGHighUtils.getInstance().pushSingleAccount("闪多", "您已被"+user.get("user_name")+"请出了他的"+activityName+"活动", userId, 3, activityId);
+		XGHighUtils.getInstance().pushSingleAccount("ShanDuo", "您已被"+user.get("user_name")+"请出了他的"+activityName+"活动", userId, 3, activityId);
 		return 1;
 	}
 	

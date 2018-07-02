@@ -177,7 +177,6 @@ public class ReputationServiceImpl implements ReputationService {
 		resultMap.put("page", page.getPageNum());
 		resultMap.put("totalpage", page.getTotalPage());
 		resultMap.put("list", activityList);
-		updateReport(userId);
 		return resultMap;
 	}
 	
@@ -253,11 +252,11 @@ public class ReputationServiceImpl implements ReputationService {
 							}
 						}
 						if(lowScore != 0) {
-							if(scoreCount/lowScore < 2) { //在一次活动中差评所占百分比大于50%的扣一分信誉分
-								int reputation = shanduoReputationMapper.selectByUserId(userId);
-								int reputations = shanduoReputationMapper.updateByUserId(userId, reputation-1);
+							if(scoreCount/lowScore < 2) { //在一次活动中差评所占百分比大于50%的扣一分
+								int deduction = shanduoReputationMapper.selectDeduction(userId);
+								int reputations = shanduoReputationMapper.updateDeduction(userId, deduction+1);
 								if(reputations < 1) {
-									log.error("信誉等级修改失败");
+									log.error("扣分修改失败");
 									throw new RuntimeException();
 								}
 								//修改信誉等级后将活动表中的扣分标志改为1，避免重复扣分

@@ -88,19 +88,19 @@ public class ActivityController {
 			log.error("活动开始时间不能为空");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动开始时间不能为空");
 		}
-		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
-			log.error("人数不能为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"人数不能为空");
-		}
-		if ("0".equals(manNumber) && "0".equals(womanNumber)) {
-			log.error("人数不能为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"人数不能为空");
-		}
+//		if (StringUtils.isNull(manNumber) && StringUtils.isNull(womanNumber)) {
+//			log.error("人数不能为空");
+//			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"人数不能为空");
+//		}
 		if(StringUtils.isNull(manNumber)) {
 			manNumber = "0";
 		}
 		if(StringUtils.isNull(womanNumber)) {
 			womanNumber = "0";
+		}
+		if ("0".equals(manNumber) && "0".equals(womanNumber)) {
+			log.error("人数不能为空");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"人数不能为空");
 		}
 		if(!manNumber.matches("^\\d+$") || !womanNumber.matches("^\\d+$")) {
 			log.error("人数必须为正整数");
@@ -126,10 +126,12 @@ public class ActivityController {
 			log.error("纬度格式错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"纬度格式错误");
 		}
+		activityStartTime = activityStartTime.replace("T", " ");
 		if(System.currentTimeMillis() > convertTimeToLong(activityStartTime)) {
 			log.error("活动开始时间不能小于系统当前时间");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动开始时间不能小于系统当前时间");
 		}
+		activityCutoffTime = activityCutoffTime.replace("T", " ");
 		if (System.currentTimeMillis() > convertTimeToLong(activityCutoffTime)) {
 			log.error("活动报名截止时间不能小于系统当前时间");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动报名截止时间不能小于系统当前时间");
@@ -219,6 +221,10 @@ public class ActivityController {
 	@ResponseBody
 	public ResultBean showHotActivity(HttpServletRequest request,String type, String page, String pageSize, String lon, String lat, 
 			String token, String userId) {
+		if(StringUtils.isNull(type) || !type.matches("^[1234567]$")) {
+			log.error("类型错误");
+			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
+		}
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度格式错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"经度格式错误");
@@ -234,10 +240,6 @@ public class ActivityController {
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
 			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
-		}
-		if(StringUtils.isNull(type) || !type.matches("^[1234567]$")) {
-			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -448,7 +450,6 @@ public class ActivityController {
 				}
 			}
 			try {
-				;
 				activityService.insertSelective(userToken, activityId,shanduoActivity.getActivityName(), shanduoActivity.getUserId());
 			} catch (Exception e) {
 				log.error("参加活动失败");
