@@ -1,7 +1,5 @@
 package com.shanduo.party.service;
 
-import java.util.List;
-
 /**
  * 图片业务层
  * @ClassName: PictureService
@@ -17,12 +15,12 @@ public interface PictureService {
 	 * @Title: savePicture
 	 * @Description: TODO
 	 * @param @param userId 用户ID
-	 * @param @param urlList 图片URL集合
+	 * @param @param images 图片名称集合
 	 * @param @return
 	 * @return String
 	 * @throws
 	 */
-	String savePicture(Integer userId,List<String> urlList);
+	String savePicture(Integer userId,String images);
 	
 	/**
 	 * 查找单张图片

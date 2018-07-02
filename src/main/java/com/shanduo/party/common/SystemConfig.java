@@ -20,4 +20,9 @@ public class SystemConfig {
 	 */
 	public static final String PICTURE = API_URL+"/picture/";
 	
+	/**
+	 * 保存图片目录
+	 */
+	public static final String FILE_PATH = "/www/app/picture/";
+	
 }

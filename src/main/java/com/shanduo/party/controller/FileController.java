@@ -2,8 +2,6 @@ package com.shanduo.party.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.SystemConfig;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -39,7 +38,6 @@ public class FileController {
 	
 	private static final Logger log = LoggerFactory.getLogger(FileController.class);
 	
-	private static String path = "/www/app/picture/";
 	@Autowired
 	private BaseService baseService;
 	@Autowired
@@ -74,27 +72,26 @@ public class FileController {
 //            	
 //            }
 //		}
-    	List<String> urlList = new ArrayList<>();
+    	String images = "";
     	for(int i=0;i<file.length;i++) {
     		MultipartFile files = file[i];
             String fileName = files.getOriginalFilename();
             fileName = UUIDGenerator.getUUID()+fileName.substring(fileName.lastIndexOf("."));
-            File dir = new File(path,fileName);
+            File dir = new File(SystemConfig.FILE_PATH,fileName);
             if(!dir.exists()){
                 dir.mkdirs();
             }
             //MultipartFile自带的解析方法
             files.transferTo(dir);
-            urlList.add(fileName);
+            images += fileName+",";
     	}
-    	String pictureList = "";
     	try {
-    		pictureList = pictureService.savePicture(isUserId, urlList);
+    		images = pictureService.savePicture(isUserId, images);
 		} catch (Exception e) {
 			log.error("图片记录插入失败");
 			return new ErrorBean(10003,"上传失败");
 		}
-        return new SuccessBean(pictureList);
+        return new SuccessBean(images);
     }   
 
     /**
@@ -117,27 +114,25 @@ public class FileController {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
 			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
 		}
-    	List<String> urlList = new ArrayList<>();
-    	String pictureList = "";
+		String images = "";
     	for(int i=0;i<file.length;i++) {
     		MultipartFile files = file[i];
             String fileName = files.getOriginalFilename();
             fileName = UUIDGenerator.getUUID()+fileName.substring(fileName.lastIndexOf("."));
-            pictureList += fileName+",";
-            File dir = new File(path,fileName);
+            File dir = new File(SystemConfig.FILE_PATH,fileName);
             if(!dir.exists()){
                 dir.mkdirs();
             }
             //MultipartFile自带的解析方法
             files.transferTo(dir);
-            urlList.add(fileName);
+            images += fileName+",";
     	}
     	try {
-    		pictureService.savePicture(isUserId, urlList);
+    		pictureService.savePicture(isUserId, images);
 		} catch (Exception e) {
 			log.error("图片记录插入失败");
 			return new ErrorBean(10003,"上传失败");
 		}
-        return new SuccessBean(pictureList.substring(0, pictureList.length()-1));
+        return new SuccessBean(images.substring(0, images.length()-1));
     }   
 }

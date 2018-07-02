@@ -1,7 +1,5 @@
 package com.shanduo.party.service.impl;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,22 +29,27 @@ public class PictureServiceImpl implements PictureService {
 	private ShanduoPictureMapper pictureMapper;
 	
 	@Override
-	public String savePicture(Integer userId,List<String> urlList) {
-		String pictureList = "";
-		for (int i = 0; i < urlList.size(); i++) {
+	public String savePicture(Integer userId,String images) {
+		String[] imageList = images.split(",");
+		String pictures = "";
+		for (int i = 0; i < imageList.length; i++) {
+			String image = imageList[i];
+			if(image == null || "".equals(image)) {
+				continue;
+			}
 			String uuid = UUIDGenerator.getUUID();
 			ShanduoPicture picture = new ShanduoPicture();
 			picture.setId(uuid);
 			picture.setUserId(userId);
-			picture.setPictureName(urlList.get(i));
+			picture.setPictureName(image);
 			int n = pictureMapper.insertSelective(picture);
 			if(n <= 0) {
 				log.error("图片记录插入失败");
 				throw new RuntimeException();
 			}
-			pictureList += uuid+",";
+			pictures += uuid+",";
 		}
-		return pictureList.substring(0, pictureList.length()-1);
+		return pictures.substring(0, pictures.length()-1);
 	}
 
 	@Override

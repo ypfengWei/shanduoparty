@@ -20,9 +20,11 @@ import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.DynamicService;
 import com.shanduo.party.service.ExperienceService;
+import com.shanduo.party.service.PictureService;
 import com.shanduo.party.service.PraiseService;
 import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
+import com.shanduo.party.util.WxFileUtils;
 
 /**
  * 动态控制层
@@ -46,6 +48,8 @@ public class DynamicController {
 	private PraiseService praiseService;
 	@Autowired
 	private ExperienceService experienceService;
+	@Autowired
+	private PictureService pictureService;
 	
 	/**
 	 * 发表动态
@@ -81,6 +85,73 @@ public class DynamicController {
 		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
 			log.error("经度错误");
 			return new ErrorBean(10002,"经度错误");
+		}
+		try {
+			dynamicService.saveDynamic(isUserId, content, picture, lat, lon, location);
+		} catch (Exception e) {
+			log.error("发表动态失败");
+			return new ErrorBean(10003,"发表动态失败");
+		}
+		//添加每日发表动态经验值，日限制2次/5点经验
+		if(!experienceService.checkCount(isUserId, "4")) {
+			try {
+				experienceService.addExperience(isUserId, "4");
+			} catch (Exception e) {
+				log.error("发表动态获得经验失败");
+			}
+		}
+		return new SuccessBean("发表动态成功");
+	}
+	
+	/**
+	 * 公众号发表动态
+	 * @Title: wxdynamic
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @param accessToken 微信凭证
+	 * @param @param content 动态内容
+	 * @param @param picture 微信图片ID集合
+	 * @param @param lat 纬度
+	 * @param @param lon 经度
+	 * @param @param location 位置
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "wxdynamic",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean wxDynamic(HttpServletRequest request,String token,String accessToken,
+			String content,String picture,String lat, String lon,String location) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+		}
+		if(StringUtils.isNull(content) && StringUtils.isNull(picture)) {
+			log.error("内容为空");
+			return new ErrorBean(10002,"内容为空");
+		}
+		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
+			log.error("纬度错误");
+			return new ErrorBean(10002,"纬度错误");
+		}
+		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
+			log.error("经度错误");
+			return new ErrorBean(10002,"经度错误");
+		}
+		if(!StringUtils.isNull(picture)) {
+			if(StringUtils.isNull(accessToken)) {
+				log.error("微信凭证为空");
+				return new ErrorBean(10002,"微信凭证为空");
+			}
+			picture = WxFileUtils.downloadImages(accessToken, picture);
+			try {
+				picture = pictureService.savePicture(isUserId, picture);
+			} catch (Exception e) {
+				log.error("图片记录插入失败");
+				return new ErrorBean(10003,"发表动态失败");
+			}
 		}
 		try {
 			dynamicService.saveDynamic(isUserId, content, picture, lat, lon, location);
@@ -239,11 +310,11 @@ public class DynamicController {
 			log.error("动态ID为空");
 			return new ErrorBean(10002,"动态ID为空");
 		}
-		if(!StringUtils.isNull(lat) && !PatternUtils.patternLatitude(lat)) {
+		if(!StringUtils.isNull(lat) && PatternUtils.patternLatitude(lat)) {
 			log.error("纬度错误");
 			return new ErrorBean(10002,"纬度错误");
 		}
-		if(!StringUtils.isNull(lon) && !PatternUtils.patternLatitude(lon)) {
+		if(!StringUtils.isNull(lon) && PatternUtils.patternLatitude(lon)) {
 			log.error("经度错误");
 			return new ErrorBean(10002,"经度错误");
 		}
