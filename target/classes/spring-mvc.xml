@@ -62,6 +62,7 @@
 	 		<mvc:mapping path="/juser/checktoken"/>
 	 		<!-- 动态接口拦截 -->
 	 		<mvc:mapping path="/jdynamic/savedynamic"/>
+	 		<mvc:mapping path="/jdynamic/wxdynamic"/>
 	 		<mvc:mapping path="/jdynamic/ispraise"/>
 	 		<mvc:mapping path="/jdynamic/savecomment"/>
 	 		<mvc:mapping path="/jdynamic/hidedynamics"/>

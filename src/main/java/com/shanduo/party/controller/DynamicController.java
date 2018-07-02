@@ -68,7 +68,8 @@ public class DynamicController {
 	 */
 	@RequestMapping(value = "savedynamic",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public ResultBean saveDynamic(HttpServletRequest request,String token,String content,String picture,String lat, String lon,String location) {
+	public ResultBean saveDynamic(HttpServletRequest request,String token,String accessToken,String content,
+			String picture,String lat, String lon,String location) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
@@ -86,65 +87,7 @@ public class DynamicController {
 			log.error("经度错误");
 			return new ErrorBean(10002,"经度错误");
 		}
-		try {
-			dynamicService.saveDynamic(isUserId, content, picture, lat, lon, location);
-		} catch (Exception e) {
-			log.error("发表动态失败");
-			return new ErrorBean(10003,"发表动态失败");
-		}
-		//添加每日发表动态经验值，日限制2次/5点经验
-		if(!experienceService.checkCount(isUserId, "4")) {
-			try {
-				experienceService.addExperience(isUserId, "4");
-			} catch (Exception e) {
-				log.error("发表动态获得经验失败");
-			}
-		}
-		return new SuccessBean("发表动态成功");
-	}
-	
-	/**
-	 * 公众号发表动态
-	 * @Title: wxdynamic
-	 * @Description: TODO
-	 * @param @param request
-	 * @param @param token
-	 * @param @param accessToken 微信凭证
-	 * @param @param content 动态内容
-	 * @param @param picture 微信图片ID集合
-	 * @param @param lat 纬度
-	 * @param @param lon 经度
-	 * @param @param location 位置
-	 * @param @return
-	 * @return ResultBean
-	 * @throws
-	 */
-	@RequestMapping(value = "wxdynamic",method={RequestMethod.POST,RequestMethod.GET})
-	@ResponseBody
-	public ResultBean wxDynamic(HttpServletRequest request,String token,String accessToken,
-			String content,String picture,String lat, String lon,String location) {
-		Integer isUserId = baseService.checkUserToken(token);
-		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
-		}
-		if(StringUtils.isNull(content) && StringUtils.isNull(picture)) {
-			log.error("内容为空");
-			return new ErrorBean(10002,"内容为空");
-		}
-		if(StringUtils.isNull(lat) || PatternUtils.patternLatitude(lat)) {
-			log.error("纬度错误");
-			return new ErrorBean(10002,"纬度错误");
-		}
-		if(StringUtils.isNull(lon) || PatternUtils.patternLatitude(lon)) {
-			log.error("经度错误");
-			return new ErrorBean(10002,"经度错误");
-		}
-		if(!StringUtils.isNull(picture)) {
-			if(StringUtils.isNull(accessToken)) {
-				log.error("微信凭证为空");
-				return new ErrorBean(10002,"微信凭证为空");
-			}
+		if(!StringUtils.isNull(picture) && !StringUtils.isNull(accessToken)) {
 			picture = WxFileUtils.downloadImages(accessToken, picture);
 			try {
 				picture = pictureService.savePicture(isUserId, picture);
