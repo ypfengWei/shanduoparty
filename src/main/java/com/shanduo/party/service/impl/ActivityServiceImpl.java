@@ -534,7 +534,9 @@ public class ActivityServiceImpl implements ActivityService {
         				activityInfo.setTypeId(2);
         			}
         		} else {
-        			activityInfo.setTypeId(2);
+        			if(newstartTime < nowTime) { //开始时间过了没有人参与活动
+        				activityInfo.setTypeId(8);
+        			}
         		}
         	} else {
         		if(nowTime < newstartTime) {

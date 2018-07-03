@@ -349,7 +349,6 @@
     from shanduo_activity sa 
     join activity_requirement ar on sa.id = ar.activity_id
     join shanduo_user su on sa.user_id = su.id 
-	join activity_score ye on sa.id = ye.activity_id
 	where sa.del_flag = '0' and ar.del_flag = '0' and su.del_flag = '0'
     and sa.user_id = #{0}
     order by sa.activity_start_time desc
