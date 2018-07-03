@@ -139,12 +139,21 @@ public class OrderServiceImpl implements OrderService {
 		Integer month = order.getMonth();
 		String activityId = order.getActivityId();
 		String remarks = "";
-		if("2".equals(payId)) {
-			remarks = "支付宝";
-		}else if("3".equals(payId)) {
-			remarks = "微信";
-		}else {
-			remarks = "小程序";
+		switch (payId) {
+			case "1":
+				remarks = "支付宝";
+				break;
+			case "2":
+				remarks = "微信";
+				break;
+			case "3":
+				remarks = "小程序";
+				break;
+			case "4":
+				remarks = "公众号";
+				break;
+			default:
+				break;
 		}
 		moneyService.payMoney(userId, money, remarks);
 		payOrder(orderId, userId, money, month, activityId, order.getOrderType(),payId,"1");
@@ -168,8 +177,6 @@ public class OrderServiceImpl implements OrderService {
 	public void payOrder(String orderId,Integer userId,BigDecimal money,Integer month,String activityId,String orderType,String payId,String typeId) {
 		//1.充值,2.vip,3.svip,4.活动刷新,5.活动置顶
 		switch (orderType) {
-			case "1":
-				break;
 			case "2":
 				moneyService.consumeMoney(userId, money, "开通"+month+"个月VIP",typeId);
 				vipService.updateVip(userId, month, "0");
@@ -187,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
 				activityService.updateBysetTop(activityId);
 				break;
 			case "6":
-				moneyService.consumeMoney(userId, money, "升级svip",typeId);
+				moneyService.consumeMoney(userId, money, "升级"+month+"个月SVIP",typeId);
 				vipService.upgradeVip(userId, month);
 				break;
 			default:
