@@ -41,11 +41,11 @@ public class WXBizDataCrypt {
 			e.printStackTrace();
 		}
         JSONObject oppidObj = JSONObject.fromObject(oppid);
-        String openid = (String) oppidObj.get("openid");
+//        String openid = (String) oppidObj.get("openid");
         String session_key = (String) oppidObj.get("session_key"); 
         String unionId = oppidObj.get("unionid")+"";
         List<String> list = new ArrayList<String>();
-        list.add(openid);
+//        list.add(openid);
         list.add(session_key);
         list.add(unionId);
         return list;

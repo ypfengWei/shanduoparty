@@ -53,6 +53,15 @@ public class WechatController {
 	@Autowired
 	private BaseService baseService;
 
+	/**
+	 * 小程序登录
+	 * @Title: loginWechat
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param code
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
 	@RequestMapping(value = "loginWechat", method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public ResultBean loginWechat(String code) {
@@ -61,17 +70,18 @@ public class WechatController {
 			return new ErrorBean(10002,"code不能为空");
 		}
 		List<String> str = new WXBizDataCrypt().loginWechat(code);
-		if (StringUtils.isNull(str.get(2))) {
+		if (StringUtils.isNull(str.get(0))) {
 			SessionKey key = new SessionKey();
 			key.setId(UUIDGenerator.getUUID());
-			key.setOpenId(str.get(0));
-			key.setSessionKey(str.get(1));
+//			key.setOpenId(str.get(0));
+			key.setSessionKey(str.get(0));
 			sessionKeyMapper.insertSelective(key);
 			return new ErrorBean(10087, str.get(0));
 		}
-		Integer userId = bindingService.selectUserId(str.get(2), "1");
+		Integer userId = bindingService.selectUserId(str.get(1), "1");
 		if (null == userId) {
-			String json = "{\"openId\":\"" + str.get(0) + "\",\"unionId\":\"" + str.get(2) + "\"}";
+//			String json = "{\"openId\":\"" + str.get(0) + "\",\"unionId\":\"" + str.get(2) + "\"}";
+			String json = "{\"unionId\":\"" + str.get(1) + "\"}";
 			return new ErrorBean(10086, json);
 		}
 		String tokenInfo = userService.loginUser(userId);
@@ -127,7 +137,22 @@ public class WechatController {
 		}
 		return new SuccessBean(tokens);
 	}
-
+	
+	/**
+	 * 
+	 * @Title: bingding
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
+	 * @param @param openId
+	 * @param @param unionId
+	 * @param @param nickName
+	 * @param @param gender
+	 * @param @param username
+	 * @param @param password
+	 * @param @param codes
+	 * @param @return    设定文件
+	 * @return ResultBean    返回类型
+	 * @throws
+	 */
 	@RequestMapping(value = "bindingUser", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public ResultBean bingding(String openId, String unionId, String nickName, String gender, String username,
@@ -137,12 +162,14 @@ public class WechatController {
 		if(userid != null) {
 			return new ErrorBean(10002, "此账号已绑定");
 		}
+		String tokenInfo = null;
+		int userId = 0;
 		if (StringUtils.isNull(codes)) {
-			String tokenInfo = userService.loginUser(username, password);
+			tokenInfo = userService.loginUser(username, password);
 			if (null == tokenInfo) {
 				return new ErrorBean(10002, "账号或密码错误");
 			}
-			Integer userId = baseService.checkUserToken(tokenInfo);
+			userId = baseService.checkUserToken(tokenInfo);
 			String type = "1";
 			if(StringUtils.isNull(openId) || StringUtils.isNull(unionId)) {
 				return new ErrorBean(10002, "openId或unionId为空");
@@ -152,25 +179,25 @@ public class WechatController {
 			} catch (Exception e) {
 				return new ErrorBean(10003, "失败");
 			}
-			return new SuccessBean(tokenInfo);
-		}
-		if (codeService.checkCode(username, codes, "1")) {
-			return new ErrorBean(10002, "验证码错误");
-		}
-		if (userService.checkPhone(username)) {
-			return new ErrorBean(10002, "该手机号已存在");
-		}
-		int userId = userService.saveUser(username, password, nickName, gender);
-		String type = "1";
-		try {
-			bindingService.insertSelective(userId, unionId, type);
-		} catch (Exception e) {
-			return new ErrorBean(10003, "失败");
-		}
-		String tokenInfo = userService.loginUser(username, password);
-		if(tokenInfo == null) {
-			log.error("登录失败");
-			return new ErrorBean(10002,"登录失败");
+		} else {
+			if (codeService.checkCode(username, codes, "1")) {
+				return new ErrorBean(10002, "验证码错误");
+			}
+			if (userService.checkPhone(username)) {
+				return new ErrorBean(10002, "该手机号已存在");
+			}
+			userId = userService.saveUser(username, password, nickName, gender);
+			String type = "1";
+			try {
+				bindingService.insertSelective(userId, unionId, type);
+			} catch (Exception e) {
+				return new ErrorBean(10003, "失败");
+			}
+			tokenInfo = userService.loginUser(username, password);
+			if(tokenInfo == null) {
+				log.error("登录失败");
+				return new ErrorBean(10002,"登录失败");
+			}
 		}
 		TokenInfo tokens = userService.selectById(tokenInfo,userId);
 		if(tokens == null) {
