@@ -16,6 +16,8 @@ public class UserMoney {
 
     private BigDecimal reward;
 
+    private BigDecimal rewards;
+
     private Integer refresh;
 
     private String remarks;
@@ -72,6 +74,14 @@ public class UserMoney {
 
     public void setReward(BigDecimal reward) {
         this.reward = reward;
+    }
+
+    public BigDecimal getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(BigDecimal rewards) {
+        this.rewards = rewards;
     }
 
     public Integer getRefresh() {

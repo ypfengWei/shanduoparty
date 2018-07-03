@@ -66,8 +66,9 @@ public class MoneyServiceImpl implements MoneyService {
 		Map<String, Object> resultMap = new HashMap<String, Object>(2);
 		resultMap.put("money", money.getMoney());
 		resultMap.put("beans", money.getBeans());
-		resultMap.put("refresh", money.getRefresh());
 		resultMap.put("reward", money.getReward());
+		resultMap.put("rewards", money.getRewards());
+		resultMap.put("refresh", money.getRefresh());
 		return resultMap;
 	}
 	
@@ -178,7 +179,9 @@ public class MoneyServiceImpl implements MoneyService {
 			money.setUserId(userId);
 			money.setBeans(money.getBeans()%1000);
 			BigDecimal reward = money.getReward().add(new BigDecimal(beans+""));
+			BigDecimal rewards = money.getRewards().add(new BigDecimal(beans+""));
 			money.setReward(reward);
+			money.setRewards(rewards);
 			int i = moneyMapper.updateByPrimaryKeySelective(money);
 			if(i < 1) {
 				log.error("减闪多豆充值赏金余额失败");

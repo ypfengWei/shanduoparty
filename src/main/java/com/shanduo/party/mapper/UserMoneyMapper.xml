@@ -8,6 +8,7 @@
     <result column="experience" jdbcType="INTEGER" property="experience" />
     <result column="beans" jdbcType="INTEGER" property="beans" />
     <result column="reward" jdbcType="DECIMAL" property="reward" />
+    <result column="rewards" jdbcType="DECIMAL" property="rewards" />
     <result column="refresh" jdbcType="INTEGER" property="refresh" />
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -15,7 +16,7 @@
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    user_id, password, money, experience, beans, reward, refresh, remarks, create_date, 
+    user_id, password, money, experience, beans, reward, rewards, refresh, remarks, create_date, 
     update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -31,12 +32,14 @@
   <insert id="insert" parameterType="com.shanduo.party.entity.UserMoney">
     insert into user_money (user_id, password, money, 
       experience, beans, reward, 
-      refresh, remarks, create_date, 
-      update_date, del_flag)
+      rewards, refresh, remarks, 
+      create_date, update_date, del_flag
+      )
     values (#{userId,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, 
       #{experience,jdbcType=INTEGER}, #{beans,jdbcType=INTEGER}, #{reward,jdbcType=DECIMAL}, 
-      #{refresh,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR})
+      #{rewards,jdbcType=DECIMAL}, #{refresh,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shanduo.party.entity.UserMoney">
     insert into user_money
@@ -58,6 +61,9 @@
       </if>
       <if test="reward != null">
         reward,
+      </if>
+      <if test="rewards != null">
+        rewards,
       </if>
       <if test="refresh != null">
         refresh,
@@ -94,6 +100,9 @@
       <if test="reward != null">
         #{reward,jdbcType=DECIMAL},
       </if>
+      <if test="rewards != null">
+        #{rewards,jdbcType=DECIMAL},
+      </if>
       <if test="refresh != null">
         #{refresh,jdbcType=INTEGER},
       </if>
@@ -129,6 +138,9 @@
       <if test="reward != null">
         reward = #{reward,jdbcType=DECIMAL},
       </if>
+      <if test="rewards != null">
+        rewards = #{rewards,jdbcType=DECIMAL},
+      </if>
       <if test="refresh != null">
         refresh = #{refresh,jdbcType=INTEGER},
       </if>
@@ -154,6 +166,7 @@
       experience = #{experience,jdbcType=INTEGER},
       beans = #{beans,jdbcType=INTEGER},
       reward = #{reward,jdbcType=DECIMAL},
+      rewards = #{rewards,jdbcType=DECIMAL},
       refresh = #{refresh,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -164,7 +177,7 @@
   
   <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
-    user_id, money, experience, beans, reward, refresh
+    user_id, money, experience, beans, reward, rewards, refresh
     from user_money
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
