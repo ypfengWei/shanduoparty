@@ -335,10 +335,9 @@
   </select>
   <select id="selectByUserIdCount" resultType="java.lang.Integer">
    	select 
-   	count(sa.id) 
-   	from shanduo_activity sa
-	join activity_score ye on sa.id = ye.activity_id
-   	where sa.del_flag = '0' and ye.del_flag = '0' and sa.user_id = #{0}
+   	count(id) 
+   	from shanduo_activity
+   	where del_flag = '0' and user_id = #{0}
   </select>
   <select id="selectByUserId" resultMap="ActivityResultMap">
 	select 
