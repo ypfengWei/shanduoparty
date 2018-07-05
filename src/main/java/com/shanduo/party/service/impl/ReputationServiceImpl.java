@@ -150,7 +150,7 @@ public class ReputationServiceImpl implements ReputationService {
 				if(!initiatorMap.isEmpty()) { //活动信息不为空循环获取评论信息到ScoreMapLists
 					List<Map<String, Object>> scoreMapLists = new ArrayList<Map<String, Object>>();
 					for(Map<String, Object> scoremap : scoreMapList){
-						Map<String, Object> newscoremap = new HashMap<String, Object>(6);
+						Map<String, Object> newscoremap = new HashMap<String, Object>(2);
 						newscoremap.putAll(scoremap);
 						scoreMapLists.add(newscoremap);
 					}
@@ -170,8 +170,10 @@ public class ReputationServiceImpl implements ReputationService {
 				}
 			}
 		}
-		initiatorMap.put("scoreList", scoreMapList);
-		activityList.add(initiatorMap);
+		if(scoreMapList.size() > 0) {
+			initiatorMap.put("scoreList", scoreMapList);
+			activityList.add(initiatorMap);
+		}
 		Map<String, Object> resultMap = new HashMap<String, Object>(4);
 		resultMap.put("map", map);
 		resultMap.put("page", page.getPageNum());
