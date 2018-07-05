@@ -77,8 +77,8 @@ public class GroupController {
 			return new ErrorBean(10002,"不可以创建"+error+"群");
 		}
 		if(i==1) {
-			log.error(error+"群已达创建上限");
-			return new ErrorBean(10002,error+"群已达创建上限");
+			log.error(error+"群已达上限");
+			return new ErrorBean(10002,error+"群已达上限");
 		}
 		return new SuccessBean("可以创建");
 	}

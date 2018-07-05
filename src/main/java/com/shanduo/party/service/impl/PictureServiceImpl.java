@@ -47,9 +47,13 @@ public class PictureServiceImpl implements PictureService {
 				log.error("图片记录插入失败");
 				throw new RuntimeException();
 			}
-			pictures += uuid+",";
+			if(i == imageList.length - 1) {
+				pictures += uuid;
+			}else {
+				pictures += uuid+",";
+			}
 		}
-		return pictures.substring(0, pictures.length()-1);
+		return pictures;
 	}
 
 	@Override

@@ -83,7 +83,11 @@ public class FileController {
             }
             //MultipartFile自带的解析方法
             files.transferTo(dir);
-            images += fileName+",";
+            if(i == file.length - 1) {
+            	images += fileName;
+			}else {
+				images += fileName + ",";
+			}
     	}
     	try {
     		images = pictureService.savePicture(isUserId, images);
@@ -125,7 +129,11 @@ public class FileController {
             }
             //MultipartFile自带的解析方法
             files.transferTo(dir);
-            images += fileName+",";
+            if(i == file.length - 1) {
+            	images += fileName;
+			}else {
+				images += fileName + ",";
+			}
     	}
     	try {
     		pictureService.savePicture(isUserId, images);
@@ -133,6 +141,6 @@ public class FileController {
 			log.error("图片记录插入失败");
 			return new ErrorBean(10003,"上传失败");
 		}
-        return new SuccessBean(images.substring(0, images.length()-1));
+        return new SuccessBean(images);
     }   
 }
