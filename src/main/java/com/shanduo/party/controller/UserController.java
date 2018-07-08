@@ -28,7 +28,7 @@ import com.shanduo.party.util.StringUtils;
  * @author fanshixin
  * @date 2018年4月14日 下午4:20:00
  *
- */ 
+ */
 @Controller
 @RequestMapping(value="juser")
 public class UserController {
@@ -199,6 +199,7 @@ public class UserController {
 	 * @param @param request
 	 * @param @param token
 	 * @param @param typeId 类型 1.验证码修改密码,2.原始密码修改密码
+	 * @param @param phone 手机号
 	 * @param @param code 验证码
 	 * @param @param password 原始密码
 	 * @param @param newPassword 新密码

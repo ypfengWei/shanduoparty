@@ -183,7 +183,7 @@
   </select>
   <select id="beansList" resultMap="BaseResultMap">
     select
-    user_id,reward,beans
+    user_id,reward,beans,rewards
     from user_money
     where beans >= 1000
   </select>
