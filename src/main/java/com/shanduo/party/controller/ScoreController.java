@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -60,21 +60,21 @@ public class ScoreController {
 			String evaluationcontent) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConsts.TOKEN_INVALID,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"活动ID为空");
 		}
 		if (StringUtils.isNull(score) || !score.matches("^[1-5]$")) {
 			log.error("评分错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"评分错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"评分错误");
 		}
 		try {
 			scoreService.updateActivityScore(userToken, activityId, Integer.valueOf(score), evaluationcontent);
 		} catch (Exception e) {
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"添加失败");
+			return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR,"添加失败");
 		}
 		return new SuccessBean("添加成功");
 	}
@@ -96,27 +96,27 @@ public class ScoreController {
 	public ResultBean updateOthersScore(HttpServletRequest request, String token, String activityId,String data) {
 		Integer userToken = baseService.checkUserToken(token);
 		if (userToken == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConsts.TOKEN_INVALID,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)){
 			log.error("活动ID为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动ID为空");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"活动ID为空");
 		}
 		if(StringUtils.isNull(data)) {
 			log.error("没有进行评价");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"没有进行评价");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"没有进行评价");
 		}
 		List<Map<String, Object>> list = JsonStringUtils.getList(data);
 		if(list.isEmpty()) {
 			log.error("没有进行评价");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"没有进行评价");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"没有进行评价");
 		}
 		try {
 			scoreService.updateByUserId(activityId,list);
 		} catch (Exception e) {
 			log.error("评价失败");
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"评价失败");
+			return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR,"评价失败");
 		}
 		return new SuccessBean("评价成功");
 	}

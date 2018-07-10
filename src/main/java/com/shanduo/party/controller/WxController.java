@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -72,92 +72,92 @@ public class WxController {
 			userId = bindingService.selectUserId(unionId, "0");
 			if(userId != null) {
 				log.error("此账号已绑定");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "此账号已绑定");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR, "此账号已绑定");
 			}
 			if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 				log.error("手机号格式错误");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"手机号格式错误");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"手机号格式错误");
 			}
 			if(userService.checkPhone(phone)) {
 				log.error("手机号已被注册");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"手机号已被注册");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"手机号已被注册");
 			}
 			if(StringUtils.isNull(code) || PatternUtils.patternCode(code)) {
 				log.error("验证码错误");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码错误");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"验证码错误");
 			}
 			if(codeService.checkCode(phone, code, "1")) {
 				log.error("验证码超时或错误");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"验证码超时或错误");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"验证码超时或错误");
 			}
 			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 				log.error("密码格式错误");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"密码格式错误");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"密码格式错误");
 			}
 			try {
 				userService.saveUser(phone, password);
 			} catch (Exception e) {
 				log.error("注册失败");
-				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "注册失败");
+				return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR, "注册失败");
 			}
 			tokenInfo = userService.loginUser(phone, password);
 			if(tokenInfo == null) {
 				log.error("token为空");
-				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "token为空");
+				return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR, "token为空");
 			}
 			userId = baseService.checkUserToken(tokenInfo);
 			try {
 				bindingService.insertSelective(baseService.checkUserToken(tokenInfo), unionId, "0");
 			} catch (Exception e) {
 				log.error("绑定失败");
-				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "绑定失败");
+				return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR, "绑定失败");
 			}
 		} else if("2".equals(type)) {
 			if(StringUtils.isNull(unionId)) {
 				log.error("unionId为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"unionId为空");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"unionId为空");
 			}
 			userId = bindingService.selectUserId(unionId, "0");
 			if(userId == null) {
 				log.error("此账户未绑定");
-				return new ErrorBean(ErrorCodeConstants.UNBOUND, "未绑定");
+				return new ErrorBean(ErrorCodeConsts.UNBOUND, "未绑定");
 			}
 			tokenInfo = userService.loginUser(userId);
 			if(tokenInfo == null) {
 				log.error("token为空");
-				return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR, "token为空");
+				return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR, "token为空");
 			}
 		} else {
 			if(StringUtils.isNull(unionId)) {
 				log.error("unionId为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "unionId为空");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR, "unionId为空");
 			}
 			tokenInfo = userService.loginUser(phone, password);
 			if (null == tokenInfo) {
 				log.error("登录失败");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "账号或密码错误");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR, "账号或密码错误");
 			}
 			userId = baseService.checkUserToken(tokenInfo);
 			if(userId == null) {
-				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 			}
 			String unionIds = bindingService.selectUnionId(userId, "0");
 			if(unionIds != null) {
 				log.error("此账号已在其他微信上绑定");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR, "此账号已在其他微信上绑定");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR, "此账号已在其他微信上绑定");
 			}
 			try {
 				bindingService.insertSelective(userId, unionId, "0");
 			} catch (Exception e) {
 				log.error("绑定失败");
-				return new ErrorBean(ErrorCodeConstants.BINDINGS_FAILURE, "绑定失败");
+				return new ErrorBean(ErrorCodeConsts.BINDINGS_FAILURE, "绑定失败");
 			}
 		}
 		TokenInfo tokens = userService.selectById(tokenInfo,userId);
 		if(tokens == null) {
 			log.error("获取用户详细错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"获取用户详细错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"获取用户详细错误");
 		}
 		return new SuccessBean(tokens);
 	}

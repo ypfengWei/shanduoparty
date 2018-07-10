@@ -8,7 +8,7 @@ package com.shanduo.party.common;
  * @date 2018年6月21日 上午10:33:07
  *
  */
-public class ActivityConfig {
+public class ActivityConsts {
 
 	public static final String ACTIVITY = "com.yapin.shanduo.ui.activity.";
 	//vip

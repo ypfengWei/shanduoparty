@@ -5,7 +5,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.shanduo.party.common.ActivityConfig;
+import com.shanduo.party.common.ActivityConsts;
 import com.tencent.xinge.ClickAction;
 import com.tencent.xinge.Message;
 import com.tencent.xinge.Style;
@@ -71,23 +71,23 @@ public class XGHighUtils {
         switch (typeId) {
 		case 1:
 			action.setActionType(ClickAction.TYPE_ACTIVITY);
-	        action.setActivity(ActivityConfig.VIP);
+	        action.setActivity(ActivityConsts.VIP);
 			break;
 		case 2:
 			action.setActionType(ClickAction.TYPE_ACTIVITY);
-			action.setActivity(ActivityConfig.MONEY);
+			action.setActivity(ActivityConsts.MONEY);
 			break;
 		case 3:
 			action.setActionType(ClickAction.TYPE_INTENT);
-			action.setIntent(ActivityConfig.ACT_DETAIL +"?actId="+parameter+"&type=1");
+			action.setIntent(ActivityConsts.ACT_DETAIL +"?actId="+parameter+"&type=1");
 			break;
 		case 4:
 			action.setActionType(ClickAction.TYPE_INTENT);
-			action.setIntent(ActivityConfig.USER_ACT +"?type=1");
+			action.setIntent(ActivityConsts.USER_ACT +"?type=1");
 			break;
 		case 5:
 			action.setActionType(ClickAction.TYPE_ACTIVITY);
-	        action.setActivity(ActivityConfig.MESSAGE);
+	        action.setActivity(ActivityConsts.MESSAGE);
 			break;
 		default:
 			break;

@@ -1,7 +1,7 @@
 package com.shanduo.party.common;
 
 
-public class ShanduoConstants {
+public class ShanduoConsts {
 
 
 	public static final String ROLE_MERCHANT = "1";//商家

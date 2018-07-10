@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -50,39 +50,39 @@ public class ReportController {
 			String remarks) {
 		Integer userIds = Integer.parseInt(userId);
 		if (userId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(ErrorCodeConsts.TOKEN_INVALID,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"类型错误");
 		}
 		if(StringUtils.isNull(remarks)) {
 			log.error("举报内容为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"举报内容不能为空");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"举报内容不能为空");
 		}
 		String id = null;
 		if("1".equals(typeId)) {
 			if(StringUtils.isNull(activityId)) {
 				log.error("活动为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动为空");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"活动为空");
 			}
 		} else {
 			if(StringUtils.isNull(dynamicId)) {
 				log.error("动态为空");
-				return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"动态为空");
+				return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"动态为空");
 			}
 		}
 		id = reportService.selectId(activityId, dynamicId, typeId, userIds);
 		if(!StringUtils.isNull(id)) {
 			log.error("已举报");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"已举报");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"已举报");
 		}
 		try {
 			reportService.report(userIds, activityId, dynamicId, typeId, remarks);
 		} catch (Exception e) {
 			log.error("举报记录添加失败");
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报失败");
+			return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR,"举报失败");
 		}
 		return new SuccessBean("举报成功");
 	}
@@ -104,15 +104,15 @@ public class ReportController {
 	public ResultBean reportRecord(HttpServletRequest request, String type, String page, String pageSize) {
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"类型错误");
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"记录错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -136,11 +136,11 @@ public class ReportController {
 	public ResultBean selectInfo(HttpServletRequest request, String activityId, String dynamicId) {
 		if(StringUtils.isNull(activityId) && StringUtils.isNull(dynamicId)) {
 			log.error("活动或者动态id为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"活动或者动态为空");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"活动或者动态为空");
 		}
 		List<Map<String, Object>> resultMap = reportService.selectInfo(activityId, dynamicId);
 		if(resultMap == null) {
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"查询失败");
+			return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR,"查询失败");
 		}
 		return new SuccessBean(resultMap);
 	}
@@ -162,17 +162,17 @@ public class ReportController {
 	public ResultBean reportHandling(HttpServletRequest request, String activityId, String dynamicId, String type) {
 		if(StringUtils.isNull(activityId)&&StringUtils.isNull(dynamicId)) {
 			log.error("id为空");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"id为空");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"id为空");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"类型错误");
 		}
 		try {
 			reportService.updateReputation(activityId,type,dynamicId);
 		} catch (Exception e) {
 			log.error("信誉修改失败");
-			return new ErrorBean(ErrorCodeConstants.BACKSTAGE_ERROR,"举报处理失败");
+			return new ErrorBean(ErrorCodeConsts.BACKSTAGE_ERROR,"举报处理失败");
 		}
 		return new SuccessBean("举报处理成功");
 	}

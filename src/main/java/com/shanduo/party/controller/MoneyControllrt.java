@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -62,8 +62,8 @@ public class MoneyControllrt {
 	public ResultBean getMoney(HttpServletRequest request,String token) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		Map<String, Object> resultMap = moneyService.selectByUserId(isUserId);
 		if(resultMap == null) {
@@ -90,8 +90,8 @@ public class MoneyControllrt {
 	public ResultBean moneyList(HttpServletRequest request,String token,String page,String pageSize) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -123,8 +123,8 @@ public class MoneyControllrt {
 	public ResultBean checkPassword(HttpServletRequest request,String token,String password) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(password) || PatternUtils.patternCode(password)) {
 			log.error("密码格式错误");
@@ -156,8 +156,8 @@ public class MoneyControllrt {
 	public ResultBean updatepassword(HttpServletRequest request,String token,String typeId,String code,String password,String newPassword) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
@@ -212,8 +212,8 @@ public class MoneyControllrt {
 	public ResultBean refreshActivity(HttpServletRequest request,String token,String activityId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(activityId)) {
 			log.error("活动ID为空");

@@ -15,7 +15,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.shanduo.party.common.SystemConfig;
+import com.shanduo.party.common.ConfigConsts;
 
 /**
  * 从微信服务器下载图片资源
@@ -30,15 +30,19 @@ public class WxFileUtils {
 	private static final Logger log = LoggerFactory.getLogger(WxFileUtils.class);
 	
 	public static String downloadImages(String accessToken, String mediaId) {
-		String picture = "";
+		StringBuilder picture = new StringBuilder();
 		String[] pictures = mediaId.split(",");
 		for (int i = 0; i < pictures.length; i++) {
 			if(pictures[i] == null || "".equals(pictures[i])) {
 				continue;
 			}
-			picture += downloadImage(accessToken, pictures[i])+",";
+			if(i == pictures.length - 1) {
+				picture.append(downloadImage(accessToken, pictures[i]));
+			}else{
+				picture.append(downloadImage(accessToken, pictures[i])+",");
+			}
 		}
-		return picture.substring(0, picture.length()-1);
+		return picture.toString();
 	}
 	
 	public static String downloadImage(String accessToken, String mediaId) {
@@ -57,7 +61,7 @@ public class WxFileUtils {
             		InputStream is = response.getEntity().getContent();
             		String fileName = UUIDGenerator.getUUID()+".jpg";
             		BufferedInputStream bis = new BufferedInputStream(is);
-            		FileOutputStream fos = new FileOutputStream(new File(SystemConfig.FILE_PATH, fileName));
+            		FileOutputStream fos = new FileOutputStream(new File(ConfigConsts.FILE_PATH, fileName));
             		byte[] buf = new byte[1024];
             		int size = 0;
             		while ((size = bis.read(buf)) != -1) {

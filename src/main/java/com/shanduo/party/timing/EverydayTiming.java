@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shanduo.party.common.ShanduoConstants;
+import com.shanduo.party.common.ShanduoConsts;
 import com.shanduo.party.mapper.VipExperienceMapper;
 import com.shanduo.party.service.CodeService;
 import com.shanduo.party.service.MoneyService;
@@ -48,7 +48,7 @@ public class EverydayTiming {
 	public void delTiming() {
 		long time = System.currentTimeMillis();
 		Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String createDate = format.format(time - ShanduoConstants.WEEK);
+		String createDate = format.format(time - ShanduoConsts.WEEK);
 		int i = codeService.deleteTimer(createDate);
 		log.info("删除过期验证码记录"+i+"条");
 	}

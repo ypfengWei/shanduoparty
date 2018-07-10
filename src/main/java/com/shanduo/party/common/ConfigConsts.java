@@ -8,7 +8,7 @@ package com.shanduo.party.common;
  * @date 2018年6月28日 上午10:09:27
  *
  */
-public class SystemConfig {
+public class ConfigConsts {
 
 	/**
 	 * 测试环境URL

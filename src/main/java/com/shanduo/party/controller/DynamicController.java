@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -72,8 +72,8 @@ public class DynamicController {
 			String picture,String lat, String lon,String location) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(content) && StringUtils.isNull(picture)) {
 			log.error("内容为空");
@@ -162,8 +162,8 @@ public class DynamicController {
 			return new SuccessBean(resultMap);
 		}
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if("2".equals(typeId)) {
 			resultMap = dynamicService.attentionList(isUserId,lat, lon, pages, pageSizes);
@@ -195,8 +195,8 @@ public class DynamicController {
 	public ResultBean isPraise(HttpServletRequest request,String token,String dynamicId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
@@ -325,8 +325,8 @@ public class DynamicController {
 		Integer pageSizes = Integer.valueOf(pageSize);
 		Map<String, Object> resultMap = new HashMap<>(3);
 		if(StringUtils.isNull(dynamicId) && StringUtils.isNull(commentId)) {
-			log.error(ErrorCodeConstants.PARAMETER);
-			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
+			log.error(ErrorCodeConsts.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConsts.PARAMETER);
 		}
 		if(!StringUtils.isNull(dynamicId)) {
 			resultMap = dynamicService.commentList(dynamicId, pages, pageSizes);
@@ -358,8 +358,8 @@ public class DynamicController {
 			String comment,String typeId,String commentId,String respondent,String replyCommentId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(dynamicId)) {
 			log.error("动态ID为空");
@@ -416,8 +416,8 @@ public class DynamicController {
 	public ResultBean hideDynamics(HttpServletRequest request,String token,String dynamicIds) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(dynamicIds)) {
 			log.error("动态ID为空");
@@ -448,8 +448,8 @@ public class DynamicController {
 	public ResultBean hideComment(HttpServletRequest request,String token,String commentId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(commentId)) {
 			log.error("评论ID为空");
@@ -481,8 +481,8 @@ public class DynamicController {
 	public ResultBean myMessage(HttpServletRequest request,String token,String page,String pageSize) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");

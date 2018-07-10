@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -136,8 +136,8 @@ public class UserController {
 	public ResultBean details(HttpServletRequest request,String token) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10002,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		TokenInfo tokens = userService.selectById(token,isUserId);
 		if(tokens == null) {
@@ -164,8 +164,8 @@ public class UserController {
 	public ResultBean updatePhone(HttpServletRequest request,String token,String phone,String code) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10002,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(phone) || PatternUtils.patternPhone(phone)) {
 			log.error("手机号格式错误");
@@ -241,8 +241,8 @@ public class UserController {
 		}else {
 			Integer isUserId = baseService.checkUserToken(token);
 			if(isUserId == null) {
-				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-				return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+				return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 			}
 			if(StringUtils.isNull(password) || PatternUtils.patternPassword(password)) {
 				log.error("密码格式错误");
@@ -288,8 +288,8 @@ public class UserController {
 			String emotion,String signature,String background,String hometown,String occupation,String school) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10002,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10002,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(!StringUtils.isNull(birthday) && PatternUtils.patternBirthday(birthday)) {
 			log.error("生日错误");
@@ -328,8 +328,8 @@ public class UserController {
 	public ResultBean checkToken(HttpServletRequest request,String token) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		return new SuccessBean();
 	}

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -63,8 +63,8 @@ public class AttentionController {
 	public ResultBean seekUser(HttpServletRequest request,String token,String query,String typeId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
@@ -95,8 +95,8 @@ public class AttentionController {
 	public ResultBean userDetails(HttpServletRequest request,String token,String userId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(userId) || PatternUtils.patternUser(userId)) {
 			log.error("账号格式错误");
@@ -126,12 +126,12 @@ public class AttentionController {
 	public ResultBean saveApply(HttpServletRequest request,String token,String attention) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(attention) || PatternUtils.patternUser(attention)) {
 			log.error("被添加人格式错误");
-			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConsts.PARAMETER);
 		}
 		Integer attentions = Integer.valueOf(attention);
 		int i = attentionService.checkAttention(isUserId, attentions);
@@ -184,8 +184,8 @@ public class AttentionController {
 	public ResultBean applyList(HttpServletRequest request,String token,String page,String pageSize) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
@@ -218,8 +218,8 @@ public class AttentionController {
 	public ResultBean isapply(HttpServletRequest request,String token,String applyId,String typeId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(applyId)) {
 			log.error("申请ID为空");
@@ -254,8 +254,8 @@ public class AttentionController {
 	public ResultBean hideApply(HttpServletRequest request,String token,String applyIds) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(applyIds)) {
 			log.error("申请ID为空");
@@ -286,8 +286,8 @@ public class AttentionController {
 	public ResultBean attentionList(HttpServletRequest request,String token,String typeId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
@@ -315,12 +315,12 @@ public class AttentionController {
 	public ResultBean delAttention(HttpServletRequest request,String token,String attention,String typeId) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(attention) || PatternUtils.patternUser(attention)) {
 			log.error("被删除人格式错误");
-			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConsts.PARAMETER);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
@@ -352,12 +352,12 @@ public class AttentionController {
 	public ResultBean blacklistAttention(HttpServletRequest request,String token,String attention) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(attention) || PatternUtils.patternUser(attention)) {
 			log.error("被拉黑人格式错误");
-			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConsts.PARAMETER);
 		}
 		Integer attentions = Integer.valueOf(attention);
 		try {

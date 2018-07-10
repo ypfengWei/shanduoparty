@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -59,15 +59,15 @@ public class ReputationController {
 	public ResultBean creditDetails(HttpServletRequest request, String token, String userId, String page, String pageSize, String type) {
 		if(StringUtils.isNull(page) || !page.matches("^\\d+$")) {
 			log.error("页码错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"页码错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"页码错误");
 		}
 		if(StringUtils.isNull(pageSize) || !pageSize.matches("^\\d+$")) {
 			log.error("记录错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"记录错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"记录错误");
 		}
 		if(StringUtils.isNull(type) || !type.matches("^[12]$")) {
 			log.error("类型错误");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"类型错误");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"类型错误");
 		}
 		Integer pages = Integer.valueOf(page);
 		Integer pageSizes = Integer.valueOf(pageSize);
@@ -75,8 +75,8 @@ public class ReputationController {
 		Map<String, Object> resultMap = new HashMap<String, Object>(4);
 		if(StringUtils.isNull(userId)) {
 			if (userToken == null) {
-				log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-				return new ErrorBean(ErrorCodeConstants.TOKEN_INVALID,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+				log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+				return new ErrorBean(ErrorCodeConsts.TOKEN_INVALID,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 			}
 			if("1".equals(type)) {
 				resultMap = reputationService.selectReputation(null, userToken, pages, pageSizes);
@@ -92,7 +92,7 @@ public class ReputationController {
 		}
 		if(resultMap == null) {
 			log.error("用户不存在");
-			return new ErrorBean(ErrorCodeConstants.PARAMETER_ERROR,"用户不存在");
+			return new ErrorBean(ErrorCodeConsts.PARAMETER_ERROR,"用户不存在");
 		}
 		return new SuccessBean(resultMap);
 	}

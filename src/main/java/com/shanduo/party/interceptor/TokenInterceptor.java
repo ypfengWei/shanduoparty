@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 
 import net.sf.json.JSONObject;
@@ -36,8 +36,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 		ErrorBean errorBean = new ErrorBean();
 		String token = request.getParameter("token");
 		if ("".equals(token) || token == null) {
-			log.error(ErrorCodeConstants.TOKEN_TEXT_ISNULL);
-			errorBean = new ErrorBean(10001,ErrorCodeConstants.TOKEN_TEXT_ISNULL);
+			log.error(ErrorCodeConsts.TOKEN_TEXT_ISNULL);
+			errorBean = new ErrorBean(10001,ErrorCodeConsts.TOKEN_TEXT_ISNULL);
 			check = true;
 		}
 		//如果为空就直接出去了

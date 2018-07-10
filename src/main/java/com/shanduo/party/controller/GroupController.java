@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shanduo.party.common.ErrorCodeConstants;
+import com.shanduo.party.common.ErrorCodeConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -56,8 +56,8 @@ public class GroupController {
 	public ResultBean checkGroup(HttpServletRequest request,String token,String groupType) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(groupType) || !groupType.matches("^[123]$")) {
 			log.error("群组类型错误");
@@ -102,8 +102,8 @@ public class GroupController {
 	public ResultBean isGroup(HttpServletRequest request,String token,String typeId,String name,String groupId,String groupType) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(typeId) || !typeId.matches("^[12]$")) {
 			log.error("类型错误");
@@ -160,8 +160,8 @@ public class GroupController {
 	public ResultBean updateGroup(HttpServletRequest request,String token,String groupId,String name) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(groupId)) {
 			log.error("群组ID为空");
@@ -195,8 +195,8 @@ public class GroupController {
 	public ResultBean groupList(HttpServletRequest request,String token) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		Map<String, Object> resultMap = ImUtils.getGroupList(isUserId+"");
 		return new SuccessBean(resultMap);
@@ -218,12 +218,12 @@ public class GroupController {
 	public ResultBean queryName(HttpServletRequest request,String token,String name) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(name)) {
-			log.error(ErrorCodeConstants.PARAMETER);
-			return new ErrorBean(10002,ErrorCodeConstants.PARAMETER);
+			log.error(ErrorCodeConsts.PARAMETER);
+			return new ErrorBean(10002,ErrorCodeConsts.PARAMETER);
 		}
 		Map<String, Object> resultMap = groupService.queryNameList(name);
 		if(resultMap == null) {
@@ -249,8 +249,8 @@ public class GroupController {
 	public ResultBean getGroupUser(HttpServletRequest request,String token,String groupId,String page) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(groupId)) {
 			log.error("群组ID为空");

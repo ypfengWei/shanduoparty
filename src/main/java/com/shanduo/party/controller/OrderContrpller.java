@@ -20,9 +20,9 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
-import com.shanduo.party.common.AliPayConfig;
-import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.common.WxPayConfig;
+import com.shanduo.party.common.AliPayConsts;
+import com.shanduo.party.common.ErrorCodeConsts;
+import com.shanduo.party.common.WxPayConsts;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
@@ -83,8 +83,8 @@ public class OrderContrpller {
 			String typeId, String money, String month,String activityId, String location) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
 		if(StringUtils.isNull(payId) || !payId.matches("^[1-6]$")) {
 			log.error("支付类型错误");
@@ -249,7 +249,7 @@ public class OrderContrpller {
 		}
 		subject = body + order.getMoney();
 		//实例化客户端
-		AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", AliPayConfig.APPID, AliPayConfig.APP_PRIVATE_KEY, AliPayConfig.FORMAT, AliPayConfig.CHARSET, AliPayConfig.ALIPAY_PUBLIC_KEY,AliPayConfig.SIGNTYPE);
+		AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", AliPayConsts.APPID, AliPayConsts.APP_PRIVATE_KEY, AliPayConsts.FORMAT, AliPayConsts.CHARSET, AliPayConsts.ALIPAY_PUBLIC_KEY,AliPayConsts.SIGNTYPE);
 		//实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
 		AlipayTradeAppPayRequest requests = new AlipayTradeAppPayRequest();
 		//SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
@@ -265,7 +265,7 @@ public class OrderContrpller {
 		model.setTotalAmount(order.getMoney().toString());
 		model.setProductCode("QUICK_MSECURITY_PAY");
 		requests.setBizModel(model);
-		requests.setNotifyUrl(AliPayConfig.NOTIFY_URL);
+		requests.setNotifyUrl(AliPayConsts.NOTIFY_URL);
 		AlipayTradeAppPayResponse response = null;
 		try {
 	        //这里和普通的接口调用不同，使用的是sdkExecute
@@ -308,23 +308,23 @@ public class OrderContrpller {
 		//订单总金额
 		Integer moneys = amount.intValue();
 		Map<String, String> paramsMap = new HashMap<>(10);
-		paramsMap.put("appid", WxPayConfig.APPID);
-		paramsMap.put("mch_id", WxPayConfig.MCH_ID);
+		paramsMap.put("appid", WxPayConsts.APPID);
+		paramsMap.put("mch_id", WxPayConsts.MCH_ID);
 		paramsMap.put("nonce_str", UUIDGenerator.getUUID());
 		paramsMap.put("body", body);
 		paramsMap.put("out_trade_no", order.getId());
 		paramsMap.put("total_fee", moneys.toString());
 		paramsMap.put("spbill_create_ip", IpUtils.getIpAddress(request));
-		paramsMap.put("notify_url", WxPayConfig.NOTIFY_URL);
-		paramsMap.put("trade_type", WxPayConfig.TRADETYPE);
+		paramsMap.put("notify_url", WxPayConsts.NOTIFY_URL);
+		paramsMap.put("trade_type", WxPayConsts.TRADETYPE);
 		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
 		String paramsString = WxPayUtils.createLinkString(paramsMap);
 		//MD5运算生成签名
-		String sign = WxPayUtils.sign(paramsString, WxPayConfig.KEY, "utf-8").toUpperCase();
+		String sign = WxPayUtils.sign(paramsString, WxPayConsts.KEY, "utf-8").toUpperCase();
 		//签名
 		paramsMap.put("sign", sign);
 		String paramsXml = WxPayUtils.map2Xmlstring(paramsMap);
-		String result = WxPayUtils.httpRequest(WxPayConfig.PAY_URL, "POST", paramsXml);
+		String result = WxPayUtils.httpRequest(WxPayConsts.PAY_URL, "POST", paramsXml);
 		Map<String, Object> resultMap = WxPayUtils.Str2Map(result);
 		String returnCode = resultMap.get("return_code").toString();
 		if(!returnCode.equals("SUCCESS")) {
@@ -338,8 +338,8 @@ public class OrderContrpller {
 		}
 		String prepayId = resultMap.get("prepay_id").toString();
 		Map<String, String> responseMap = new HashMap<String, String>(7);
-		responseMap.put("appid", WxPayConfig.APPID);
-		responseMap.put("partnerid", WxPayConfig.MCH_ID);
+		responseMap.put("appid", WxPayConsts.APPID);
+		responseMap.put("partnerid", WxPayConsts.MCH_ID);
 		responseMap.put("prepayid", prepayId);
 		responseMap.put("package", "Sign=WXPay");
 		responseMap.put("noncestr", UUIDGenerator.getUUID());
@@ -348,7 +348,7 @@ public class OrderContrpller {
 		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
 		String responseString = WxPayUtils.createLinkString(responseMap);
 		//MD5运算生成签名
-		String responseSign = WxPayUtils.sign(responseString, WxPayConfig.KEY, "utf-8").toUpperCase();
+		String responseSign = WxPayUtils.sign(responseString, WxPayConsts.KEY, "utf-8").toUpperCase();
 		responseMap.put("sign", responseSign);
 		return new SuccessBean(responseMap);
 	}

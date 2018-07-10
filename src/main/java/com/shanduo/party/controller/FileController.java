@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.shanduo.party.common.ErrorCodeConstants;
-import com.shanduo.party.common.SystemConfig;
+import com.shanduo.party.common.ErrorCodeConsts;
+import com.shanduo.party.common.ConfigConsts;
 import com.shanduo.party.entity.common.ErrorBean;
 import com.shanduo.party.entity.common.ResultBean;
 import com.shanduo.party.entity.common.SuccessBean;
@@ -60,42 +60,17 @@ public class FileController {
     public ResultBean upload(HttpServletRequest request,@RequestParam("file") MultipartFile[] file,String token) throws IOException{
     	Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
-//		for(MultipartFile files : file) {
-//			String fileName = files.getOriginalFilename();
-//            String str = fileName.substring(fileName.lastIndexOf("."),fileName.length());
-//            if(str == ".jpg" || str==".JPG" || str==".gif" || str==".GIF" || str==".png" || str==".PNG" || str==".jpeg" || str==".JPEG"){
-//            	
-//            }else{
-//            	
-//            }
-//		}
-    	String images = "";
-    	for(int i=0;i<file.length;i++) {
-    		MultipartFile files = file[i];
-            String fileName = files.getOriginalFilename();
-            fileName = UUIDGenerator.getUUID()+fileName.substring(fileName.lastIndexOf("."));
-            File dir = new File(SystemConfig.FILE_PATH,fileName);
-            if(!dir.exists()){
-                dir.mkdirs();
-            }
-            //MultipartFile自带的解析方法
-            files.transferTo(dir);
-            if(i == file.length - 1) {
-            	images += fileName;
-			}else {
-				images += fileName + ",";
-			}
-    	}
+		String imangs = getImage(file);
     	try {
-    		images = pictureService.savePicture(isUserId, images);
+    		imangs = pictureService.savePicture(isUserId, imangs);
 		} catch (Exception e) {
 			log.error("图片记录插入失败");
 			return new ErrorBean(10003,"上传失败");
 		}
-        return new SuccessBean(images);
+        return new SuccessBean(imangs);
     }   
 
     /**
@@ -115,32 +90,37 @@ public class FileController {
     public ResultBean uploads(HttpServletRequest request,@RequestParam("file") MultipartFile[] file,String token) throws IOException{
     	Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
-			log.error(ErrorCodeConstants.USER_TOKEN_PASTDUR);
-			return new ErrorBean(10001,ErrorCodeConstants.USER_TOKEN_PASTDUR);
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
 		}
-		String images = "";
+    	String imangs = getImage(file);
+    	try {
+    		pictureService.savePicture(isUserId, imangs);
+		} catch (Exception e) {
+			log.error("图片记录插入失败");
+			return new ErrorBean(10003,"上传失败");
+		}
+        return new SuccessBean(imangs);
+    }
+    
+    public String getImage(MultipartFile[] file) throws IllegalStateException, IOException {
+    	StringBuilder imangs = new StringBuilder();
     	for(int i=0;i<file.length;i++) {
     		MultipartFile files = file[i];
             String fileName = files.getOriginalFilename();
             fileName = UUIDGenerator.getUUID()+fileName.substring(fileName.lastIndexOf("."));
-            File dir = new File(SystemConfig.FILE_PATH,fileName);
+            File dir = new File(ConfigConsts.FILE_PATH,fileName);
             if(!dir.exists()){
                 dir.mkdirs();
             }
             //MultipartFile自带的解析方法
             files.transferTo(dir);
             if(i == file.length - 1) {
-            	images += fileName;
+            	imangs.append(fileName);
 			}else {
-				images += fileName + ",";
+				imangs.append(fileName+",");
 			}
     	}
-    	try {
-    		pictureService.savePicture(isUserId, images);
-		} catch (Exception e) {
-			log.error("图片记录插入失败");
-			return new ErrorBean(10003,"上传失败");
-		}
-        return new SuccessBean(images);
-    }   
+    	return imangs.toString();
+    }
 }

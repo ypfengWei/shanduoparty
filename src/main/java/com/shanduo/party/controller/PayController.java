@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.shanduo.party.common.AliPayConfig;
-import com.shanduo.party.common.WxPayConfig;
+import com.shanduo.party.common.AliPayConsts;
+import com.shanduo.party.common.WxPayConsts;
 import com.shanduo.party.entity.UserOrder;
 import com.shanduo.party.service.OrderService;
 import com.shanduo.party.util.WxPayUtils;
@@ -74,7 +74,7 @@ public class PayController {
 		log.info("支付宝支付回调接口返回数据:" + params.toString());
 		//切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
 		//boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
-		boolean flag = AlipaySignature.rsaCheckV1(params, AliPayConfig.ALIPAY_PUBLIC_KEY, AliPayConfig.CHARSET,AliPayConfig.SIGNTYPE);
+		boolean flag = AlipaySignature.rsaCheckV1(params, AliPayConsts.ALIPAY_PUBLIC_KEY, AliPayConsts.CHARSET,AliPayConsts.SIGNTYPE);
 		if(flag) {
 			//订单支付状态
 			String tradeStatus = params.get("trade_status");
@@ -90,13 +90,13 @@ public class PayController {
 			}
 			//应用ID
 			String appId = params.get("app_id");
-			if(!AliPayConfig.APPID.equals(appId)) {
+			if(!AliPayConsts.APPID.equals(appId)) {
 				log.error("应用ID不匹配:"+appId);
 				return "SUCCESS";
 			}
 			//商家ID
 			String sellerId = params.get("seller_id");
-			if(!AliPayConfig.SELLERID.equals(sellerId)) {
+			if(!AliPayConsts.SELLERID.equals(sellerId)) {
 				log.error("商家ID不匹配:"+sellerId);
 				return "SUCCESS";
 			}
@@ -151,33 +151,33 @@ public class PayController {
         log.info("微信支付回调接口返回XML数据:" + xmlString);
         Map<String, Object> resultMap = WxPayUtils.Str2Map(xmlString);
         //验证签名是否微信调用
-        boolean flag = WxPayUtils.isWechatSigns(resultMap, WxPayConfig.KEY, "utf-8");
+        boolean flag = WxPayUtils.isWechatSigns(resultMap, WxPayConsts.KEY, "utf-8");
         if(flag) {
         	String returnCode = resultMap.get("return_code").toString();
     		if(!"SUCCESS".equals(returnCode)) {
     			log.error(resultMap.get("return_msg").toString());
-    			return returnXML(WxPayConfig.FAIL);
+    			return returnXML(WxPayConsts.FAIL);
     		}
     		String resultCode = resultMap.get("result_code").toString();
     		if(!"SUCCESS".equals(resultCode)) {
     			log.error(resultMap.get("err_code_des").toString());
-    			return returnXML(WxPayConfig.FAIL);
+    			return returnXML(WxPayConsts.FAIL);
     		}
     		String appid = resultMap.get("appid").toString();
-    		if(!appid.equals(WxPayConfig.APPID)) {
+    		if(!appid.equals(WxPayConsts.APPID)) {
     			log.error("APPID不匹配");
-    			return returnXML(WxPayConfig.FAIL);
+    			return returnXML(WxPayConsts.FAIL);
     		}
     		String mchId = resultMap.get("mch_id").toString();
-    		if(!mchId.equals(WxPayConfig.MCH_ID)) {
+    		if(!mchId.equals(WxPayConsts.MCH_ID)) {
     			log.error("商户号不匹配");
-    			return returnXML(WxPayConfig.FAIL);
+    			return returnXML(WxPayConsts.FAIL);
     		}
     		String orderId = resultMap.get("out_trade_no").toString();
     		UserOrder order = orderService.selectByOrderId(orderId);
 			if(order == null) {
 				log.error("订单已操作或不存在");
-				return returnXML(WxPayConfig.FAIL);
+				return returnXML(WxPayConsts.FAIL);
 			}
     		String totalFee = resultMap.get("total_fee").toString();
     		//价格，单位为分
@@ -185,17 +185,17 @@ public class PayController {
     		amount = amount.multiply(new BigDecimal("100"));
     		if(amount.compareTo(new BigDecimal(totalFee)) != 0) {
     			log.error("订单金额错误:"+totalFee+","+order.getMoney());
-    			return returnXML(WxPayConfig.FAIL);
+    			return returnXML(WxPayConsts.FAIL);
     		}
     		try {
 				orderService.updateOrders(orderId,"3");
 			} catch (Exception e) {
 				log.error("修改订单错误");
-				return returnXML(WxPayConfig.FAIL);
+				return returnXML(WxPayConsts.FAIL);
 			}
-    		return returnXML(WxPayConfig.SUCCESS);
+    		return returnXML(WxPayConsts.SUCCESS);
         }
-    	return returnXML(WxPayConfig.FAIL);
+    	return returnXML(WxPayConsts.FAIL);
 	}
 	
 }

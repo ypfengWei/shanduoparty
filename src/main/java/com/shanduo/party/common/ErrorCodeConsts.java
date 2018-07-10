@@ -1,6 +1,6 @@
 package com.shanduo.party.common;
 
-public class ErrorCodeConstants {
+public class ErrorCodeConsts {
 
 	public static final String USER_TOKEN_ERROR = "用户登录超时";
 	public static final String USER_TOKEN_PASTDUR = "登录已失效";

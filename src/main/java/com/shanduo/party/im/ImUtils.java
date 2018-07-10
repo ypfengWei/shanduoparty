@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.shanduo.party.common.SystemConfig;
+import com.shanduo.party.common.ConfigConsts;
 import com.shanduo.party.util.JsonStringUtils;
 
 /**
@@ -73,7 +73,7 @@ public class ImUtils {
 		if(image != null) {
 			Map<String, String> paramsImage = new HashMap<>();
 			paramsImage.put("Tag", "Tag_Profile_IM_Image");
-			paramsImage.put("Value", SystemConfig.PICTURE+image);
+			paramsImage.put("Value", ConfigConsts.PICTURE+image);
 			friendList.add(paramsImage);
 		}
 		paramsMap.put("ProfileItem", friendList);

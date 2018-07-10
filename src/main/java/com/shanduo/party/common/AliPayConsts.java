@@ -9,7 +9,7 @@ package com.shanduo.party.common;
  * @date 2018年5月19日 上午10:59:35
  *
  */
-public class AliPayConfig {
+public class AliPayConsts {
 
 	/**
 	 * appid
@@ -49,6 +49,6 @@ public class AliPayConfig {
 	/**
 	 * 支付宝支付回调地址
 	 */
-	public static final String NOTIFY_URL = SystemConfig.API_URL+"/jpay/alipay";
+	public static final String NOTIFY_URL = ConfigConsts.API_URL+"/jpay/alipay";
 	
 }

@@ -8,7 +8,7 @@ package com.shanduo.party.common;
  * @date 2018年5月22日 下午2:39:37
  *
  */
-public class WxPayConfig {
+public class WxPayConsts {
 	
 	/**
 	 * APPID
@@ -43,7 +43,7 @@ public class WxPayConfig {
     /**
      * 回调url
      */
-    public static final String NOTIFY_URL= SystemConfig.API_URL+"/jpay/appwxpay";
+    public static final String NOTIFY_URL= ConfigConsts.API_URL+"/jpay/appwxpay";
     
     /**
      * 调用微信接口的返回值的false

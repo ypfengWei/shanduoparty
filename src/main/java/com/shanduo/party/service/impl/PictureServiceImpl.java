@@ -31,7 +31,7 @@ public class PictureServiceImpl implements PictureService {
 	@Override
 	public String savePicture(Integer userId,String images) {
 		String[] imageList = images.split(",");
-		String pictures = "";
+		StringBuilder pictures = new StringBuilder();
 		for (int i = 0; i < imageList.length; i++) {
 			String image = imageList[i];
 			if(image == null || "".equals(image)) {
@@ -48,12 +48,12 @@ public class PictureServiceImpl implements PictureService {
 				throw new RuntimeException();
 			}
 			if(i == imageList.length - 1) {
-				pictures += uuid;
+				pictures.append(uuid);
 			}else {
-				pictures += uuid+",";
+				pictures.append(uuid+",");
 			}
 		}
-		return pictures;
+		return pictures.toString();
 	}
 
 	@Override

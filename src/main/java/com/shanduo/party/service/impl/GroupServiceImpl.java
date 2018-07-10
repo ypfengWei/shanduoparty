@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shanduo.party.common.SystemConfig;
+import com.shanduo.party.common.ConfigConsts;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserGroup;
 import com.shanduo.party.im.ImUtils;
@@ -171,7 +171,7 @@ public class GroupServiceImpl implements GroupService {
         		String userId = map.get("Member_Account").toString();
         		ShanduoUser user = userMapper.selectByPrimaryKey(Integer.valueOf(userId));
         		map.put("name", user.getUserName());
-        		map.put("picture", SystemConfig.PICTURE+PictureUtils.getPictureUrl(user.getHeadPortraitId()));
+        		map.put("picture", ConfigConsts.PICTURE+PictureUtils.getPictureUrl(user.getHeadPortraitId()));
         	}
         }
 		return resultMap;
