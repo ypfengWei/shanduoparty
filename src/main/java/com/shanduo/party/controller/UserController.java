@@ -1,5 +1,8 @@
 package com.shanduo.party.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -17,9 +20,11 @@ import com.shanduo.party.entity.common.SuccessBean;
 import com.shanduo.party.entity.service.TokenInfo;
 import com.shanduo.party.service.BaseService;
 import com.shanduo.party.service.CodeService;
+import com.shanduo.party.service.PictureService;
 import com.shanduo.party.service.UserService;
 import com.shanduo.party.util.PatternUtils;
 import com.shanduo.party.util.StringUtils;
+import com.shanduo.party.util.WxFileUtils;
 
 /**
  * 用户接口
@@ -41,6 +46,8 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private CodeService codeService;
+	@Autowired
+	private PictureService pictureService;
 	
 	/**
 	 * 用户注册
@@ -285,7 +292,7 @@ public class UserController {
 	@RequestMapping(value = "updateuser",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public ResultBean updateUser(HttpServletRequest request,String token,String name,String picture,String birthday,String gender,
-			String emotion,String signature,String background,String hometown,String occupation,String school) {
+			String emotion,String signature,String background,String hometown,String occupation,String school,String accessToken) {
 		Integer isUserId = baseService.checkUserToken(token);
 		if(isUserId == null) {
 			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
@@ -303,12 +310,25 @@ public class UserController {
 			log.error("情感状态错误");
 			return new ErrorBean(10002,"情感状态错误");
 		}
+		String image = "";
+		if(!StringUtils.isNull(picture) && !StringUtils.isNull(accessToken)) {
+			image = WxFileUtils.downloadImages(accessToken, picture);
+			try {
+				picture = pictureService.savePicture(isUserId, image);
+			} catch (Exception e) {
+				log.error("图片记录插入失败");
+				return new ErrorBean(10003,"修改失败");
+			}
+		}
 		try {
 			userService.updateUser(token,isUserId, name, picture, birthday, 
 					gender, emotion, signature, background, hometown, occupation, school);
 		} catch (Exception e) {
 			log.error("修改失败");
 			return new ErrorBean(10003,"修改失败");
+		}
+		if(!StringUtils.isNull(picture) && !StringUtils.isNull(accessToken)) {
+			return new SuccessBean(image);
 		}
 		return new SuccessBean("修改成功");
 	}
@@ -333,5 +353,26 @@ public class UserController {
 		}
 		return new SuccessBean();
 	}
-		
+	
+	/**
+	 * 获取客服列表
+	 * @Title: service
+	 * @Description: TODO
+	 * @param @param request
+	 * @param @param token
+	 * @param @return
+	 * @return ResultBean
+	 * @throws
+	 */
+	@RequestMapping(value = "service",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public ResultBean service(HttpServletRequest request,String token) {
+		Integer isUserId = baseService.checkUserToken(token);
+		if(isUserId == null) {
+			log.error(ErrorCodeConsts.USER_TOKEN_PASTDUR);
+			return new ErrorBean(10001,ErrorCodeConsts.USER_TOKEN_PASTDUR);
+		}
+		List<Map<String, Object>> list = userService.listService();
+		return new SuccessBean(list);
+	}
 }

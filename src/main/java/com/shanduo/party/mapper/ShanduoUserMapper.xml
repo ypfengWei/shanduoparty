@@ -328,7 +328,8 @@
   	id as userId, user_name as name, head_portrait_id as picture, birthday as age, gender,
     signature, hometown
   	from shanduo_user
-  	where id like "%"#{query}"%"
+  	where jurisdiction = '2'
+  	and id like "%"#{query}"%"
  	or user_name like "%"#{query}"%"
  	or phone_number = #{query}
  	limit 10
@@ -349,5 +350,11 @@
     birthday as age , gender
     from shanduo_user
     where id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="listUser" parameterType="java.lang.String" resultType="map">
+    select 
+    id as userId, user_name as name,head_portrait_id as picture
+    from shanduo_user
+    where jurisdiction = #{jurisdiction,jdbcType=INTEGER}
   </select>
 </mapper>

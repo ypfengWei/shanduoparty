@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shanduo.party.common.ShanduoConsts;
 import com.shanduo.party.entity.ShanduoReputation;
 import com.shanduo.party.entity.ShanduoUser;
 import com.shanduo.party.entity.UserMoney;
@@ -93,6 +94,15 @@ public class UserServiceImpl implements UserService {
 		}
 		//向IM导入账号
 		ImUtils.accountImport(userId+"", name);
+		//添加客服IM好友关系
+		List<Map<String, Object>> listService = userMapper.listUser(ShanduoConsts.ROLE_SERVICE);
+		for (Map<String, Object> map : listService) {
+			String service = map.get("userId").toString();
+			boolean flag = ImUtils.addFriend(userId+"", service);
+			if(flag) {
+				log.warn("IM添加客服好友失败 userId:{} and service:{}",userId,service);
+			}
+		}
 	}
 	
 	@Override
@@ -342,5 +352,30 @@ public class UserServiceImpl implements UserService {
 		return resultMap;
 	}
 
+	@Override
+	public List<Map<String, Object>> listService() {
+		List<Map<String, Object>> list = userMapper.listUser(ShanduoConsts.ROLE_SERVICE);
+		for (Map<String, Object> map : list) {
+			map.put("picture", PictureUtils.getPictureUrl(map.get("picture")));
+		}
+		return list;
+	}
 
+	@Override
+	public int addService() {
+		List<Map<String, Object>> list1 = userMapper.listUser(ShanduoConsts.ROLE_SERVICE);
+		List<Map<String, Object>> list2 = userMapper.listUser(ShanduoConsts.ROLE_USER);
+		for (Map<String, Object> map : list1) {
+			String userId = map.get("userId").toString();
+			for (Map<String, Object> map2 : list2) {
+				String service = map2.get("userId").toString();
+				boolean flag = ImUtils.addFriend(userId, service);
+				if(flag) {
+					log.warn("IM添加客服好友失败 userId:{} and service:{}",userId,service);
+				}
+			}
+		}
+		return 1;
+	}
+	
 }

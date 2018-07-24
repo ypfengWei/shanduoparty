@@ -34,4 +34,5 @@ public interface ShanduoUserMapper {
     
     Map<String, Object> selectById(Integer userId);
     
+    List<Map<String, Object>> listUser(String jurisdiction);
 }

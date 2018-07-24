@@ -103,7 +103,7 @@ public class FileController {
         return new SuccessBean(imangs);
     }
     
-    public String getImage(MultipartFile[] file) throws IllegalStateException, IOException {
+    private String getImage(MultipartFile[] file) throws IOException {
     	StringBuilder imangs = new StringBuilder();
     	for(int i=0;i<file.length;i++) {
     		MultipartFile files = file[i];

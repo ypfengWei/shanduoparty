@@ -217,4 +217,15 @@ public interface UserService {
 	 */
 	Map<String, Object> selectById(Integer userId,Integer attention);
 	
+	/**
+	 * 查询客服
+	 * @Title: listService
+	 * @Description: TODO
+	 * @param @return
+	 * @return List<Map<String,Object>>
+	 * @throws
+	 */
+	List<Map<String, Object>> listService();
+	
+	int addService();
 }

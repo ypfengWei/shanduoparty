@@ -9,6 +9,8 @@ public class ShanduoConsts {
 	public static final String ROLE_USER = "2";//用户
 
 	public static final String ROLE_ADMIN = "3";//管理员
+	
+	public static final String ROLE_SERVICE = "4";//客服
 
 	/**
 	 * 商家
