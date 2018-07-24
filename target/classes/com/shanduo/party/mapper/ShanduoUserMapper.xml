@@ -329,9 +329,9 @@
     signature, hometown
   	from shanduo_user
   	where jurisdiction = '2'
-  	and id like "%"#{query}"%"
+  	and (id like "%"#{query}"%"
  	or user_name like "%"#{query}"%"
- 	or phone_number = #{query}
+ 	or phone_number = #{query})
  	limit 10
   </select>
   <select id="seekAttention" resultType="map">
