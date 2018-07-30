@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ToCityMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ToCity">
+    <id column="city_id" jdbcType="VARCHAR" property="cityId" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="province_id" jdbcType="VARCHAR" property="provinceId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    city_id, city, province_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from to_city
+    where city_id = #{cityId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from to_city
+    where city_id = #{cityId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ToCity">
+    insert into to_city (city_id, city, province_id
+      )
+    values (#{cityId,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{provinceId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ToCity">
+    insert into to_city
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cityId != null">
+        city_id,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="provinceId != null">
+        province_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cityId != null">
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceId != null">
+        #{provinceId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ToCity">
+    update to_city
+    <set>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceId != null">
+        province_id = #{provinceId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where city_id = #{cityId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ToCity">
+    update to_city
+    set city = #{city,jdbcType=VARCHAR},
+      province_id = #{provinceId,jdbcType=VARCHAR}
+    where city_id = #{cityId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="listCity" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from to_city
+    where province_id = #{provinceId,jdbcType=VARCHAR}
+  </select>
+</mapper>

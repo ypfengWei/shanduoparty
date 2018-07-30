@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ToProvinceMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ToProvince">
+    <id column="province_id" jdbcType="VARCHAR" property="provinceId" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    province_id, province
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from to_province
+    where province_id = #{provinceId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from to_province
+    where province_id = #{provinceId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ToProvince">
+    insert into to_province (province_id, province)
+    values (#{provinceId,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ToProvince">
+    insert into to_province
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="provinceId != null">
+        province_id,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="provinceId != null">
+        #{provinceId,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ToProvince">
+    update to_province
+    <set>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where province_id = #{provinceId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ToProvince">
+    update to_province
+    set province = #{province,jdbcType=VARCHAR}
+    where province_id = #{provinceId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="listProvince" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from to_province
+  </select>
+</mapper>

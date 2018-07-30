@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanduo.party.mapper.ToAreaMapper">
+  <resultMap id="BaseResultMap" type="com.shanduo.party.entity.ToArea">
+    <id column="area_id" jdbcType="VARCHAR" property="areaId" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="city_id" jdbcType="VARCHAR" property="cityId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    area_id, area, city_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from to_area
+    where area_id = #{areaId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from to_area
+    where area_id = #{areaId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.shanduo.party.entity.ToArea">
+    insert into to_area (area_id, area, city_id
+      )
+    values (#{areaId,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{cityId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shanduo.party.entity.ToArea">
+    insert into to_area
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="areaId != null">
+        area_id,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="cityId != null">
+        city_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="areaId != null">
+        #{areaId,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null">
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shanduo.party.entity.ToArea">
+    update to_area
+    <set>
+      <if test="area != null">
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null">
+        city_id = #{cityId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where area_id = #{areaId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shanduo.party.entity.ToArea">
+    update to_area
+    set area = #{area,jdbcType=VARCHAR},
+      city_id = #{cityId,jdbcType=VARCHAR}
+    where area_id = #{areaId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="listArea" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from to_area
+    where city_id = #{cityId,jdbcType=VARCHAR}
+  </select>
+</mapper>

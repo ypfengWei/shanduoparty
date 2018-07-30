@@ -149,7 +149,7 @@ public class OrderContrpller {
 		}
 		switch (typeId) {
 		case "1":
-			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})$")) {
+			if(StringUtils.isNull(money) || !money.matches("^\\d+(\\.\\d{0,2})?$")) {
 				log.error("充值金额错误");
 				return new ErrorBean(10002,"充值金额错误");
 			}
