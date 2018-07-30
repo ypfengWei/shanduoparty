@@ -59,9 +59,11 @@ public class DynamicServiceImpl implements DynamicService {
 		dynamic.setId(UUIDGenerator.getUUID());
 		dynamic.setUserId(userId);
 		dynamic.setContent(SensitiveWord.filterInfo(content));
-		picture = picture.replaceAll("\"","");
-		picture = picture.replaceAll("\\[","");
-		picture = picture.replaceAll("\\]","");
+		if(picture != null) {
+			picture = picture.replaceAll("\"","");
+			picture = picture.replaceAll("\\[","");
+			picture = picture.replaceAll("\\]","");
+		}
 		dynamic.setPicture(picture);
 		dynamic.setLat(new BigDecimal(lat));
 		dynamic.setLon(new BigDecimal(lon));
